@@ -3,17 +3,14 @@ import type { EmailConfig } from "@convex-dev/auth/server";
 import axios from "axios";
 import { RandomReader, generateRandomString } from "@oslojs/crypto/random";
 
+// Define the custom Email OTP provider configuration type extending EmailConfig
+export type EmailOtpConfig = EmailConfig & {
+  maxAge?: number;
+  generateVerificationToken?: () => Promise<string> | string;
+};
+
+// Base email provider configuring the delivery request and verification checks
 const emailProvider = Email({
-  // Generate cryptographically secure verification code
-  async generateVerificationToken() {
-    const random: RandomReader = {
-      read(bytes: Uint8Array) {
-        crypto.getRandomValues(bytes);
-      },
-    };
-    const alphabet = "0123456789";
-    return generateRandomString(random, alphabet, 6);
-  },
   async sendVerificationRequest({ identifier, token }) {
     const email =
       typeof identifier === "string" ? identifier.trim().toLowerCase() : "";
@@ -95,8 +92,17 @@ const emailProvider = Email({
   },
 });
 
-// Configure 10-minute OTP expiration (600 seconds) on the EmailConfig provider
-export const emailOtp: EmailConfig = {
+// Configure 10-minute OTP expiration (600 seconds) and 6-digit token generation on the provider
+export const emailOtp: EmailOtpConfig = {
   ...emailProvider,
   maxAge: 60 * 10, // 10 minutes
+  async generateVerificationToken() {
+    const random: RandomReader = {
+      read(bytes: Uint8Array) {
+        crypto.getRandomValues(bytes);
+      },
+    };
+    const alphabet = "0123456789";
+    return generateRandomString(random, alphabet, 6);
+  },
 };
