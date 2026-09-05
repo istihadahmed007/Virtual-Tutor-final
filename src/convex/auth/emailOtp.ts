@@ -1,9 +1,9 @@
 import { Email } from "@convex-dev/auth/providers/Email";
+import type { EmailConfig } from "@convex-dev/auth/server";
 import axios from "axios";
 import { RandomReader, generateRandomString } from "@oslojs/crypto/random";
 
-export const emailOtp = Email({
-  maxAge: 60 * 10, // 10 minutes
+const emailProvider = Email({
   // Generate cryptographically secure verification code
   async generateVerificationToken() {
     const random: RandomReader = {
@@ -95,3 +95,8 @@ export const emailOtp = Email({
   },
 });
 
+// Configure 10-minute OTP expiration (600 seconds) on the EmailConfig provider
+export const emailOtp: EmailConfig = {
+  ...emailProvider,
+  maxAge: 60 * 10, // 10 minutes
+};
