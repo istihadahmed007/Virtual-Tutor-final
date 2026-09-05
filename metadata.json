@@ -1,0 +1,11 @@
+{
+  "name": "Virtual Tutor Pro",
+  "description": "An online tutoring and live classroom platform connecting students and teachers with interactive lessons, assignments, scheduling, progress tracking, and AI assistance.",
+  "requestFramePermissions": [
+    "camera",
+    "microphone"
+  ],
+  "majorCapabilities": [
+    "MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"
+  ]
+}
