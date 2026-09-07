@@ -91,11 +91,14 @@ export default function TeacherApplicationPage() {
   const [timezone, setTimezone] = useState(
     myProfile?.timezone || Intl.DateTimeFormat().resolvedOptions().timeZone || "America/New_York"
   );
-  const [hourlyRate, setHourlyRate] = useState<number>(myProfile?.hourlyRate || 35);
-  const [price30Min, setPrice30Min] = useState<number>(myProfile?.price30min || 20);
-  const [price60Min, setPrice60Min] = useState<number>(myProfile?.price60min || 35);
-  const [priceSmallGroup, setPriceSmallGroup] = useState<number>(myProfile?.groupPrice || 25);
-  const [priceTrial, setPriceTrial] = useState<number>(myProfile?.trialPrice || 15);
+  const initialMonthlyTuition = myProfile?.hourlyRate
+    ? (myProfile.hourlyRate >= 500 ? myProfile.hourlyRate : myProfile.hourlyRate * 100)
+    : 4000;
+  const [hourlyRate, setHourlyRate] = useState<number>(initialMonthlyTuition);
+  const [price30Min, setPrice30Min] = useState<number>(Math.round(initialMonthlyTuition * 0.55));
+  const [price60Min, setPrice60Min] = useState<number>(initialMonthlyTuition);
+  const [priceSmallGroup, setPriceSmallGroup] = useState<number>(Math.round(initialMonthlyTuition * 0.7));
+  const [priceTrial, setPriceTrial] = useState<number>(Math.round(initialMonthlyTuition * 0.25));
 
   const [subjects, setSubjects] = useState<string[]>(myProfile?.subjects || []);
   const [customSubjectInput, setCustomSubjectInput] = useState("");
@@ -156,11 +159,12 @@ export default function TeacherApplicationPage() {
     if (myProfile.title) setTitle((prev) => prev || myProfile.title);
     if (myProfile.bio) setBio((prev) => prev || myProfile.bio);
     if (myProfile.country) setCountry((prev) => (prev === "United States" ? myProfile.country : prev));
-    if (myProfile.hourlyRate) setHourlyRate((prev) => (prev === 35 ? myProfile.hourlyRate : prev));
-    if (myProfile.price30min) setPrice30Min((prev) => (prev === 20 ? myProfile.price30min : prev));
-    if (myProfile.price60min) setPrice60Min((prev) => (prev === 35 ? myProfile.price60min : prev));
-    if (myProfile.groupPrice) setPriceSmallGroup((prev) => (prev === 25 ? myProfile.groupPrice : prev));
-    if (myProfile.trialPrice) setPriceTrial((prev) => (prev === 15 ? myProfile.trialPrice : prev));
+    if (myProfile.hourlyRate) {
+      const tuition = myProfile.hourlyRate >= 500 ? myProfile.hourlyRate : myProfile.hourlyRate * 100;
+      setHourlyRate((prev) => (prev === 4000 ? tuition : prev));
+      setPrice60Min((prev) => (prev === 4000 ? tuition : prev));
+    }
+    if (myProfile.groupPrice) setPriceSmallGroup((prev) => (prev === 2800 ? myProfile.groupPrice : prev));
 
     if (myProfile.subjects && myProfile.subjects.length > 0) {
       setSubjects((prev) => (prev.length === 0 ? myProfile.subjects : prev));
@@ -766,81 +770,72 @@ export default function TeacherApplicationPage() {
           </CardContent>
         </Card>
 
-        {/* Section 3: Languages & Pricing Structure */}
+        {/* Section 3: Monthly Tuition Plan & Languages */}
         <Card className="border border-stone-200 shadow-sm bg-white rounded-2xl">
           <CardHeader className="pb-3 border-b border-stone-100">
             <CardTitle className="text-base font-bold text-slate-900 flex items-center gap-2">
-              <DollarSign className="w-4 h-4 text-teal-600" />
-              3. Languages & Rate Structure
+              <span className="text-teal-700 font-bold text-lg leading-none">৳</span>
+              3. Monthly Tuition Plan & Languages
             </CardTitle>
             <CardDescription className="text-xs text-slate-500">
-              Define your instructional rates and conversational languages
+              Students are charged on a monthly tuition plan only (in Bangladeshi Taka / Tk).
             </CardDescription>
           </CardHeader>
           <CardContent className="pt-5 space-y-5">
-            <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-              <div className="space-y-1">
-                <label className="text-[11px] font-semibold text-slate-700">
-                  Standard Hourly Rate ($/hr) <span className="text-red-500">*</span>
-                </label>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div className="space-y-1.5">
+                <div className="flex items-center justify-between">
+                  <label className="text-[11px] font-semibold text-slate-700">
+                    Monthly Tuition Fee (৳ Tk / month) <span className="text-red-500">*</span>
+                  </label>
+                  <span className="text-[10px] font-semibold text-teal-700 bg-teal-50 px-2 py-0.5 rounded border border-teal-200">
+                    Monthly Charge Only
+                  </span>
+                </div>
                 <div className="relative">
-                  <span className="absolute left-3 top-2.5 text-xs text-slate-400 font-bold">$</span>
+                  <span className="absolute left-3 top-2.5 text-xs text-teal-800 font-bold">৳</span>
                   <Input
                     type="number"
                     disabled={isLocked}
-                    min={10}
-                    max={250}
+                    min={500}
+                    max={50000}
+                    step={100}
                     value={hourlyRate}
                     onChange={(e) => {
                       const val = Number(e.target.value);
                       setHourlyRate(val);
                       setPrice60Min(val);
                     }}
+                    placeholder="e.g. 4000"
                     className="h-9 pl-7 text-xs font-semibold font-mono"
                   />
                 </div>
+                <p className="text-[11px] text-slate-400">
+                  Standard 1-on-1 monthly tuition charged to student for regular weekly live lessons.
+                </p>
               </div>
 
-              <div className="space-y-1">
-                <label className="text-[11px] font-semibold text-slate-700">30-Min Lesson ($)</label>
+              <div className="space-y-1.5">
+                <label className="text-[11px] font-semibold text-slate-700">
+                  Small Group Monthly Fee (৳ Tk / student)
+                </label>
                 <div className="relative">
-                  <span className="absolute left-3 top-2.5 text-xs text-slate-400 font-bold">$</span>
+                  <span className="absolute left-3 top-2.5 text-xs text-teal-800 font-bold">৳</span>
                   <Input
                     type="number"
                     disabled={isLocked}
-                    value={price30Min}
-                    onChange={(e) => setPrice30Min(Number(e.target.value))}
-                    className="h-9 pl-7 text-xs font-semibold font-mono"
-                  />
-                </div>
-              </div>
-
-              <div className="space-y-1">
-                <label className="text-[11px] font-semibold text-slate-700">Small Group ($/hr)</label>
-                <div className="relative">
-                  <span className="absolute left-3 top-2.5 text-xs text-slate-400 font-bold">$</span>
-                  <Input
-                    type="number"
-                    disabled={isLocked}
+                    min={500}
+                    max={30000}
+                    step={100}
                     value={priceSmallGroup}
                     onChange={(e) => setPriceSmallGroup(Number(e.target.value))}
+                    placeholder="e.g. 2500"
                     className="h-9 pl-7 text-xs font-semibold font-mono"
                   />
                 </div>
-              </div>
-
-              <div className="space-y-1">
-                <label className="text-[11px] font-semibold text-slate-700">Trial Lesson ($)</label>
-                <div className="relative">
-                  <span className="absolute left-3 top-2.5 text-xs text-slate-400 font-bold">$</span>
-                  <Input
-                    type="number"
-                    disabled={isLocked}
-                    value={priceTrial}
-                    onChange={(e) => setPriceTrial(Number(e.target.value))}
-                    className="h-9 pl-7 text-xs font-semibold font-mono"
-                  />
-                </div>
+                <p className="text-[11px] text-slate-400">
+                  Discounted monthly tuition rate per student for small group cohort batches.
+                </p>
               </div>
             </div>
 

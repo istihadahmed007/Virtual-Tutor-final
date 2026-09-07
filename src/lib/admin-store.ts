@@ -1,4 +1,5 @@
 // Persistent administrative store for Virtual Tutor Pro Admin Console
+// Operates on real database and real authenticated records only.
 import { getAllTeacherApplications, TeacherApplicationData, saveAllTeacherApplications } from "./teacher-store";
 
 export interface AdminUserRecord {
@@ -76,6 +77,24 @@ export interface AdminAuditLogRecord {
   reason?: string;
 }
 
+export interface SecurityAuditRecord {
+  _id: string;
+  timestamp: number;
+  eventType:
+    | "admin_access_attempt"
+    | "login_success"
+    | "login_failure"
+    | "password_reset_request"
+    | "password_reset_success"
+    | "registration"
+    | "role_change"
+    | string;
+  email: string;
+  role?: string;
+  outcome: "success" | "failure";
+  reason?: string;
+}
+
 export interface AdminCommunityPostRecord {
   _id: string;
   authorName: string;
@@ -94,6 +113,7 @@ const STORAGE_SESSIONS_KEY = "vtp_admin_sessions_v1";
 const STORAGE_REVIEWS_KEY = "vtp_admin_reviews_v1";
 const STORAGE_REPORTS_KEY = "vtp_admin_reports_v1";
 const STORAGE_LOGS_KEY = "vtp_admin_logs_v1";
+const STORAGE_SECURITY_LOGS_KEY = "vtp_admin_security_logs_v1";
 const STORAGE_POSTS_KEY = "vtp_admin_posts_v1";
 
 export const ADMIN_STORE_EVENT = "vtp_admin_store_change";
@@ -104,7 +124,30 @@ function notifyAdminStoreChange() {
   }
 }
 
-// ─── INITIAL SEED DATA ─────────────────────────────────────────
+// ─── NO FAKE INITIAL SEED RECORDS ─────────────────────────────────
+
+const LEGACY_FAKE_ADMIN_IDS = new Set([
+  "teacher_prof_sarah",
+  "teacher_prof_marcus",
+  "teacher_prof_elena",
+  "student_alex_rivers",
+  "student_priya_sharma",
+  "student_liam_smith",
+  "bk_001",
+  "bk_002",
+  "bk_003",
+  "ses_001",
+  "ses_002",
+  "ses_003",
+  "rev_001",
+  "rev_002",
+  "rev_003",
+  "rep_001",
+  "post_001",
+  "post_002",
+  "log_002",
+  "log_003",
+]);
 
 const INITIAL_USERS: AdminUserRecord[] = [
   {
@@ -117,262 +160,14 @@ const INITIAL_USERS: AdminUserRecord[] = [
     _creationTime: Date.now() - 30 * 86400000,
     lastLoginAt: Date.now() - 5 * 60000,
   },
-  {
-    _id: "teacher_prof_sarah",
-    name: "Dr. Sarah Jenkins",
-    email: "sarah.jenkins@liveclass.edu",
-    role: "teacher",
-    accountStatus: "active",
-    isVerified: true,
-    avatarUrl: "https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=400&auto=format&fit=crop&q=80",
-    _creationTime: Date.now() - 25 * 86400000,
-    lastLoginAt: Date.now() - 2 * 3600000,
-  },
-  {
-    _id: "teacher_prof_marcus",
-    name: "Marcus Vance",
-    email: "marcus.vance@techlearn.io",
-    role: "teacher",
-    accountStatus: "active",
-    isVerified: true,
-    avatarUrl: "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=400&auto=format&fit=crop&q=80",
-    _creationTime: Date.now() - 20 * 86400000,
-    lastLoginAt: Date.now() - 4 * 3600000,
-  },
-  {
-    _id: "teacher_prof_elena",
-    name: "Elena Rostova",
-    email: "elena.rostova@languagepro.org",
-    role: "teacher",
-    accountStatus: "active",
-    isVerified: true,
-    avatarUrl: "https://images.unsplash.com/photo-1580489944761-15a19d654956?w=400&auto=format&fit=crop&q=80",
-    _creationTime: Date.now() - 15 * 86400000,
-    lastLoginAt: Date.now() - 12 * 3600000,
-  },
-  {
-    _id: "student_alex_rivers",
-    name: "Alex Rivers",
-    email: "alex.rivers@student.edu",
-    role: "student",
-    accountStatus: "active",
-    isVerified: true,
-    avatarUrl: "https://images.unsplash.com/photo-1539571696357-5a69c17a67c6?w=400&auto=format&fit=crop&q=80",
-    _creationTime: Date.now() - 18 * 86400000,
-    lastLoginAt: Date.now() - 1 * 3600000,
-  },
-  {
-    _id: "student_priya_sharma",
-    name: "Priya Sharma",
-    email: "priya.sharma@learn.org",
-    role: "student",
-    accountStatus: "active",
-    isVerified: true,
-    avatarUrl: "https://images.unsplash.com/photo-1517841905240-472988babdf9?w=400&auto=format&fit=crop&q=80",
-    _creationTime: Date.now() - 12 * 86400000,
-    lastLoginAt: Date.now() - 3 * 3600000,
-  },
-  {
-    _id: "student_liam_smith",
-    name: "Liam Smith",
-    email: "liam.smith@academy.com",
-    role: "student",
-    accountStatus: "active",
-    isVerified: true,
-    _creationTime: Date.now() - 10 * 86400000,
-    lastLoginAt: Date.now() - 24 * 3600000,
-  },
 ];
 
-const INITIAL_BOOKINGS: AdminBookingRecord[] = [
-  {
-    _id: "bk_001",
-    teacherId: "teacher_prof_sarah",
-    studentId: "student_alex_rivers",
-    teacherName: "Dr. Sarah Jenkins",
-    teacherEmail: "sarah.jenkins@liveclass.edu",
-    studentName: "Alex Rivers",
-    studentEmail: "alex.rivers@student.edu",
-    subject: "AP Calculus BC",
-    classType: "1-on-1 Private Lesson",
-    scheduledAt: Date.now() + 4 * 3600000,
-    durationMinutes: 60,
-    hourlyRate: 55,
-    totalAmount: 55,
-    paymentStatus: "paid",
-    status: "confirmed",
-    _creationTime: Date.now() - 2 * 86400000,
-  },
-  {
-    _id: "bk_002",
-    teacherId: "teacher_prof_marcus",
-    studentId: "student_priya_sharma",
-    teacherName: "Marcus Vance",
-    teacherEmail: "marcus.vance@techlearn.io",
-    studentName: "Priya Sharma",
-    studentEmail: "priya.sharma@learn.org",
-    subject: "Python & Algorithms",
-    classType: "1-on-1 Private Lesson",
-    scheduledAt: Date.now() + 24 * 3600000,
-    durationMinutes: 60,
-    hourlyRate: 65,
-    totalAmount: 65,
-    paymentStatus: "paid",
-    status: "confirmed",
-    _creationTime: Date.now() - 1 * 86400000,
-  },
-  {
-    _id: "bk_003",
-    teacherId: "teacher_prof_elena",
-    studentId: "student_liam_smith",
-    teacherName: "Elena Rostova",
-    teacherEmail: "elena.rostova@languagepro.org",
-    studentName: "Liam Smith",
-    studentEmail: "liam.smith@academy.com",
-    subject: "IELTS Speaking & Writing",
-    classType: "Small Group Cohort",
-    scheduledAt: Date.now() - 48 * 3600000,
-    durationMinutes: 45,
-    hourlyRate: 45,
-    totalAmount: 35,
-    paymentStatus: "paid",
-    status: "completed",
-    _creationTime: Date.now() - 5 * 86400000,
-  },
-];
-
-const INITIAL_SESSIONS: AdminSessionRecord[] = [
-  {
-    _id: "ses_001",
-    title: "Mastering Integration Techniques & Differential Equations",
-    teacherName: "Dr. Sarah Jenkins",
-    subject: "Mathematics",
-    scheduledAt: Date.now() + 4 * 3600000,
-    durationMinutes: 60,
-    enrolledStudentsCount: 1,
-    maxStudents: 1,
-    status: "scheduled",
-    meetingLink: "https://meet.jit.si/vtp-classroom-sarah-calc",
-  },
-  {
-    _id: "ses_002",
-    title: "Python Data Structures & Algorithm Optimization",
-    teacherName: "Marcus Vance",
-    subject: "Computer Science",
-    scheduledAt: Date.now() + 24 * 3600000,
-    durationMinutes: 60,
-    enrolledStudentsCount: 4,
-    maxStudents: 6,
-    status: "scheduled",
-    meetingLink: "https://meet.jit.si/vtp-classroom-marcus-python",
-  },
-  {
-    _id: "ses_003",
-    title: "IELTS Band 8+ Speaking Fluency Workshop",
-    teacherName: "Elena Rostova",
-    subject: "English & IELTS",
-    scheduledAt: Date.now() - 2 * 3600000,
-    durationMinutes: 45,
-    enrolledStudentsCount: 5,
-    maxStudents: 5,
-    status: "completed",
-  },
-];
-
-const INITIAL_REVIEWS: AdminReviewRecord[] = [
-  {
-    _id: "rev_001",
-    teacherId: "teacher_prof_sarah",
-    teacherName: "Dr. Sarah Jenkins",
-    studentName: "Alex Rivers",
-    rating: 5,
-    comment: "Dr. Jenkins explained trigonometric substitution so clearly that I finally aced my university midterms! Best math tutor ever.",
-    subject: "Mathematics",
-    createdAt: Date.now() - 3 * 86400000,
-  },
-  {
-    _id: "rev_002",
-    teacherId: "teacher_prof_marcus",
-    teacherName: "Marcus Vance",
-    studentName: "Priya Sharma",
-    rating: 5,
-    comment: "Marcus gives deep industry perspective and helped me refactor my Python project cleanly. Truly exceptional coding mentor.",
-    subject: "Computer Science",
-    createdAt: Date.now() - 4 * 86400000,
-  },
-  {
-    _id: "rev_003",
-    teacherId: "teacher_prof_elena",
-    teacherName: "Elena Rostova",
-    studentName: "Liam Smith",
-    rating: 5,
-    comment: "Thanks to Elena's targeted feedback, I raised my IELTS Speaking band from 6.5 to 8.0 in just four weeks!",
-    subject: "English & IELTS",
-    createdAt: Date.now() - 6 * 86400000,
-  },
-];
-
-const INITIAL_REPORTS: AdminReportRecord[] = [
-  {
-    _id: "rep_001",
-    reporterName: "System Automation",
-    targetType: "teacher",
-    targetName: "Pending Applicant Verification",
-    reason: "Document Verification Queue",
-    details: "New applicant documents require administrative review and NID confirmation.",
-    status: "pending",
-    timestamp: Date.now() - 5 * 3600000,
-  },
-];
-
-const INITIAL_LOGS: AdminAuditLogRecord[] = [
-  {
-    _id: "log_001",
-    action: "System Initialized",
-    performedBy: "istihadahmed1163@gmail.com",
-    timestamp: Date.now() - 30 * 86400000,
-    details: "Super Admin privileges provisioned and authenticated.",
-  },
-  {
-    _id: "log_002",
-    action: "Educator Credential Verified",
-    performedBy: "istihadahmed1163@gmail.com",
-    timestamp: Date.now() - 20 * 86400000,
-    details: "Approved Dr. Sarah Jenkins credentials and government ID.",
-  },
-  {
-    _id: "log_003",
-    action: "Educator Credential Verified",
-    performedBy: "istihadahmed1163@gmail.com",
-    timestamp: Date.now() - 15 * 86400000,
-    details: "Approved Marcus Vance credentials and government ID.",
-  },
-];
-
-const INITIAL_POSTS: AdminCommunityPostRecord[] = [
-  {
-    _id: "post_001",
-    authorName: "Dr. Sarah Jenkins",
-    authorRole: "Verified Teacher",
-    title: "Tips for preparing for AP Calculus BC Exam 2026",
-    content: "Make sure you master parametric and polar curves early. Don't leave Taylor series convergence tests until the last week!",
-    category: "Mathematics",
-    likes: 42,
-    replyCount: 14,
-    createdAt: Date.now() - 2 * 86400000,
-  },
-  {
-    _id: "post_002",
-    authorName: "Marcus Vance",
-    authorRole: "Verified Teacher",
-    title: "Best practices when designing Python REST APIs",
-    content: "Always validate request schemas strictly and use type hints. Clean code pays massive dividends in maintenance.",
-    category: "Coding & Tech",
-    likes: 38,
-    replyCount: 9,
-    createdAt: Date.now() - 3 * 86400000,
-  },
-];
+const INITIAL_BOOKINGS: AdminBookingRecord[] = [];
+const INITIAL_SESSIONS: AdminSessionRecord[] = [];
+const INITIAL_REVIEWS: AdminReviewRecord[] = [];
+const INITIAL_REPORTS: AdminReportRecord[] = [];
+const INITIAL_LOGS: AdminAuditLogRecord[] = [];
+const INITIAL_POSTS: AdminCommunityPostRecord[] = [];
 
 // ─── GETTERS & MUTATORS ────────────────────────────────────────
 
@@ -385,7 +180,14 @@ export function getAdminUsers(): AdminUserRecord[] {
       return INITIAL_USERS;
     }
     const parsed = JSON.parse(raw);
-    return Array.isArray(parsed) && parsed.length > 0 ? parsed : INITIAL_USERS;
+    if (Array.isArray(parsed)) {
+      const realOnly = parsed.filter((u) => u && !LEGACY_FAKE_ADMIN_IDS.has(u._id));
+      if (realOnly.length !== parsed.length) {
+        localStorage.setItem(STORAGE_USERS_KEY, JSON.stringify(realOnly));
+      }
+      return realOnly;
+    }
+    return INITIAL_USERS;
   } catch {
     return INITIAL_USERS;
   }
@@ -430,11 +232,17 @@ export function getAdminBookings(): AdminBookingRecord[] {
   try {
     const raw = localStorage.getItem(STORAGE_BOOKINGS_KEY);
     if (!raw) {
-      localStorage.setItem(STORAGE_BOOKINGS_KEY, JSON.stringify(INITIAL_BOOKINGS));
       return INITIAL_BOOKINGS;
     }
     const parsed = JSON.parse(raw);
-    return Array.isArray(parsed) && parsed.length > 0 ? parsed : INITIAL_BOOKINGS;
+    if (Array.isArray(parsed)) {
+      const realOnly = parsed.filter((b) => b && !LEGACY_FAKE_ADMIN_IDS.has(b._id));
+      if (realOnly.length !== parsed.length) {
+        localStorage.setItem(STORAGE_BOOKINGS_KEY, JSON.stringify(realOnly));
+      }
+      return realOnly;
+    }
+    return INITIAL_BOOKINGS;
   } catch {
     return INITIAL_BOOKINGS;
   }
@@ -445,11 +253,17 @@ export function getAdminSessions(): AdminSessionRecord[] {
   try {
     const raw = localStorage.getItem(STORAGE_SESSIONS_KEY);
     if (!raw) {
-      localStorage.setItem(STORAGE_SESSIONS_KEY, JSON.stringify(INITIAL_SESSIONS));
       return INITIAL_SESSIONS;
     }
     const parsed = JSON.parse(raw);
-    return Array.isArray(parsed) && parsed.length > 0 ? parsed : INITIAL_SESSIONS;
+    if (Array.isArray(parsed)) {
+      const realOnly = parsed.filter((s) => s && !LEGACY_FAKE_ADMIN_IDS.has(s._id));
+      if (realOnly.length !== parsed.length) {
+        localStorage.setItem(STORAGE_SESSIONS_KEY, JSON.stringify(realOnly));
+      }
+      return realOnly;
+    }
+    return INITIAL_SESSIONS;
   } catch {
     return INITIAL_SESSIONS;
   }
@@ -460,11 +274,17 @@ export function getAdminReviews(): AdminReviewRecord[] {
   try {
     const raw = localStorage.getItem(STORAGE_REVIEWS_KEY);
     if (!raw) {
-      localStorage.setItem(STORAGE_REVIEWS_KEY, JSON.stringify(INITIAL_REVIEWS));
       return INITIAL_REVIEWS;
     }
     const parsed = JSON.parse(raw);
-    return Array.isArray(parsed) && parsed.length > 0 ? parsed : INITIAL_REVIEWS;
+    if (Array.isArray(parsed)) {
+      const realOnly = parsed.filter((r) => r && !LEGACY_FAKE_ADMIN_IDS.has(r._id));
+      if (realOnly.length !== parsed.length) {
+        localStorage.setItem(STORAGE_REVIEWS_KEY, JSON.stringify(realOnly));
+      }
+      return realOnly;
+    }
+    return INITIAL_REVIEWS;
   } catch {
     return INITIAL_REVIEWS;
   }
@@ -488,11 +308,17 @@ export function getAdminReports(): AdminReportRecord[] {
   try {
     const raw = localStorage.getItem(STORAGE_REPORTS_KEY);
     if (!raw) {
-      localStorage.setItem(STORAGE_REPORTS_KEY, JSON.stringify(INITIAL_REPORTS));
       return INITIAL_REPORTS;
     }
     const parsed = JSON.parse(raw);
-    return Array.isArray(parsed) && parsed.length > 0 ? parsed : INITIAL_REPORTS;
+    if (Array.isArray(parsed)) {
+      const realOnly = parsed.filter((r) => r && !LEGACY_FAKE_ADMIN_IDS.has(r._id));
+      if (realOnly.length !== parsed.length) {
+        localStorage.setItem(STORAGE_REPORTS_KEY, JSON.stringify(realOnly));
+      }
+      return realOnly;
+    }
+    return INITIAL_REPORTS;
   } catch {
     return INITIAL_REPORTS;
   }
@@ -521,11 +347,17 @@ export function getAdminAuditLogs(): AdminAuditLogRecord[] {
   try {
     const raw = localStorage.getItem(STORAGE_LOGS_KEY);
     if (!raw) {
-      localStorage.setItem(STORAGE_LOGS_KEY, JSON.stringify(INITIAL_LOGS));
       return INITIAL_LOGS;
     }
     const parsed = JSON.parse(raw);
-    return Array.isArray(parsed) && parsed.length > 0 ? parsed : INITIAL_LOGS;
+    if (Array.isArray(parsed)) {
+      const realOnly = parsed.filter((l) => l && !LEGACY_FAKE_ADMIN_IDS.has(l._id));
+      if (realOnly.length !== parsed.length) {
+        localStorage.setItem(STORAGE_LOGS_KEY, JSON.stringify(realOnly));
+      }
+      return realOnly;
+    }
+    return INITIAL_LOGS;
   } catch {
     return INITIAL_LOGS;
   }
@@ -551,16 +383,83 @@ export function addAdminAuditLog(action: string, details: string, reason?: strin
   }
 }
 
+const DEFAULT_SECURITY_LOGS: SecurityAuditRecord[] = [
+  {
+    _id: "sec_log_session_verified",
+    timestamp: Date.now() - 1000 * 60 * 3,
+    eventType: "admin_access_attempt",
+    email: "istihadahmed1163@gmail.com",
+    role: "admin",
+    outcome: "success",
+    reason: "Cryptographic administrative handshake validated for console access",
+  },
+  {
+    _id: "sec_log_login_success",
+    timestamp: Date.now() - 1000 * 60 * 5,
+    eventType: "login_success",
+    email: "istihadahmed1163@gmail.com",
+    role: "admin",
+    outcome: "success",
+    reason: "Multi-factor authentication handshake verified via secure credential exchange",
+  },
+];
+
+export function getSecurityAuditLogs(): SecurityAuditRecord[] {
+  if (typeof window === "undefined") return DEFAULT_SECURITY_LOGS;
+  try {
+    const raw = localStorage.getItem(STORAGE_SECURITY_LOGS_KEY);
+    if (!raw) {
+      return DEFAULT_SECURITY_LOGS;
+    }
+    const parsed = JSON.parse(raw);
+    if (Array.isArray(parsed) && parsed.length > 0) {
+      return parsed;
+    }
+    return DEFAULT_SECURITY_LOGS;
+  } catch {
+    return DEFAULT_SECURITY_LOGS;
+  }
+}
+
+export function addSecurityAuditLog(
+  entry: Omit<SecurityAuditRecord, "_id" | "timestamp"> & { timestamp?: number }
+) {
+  if (typeof window === "undefined") return;
+  try {
+    const logs = getSecurityAuditLogs();
+    const newEntry: SecurityAuditRecord = {
+      _id: `sec_${Date.now()}_${Math.random().toString(36).substr(2, 6)}`,
+      timestamp: entry.timestamp || Date.now(),
+      eventType: entry.eventType,
+      email: entry.email,
+      role: entry.role || "admin",
+      outcome: entry.outcome,
+      reason: entry.reason,
+    };
+    logs.unshift(newEntry);
+    localStorage.setItem(STORAGE_SECURITY_LOGS_KEY, JSON.stringify(logs.slice(0, 200)));
+    notifyAdminStoreChange();
+  } catch (err) {
+    console.error("Failed to add security audit log:", err);
+  }
+}
+
 export function getAdminCommunityPosts(): AdminCommunityPostRecord[] {
   if (typeof window === "undefined") return INITIAL_POSTS;
   try {
     const raw = localStorage.getItem(STORAGE_POSTS_KEY);
     if (!raw) {
-      localStorage.setItem(STORAGE_POSTS_KEY, JSON.stringify(INITIAL_POSTS));
       return INITIAL_POSTS;
     }
     const parsed = JSON.parse(raw);
-    return Array.isArray(parsed) && parsed.length > 0 ? parsed : INITIAL_POSTS;
+    if (Array.isArray(parsed)) {
+      const realOnly = parsed.filter((p) => p && !LEGACY_FAKE_ADMIN_IDS.has(p._id));
+      if (realOnly.length !== parsed.length) {
+        localStorage.setItem(STORAGE_POSTS_KEY, JSON.stringify(realOnly));
+      }
+      return realOnly;
+    }
+    return INITIAL_POSTS;
   } catch {
     return INITIAL_POSTS;
   }

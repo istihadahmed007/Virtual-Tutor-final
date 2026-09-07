@@ -70,11 +70,11 @@ export const LANGUAGE_OPTIONS = [
 ];
 
 export const PRICE_RANGE_OPTIONS = [
-  { value: "all", label: "Any Price" },
-  { value: "under_35", label: "Under $35/hr" },
-  { value: "35_50", label: "$35 – $50/hr" },
-  { value: "50_70", label: "$50 – $70/hr" },
-  { value: "over_70", label: "$70+/hr" },
+  { value: "all", label: "Any Tuition" },
+  { value: "under_3000", label: "Under ৳3,000/mo" },
+  { value: "3000_5000", label: "৳3,000 – ৳5,000/mo" },
+  { value: "5000_8000", label: "৳5,000 – ৳8,000/mo" },
+  { value: "over_8000", label: "Over ৳8,000/mo" },
 ];
 
 export const AVAILABILITY_OPTIONS = [
@@ -294,7 +294,7 @@ export function TeacherFilters({
             {/* Price Range */}
             <div>
               <label className="text-xs font-bold uppercase tracking-wider text-slate-700 mb-2 block">
-                Hourly Rate
+                Monthly Tuition (Tk)
               </label>
               <div className="grid grid-cols-2 gap-2">
                 {PRICE_RANGE_OPTIONS.map((p) => {

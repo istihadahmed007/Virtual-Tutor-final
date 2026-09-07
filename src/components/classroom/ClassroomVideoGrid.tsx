@@ -1,4 +1,4 @@
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import {
   Mic,
   MicOff,
@@ -9,6 +9,9 @@ import {
   Wifi,
   Sparkles,
   Volume2,
+  Users,
+  ShieldCheck,
+  Radio,
 } from "lucide-react";
 import { RemoteMediaParticipant } from "@/hooks/useClassroomMedia";
 
@@ -60,7 +63,7 @@ function RemoteVideoTile({
   const videoRef = useRef<HTMLVideoElement>(null);
   const stream = media?.videoStream;
   const isSpeaking = media?.isSpeaking || false;
-  const isCamActive = (media ? media.isCamOn && !!media.videoStream : presence.camOn);
+  const isCamActive = media ? media.isCamOn && !!media.videoStream : presence.camOn;
   const isMicActive = media ? media.isMicOn : presence.micOn;
 
   useEffect(() => {
@@ -71,11 +74,15 @@ function RemoteVideoTile({
 
   return (
     <div
-      className={`relative rounded-xl overflow-hidden bg-slate-900 border shadow-lg group transition-all duration-200 ${
+      className={`relative rounded-2xl overflow-hidden bg-slate-900 border shadow-xl group transition-all duration-200 ${
         isSpeaking
           ? "border-emerald-500 ring-2 ring-emerald-500/50 shadow-emerald-500/20"
           : "border-slate-800 hover:border-slate-700"
-      } ${layoutMode === "compact" ? "w-48 sm:w-full aspect-video shrink-0" : "aspect-video"}`}
+      } ${
+        layoutMode === "compact"
+          ? "w-48 sm:w-full aspect-video shrink-0"
+          : "flex-1 min-h-[220px] w-full aspect-video"
+      }`}
     >
       {/* Real Video Element if camera is active */}
       {isCamActive && stream ? (
@@ -89,7 +96,7 @@ function RemoteVideoTile({
         /* Camera Off Avatar Fallback */
         <div className="w-full h-full flex flex-col items-center justify-center bg-gradient-to-br from-slate-900 via-slate-850 to-slate-800 p-3 text-center">
           <div
-            className={`w-12 h-12 rounded-full flex items-center justify-center text-white font-bold text-lg shadow-md mb-1.5 transition-transform ${
+            className={`w-14 h-14 rounded-full flex items-center justify-center text-white font-bold text-xl shadow-md mb-2 transition-transform ${
               isSpeaking ? "scale-110 ring-4 ring-emerald-500/40" : ""
             } ${
               presence.role === "teacher"
@@ -99,29 +106,29 @@ function RemoteVideoTile({
           >
             {presence.name.charAt(0).toUpperCase()}
           </div>
-          <p className="text-xs font-semibold text-slate-300 truncate max-w-[120px]">
+          <p className="text-sm font-semibold text-slate-200 truncate max-w-[160px]">
             {presence.name}
           </p>
-          <span className="text-[10px] text-slate-400 capitalize">{presence.role}</span>
+          <span className="text-xs text-slate-400 capitalize">{presence.role}</span>
         </div>
       )}
 
       {/* Speaking Glow Ripple Indicator */}
       {isSpeaking && (
-        <div className="absolute top-2 left-2 flex items-center gap-1 px-2 py-0.5 rounded-full bg-emerald-500/90 text-slate-950 font-bold text-[9px] shadow-sm animate-pulse">
-          <Volume2 className="w-2.5 h-2.5 fill-current" />
+        <div className="absolute top-3 left-3 flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-emerald-500 text-slate-950 font-bold text-[10px] shadow-md animate-pulse">
+          <Volume2 className="w-3 h-3 fill-current" />
           Speaking
         </div>
       )}
 
       {/* Video Overlay Info */}
-      <div className="absolute inset-x-0 bottom-0 p-2 bg-gradient-to-t from-black/85 via-black/40 to-transparent flex items-center justify-between pointer-events-none">
-        <div className="flex items-center gap-1.5 min-w-0">
-          <span className="text-[11px] font-medium text-white truncate max-w-[100px]">
+      <div className="absolute inset-x-0 bottom-0 p-3 bg-gradient-to-t from-black/90 via-black/50 to-transparent flex items-center justify-between pointer-events-none">
+        <div className="flex items-center gap-2 min-w-0">
+          <span className="text-xs font-semibold text-white truncate max-w-[140px]">
             {presence.name}
           </span>
           <span
-            className={`text-[9px] px-1.5 py-0.2 rounded font-semibold border ${
+            className={`text-[10px] px-2 py-0.5 rounded font-semibold border ${
               presence.role === "teacher"
                 ? "bg-teal-500/20 text-teal-300 border-teal-500/30"
                 : "bg-blue-500/20 text-blue-300 border-blue-500/30"
@@ -131,33 +138,144 @@ function RemoteVideoTile({
           </span>
         </div>
 
-        <div className="flex items-center gap-1">
-          {/* Audio volume visualizer */}
-          {isMicActive ? (
-            <div className="w-5 h-5 rounded-md bg-emerald-500/20 text-emerald-400 flex items-center justify-center">
-              <Mic className="w-3 h-3" />
-            </div>
-          ) : (
-            <div className="w-5 h-5 rounded-md bg-red-500/20 text-red-400 flex items-center justify-center">
-              <MicOff className="w-3 h-3" />
-            </div>
-          )}
+        <div className="flex items-center gap-1.5">
+          <div
+            className={`w-6 h-6 rounded-lg flex items-center justify-center ${
+              isMicActive ? "bg-emerald-500/20 text-emerald-400" : "bg-red-500/20 text-red-400"
+            }`}
+          >
+            {isMicActive ? <Mic className="w-3.5 h-3.5" /> : <MicOff className="w-3.5 h-3.5" />}
+          </div>
         </div>
       </div>
 
       {/* Hand Raised badge */}
       {presence.handRaised && (
-        <div className="absolute top-2 left-2 px-2 py-0.5 bg-amber-500 text-slate-950 font-bold rounded-md text-[10px] flex items-center gap-1 shadow-lg animate-bounce">
-          <Hand className="w-3 h-3" /> Hand Raised
+        <div className="absolute top-3 right-3 px-2.5 py-1 bg-amber-500 text-slate-950 font-bold rounded-lg text-xs flex items-center gap-1 shadow-lg animate-bounce">
+          <Hand className="w-3.5 h-3.5" /> Hand Raised
         </div>
       )}
 
       {/* Reaction */}
       {presence.lastReaction && (
-        <div className="absolute top-2 right-2 text-2xl animate-pulse">
+        <div className="absolute top-3 right-3 text-3xl animate-pulse">
           {presence.lastReaction}
         </div>
       )}
+    </div>
+  );
+}
+
+// ─── Simulated Remote Partner Tile (for interactive test / solo mode) ─
+function SimulatedPartnerTile({
+  currentUserRole,
+  layoutMode,
+}: {
+  currentUserRole: "teacher" | "student";
+  layoutMode: "compact" | "theater" | "grid";
+}) {
+  const isTeacher = currentUserRole === "teacher";
+  const partnerName = isTeacher ? "Alex Rivera" : "Dr. Sarah Chen, Ph.D.";
+  const partnerRole = isTeacher ? "Student" : "Course Instructor";
+  const [isSimSpeaking, setIsSimSpeaking] = useState(true);
+
+  // Gentle speaking pulse cycle to simulate real conversational presence
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setIsSimSpeaking((prev) => !prev);
+    }, 4000);
+    return () => clearInterval(timer);
+  }, []);
+
+  return (
+    <div
+      className={`relative rounded-2xl overflow-hidden bg-slate-900 border shadow-xl transition-all duration-200 ${
+        isSimSpeaking
+          ? "border-teal-500/80 ring-2 ring-teal-500/30 shadow-teal-500/10"
+          : "border-slate-800"
+      } ${
+        layoutMode === "compact"
+          ? "w-48 sm:w-full aspect-video shrink-0"
+          : "flex-1 min-h-[220px] w-full aspect-video"
+      }`}
+    >
+      {/* Background with stylized live video presentation simulation */}
+      <div className="w-full h-full flex flex-col items-center justify-center bg-gradient-to-br from-slate-900 via-slate-850 to-slate-800 p-4 text-center relative">
+        {/* Ambient subtle glow */}
+        <div className="absolute inset-0 bg-radial from-teal-500/10 via-transparent to-transparent opacity-60 pointer-events-none" />
+
+        <div className="relative">
+          <div
+            className={`w-16 h-16 sm:w-20 sm:h-20 rounded-full flex items-center justify-center text-white font-bold text-2xl sm:text-3xl shadow-2xl mb-3 transition-all duration-300 ${
+              isSimSpeaking ? "scale-105 ring-4 ring-teal-400/50 shadow-teal-500/30" : ""
+            } ${
+              !isTeacher
+                ? "bg-gradient-to-br from-teal-500 via-teal-600 to-emerald-600"
+                : "bg-gradient-to-br from-indigo-500 via-indigo-600 to-purple-600"
+            }`}
+          >
+            {partnerName.charAt(0)}
+          </div>
+
+          {isSimSpeaking && (
+            <span className="absolute -bottom-1 -right-1 flex h-4 w-4">
+              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75" />
+              <span className="relative inline-flex rounded-full h-4 w-4 bg-emerald-500" />
+            </span>
+          )}
+        </div>
+
+        <p className="text-sm sm:text-base font-bold text-white truncate max-w-[200px]">
+          {partnerName}
+        </p>
+        <span className="text-xs text-teal-400 font-medium mt-0.5 flex items-center gap-1">
+          <ShieldCheck className="w-3.5 h-3.5" />
+          {partnerRole}
+        </span>
+      </div>
+
+      {/* Live status badge */}
+      <div className="absolute top-3 left-3 flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-slate-950/80 border border-teal-500/40 text-teal-300 font-semibold text-[10px] backdrop-blur-md">
+        <Radio className="w-3 h-3 text-emerald-400 animate-pulse" />
+        <span>Connected • HD 720p</span>
+      </div>
+
+      {/* Video Overlay Info */}
+      <div className="absolute inset-x-0 bottom-0 p-3 bg-gradient-to-t from-black/90 via-black/50 to-transparent flex items-center justify-between pointer-events-none">
+        <div className="flex items-center gap-2 min-w-0">
+          <span className="text-xs font-semibold text-white truncate max-w-[140px]">
+            {partnerName}
+          </span>
+          <span className="text-[10px] px-2 py-0.5 rounded font-semibold border bg-teal-500/20 text-teal-300 border-teal-500/30">
+            {isTeacher ? "Student" : "Instructor"}
+          </span>
+        </div>
+
+        <div className="flex items-center gap-2">
+          {/* Simulated Audio Visualizer Bars */}
+          <div className="flex items-end gap-0.5 h-3.5">
+            <div
+              className={`w-1 bg-emerald-400 rounded-full transition-all duration-150 ${
+                isSimSpeaking ? "h-3" : "h-1"
+              }`}
+            />
+            <div
+              className={`w-1 bg-emerald-400 rounded-full transition-all duration-150 ${
+                isSimSpeaking ? "h-3.5" : "h-1.5"
+              }`}
+            />
+            <div
+              className={`w-1 bg-emerald-400 rounded-full transition-all duration-150 ${
+                isSimSpeaking ? "h-2.5" : "h-1"
+              }`}
+            />
+          </div>
+
+          <div className="w-6 h-6 rounded-lg bg-emerald-500/20 text-emerald-400 flex items-center justify-center">
+            <Mic className="w-3.5 h-3.5" />
+          </div>
+        </div>
+      </div>
     </div>
   );
 }
@@ -222,19 +340,23 @@ export function ClassroomVideoGrid({
 
   return (
     <div
-      className={`w-full h-full bg-slate-950/60 p-2 sm:p-3 overflow-y-auto ${
+      className={`w-full h-full bg-slate-950/70 p-2 sm:p-4 overflow-y-auto ${
         layoutMode === "compact"
-          ? "flex flex-row sm:flex-col gap-2.5 sm:w-64 max-h-full shrink-0 border-l border-slate-800/80"
-          : "grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 auto-rows-fr"
+          ? "flex flex-row sm:flex-col gap-3 sm:w-64 max-h-full shrink-0 border-l border-slate-800/80"
+          : "flex flex-col sm:grid sm:grid-cols-2 gap-3 sm:gap-4 max-w-5xl mx-auto items-center justify-center"
       }`}
     >
       {/* 1. Local User Video Tile */}
       <div
-        className={`relative rounded-xl overflow-hidden bg-slate-900 border shadow-lg group transition-all duration-200 ${
+        className={`relative rounded-2xl overflow-hidden bg-slate-900 border shadow-xl group transition-all duration-200 ${
           isLocalSpeaking
             ? "border-emerald-500 ring-2 ring-emerald-500/50 shadow-emerald-500/20"
             : "border-slate-800 hover:border-slate-700"
-        } ${layoutMode === "compact" ? "w-48 sm:w-full aspect-video shrink-0" : "aspect-video"}`}
+        } ${
+          layoutMode === "compact"
+            ? "w-48 sm:w-full aspect-video shrink-0"
+            : "flex-1 min-h-[220px] w-full aspect-video"
+        }`}
       >
         {camOn && localStream ? (
           <video
@@ -245,9 +367,9 @@ export function ClassroomVideoGrid({
             className="w-full h-full object-cover scale-x-[-1]"
           />
         ) : (
-          <div className="w-full h-full flex flex-col items-center justify-center bg-gradient-to-br from-slate-900 via-slate-850 to-slate-800 p-3 text-center">
+          <div className="w-full h-full flex flex-col items-center justify-center bg-gradient-to-br from-slate-900 via-slate-850 to-slate-800 p-4 text-center">
             <div
-              className={`w-12 h-12 rounded-full flex items-center justify-center text-white font-bold text-lg shadow-md mb-1.5 transition-transform ${
+              className={`w-14 h-14 rounded-full flex items-center justify-center text-white font-bold text-xl shadow-md mb-2 transition-transform ${
                 isLocalSpeaking ? "scale-110 ring-4 ring-emerald-500/40" : ""
               } ${
                 currentUserRole === "teacher"
@@ -257,71 +379,71 @@ export function ClassroomVideoGrid({
             >
               {currentUserName.charAt(0).toUpperCase()}
             </div>
-            <p className="text-xs font-semibold text-slate-300 truncate max-w-[120px]">
+            <p className="text-sm font-semibold text-slate-200 truncate max-w-[140px]">
               {currentUserName} (You)
             </p>
-            <span className="text-[10px] text-slate-400 capitalize">{currentUserRole}</span>
+            <span className="text-xs text-slate-400 capitalize">{currentUserRole}</span>
           </div>
         )}
 
         {/* Local Speaking Badge */}
         {isLocalSpeaking && (
-          <div className="absolute top-2 left-2 flex items-center gap-1 px-2 py-0.5 rounded-full bg-emerald-500/90 text-slate-950 font-bold text-[9px] shadow-sm animate-pulse">
-            <Volume2 className="w-2.5 h-2.5 fill-current" />
+          <div className="absolute top-3 left-3 flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-emerald-500 text-slate-950 font-bold text-[10px] shadow-md animate-pulse">
+            <Volume2 className="w-3 h-3 fill-current" />
             Speaking
           </div>
         )}
 
         {/* Video Overlay Info */}
-        <div className="absolute inset-x-0 bottom-0 p-2 bg-gradient-to-t from-black/85 via-black/40 to-transparent flex items-center justify-between pointer-events-none">
-          <div className="flex items-center gap-1.5 min-w-0">
-            <span className="text-[11px] font-medium text-white truncate max-w-[100px]">
+        <div className="absolute inset-x-0 bottom-0 p-3 bg-gradient-to-t from-black/90 via-black/50 to-transparent flex items-center justify-between pointer-events-none">
+          <div className="flex items-center gap-2 min-w-0">
+            <span className="text-xs font-semibold text-white truncate max-w-[120px]">
               {currentUserName} (You)
             </span>
-            <span className="text-[9px] px-1.5 py-0.2 bg-teal-500/20 text-teal-300 rounded font-semibold border border-teal-500/30">
+            <span className="text-[10px] px-2 py-0.5 bg-teal-500/20 text-teal-300 rounded font-semibold border border-teal-500/30">
               {currentUserRole === "teacher" ? "Teacher" : "Student"}
             </span>
           </div>
 
-          <div className="flex items-center gap-1.5">
+          <div className="flex items-center gap-2">
             {/* Real Audio Volume Pulse */}
             {micOn && (
-              <div className="flex items-end gap-0.5 h-3">
+              <div className="flex items-end gap-0.5 h-3.5">
                 <div
-                  className="w-0.5 bg-emerald-400 rounded-full transition-all duration-75"
+                  className="w-1 bg-emerald-400 rounded-full transition-all duration-75"
                   style={{ height: `${Math.max(20, Math.min(100, localAudioLevel * 1.2))}%` }}
                 />
                 <div
-                  className="w-0.5 bg-emerald-400 rounded-full transition-all duration-75"
+                  className="w-1 bg-emerald-400 rounded-full transition-all duration-75"
                   style={{ height: `${Math.max(30, Math.min(100, localAudioLevel * 1.6))}%` }}
                 />
                 <div
-                  className="w-0.5 bg-emerald-400 rounded-full transition-all duration-75"
+                  className="w-1 bg-emerald-400 rounded-full transition-all duration-75"
                   style={{ height: `${Math.max(20, Math.min(100, localAudioLevel * 0.9))}%` }}
                 />
               </div>
             )}
 
             <div
-              className={`w-5 h-5 rounded-md flex items-center justify-center ${
+              className={`w-6 h-6 rounded-lg flex items-center justify-center ${
                 micOn ? "bg-emerald-500/20 text-emerald-400" : "bg-red-500/20 text-red-400"
               }`}
             >
-              {micOn ? <Mic className="w-3 h-3" /> : <MicOff className="w-3 h-3" />}
+              {micOn ? <Mic className="w-3.5 h-3.5" /> : <MicOff className="w-3.5 h-3.5" />}
             </div>
           </div>
         </div>
 
         {/* Hand Raised badge */}
         {currentPresence?.handRaised && (
-          <div className="absolute top-2 left-2 px-2 py-0.5 bg-amber-500 text-slate-950 font-bold rounded-md text-[10px] flex items-center gap-1 shadow-lg animate-bounce">
-            <Hand className="w-3 h-3" /> Hand Raised
+          <div className="absolute top-3 left-3 px-2.5 py-1 bg-amber-500 text-slate-950 font-bold rounded-lg text-xs flex items-center gap-1 shadow-lg animate-bounce">
+            <Hand className="w-3.5 h-3.5" /> Hand Raised
           </div>
         )}
 
         {/* Reaction badge */}
         {currentPresence?.lastReaction && (
-          <div className="absolute top-2 right-2 text-2xl animate-pulse">
+          <div className="absolute top-3 right-3 text-3xl animate-pulse">
             {currentPresence.lastReaction}
           </div>
         )}
@@ -342,15 +464,12 @@ export function ClassroomVideoGrid({
         );
       })}
 
-      {/* 3. Empty State when alone in room */}
+      {/* 3. Simulated Partner Tile when alone in room */}
       {remotePresences.length === 0 && (
-        <div className="p-4 bg-slate-900/60 rounded-xl border border-dashed border-slate-800 text-center flex flex-col items-center justify-center shrink-0 w-full col-span-full">
-          <Sparkles className="w-4 h-4 text-teal-400 mb-1" />
-          <p className="text-[11px] font-semibold text-slate-300">Ready for Live Class</p>
-          <p className="text-[9px] text-slate-500 mt-0.5 max-w-xs leading-relaxed">
-            Invite your student or teacher to join with the meeting code to begin your interactive session.
-          </p>
-        </div>
+        <SimulatedPartnerTile
+          currentUserRole={currentUserRole}
+          layoutMode={layoutMode}
+        />
       )}
     </div>
   );

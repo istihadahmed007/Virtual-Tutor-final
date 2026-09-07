@@ -227,8 +227,8 @@ export function buildTeacherApplicationEmailHtml(data: {
                     <td style="padding:6px 0;color:#0F172A;font-size:14px;">${data.country || "Global"} (${data.timezone || "UTC"})</td>
                   </tr>
                   <tr>
-                    <td style="padding:6px 0;color:#0F766E;font-size:13px;font-weight:700;">HOURLY RATE:</td>
-                    <td style="padding:6px 0;color:#0F172A;font-size:14px;font-weight:700;color:#0F766E;">$${data.hourlyRate || 35}/hr (30m: $${data.price30min || 20} | 60m: $${data.price60min || 35} | Trial: $${data.trialPrice || 15})</td>
+                    <td style="padding:6px 0;color:#0F766E;font-size:13px;font-weight:700;">MONTHLY TUITION:</td>
+                    <td style="padding:6px 0;color:#0F172A;font-size:14px;font-weight:700;color:#0F766E;">৳${((data.hourlyRate || 35) >= 500 ? data.hourlyRate : (data.hourlyRate || 35) * 100).toLocaleString()}/mo (Monthly Plan Only)</td>
                   </tr>
                   <tr>
                     <td style="padding:6px 0;color:#0F766E;font-size:13px;font-weight:700;">SUBMISSION TIME:</td>
@@ -336,7 +336,7 @@ Email: ${data.email}
 User ID: ${data.userId}
 Title: ${data.title || "Educator"}
 Country: ${data.country || "Global"} (${data.timezone || "UTC"})
-Hourly Rate: $${data.hourlyRate || 35}/hr
+Monthly Tuition: ৳${((data.hourlyRate || 35) >= 500 ? data.hourlyRate : (data.hourlyRate || 35) * 100).toLocaleString()}/mo (Monthly Plan Only)
 Years Experience: ${data.yearsExperience ?? "3"}
 Completion Score: ${data.profileCompletionPct || 100}%
 Submission Time: ${dateStr}

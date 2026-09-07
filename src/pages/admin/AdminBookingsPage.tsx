@@ -111,7 +111,7 @@ export default function AdminBookingsPage() {
                       <p className="text-[11px] text-slate-500">{b.timeSlot}</p>
                     </td>
                     <td className="py-3.5 px-4 font-bold text-slate-900">
-                      ${b.price || 0}
+                      ৳{(b.price || 0).toLocaleString()}
                     </td>
                     <td className="py-3.5 px-4">
                       <span

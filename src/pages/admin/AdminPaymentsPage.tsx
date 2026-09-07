@@ -33,24 +33,24 @@ export default function AdminPaymentsPage() {
         <div className="bg-white p-5 rounded-2xl border border-stone-200 shadow-xs">
           <p className="text-xs font-bold text-slate-400 uppercase tracking-wider">Gross Booking Volume</p>
           <div className="flex items-baseline gap-1 mt-1">
-            <span className="text-2xl font-bold text-slate-900">${totalVolume.toLocaleString()}</span>
-            <span className="text-xs text-slate-400 font-medium">USD</span>
+            <span className="text-2xl font-bold text-slate-900">৳{totalVolume.toLocaleString()}</span>
+            <span className="text-xs text-slate-400 font-medium">BDT</span>
           </div>
         </div>
 
         <div className="bg-white p-5 rounded-2xl border border-stone-200 shadow-xs">
           <p className="text-xs font-bold text-slate-400 uppercase tracking-wider">Settled & Completed</p>
           <div className="flex items-baseline gap-1 mt-1">
-            <span className="text-2xl font-bold text-emerald-600">${confirmedVolume.toLocaleString()}</span>
-            <span className="text-xs text-slate-400 font-medium">USD</span>
+            <span className="text-2xl font-bold text-emerald-600">৳{confirmedVolume.toLocaleString()}</span>
+            <span className="text-xs text-slate-400 font-medium">BDT</span>
           </div>
         </div>
 
         <div className="bg-white p-5 rounded-2xl border border-stone-200 shadow-xs">
           <p className="text-xs font-bold text-slate-400 uppercase tracking-wider">Platform Fee Revenue (15%)</p>
           <div className="flex items-baseline gap-1 mt-1">
-            <span className="text-2xl font-bold text-teal-700">${platformRevenue.toLocaleString()}</span>
-            <span className="text-xs text-slate-400 font-medium">USD</span>
+            <span className="text-2xl font-bold text-teal-700">৳{platformRevenue.toLocaleString()}</span>
+            <span className="text-xs text-slate-400 font-medium">BDT</span>
           </div>
         </div>
       </div>
@@ -101,10 +101,10 @@ export default function AdminPaymentsPage() {
                         {b.studentName || "Student"}
                       </td>
                       <td className="py-3.5 px-4 font-semibold text-emerald-700">
-                        ${teacherPayout}
+                        ৳{teacherPayout.toLocaleString()}
                       </td>
                       <td className="py-3.5 px-4 font-bold text-slate-900">
-                        ${gross}
+                        ৳{gross.toLocaleString()}
                       </td>
                       <td className="py-3.5 px-4">
                         <span

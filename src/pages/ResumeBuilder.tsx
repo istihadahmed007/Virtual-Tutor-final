@@ -87,73 +87,6 @@ const steps = ["Templates", "Personal Info", "Experience", "Education", "Skills"
 let _idCounter = 0;
 const uid = () => `_${++_idCounter}`;
 
-function generateSampleResume(): ResumeData {
-  return {
-    fullName: "Jill Morgan",
-    jobTitle: "Sales Representative",
-    email: "jill.morgan@zety.com",
-    phone: "212-555-0104",
-    linkedin: "linkedin.com/in/jillmorganzety",
-    website: "",
-    location: "New York, NY",
-    summary:
-      "Results-oriented sales representative with over 5 years of experience in industrial supplies and products. Skilled at maintaining profitable client relationships and developing ambitious sales targets. Achieved over $500,000 in sales in each fiscal quarter from 2019 to the present.",
-    experience: [
-      {
-        id: uid(),
-        title: "Senior Sales Representative",
-        company: "McKinsey Industrial Supplies",
-        location: "Brooklyn, NY",
-        startDate: "2018-09",
-        endDate: "",
-        current: true,
-        bullets: [
-          "Managed organizational sales and group of sales representatives in selling industrial equipment and maintaining large construction and contractor business relationships.",
-          "Worked with the data analysis team to develop sales targets based on extensive market research and analysis.",
-          "Tracked individual sales rep goals and individually mentored any representative deemed to be falling behind.",
-          "Managed largest 5 corporate construction and industrial client accounts.",
-        ],
-        keyAchievement: "Achieved over $500,000 in sales in each fiscal quarter from 2019.",
-      },
-      {
-        id: uid(),
-        title: "Customer Relationship Officer",
-        company: "XYZ Inc.",
-        location: "Philadelphia, PA",
-        startDate: "2016-09",
-        endDate: "2018-08",
-        current: false,
-        bullets: [
-          "Acted as liaison between XYZ Inc. and corporate clients to facilitate and maintain healthy business relationships.",
-          "Checked in on clients on a weekly basis to ensure needs are being met and supplies are being filled.",
-          "Managed database of clients and potential leads in a customer relationship manager (CRM) program.",
-        ],
-        keyAchievement: "Maintained positive client relationships with 15 corporate customers.",
-      },
-    ],
-    education: [
-      {
-        id: uid(),
-        degree: "BSc in Marketing, Major in Professional Sales",
-        school: "Penn State University",
-        location: "Philadelphia, PA",
-        year: "2016",
-        coursework: "Professional Selling, Sales Management, Advanced Sales & Selling Techniques, Cloud-Based CRM Systems",
-        minor: "Leadership & Communication",
-      },
-    ],
-    skills: [
-      { name: "Lead Qualification & Prospecting", level: 5 },
-      { name: "Salesforce & Hubspot CRM", level: 4 },
-      { name: "Optimizing MRR", level: 4 },
-      { name: "Contract Negotiation", level: 3 },
-    ],
-    languages: ["English", "Spanish"],
-    hobbies: [],
-    references: [],
-  };
-}
-
 // ─── Main Component ───
 
 export default function ResumeBuilder() {
@@ -168,11 +101,6 @@ export default function ResumeBuilder() {
     (patch: Partial<ResumeData>) => setResume((r) => ({ ...r, ...patch })),
     [],
   );
-
-  const loadSample = () => {
-    setResume(generateSampleResume());
-    setStep(1);
-  };
 
   const addExperience = () =>
     setResume((r) => ({
@@ -332,12 +260,6 @@ export default function ResumeBuilder() {
                 <p className="mt-2 text-slate-500">
                   Pick a design that matches your industry. You can customize everything later.
                 </p>
-                <button
-                  onClick={loadSample}
-                  className="mt-4 inline-flex items-center gap-2 px-4 py-2 bg-violet-50 border border-violet-200 text-violet-700 text-sm font-semibold rounded-xl hover:bg-violet-100 transition-all"
-                >
-                  <Star className="w-4 h-4" /> Load sample data to preview
-                </button>
               </div>
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5 max-w-5xl mx-auto">
                 {templates.map((t) => (

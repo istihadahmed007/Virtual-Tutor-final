@@ -176,29 +176,6 @@ authLogger.info("Config", "Convex client initialized", {
   },
 });
 
-// Sanitize legacy or corrupted Convex Auth token keys while logging findings
-try {
-  if (typeof window !== "undefined" && window.localStorage) {
-    const keysToRemove: string[] = [];
-    for (let i = 0; i < window.localStorage.length; i++) {
-      const key = window.localStorage.key(i);
-      if (key && (key.startsWith("__convexAuth") || key.includes("convexAuth"))) {
-        keysToRemove.push(key);
-      }
-    }
-    if (keysToRemove.length > 0) {
-      authLogger.info("StorageSanitization", "Clearing legacy/corrupted Convex Auth storage keys", {
-        keys: keysToRemove,
-      });
-      keysToRemove.forEach((k) => window.localStorage.removeItem(k));
-    }
-  }
-} catch (err) {
-  authLogger.warn("StorageSanitization", "Failed to access localStorage for sanitization", {
-    error: err instanceof Error ? `${err.name}: ${err.message}` : String(err),
-  });
-}
-
 // Logged Convex Auth Storage adapter that traces every handshake token request, storage attempt, and permission denial
 const loggedConvexAuthStorage = createLoggedConvexAuthStorage();
 

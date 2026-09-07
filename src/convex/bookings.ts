@@ -64,18 +64,13 @@ export const create = mutation({
       throw new Error("Teacher account is suspended.");
     }
 
-    // Resolve price server-side from teacher's profile
-    let price = teacherProfile.hourlyRate;
-    if (args.durationMinutes === 30 && teacherProfile.price30min) {
-      price = teacherProfile.price30min;
-    } else if (args.durationMinutes === 60 && teacherProfile.price60min) {
-      price = teacherProfile.price60min;
-    } else if (args.sessionType === "small-group" && teacherProfile.groupPrice) {
-      price = teacherProfile.groupPrice;
+    // Resolve price server-side from teacher's profile (monthly tuition plan in Tk)
+    let price = teacherProfile.hourlyRate >= 500 ? teacherProfile.hourlyRate : Math.round((teacherProfile.hourlyRate || 35) * 100);
+    if (!price || price < 500) {
+      price = 4000;
     }
-    // Scale price if duration doesn't match standard
-    if (args.durationMinutes !== 30 && args.durationMinutes !== 60) {
-      price = Math.round((teacherProfile.hourlyRate / 60) * args.durationMinutes);
+    if (args.sessionType === "small-group" && teacherProfile.groupPrice && teacherProfile.groupPrice >= 500) {
+      price = teacherProfile.groupPrice;
     }
 
     // Validate date is in the future

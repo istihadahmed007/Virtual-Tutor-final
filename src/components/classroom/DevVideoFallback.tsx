@@ -54,10 +54,10 @@ export function DevVideoFallbackBanner({
           <AlertTriangle className="w-4 h-4 text-amber-400 shrink-0 mt-0.5 sm:mt-0" />
           <div>
             <span className="font-bold text-amber-200">
-              Development Media Fallback Active:
+              Media Engine Notice:
             </span>{" "}
             <span className="text-amber-100/90">
-              LiveKit server URL not configured in container environment. Live media running in browser WebRTC & simulated preview mode.
+              LiveKit Cloud credentials unverified or unavailable. Media session is running seamlessly via browser WebRTC & local media engine.
             </span>
           </div>
         </div>

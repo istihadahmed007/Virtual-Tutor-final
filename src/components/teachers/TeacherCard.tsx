@@ -14,7 +14,8 @@ import {
 import { Button } from "../ui/button";
 import { 
   AuthoritativeTeacher, 
-  getTeacherMatchReason 
+  getTeacherMatchReason,
+  formatTk
 } from "@/lib/teacher-authoritative-data";
 
 interface TeacherCardProps {
@@ -168,18 +169,18 @@ export function TeacherCard({
         </div>
       </div>
 
-      {/* Bottom Footer: Price + Actions */}
+      {/* Bottom Footer: Monthly Tuition + Actions */}
       <div className="flex items-center justify-between gap-3 pt-3 border-t border-slate-100">
         <div>
           <div className="flex items-baseline gap-1">
             <span className="text-lg font-bold text-slate-900">
-              ${teacher.hourlyRate}
+              {formatTk(teacher.monthlyTuition)}
             </span>
-            <span className="text-xs text-slate-500 font-medium">/ hr</span>
+            <span className="text-xs text-slate-500 font-medium">/ month</span>
           </div>
-          <p className="text-[11px] text-slate-400">
-            Trial: ${teacher.trialPrice}
-          </p>
+          <span className="inline-flex items-center text-[10px] font-semibold text-teal-700 bg-teal-50 px-1.5 py-0.5 rounded border border-teal-200/50">
+            Monthly Plan Only
+          </span>
         </div>
 
         <div className="flex items-center gap-2">

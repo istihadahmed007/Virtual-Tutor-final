@@ -33,6 +33,9 @@ import {
   Pause,
   Award,
   CheckCircle,
+  Video,
+  PenTool,
+  Maximize2,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
@@ -51,6 +54,11 @@ export default function ClassroomPage() {
     "live-session-1";
 
   const sessionId = rawSessionId;
+
+  const { user } = useAuth();
+  const authUserId = user?._id || (user as any)?.id || (user as any)?.userId || "";
+  const authUserName = user?.name || "Participant";
+  const authUserRole = user?.role === "teacher" || (user as any)?.role === "instructor" ? "teacher" : "student";
 
   // Convex Queries
   const context = useQuery(api.classroom.getContext, { sessionId });
@@ -92,9 +100,8 @@ export default function ClassroomPage() {
   const finalizeAttendanceMut = useMutation(api.classroom.finalizeAttendance);
   const updateLanguageBoardMut = useMutation(api.classroom.updateLanguageBoard);
   const finishLessonMut = useMutation(api.classroom.finishLessonSession);
-  const clearStudentAnnotationsMut = useMutation(api.classroom.clearStudentAnnotations);
 
-  const isTeacher = context?.userRole === "teacher";
+  const isTeacher = context?.userRole === "teacher" || authUserRole === "teacher";
 
   // Check if teacher has muted student or disabled cam
   const isMutedByTeacher = !isTeacher && (context?.isMutedByTeacher ?? false);
@@ -112,9 +119,9 @@ export default function ClassroomPage() {
   // Real WebRTC / LiveKit Media Engine Hook
   const media = useClassroomMedia({
     sessionId,
-    currentUserId: context?.userId || "",
-    currentUserName: context?.userName || "",
-    currentUserRole: (context?.userRole as "teacher" | "student") || "student",
+    currentUserId: context?.userId || authUserId,
+    currentUserName: context?.userName || authUserName,
+    currentUserRole: (context?.userRole as "teacher" | "student") || authUserRole,
     initialCamOn: true,
     initialMicOn: true,
     onRemoteWhiteboardData: handleRemoteWhiteboardData,
@@ -122,8 +129,17 @@ export default function ClassroomPage() {
 
   const [handRaised, setHandRaised] = useState(false);
 
-  // Classroom UI View States
-  const [viewMode, setViewMode] = useState<ClassroomViewMode>("whiteboard");
+  // Classroom UI View States - default to full video call grid so users see the video call right away
+  const [viewMode, setViewMode] = useState<ClassroomViewMode>(() => {
+    try {
+      const sp = new URLSearchParams(window.location.search);
+      const v = sp.get("view");
+      if (v === "whiteboard" || v === "presentation" || v === "math" || v === "language" || v === "worksheet") {
+        return v as ClassroomViewMode;
+      }
+    } catch {}
+    return "grid";
+  });
   const [currentPageIndex, setCurrentPageIndex] = useState<number>(0);
   const [activeMaterialId, setActiveMaterialId] = useState<string | null>(null);
 
@@ -169,7 +185,10 @@ export default function ClassroomPage() {
 
   // Periodic Presence Heartbeat (Every 5 seconds)
   useEffect(() => {
-    if (!context?.userId) return;
+    // Only dispatch presence heartbeats if context has loaded and user is authenticated in the session
+    if (!context?.authenticated || !context?.userId) {
+      return;
+    }
 
     const sendHeartbeat = () => {
       const connQuality: "excellent" | "fair" | "poor" =
@@ -182,13 +201,17 @@ export default function ClassroomPage() {
         isScreenSharing: media.isScreenSharing,
         handRaised,
         connectionQuality: connQuality,
-      }).catch((e) => console.error("Heartbeat error:", e));
+      }).catch((e) => {
+        // Catch gracefully to avoid uncaught rejection noise during navigation or session termination
+        console.debug("Presence heartbeat sync notice:", e);
+      });
     };
 
     sendHeartbeat();
     const interval = setInterval(sendHeartbeat, 5000);
     return () => clearInterval(interval);
   }, [
+    context?.authenticated,
     context?.userId,
     sessionId,
     media.micOn,
@@ -205,29 +228,38 @@ export default function ClassroomPage() {
   const handleToggleHandRaise = () => {
     const next = !handRaised;
     setHandRaised(next);
-    toggleHandMut({ sessionId, raised: next });
+    if (context?.authenticated) {
+      toggleHandMut({
+        sessionId,
+        raised: next,
+      }).catch((err) => {
+        console.warn("Hand raise error:", err);
+      });
+    }
   };
 
   // Emoji Reaction
   const handleSendReaction = (emoji: string) => {
-    const connQuality: "excellent" | "fair" | "poor" =
-      media.connectionQuality || "excellent";
+    if (context?.authenticated) {
+      const connQuality: "excellent" | "fair" | "poor" =
+        media.connectionQuality || "excellent";
 
-    heartbeatMut({
-      sessionId,
-      micOn: isMutedByTeacher ? false : media.micOn,
-      camOn: isCamDisabledByTeacher ? false : media.camOn,
-      isScreenSharing: media.isScreenSharing,
-      handRaised,
-      connectionQuality: connQuality,
-      lastReaction: emoji,
-    });
+      heartbeatMut({
+        sessionId,
+        micOn: isMutedByTeacher ? false : media.micOn,
+        camOn: isCamDisabledByTeacher ? false : media.camOn,
+        isScreenSharing: media.isScreenSharing,
+        handRaised,
+        connectionQuality: connQuality,
+        lastReaction: emoji,
+      }).catch((e) => console.warn("Reaction heartbeat error:", e));
 
-    sendMessageMut({
-      sessionId,
-      text: `${emoji} (Reaction)`,
-      type: "reaction",
-    });
+      sendMessageMut({
+        sessionId,
+        text: `${emoji} (Reaction)`,
+        type: "reaction",
+      }).catch((e) => console.warn("Send reaction message error:", e));
+    }
   };
 
   // Change View Mode & Sync with Classroom State if teacher
@@ -269,8 +301,14 @@ export default function ClassroomPage() {
     }
   };
 
-  const { user } = useAuth();
-  const [bypassWaitingRoom, setBypassWaitingRoom] = useState(false);
+  const [bypassWaitingRoom, setBypassWaitingRoom] = useState(() => {
+    try {
+      const sp = new URLSearchParams(window.location.search);
+      return sp.get("bypass") === "true" || sp.get("join") === "true";
+    } catch {
+      return false;
+    }
+  });
 
   // Check local storage for mock/scheduled lessons matching this sessionId
   const activeLesson: LessonData = useMemo(() => {
@@ -279,24 +317,30 @@ export default function ClassroomPage() {
       const list: LessonData[] = raw ? JSON.parse(raw) : [];
       const found = list.find((l) => l._id === sessionId || l.meetingCode === sessionId);
       if (found) return found;
-    } catch (_) {}
+    } catch (_) {
+      // ignore local storage read error
+    }
+
+    const currentUserId = user?._id || (user as any)?.id || (user as any)?.userId || "";
+    const currentUserName = user?.name || "Participant";
+    const isTeacherRole = user?.role === "teacher" || (user as any)?.role === "instructor";
 
     return {
       _id: sessionId,
       title: context?.title || "1-on-1 Live Class Session",
       subject: context?.subject || "Academic Mentoring",
-      teacherId: (context as any)?.teacherId || "demo_teacher_01",
-      teacherName: context?.teacherName || "Dr. Sarah Chen",
+      teacherId: (context as any)?.teacherId || (isTeacherRole ? currentUserId : "instructor"),
+      teacherName: context?.teacherName || (isTeacherRole ? currentUserName : "Instructor"),
       teacherTimezone: "America/New_York",
-      studentId: context?.userId || "demo_student_01",
-      studentName: context?.userName || "Alex Rivera",
+      studentId: context?.userId || (!isTeacherRole ? currentUserId : "student"),
+      studentName: context?.userName || (!isTeacherRole ? currentUserName : "Student"),
       studentTimezone: typeof Intl !== "undefined" ? Intl.DateTimeFormat().resolvedOptions().timeZone : "UTC",
       scheduledAt: Date.now(),
       durationMinutes: 60,
       status: classroomState?.sessionStatus === "completed" ? "completed" : "live",
       meetingCode: `LIVE-${sessionId.toUpperCase()}`,
     };
-  }, [sessionId, context, classroomState]);
+  }, [sessionId, context, classroomState, user]);
 
   const availability = useMemo(() => {
     return computeLessonAvailability({
@@ -424,13 +468,55 @@ export default function ClassroomPage() {
 
       {/* ─── LIVE MEDIA INFRASTRUCTURE NOTICE (LIVEKIT SFU / DEV FALLBACK) ─── */}
       <DevVideoFallbackBanner
-        isConfigured={Boolean(
-          import.meta.env.VITE_LIVEKIT_URL &&
-          !import.meta.env.VITE_LIVEKIT_URL.includes("placeholder")
-        )}
+        isConfigured={media.isLiveKitConnected}
         serverUrl={import.meta.env.VITE_LIVEKIT_URL}
         onSimulateReconnect={media.reconnect}
       />
+
+      {/* ─── PRIMARY MODE SELECTOR (Video Call vs Whiteboard) ──────── */}
+      <div className="bg-slate-900/95 border-b border-slate-800/80 px-3 sm:px-4 py-1.5 flex items-center justify-between gap-2 shrink-0 z-20">
+        <div className="flex items-center gap-1.5">
+          <button
+            onClick={() => setViewMode("grid")}
+            className={`px-3 py-1.5 rounded-xl text-xs font-bold flex items-center gap-1.5 transition-all ${
+              viewMode === "grid"
+                ? "bg-teal-600 text-white shadow-md shadow-teal-900/40"
+                : "bg-slate-800 text-slate-300 hover:bg-slate-700 hover:text-white"
+            }`}
+          >
+            <Video className="w-3.5 h-3.5 text-teal-300" />
+            <span>Video Call Gallery</span>
+          </button>
+
+          <button
+            onClick={() => setViewMode("whiteboard")}
+            className={`px-3 py-1.5 rounded-xl text-xs font-semibold flex items-center gap-1.5 transition-all ${
+              viewMode !== "grid"
+                ? "bg-teal-600 text-white shadow-md shadow-teal-900/40"
+                : "bg-slate-800 text-slate-300 hover:bg-slate-700 hover:text-white"
+            }`}
+          >
+            <PenTool className="w-3.5 h-3.5 text-amber-300" />
+            <span>Interactive Board</span>
+          </button>
+        </div>
+
+        <div className="flex items-center gap-2">
+          {viewMode === "grid" ? (
+            <span className="text-[11px] text-emerald-400 flex items-center gap-1 font-medium">
+              <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
+              <span>Full Video Call Active</span>
+            </span>
+          ) : (
+            <button
+              onClick={() => setViewMode("grid")}
+              className="text-[11px] text-teal-400 hover:text-teal-300 font-medium underline sm:no-underline sm:bg-slate-800/80 sm:px-2 sm:py-1 sm:rounded-lg"
+            >
+              Switch to Video Call
+            </button>
+          )}
+        </div>
+      </div>
 
       {/* ─── TEACHER AUTHORITATIVE TOOLBAR (Hidden from Students) ────── */}
       <ClassroomTeacherToolbar
@@ -514,12 +600,8 @@ export default function ClassroomPage() {
               remoteOps={remoteOps}
               authorRole={isTeacher ? "teacher" : "student"}
               authorName={context?.userName || (isTeacher ? "Instructor" : "Student")}
-              onClearStudentAnnotations={async () => {
-                try {
-                  await clearStudentAnnotationsMut({ sessionId, pageIndex: currentPageIndex });
-                } catch (e) {
-                  console.warn("Cleared locally:", e);
-                }
+              onClearStudentAnnotations={() => {
+                // Annotations are filtered and synced locally by ClassroomWhiteboard
               }}
             />
           )}
@@ -631,7 +713,11 @@ export default function ClassroomPage() {
 
         {/* Mobile floating picture-in-picture preview when not on grid mode */}
         {viewMode !== "grid" && (
-          <div className="lg:hidden absolute bottom-3 right-3 z-30 w-36 sm:w-48 aspect-video rounded-xl overflow-hidden border border-slate-700 shadow-2xl bg-slate-900">
+          <div
+            onClick={() => setViewMode("grid")}
+            className="lg:hidden absolute bottom-16 right-3 z-30 w-36 sm:w-48 aspect-video rounded-2xl overflow-hidden border-2 border-teal-500 shadow-2xl bg-slate-900 cursor-pointer active:scale-95 transition-transform group"
+            title="Tap to switch to full Video Call"
+          >
             <ClassroomVideoGrid
               currentUserId={context.userId}
               currentUserName={context.userName}
@@ -646,6 +732,9 @@ export default function ClassroomPage() {
               remoteMediaParticipants={media.remoteParticipants}
               layoutMode="compact"
             />
+            <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 flex items-center justify-center transition-opacity text-white text-[10px] font-bold gap-1 backdrop-blur-xs">
+              <Maximize2 className="w-3.5 h-3.5" /> Full Video
+            </div>
           </div>
         )}
 

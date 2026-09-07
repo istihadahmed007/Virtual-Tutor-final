@@ -12,7 +12,6 @@ import { WeeklyLearningSummary } from "@/components/dashboard/WeeklyLearningSumm
 import { NextBestAction, NextActionState } from "@/components/dashboard/NextBestAction";
 import { PrivacyDiscoverabilityCard } from "@/components/dashboard/PrivacyDiscoverabilityCard";
 import { LiveClassAvailability } from "@/components/classroom/LiveClassAvailability";
-import { LiveClassDemoPanel } from "@/components/classroom/LiveClassDemoPanel";
 import {
   Video,
   Users,
@@ -56,7 +55,13 @@ export default function Dashboard() {
     try {
       const storedLessons = localStorage.getItem("vtp_mock_student_lessons");
       if (storedLessons) {
-        setLocalLessons(JSON.parse(storedLessons));
+        const parsed = JSON.parse(storedLessons);
+        if (Array.isArray(parsed)) {
+          const realLessons = parsed.filter(
+            (l) => l && l.teacherId !== "demo_teacher_01" && l.studentId !== "demo_student_01"
+          );
+          setLocalLessons(realLessons);
+        }
       }
       setHasViewedTeachers(localStorage.getItem("vtp_has_viewed_teachers") === "true");
       setHasGoals(localStorage.getItem("vtp_student_goals") !== null);
@@ -121,11 +126,6 @@ export default function Dashboard() {
           title={`Welcome back${user?.name ? `, ${user.name}` : ""}`}
           description="Your personalized learning workspace and live tutoring dashboard"
         />
-
-        {/* Live Class Availability & Simulation Testing Bar */}
-        <div className="mb-6">
-          <LiveClassDemoPanel />
-        </div>
 
         {/* Profile Completion Alert Banner if incomplete */}
         {profileStatus && !profileStatus.isComplete && profileStatus.role === "student" && (

@@ -12,6 +12,7 @@ import {
   getAdminReviews,
   getAdminReports,
   getAdminAuditLogs,
+  getSecurityAuditLogs,
   getAdminCommunityPosts,
   ADMIN_STORE_EVENT,
   AdminUserRecord,
@@ -20,6 +21,7 @@ import {
   AdminReviewRecord,
   AdminReportRecord,
   AdminAuditLogRecord,
+  SecurityAuditRecord,
   AdminCommunityPostRecord,
 } from "@/lib/admin-store";
 
@@ -221,6 +223,21 @@ export function useAdminAuditLogs(limit: number = 50): AdminAuditLogRecord[] | u
       window.removeEventListener("vtp_teacher_store_change", update);
     };
   }, [convex, limit]);
+
+  return useMemo(() => logs.slice(0, limit), [logs, limit]);
+}
+
+export function useSecurityAuditLogs(limit: number = 100): SecurityAuditRecord[] {
+  const [logs, setLogs] = useState<SecurityAuditRecord[]>(getSecurityAuditLogs);
+
+  useEffect(() => {
+    const update = () => setLogs(getSecurityAuditLogs());
+    window.addEventListener(ADMIN_STORE_EVENT, update);
+
+    return () => {
+      window.removeEventListener(ADMIN_STORE_EVENT, update);
+    };
+  }, []);
 
   return useMemo(() => logs.slice(0, limit), [logs, limit]);
 }

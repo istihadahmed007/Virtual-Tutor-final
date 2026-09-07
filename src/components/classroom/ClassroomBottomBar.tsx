@@ -202,12 +202,12 @@ export function ClassroomBottomBar({
       {/* ─── Middle Section: Digital Teaching Tools Switcher ──────────── */}
       <div className="flex items-center gap-1 bg-slate-950/80 p-1 rounded-2xl border border-slate-800">
         {[
+          { id: "grid" as const, label: "Video Call", icon: Video },
           { id: "whiteboard" as const, label: "Board", icon: PenTool },
           { id: "presentation" as const, label: "Slides", icon: Presentation },
           { id: "math" as const, label: "Math", icon: Calculator },
           { id: "language" as const, label: "Language", icon: Languages },
           { id: "worksheet" as const, label: "Activities", icon: FileCheck2 },
-          { id: "grid" as const, label: "Gallery", icon: LayoutGrid },
         ].map((mode) => (
           <button
             key={mode.id}

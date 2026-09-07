@@ -194,8 +194,8 @@ export default function AdminApplicationsPage() {
                   {/* Right numbers */}
                   <div className="flex items-center gap-4 text-xs shrink-0">
                     <div className="bg-stone-50 px-3 py-1.5 rounded-xl border border-stone-200">
-                      <span className="text-[10px] text-slate-400 block">Rate</span>
-                      <strong className="text-slate-900">${app.hourlyRate || 0}/hr</strong>
+                      <span className="text-[10px] text-slate-400 block">Monthly Tuition</span>
+                      <strong className="text-slate-900">৳{((app.hourlyRate || 0) >= 500 ? app.hourlyRate : (app.hourlyRate || 35) * 100).toLocaleString()}/mo</strong>
                     </div>
                     <div className="bg-stone-50 px-3 py-1.5 rounded-xl border border-stone-200">
                       <span className="text-[10px] text-slate-400 block">Completion</span>

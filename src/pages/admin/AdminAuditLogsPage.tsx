@@ -1,7 +1,5 @@
 import { useState } from "react";
-import { useAdminAuditLogs } from "@/hooks/use-admin-data";
-import { useQuery } from "convex/react";
-import { api } from "@/convex/_generated/api";
+import { useAdminAuditLogs, useSecurityAuditLogs } from "@/hooks/use-admin-data";
 import {
   History,
   ShieldCheck,
@@ -23,12 +21,10 @@ export default function AdminAuditLogsPage() {
   const [eventTypeFilter, setEventTypeFilter] = useState<string>("all");
 
   const adminAuditLogs = useAdminAuditLogs(limit);
-  const securityLogs = useQuery(api.admin.getSecurityAuditLogs, {
-    limit,
-    eventType: eventTypeFilter !== "all" ? eventTypeFilter : undefined,
-  });
+  const securityLogs = useSecurityAuditLogs(limit);
 
   const filteredSecurityLogs = (securityLogs || []).filter((log) => {
+    if (eventTypeFilter !== "all" && log.eventType !== eventTypeFilter) return false;
     if (!searchQuery) return true;
     const q = searchQuery.toLowerCase();
     return (

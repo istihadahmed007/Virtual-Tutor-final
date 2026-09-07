@@ -18,6 +18,7 @@ export interface Teacher {
   certifications: string[];
   languages: string[];
   hourlyRate: number;
+  monthlyTuition?: number;
   rating: number;
   reviewCount: number;
   totalStudents: number;

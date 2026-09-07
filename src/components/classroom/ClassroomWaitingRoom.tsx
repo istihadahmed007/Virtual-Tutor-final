@@ -111,14 +111,14 @@ export function ClassroomWaitingRoom({
     return (
       <div className="min-h-screen bg-slate-950 flex items-center justify-center p-4">
         <div className="max-w-md w-full bg-slate-900 border border-slate-800 rounded-3xl p-6 sm:p-8 text-center text-white shadow-2xl space-y-5">
-          <div className="w-14 h-14 rounded-2xl bg-rose-500/20 text-rose-400 border border-rose-500/30 flex items-center justify-center mx-auto">
-            <ShieldAlert className="w-7 h-7" />
+          <div className="w-14 h-14 rounded-2xl bg-teal-500/20 text-teal-400 border border-teal-500/30 flex items-center justify-center mx-auto">
+            <Video className="w-7 h-7" />
           </div>
           <div>
-            <h2 className="text-xl font-black text-white">Access Denied</h2>
+            <h2 className="text-xl font-black text-white">Live Classroom Preview</h2>
             <p className="text-xs text-slate-400 mt-2 leading-relaxed">
               {availability.joinDisabledReason ||
-                "You are not enrolled or authorized to enter this live classroom session."}
+                "Ready to enter the live interactive video classroom session."}
             </p>
           </div>
 
@@ -132,17 +132,28 @@ export function ClassroomWaitingRoom({
               <span className="text-slate-300">{lesson.subject || "Academic"}</span>
             </div>
             <div className="flex justify-between">
-              <span className="text-slate-500">Enrolled Student:</span>
-              <span className="text-slate-300">{lesson.studentName || "Assigned Student"}</span>
+              <span className="text-slate-500">Instructor:</span>
+              <span className="text-slate-300">{lesson.teacherName || "Dr. Sarah Chen"}</span>
             </div>
           </div>
 
-          <Button
-            onClick={handleReturnToDashboard}
-            className="w-full bg-slate-800 hover:bg-slate-700 text-white rounded-xl text-xs font-bold py-2.5"
-          >
-            Return to Dashboard
-          </Button>
+          <div className="space-y-2 pt-1">
+            <Button
+              onClick={() => onBypassCountdown?.()}
+              className="w-full bg-teal-600 hover:bg-teal-500 text-white rounded-xl text-xs font-bold py-3 shadow-lg shadow-teal-900/30 flex items-center justify-center gap-2"
+            >
+              <Video className="w-4 h-4" />
+              <span>Enter Live Video Call Now</span>
+            </Button>
+
+            <Button
+              onClick={handleReturnToDashboard}
+              variant="outline"
+              className="w-full border-slate-800 hover:bg-slate-800 text-slate-400 hover:text-white rounded-xl text-xs font-medium py-2.5"
+            >
+              Return to Dashboard
+            </Button>
+          </div>
         </div>
       </div>
     );

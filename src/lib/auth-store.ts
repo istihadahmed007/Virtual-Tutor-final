@@ -112,84 +112,19 @@ function notifyAuthChange() {
   }
 }
 
-const DEFAULT_DEMO_ACCOUNTS: StoredAccount[] = [
-  {
-    _id: "demo_student_01",
-    name: "Alex Rivera",
-    email: "alex.rivera@liveclass.edu",
-    role: "student",
-    passwordHash: "password123",
-    isEmailVerified: true,
-    accountStatus: "active",
-    institution: "Oakridge High Academy",
-    grade: "Grade 11",
-    subjects: ["Mathematics", "Physics", "Chemistry"],
-    createdAt: 1700000000000,
-  },
-  {
-    _id: "demo_teacher_01",
-    name: "Dr. Sarah Chen",
-    email: "sarah.chen@virtualtutorpro.com",
-    role: "teacher",
-    passwordHash: "password123",
-    isEmailVerified: true,
-    accountStatus: "active",
-    title: "Senior AP Calculus & Physics Specialist",
-    subjects: ["Mathematics", "Calculus", "Physics"],
-    hourlyRate: 45,
-    rating: 4.95,
-    createdAt: 1700000000000,
-  },
-  {
-    _id: "demo_parent_01",
-    name: "Elena Rivera",
-    email: "elena.rivera@parent.edu",
-    role: "parent",
-    passwordHash: "password123",
-    isEmailVerified: true,
-    accountStatus: "active",
-    createdAt: 1700000000000,
-  },
-  {
-    _id: "admin_istihadahmed1163",
-    name: "Istihad Ahmed",
-    email: "istihadahmed1163@gmail.com",
-    role: "admin",
-    passwordHash: "Susmoy1163",
-    isEmailVerified: true,
-    accountStatus: "active",
-    createdAt: 1700000000000,
-  },
-];
+const LEGACY_DEMO_EMAILS = new Set<string>();
+
+const DEFAULT_ACCOUNTS: StoredAccount[] = [];
 
 export function getRegisteredUsers(): StoredAccount[] {
-  if (typeof window === "undefined") return DEFAULT_DEMO_ACCOUNTS;
+  if (typeof window === "undefined") return [];
   try {
     const raw = localStorage.getItem(STORAGE_USERS_KEY);
-    if (!raw) {
-      localStorage.setItem(STORAGE_USERS_KEY, JSON.stringify(DEFAULT_DEMO_ACCOUNTS));
-      return DEFAULT_DEMO_ACCOUNTS;
-    }
+    if (!raw) return [];
     const parsed = JSON.parse(raw);
-    if (Array.isArray(parsed) && parsed.length > 0) {
-      // Merge demo accounts if missing
-      const emails = new Set(parsed.map((u: StoredAccount) => u.email.toLowerCase()));
-      let hasNew = false;
-      const combined = [...parsed];
-      for (const demo of DEFAULT_DEMO_ACCOUNTS) {
-        if (!emails.has(demo.email.toLowerCase())) {
-          combined.push(demo);
-          hasNew = true;
-        }
-      }
-      if (hasNew) {
-        localStorage.setItem(STORAGE_USERS_KEY, JSON.stringify(combined));
-      }
-      return combined;
-    }
-    return DEFAULT_DEMO_ACCOUNTS;
+    return Array.isArray(parsed) ? parsed : [];
   } catch {
-    return DEFAULT_DEMO_ACCOUNTS;
+    return [];
   }
 }
 
@@ -257,6 +192,10 @@ export function getActiveSession(): AuthUser | null {
 
   // 5. Self-Healing Synchronization across tiers
   if (user) {
+    if (LEGACY_DEMO_EMAILS.has(user.email?.toLowerCase()) || user._id?.startsWith("demo_")) {
+      setActiveSession(null);
+      return null;
+    }
     memorySessionCache = user;
 
     // If loaded from cookie, restore to localStorage if possible
@@ -340,87 +279,12 @@ export function setActiveSession(user: AuthUser | null) {
 
 // ─── AUTH OPERATIONS ─────────────────────────────────────────
 
-export function loginUser(email: string, password: string): { success: boolean; user?: AuthUser; error?: string } {
-  const cleanEmail = email.trim().toLowerCase();
-  const cleanPassword = password.trim();
-
-  if (!cleanEmail) {
-    return { success: false, error: "Please enter your email address." };
-  }
-  if (!cleanPassword) {
-    return { success: false, error: "Please enter your password." };
-  }
-
-  const users = getRegisteredUsers();
-  const found = users.find((u) => u.email.toLowerCase() === cleanEmail);
-
-  if (!found) {
-    if (cleanEmail === "istihadahmed1163@gmail.com") {
-      if (cleanPassword !== "Susmoy1163" && cleanPassword.length < 8) {
-        return { success: false, error: "Invalid password for administrator account." };
-      }
-      const adminUser: AuthUser = {
-        _id: "admin_istihadahmed1163",
-        name: "Istihad Ahmed",
-        email: "istihadahmed1163@gmail.com",
-        role: "admin",
-        isEmailVerified: true,
-        accountStatus: "active",
-      };
-      setActiveSession(adminUser);
-      return { success: true, user: adminUser };
-    }
-    // If it's a known demo email pattern, allow sign in
-    if (cleanEmail.includes("teacher") || cleanEmail.includes("sarah") || cleanEmail.includes("marcus")) {
-      const demoUser: AuthUser = {
-        _id: "demo_teacher_auto",
-        name: "Dr. Sarah Chen",
-        email: cleanEmail,
-        role: "teacher",
-        title: "Senior AP Calculus & Physics Specialist",
-        isEmailVerified: true,
-        accountStatus: "active",
-      };
-      setActiveSession(demoUser);
-      return { success: true, user: demoUser };
-    }
-    if (cleanEmail.includes("parent")) {
-      const demoUser: AuthUser = {
-        _id: "demo_parent_auto",
-        name: "Elena Rivera",
-        email: cleanEmail,
-        role: "parent",
-        isEmailVerified: true,
-        accountStatus: "active",
-      };
-      setActiveSession(demoUser);
-      return { success: true, user: demoUser };
-    }
-
-    return {
-      success: false,
-      error: "No account found with this email address. Please register first or use Instant Access.",
-    };
-  }
-
-  // Password verification (tolerant for demo accounts)
-  const isDemoAccount = DEFAULT_DEMO_ACCOUNTS.some((d) => d.email.toLowerCase() === cleanEmail);
-  if (!isDemoAccount && found.passwordHash !== cleanPassword && found.passwordHash !== `hashed_${cleanPassword}`) {
-    return {
-      success: false,
-      error: "Invalid password. Please double-check your credentials.",
-    };
-  }
-
-  const { passwordHash: _, ...authUser } = found;
-  if (authUser.email.toLowerCase().trim() === "istihadahmed1163@gmail.com") {
-    authUser.role = "admin";
-    if (!authUser.name || authUser.name === "Member") {
-      authUser.name = "Istihad Ahmed";
-    }
-  }
-  setActiveSession(authUser);
-  return { success: true, user: authUser };
+export function loginUser(_email: string, _password: string): { success: boolean; user?: AuthUser; error?: string } {
+  // Production authentication is strictly authoritative via the Convex backend.
+  return {
+    success: false,
+    error: "Authentication must be performed via the Convex backend.",
+  };
 }
 
 export function logoutUser() {

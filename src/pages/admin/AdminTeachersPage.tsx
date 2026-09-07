@@ -170,7 +170,7 @@ export default function AdminTeachersPage() {
                       <Star className="w-3.5 h-3.5 fill-amber-400 text-amber-400" />
                       {t.rating || 5.0} ({t.reviewCount || 0})
                     </span>
-                    <span>${t.hourlyRate || 0}/hr</span>
+                    <span>৳{((t.hourlyRate || 0) >= 500 ? t.hourlyRate : (t.hourlyRate || 35) * 100).toLocaleString()}/mo</span>
                     <span>{t.totalStudents || 0} Students</span>
                   </div>
 

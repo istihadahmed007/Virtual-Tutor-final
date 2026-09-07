@@ -400,7 +400,7 @@ export default function AdminTeacherApplications() {
                           <div className="flex flex-wrap items-center gap-2 pt-1 text-[11px] text-slate-500">
                             <span>Email: <strong className="text-slate-700">{app.userEmail || app.email || "N/A"}</strong></span>
                             <span>·</span>
-                            <span>Rate: <strong className="text-slate-700">${app.hourlyRate || 35}/hr</strong></span>
+                            <span>Tuition: <strong className="text-slate-700">৳{((app.hourlyRate || 35) >= 500 ? app.hourlyRate : (app.hourlyRate || 35) * 100).toLocaleString()}/mo</strong></span>
                             <span>·</span>
                             <span>NID: <strong className="font-mono text-slate-700">{app.nidNumber || "Pending"}</strong></span>
                             <span>·</span>
@@ -720,7 +720,7 @@ export default function AdminTeacherApplications() {
                         </p>
                         <div className="grid grid-cols-2 sm:grid-cols-3 gap-2 pt-2 border-t border-stone-200/60 text-[11px] text-slate-500">
                           <div>Country: <strong className="text-slate-800">{profile?.country || "N/A"}</strong></div>
-                          <div>Hourly Rate: <strong className="text-slate-800">${profile?.hourlyRate || 35}/hr</strong></div>
+                          <div>Monthly Tuition: <strong className="text-slate-800">৳{((profile?.hourlyRate || 35) >= 500 ? profile?.hourlyRate : (profile?.hourlyRate || 35) * 100).toLocaleString()}/mo</strong></div>
                           <div>Experience: <strong className="text-slate-800">{profile?.yearsExperience || 0} Years</strong></div>
                         </div>
                       </div>

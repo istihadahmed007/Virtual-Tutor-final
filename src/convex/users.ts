@@ -510,163 +510,69 @@ export const setupDemoUser = mutation({
   },
 });
 
+// Demo accounts are disabled in production to maintain an authentic human tutoring platform
 export const quickDemoLogin = mutation({
   args: {
     role: v.union(v.literal("student"), v.literal("teacher"), v.literal("parent")),
     demoType: v.optional(v.string()),
   },
+  handler: async () => {
+    throw new Error("Demo accounts have been disabled. Please register or log in with your authentic credentials.");
+  },
+});
+
+// Admin Session Synchronization for authorized administrator
+export const syncAdminSession = mutation({
+  args: {
+    email: v.optional(v.string()),
+    userId: v.optional(v.string()),
+  },
   handler: async (ctx, args) => {
-    const isTeacher = args.role === "teacher";
-    const isParent = args.role === "parent";
+    const authUserId = await getAuthUserId(ctx);
+    let targetUser: any = null;
 
-    let demoName = "Alex Rivera";
-    let demoEmail = "student@liveclass.edu";
-
-    if (isTeacher) {
-      demoName = args.demoType === "language" ? "Elena Rostova" : "Dr. Sarah Jenkins";
-      demoEmail = args.demoType === "language" ? "elena.rostova@liveclass.edu" : "teacher@liveclass.edu";
-    } else if (isParent) {
-      demoName = "Mark Jenkins";
-      demoEmail = "parent@liveclass.edu";
-    }
-
-    let user = await ctx.db
-      .query("users")
-      .withIndex("email", (q) => q.eq("email", demoEmail))
-      .first();
-
-    if (!user) {
-      const newUserId = await ctx.db.insert("users", {
-        name: demoName,
-        email: demoEmail,
-        role: args.role,
-        accountStatus: "active",
-        emailVerified: true,
-        emailVerificationTime: Date.now(),
-        lastLoginAt: Date.now(),
-        timezone: "America/New_York",
-      });
-      user = await ctx.db.get(newUserId);
-    } else {
-      await ctx.db.patch(user._id, {
-        name: demoName,
-        role: args.role,
-        accountStatus: "active",
-        emailVerified: true,
-        lastLoginAt: Date.now(),
-      });
-    }
-
-    if (!user) throw new Error("Failed to initialize demo account.");
-
-    const currentAuthId = await getAuthUserId(ctx);
-    if (currentAuthId && currentAuthId !== user._id) {
-      const currentAuthUser = await ctx.db.get(currentAuthId);
-      if (currentAuthUser?.isAnonymous) {
-        await ctx.db.patch(currentAuthId, {
-          name: demoName,
-          email: demoEmail,
-          role: args.role,
-          emailVerified: true,
-          isAnonymous: false,
-          accountStatus: "active",
-        });
+    if (authUserId) {
+      targetUser = await ctx.db.get(authUserId as any);
+    } else if (args.userId) {
+      try {
+        targetUser = await ctx.db.get(args.userId as any);
+      } catch (_) {
+        targetUser = null;
       }
     }
 
-    if (isTeacher) {
-      const existingTeacher = await ctx.db
-        .query("teacherProfiles")
-        .filter((q) => q.eq(q.field("userId"), user!._id as string))
+    if (!targetUser && args.email) {
+      const normalized = normalizeEmail(args.email);
+      targetUser = await ctx.db
+        .query("users")
+        .withIndex("email", (q) => q.eq("email", normalized))
         .first();
-
-      if (!existingTeacher) {
-        await ctx.db.insert("teacherProfiles", {
-          userId: user._id as string,
-          name: demoName,
-          title:
-            args.demoType === "language"
-              ? "Senior IELTS & Spanish Language Specialist"
-              : "Senior AP Calculus & Physics Specialist",
-          bio:
-            args.demoType === "language"
-              ? "Passionate polyglot and certified IELTS instructor with 8+ years helping students achieve Band 8.0+ and conversational fluency."
-              : "Passionate educator with 10+ years helping students excel in advanced mathematics, calculus, and physics mechanics.",
-          subjects:
-            args.demoType === "language"
-              ? ["English", "Spanish", "IELTS Preparation", "Grammar"]
-              : ["Mathematics", "Calculus", "Physics", "Linear Algebra"],
-          classLevels: ["High School", "College / AP", "Undergraduate"],
-          expertise:
-            args.demoType === "language"
-              ? ["Speaking & Pronunciation", "Writing Task 2", "Vocabulary Building"]
-              : ["Calculus I & II", "Mechanics", "Differential Equations"],
-          education: [
-            {
-              degree: "M.Sc. Education & STEM",
-              institution: "University of Cambridge",
-              passingYear: "2018",
-            },
-          ],
-          languages: ["English", "Spanish", "French"],
-          hourlyRate: 45,
-          yearsExperience: 10,
-          rating: 4.95,
-          reviewCount: 48,
-          totalStudents: 142,
-          totalHours: 360,
-          isVerified: true,
-          isAvailable: true,
-          verificationStatus: "verified",
-          profileCompletionPct: 100,
-          classTypes: ["1-on-1", "Group", "Interactive Lab"],
-        });
-      }
-    } else if (isParent) {
-      const existingParent = await ctx.db
-        .query("parentProfiles")
-        .withIndex("by_user", (q) => q.eq("userId", user!._id as string))
-        .first();
-
-      if (!existingParent) {
-        await ctx.db.insert("parentProfiles", {
-          userId: user._id as string,
-          name: demoName,
-          relationship: "Parent / Guardian",
-          linkedStudentIds: [],
-          linkedStudentEmails: ["alex.rivera@liveclass.edu"],
-          createdAt: Date.now(),
-        });
-      }
-    } else {
-      const existingStudent = await ctx.db
-        .query("studentProfiles")
-        .withIndex("by_user", (q) => q.eq("userId", user!._id as string))
-        .first();
-
-      if (!existingStudent) {
-        await ctx.db.insert("studentProfiles", {
-          userId: user._id as string,
-          name: demoName,
-          institution: "Oakridge High Academy",
-          educationLevel: "High School",
-          classLevel: "Grade 11",
-          subjects: ["Mathematics", "Physics", "Chemistry"],
-          learningGoals: ["Master AP Calculus BC", "Improve exam problem-solving speed"],
-          verificationStatus: "verified",
-          profileCompletionPct: 95,
-        });
-      }
     }
+
+    if (!targetUser) {
+      return { success: false, reason: "User not found" };
+    }
+
+    const normalizedEmail = normalizeEmail(targetUser.email || "");
+    if (!isAuthorizedAdminEmail(normalizedEmail)) {
+      return { success: false, reason: "Not authorized as platform administrator" };
+    }
+
+    // Ensure admin role and verified status
+    await ctx.db.patch(targetUser._id, {
+      role: "admin",
+      emailVerified: true,
+      accountStatus: "active",
+      lastLoginAt: Date.now(),
+    });
 
     return {
       success: true,
       user: {
-        _id: String(user._id),
-        name: demoName,
-        email: demoEmail,
-        role: args.role,
-        isEmailVerified: true,
+        _id: String(targetUser._id),
+        email: normalizedEmail,
+        name: targetUser.name || "Administrator",
+        role: "admin",
       },
     };
   },
@@ -894,3 +800,4 @@ export const ensureAuthorizedAdminAccount = mutation({
     };
   },
 });
+

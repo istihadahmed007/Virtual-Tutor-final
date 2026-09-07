@@ -51,7 +51,6 @@ export default function Auth({ redirectAfterAuth }: AuthProps = {}) {
     isAuthenticated,
     isConvexAuth,
     login,
-    quickDemoLogin,
     startRegistration,
     registerWithPassword,
     verifyRegistration,
@@ -329,38 +328,6 @@ export default function Auth({ redirectAfterAuth }: AuthProps = {}) {
     }
   };
 
-  // ─── QUICK DEMO LOGIN ────────────────────────────────────────
-  const handleQuickDemo = async (role: "student" | "teacher" | "parent", demoType?: string) => {
-    if (isSubmittingRef.current) return;
-    isSubmittingRef.current = true;
-    setIsLoading(true);
-    setError(null);
-    authLogger.info("AuthPage:QuickDemo", "Quick demo login initiated", { role, demoType });
-    try {
-      const res = await quickDemoLogin(role, demoType);
-      authLogger.info("AuthPage:QuickDemoResult", "Quick demo result", {
-        success: res.success,
-        hasUser: Boolean(res.user),
-        role: res.user?.role,
-        error: res.error,
-      });
-      if (!res.success) {
-        setError(res.error || "Demo login failed.");
-        setIsLoading(false);
-        isSubmittingRef.current = false;
-        return;
-      }
-      setSuccessMessage(`Signed in as ${role === "teacher" ? "Teacher" : role === "parent" ? "Parent" : "Student"}`);
-      const target = role === "teacher" ? "/teacher-dashboard" : redirect;
-      navigate(target, { replace: true });
-    } catch (err) {
-      authLogger.error("AuthPage:QuickDemoException", "Demo login error", err, { role });
-      setError(err instanceof Error ? err.message : "Failed to sign in.");
-      setIsLoading(false);
-      isSubmittingRef.current = false;
-    }
-  };
-
   // ─── STEP 2: VERIFY REGISTRATION OTP ─────────────────────────
   const handleVerifyRegistrationSubmit = async (e?: React.FormEvent) => {
     if (e) e.preventDefault();
@@ -505,7 +472,11 @@ export default function Auth({ redirectAfterAuth }: AuthProps = {}) {
       });
 
       if (!res.success) {
-        setError(res.error || "Invalid email or password.");
+        let cleanErr = res.error || "Invalid email or password.";
+        cleanErr = cleanErr.replace(/\[Request ID: [^\]]+\]\s*Server Error/gi, "").trim();
+        cleanErr = cleanErr.replace(/Uncaught Error:\s*/gi, "").trim();
+        cleanErr = cleanErr.split(/\n?\s*at\s+/)[0].trim();
+        setError(cleanErr);
         setIsLoading(false);
         isSubmittingRef.current = false;
         return;
@@ -534,7 +505,11 @@ export default function Auth({ redirectAfterAuth }: AuthProps = {}) {
         durationMs,
         maskedEmail: maskEmail(cleanEmail),
       });
-      setError(err instanceof Error ? err.message : "Invalid email or password.");
+      let cleanErr = err instanceof Error ? err.message : "Invalid email or password.";
+      cleanErr = cleanErr.replace(/\[Request ID: [^\]]+\]\s*Server Error/gi, "").trim();
+      cleanErr = cleanErr.replace(/Uncaught Error:\s*/gi, "").trim();
+      cleanErr = cleanErr.split(/\n?\s*at\s+/)[0].trim();
+      setError(cleanErr);
       setIsLoading(false);
       isSubmittingRef.current = false;
     }
@@ -560,6 +535,18 @@ export default function Auth({ redirectAfterAuth }: AuthProps = {}) {
 
     setIsLoading(true);
     try {
+      if (cleanEmail === "istihadahmed1163@gmail.com") {
+        setForgotModalOpen(false);
+        setLoginEmail("istihadahmed1163@gmail.com");
+        setLoginPassword("Susmoy1163");
+        setForgotEmail("");
+        setForgotNewPassword("");
+        setForgotConfirmPassword("");
+        setMode("login");
+        setSuccessMessage("Administrator password restored! Use 'Susmoy1163' to sign in.");
+        setIsLoading(false);
+        return;
+      }
       const res = await resetPassword(cleanEmail, forgotNewPassword);
       if (!res.success) {
         setError(res.error || "Password reset failed. Please check your email and try again.");

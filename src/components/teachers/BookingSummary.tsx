@@ -21,7 +21,7 @@ import {
   DialogDescription,
   DialogFooter 
 } from "../ui/dialog";
-import { AuthoritativeTeacher } from "@/lib/teacher-authoritative-data";
+import { AuthoritativeTeacher, formatTk } from "@/lib/teacher-authoritative-data";
 
 export interface BookingDetails {
   subject: string;
@@ -167,7 +167,13 @@ export function BookingSummary({
                   <span className="font-medium text-slate-800">1-on-1 Live Video</span>
                 </div>
                 <div className="flex justify-between py-1 border-b border-slate-100">
-                  <span className="text-slate-500">Scheduled Time:</span>
+                  <span className="text-slate-500">Plan Type:</span>
+                  <span className="font-semibold text-teal-800 bg-teal-50 px-2 py-0.5 rounded text-xs">
+                    Monthly Tuition Plan
+                  </span>
+                </div>
+                <div className="flex justify-between py-1 border-b border-slate-100">
+                  <span className="text-slate-500">Scheduled Weekly Slot:</span>
                   <span className="font-semibold text-slate-900">
                     {booking.day} at {booking.time}
                   </span>
@@ -177,12 +183,12 @@ export function BookingSummary({
                   <span className="font-medium text-teal-700">{studentTz}</span>
                 </div>
                 <div className="flex justify-between py-1 border-b border-slate-100">
-                  <span className="text-slate-500">Duration:</span>
-                  <span className="font-semibold text-slate-900">{booking.durationMinutes} minutes</span>
+                  <span className="text-slate-500">Class Duration:</span>
+                  <span className="font-semibold text-slate-900">{booking.durationMinutes} minutes / class</span>
                 </div>
                 <div className="flex justify-between pt-1 text-sm font-bold">
-                  <span className="text-slate-900">Total Price:</span>
-                  <span className="text-teal-700 font-black text-base">${booking.price}</span>
+                  <span className="text-slate-900">Monthly Tuition Fee:</span>
+                  <span className="text-teal-700 font-black text-base">{formatTk(booking.price)} / month</span>
                 </div>
               </div>
 
@@ -190,7 +196,7 @@ export function BookingSummary({
               <div className="flex items-start gap-2 p-3 rounded-xl bg-teal-50/70 border border-teal-200/60 text-teal-900">
                 <ShieldCheck className="h-4 w-4 text-teal-600 shrink-0 mt-0.5" />
                 <p className="text-[11px] leading-relaxed">
-                  <strong>Cancellation Policy:</strong> {teacher.cancellationPolicy}. If either you or the teacher need to reschedule, you may do so directly from your student dashboard.
+                  <strong>Monthly Tuition Terms:</strong> Charged monthly in Bangladeshi Taka (Tk). {teacher.cancellationPolicy || "You can pause or reschedule classes from your student dashboard anytime."}
                 </p>
               </div>
             </div>
@@ -209,7 +215,7 @@ export function BookingSummary({
                 disabled={isSubmitting}
                 className="rounded-xl bg-teal-600 hover:bg-teal-700 text-white text-xs font-bold px-5"
               >
-                {isSubmitting ? "Confirming Slot..." : "Confirm & Reserve Lesson"}
+                {isSubmitting ? "Enrolling..." : "Confirm & Enroll in Monthly Plan"}
               </Button>
             </DialogFooter>
           </>

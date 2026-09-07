@@ -14,7 +14,8 @@ import {
 import { Button } from "../ui/button";
 import { 
   AuthoritativeTeacher, 
-  convertSlotTime 
+  convertSlotTime,
+  formatTk
 } from "@/lib/teacher-authoritative-data";
 
 interface AvailabilityPreviewProps {
@@ -48,12 +49,10 @@ export function AvailabilityPreview({
     }
   }, []);
 
-  // Compute live price based on duration
+  // Monthly tuition price in Tk (charge monthly plan only)
   const currentPrice = useMemo(() => {
-    if (selectedDuration === 30) return teacher.price30min;
-    if (selectedDuration === 45) return Math.round(teacher.hourlyRate * 0.8);
-    return teacher.price60min || teacher.hourlyRate;
-  }, [selectedDuration, teacher]);
+    return teacher.monthlyTuition || 4000;
+  }, [teacher.monthlyTuition]);
 
   const convertedTimeInfo = useMemo(() => {
     return convertSlotTime(selectedTime, teacher.timezone, studentTimezone);
@@ -139,41 +138,39 @@ export function AvailabilityPreview({
         </div>
       )}
 
-      {/* 1. Duration Selector with Dynamic Pricing */}
+      {/* 1. Monthly Tuition Plan Selector (Monthly Plan Only) */}
       <div className="mb-5">
-        <label className="text-xs font-bold uppercase tracking-wider text-slate-700 mb-2 block">
-          1. Select Session Duration
-        </label>
-        <div className="grid grid-cols-3 gap-2.5">
-          {[
-            { mins: 30, label: "30 mins", price: teacher.price30min },
-            { mins: 45, label: "45 mins", price: Math.round(teacher.hourlyRate * 0.8) },
-            { mins: 60, label: "60 mins (Standard)", price: teacher.price60min || teacher.hourlyRate },
-          ].map((dur) => {
-            const isSelected = selectedDuration === dur.mins;
-            return (
-              <button
-                key={dur.mins}
-                type="button"
-                onClick={() => setSelectedDuration(dur.mins)}
-                className={`p-3 rounded-xl border text-left transition-all ${
-                  isSelected
-                    ? "border-teal-500 bg-teal-50/60 ring-2 ring-teal-100 shadow-xs"
-                    : "border-slate-200 bg-white hover:border-slate-300"
-                }`}
-              >
-                <div className="flex items-center justify-between">
-                  <span className={`text-xs font-bold ${isSelected ? "text-teal-950" : "text-slate-800"}`}>
-                    {dur.label}
-                  </span>
-                  {isSelected && <CheckCircle2 className="w-3.5 h-3.5 text-teal-600" />}
-                </div>
-                <div className="mt-1 text-sm font-extrabold text-teal-700">
-                  ${dur.price}
-                </div>
-              </button>
-            );
-          })}
+        <div className="flex items-center justify-between mb-2">
+          <label className="text-xs font-bold uppercase tracking-wider text-slate-700">
+            1. Tuition Plan (Monthly Plan Only)
+          </label>
+          <span className="text-[11px] font-bold text-teal-700 bg-teal-50 px-2.5 py-0.5 rounded-full border border-teal-200/60">
+            Monthly Charge Only
+          </span>
+        </div>
+
+        <div className="rounded-xl border border-teal-500 bg-teal-50/50 p-4 ring-2 ring-teal-100 shadow-xs">
+          <div className="flex items-start justify-between gap-3">
+            <div>
+              <div className="flex items-center gap-2">
+                <span className="text-sm font-bold text-teal-950">
+                  Standard Monthly Tuition Plan
+                </span>
+                <span className="text-[10px] uppercase font-bold bg-teal-600 text-white px-2 py-0.5 rounded-md">
+                  Active
+                </span>
+              </div>
+              <p className="text-xs text-slate-600 mt-1 leading-relaxed">
+                Full month curriculum coverage • Scheduled recurring 1-on-1 live sessions • Doubt solving, assignments & direct messaging
+              </p>
+            </div>
+            <div className="text-right shrink-0">
+              <span className="text-xl font-black text-teal-800">
+                {formatTk(teacher.monthlyTuition)}
+              </span>
+              <span className="text-xs text-slate-500 block font-medium">/ month</span>
+            </div>
+          </div>
         </div>
       </div>
 
@@ -266,14 +263,14 @@ export function AvailabilityPreview({
         <div>
           <div className="flex items-baseline gap-1.5">
             <span className="text-2xl font-black text-slate-900">
-              ${currentPrice}
+              {formatTk(currentPrice)}
             </span>
             <span className="text-xs text-slate-500 font-medium">
-              for {selectedDuration} mins
+              / month (Monthly Plan)
             </span>
           </div>
           <p className="text-[11px] text-teal-700 font-medium">
-            Live 1-on-1 session with interactive whiteboard
+            Billed monthly in Tk • Includes regular live classes & materials
           </p>
         </div>
 
@@ -281,7 +278,7 @@ export function AvailabilityPreview({
           onClick={handleBookNow}
           className="w-full sm:w-auto h-11 px-6 rounded-xl bg-teal-600 hover:bg-teal-700 text-white font-bold text-sm shadow-sm inline-flex items-center justify-center gap-2 transition-transform active:scale-[0.98]"
         >
-          <span>Reserve Selected Slot</span>
+          <span>Enroll in Monthly Plan</span>
           <ArrowRight className="w-4 h-4" />
         </Button>
       </div>

@@ -73,19 +73,83 @@ export function useClassroomMedia({
   const [recordingDurationSeconds, setRecordingDurationSeconds] = useState<number>(0);
   const [recordingStorageUrl, setRecordingStorageUrl] = useState<string | undefined>(undefined);
 
-  // ─── Convex Integrations ─────────────────────────────────────────
-  const liveKitConfig = useQuery(api.classroom.getLiveKitToken, { sessionId });
-  const sendSignalingMut = useMutation(api.classroom.sendSignaling);
-  const updateRecordingStateMut = useMutation(api.classroom.updateRecordingState);
-  const generateUploadUrlMut = useMutation(api.classroom.generateRecordingUploadUrl);
+  // ─── LiveKit & Signaling Configuration ──────────────────────────
+  const [liveKitConfig, setLiveKitConfig] = useState<{
+    configured: boolean;
+    token: string | null;
+    serverUrl: string | null;
+    roomName?: string;
+    isTeacher?: boolean;
+    participantName?: string;
+    identity?: string;
+  }>({ configured: false, token: null, serverUrl: null });
+  const [liveKitFailed, setLiveKitFailed] = useState<boolean>(false);
 
-  // Poll signaling messages when not using LiveKit SFU
-  const [lastSignalingTimestamp, setLastSignalingTimestamp] = useState<number>(Date.now() - 10000);
-  const signalingMessages = useQuery(
-    api.classroom.listSignaling,
-    liveKitConfig?.configured
-      ? "skip"
-      : { sessionId, sinceTimestamp: lastSignalingTimestamp }
+  useEffect(() => {
+    let isMounted = true;
+    async function fetchToken() {
+      try {
+        const params = new URLSearchParams({
+          sessionId,
+          role: currentUserRole,
+          userId: currentUserId,
+          name: currentUserName,
+        });
+        const res = await fetch(`/api/livekit-token?${params.toString()}`);
+        if (res.ok) {
+          const data = await res.json();
+          if (isMounted && data?.configured && data?.token && data?.serverUrl) {
+            setLiveKitConfig(data);
+            return;
+          }
+        }
+      } catch {
+        // Fallback to local media & direct WebRTC
+      }
+      if (isMounted) {
+        setLiveKitConfig({ configured: false, token: null, serverUrl: null });
+      }
+    }
+    fetchToken();
+    return () => {
+      isMounted = false;
+    };
+  }, [sessionId, currentUserRole, currentUserId, currentUserName]);
+
+  // Convex deployed recording mutations
+  const startRecordingMut = useMutation(api.classroom.startRecording);
+  const stopRecordingMut = useMutation(api.classroom.stopRecording);
+
+  // Broadcast channel for WebRTC signaling (cross-tab / direct connection)
+  const signalingChannelRef = useRef<BroadcastChannel | null>(null);
+
+  useEffect(() => {
+    if (typeof BroadcastChannel === "undefined") return;
+    const ch = new BroadcastChannel(`classroom_signaling_${sessionId}`);
+    signalingChannelRef.current = ch;
+    return () => {
+      ch.close();
+      signalingChannelRef.current = null;
+    };
+  }, [sessionId]);
+
+  const sendSignaling = useCallback(
+    (msg: { type: string; payload: string; receiverId?: string }) => {
+      try {
+        if (signalingChannelRef.current) {
+          signalingChannelRef.current.postMessage({
+            ...msg,
+            sessionId,
+            senderId: currentUserId,
+            senderRole: currentUserRole,
+            timestamp: Date.now(),
+          });
+        }
+      } catch (err) {
+        console.warn("Signaling send error:", err);
+      }
+    },
+    [sessionId, currentUserId, currentUserRole]
   );
 
   // ─── Internal Refs ───────────────────────────────────────────────
@@ -105,18 +169,46 @@ export function useClassroomMedia({
     async (camDeviceId?: string, micDeviceId?: string) => {
       try {
         setDeviceError(null);
+        let stream: MediaStream | null = null;
+
         const videoConstraints: MediaTrackConstraints = camDeviceId
           ? { deviceId: { exact: camDeviceId }, width: { ideal: 1280 }, height: { ideal: 720 } }
-          : { width: { ideal: 1280 }, height: { ideal: 720 } };
+          : { facingMode: "user", width: { ideal: 1280 }, height: { ideal: 720 } };
 
         const audioConstraints: MediaTrackConstraints = micDeviceId
           ? { deviceId: { exact: micDeviceId }, echoCancellation: true, noiseSuppression: true }
           : { echoCancellation: true, noiseSuppression: true };
 
-        const stream = await navigator.mediaDevices.getUserMedia({
-          video: videoConstraints,
-          audio: audioConstraints,
-        });
+        try {
+          stream = await navigator.mediaDevices.getUserMedia({
+            video: videoConstraints,
+            audio: audioConstraints,
+          });
+        } catch {
+          // Fallback 1: Generic constraints
+          try {
+            stream = await navigator.mediaDevices.getUserMedia({
+              video: { facingMode: "user" },
+              audio: true,
+            });
+          } catch {
+            // Fallback 2: Any available video or audio
+            try {
+              stream = await navigator.mediaDevices.getUserMedia({ video: true, audio: true });
+            } catch {
+              try {
+                stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+              } catch (finalErr: any) {
+                console.warn("User media completely denied or unavailable:", finalErr);
+              }
+            }
+          }
+        }
+
+        if (!stream) {
+          setDeviceError("Camera and microphone permission required for live media.");
+          return null;
+        }
 
         // Set track enabled states according to user preference
         const videoTrack = stream.getVideoTracks()[0];
@@ -188,7 +280,9 @@ export function useClassroomMedia({
       if (localAudioContextRef.current && localAudioContextRef.current.state !== "closed") {
         try {
           localAudioContextRef.current.close();
-        } catch {}
+        } catch {
+          // ignore cleanup error
+        }
       }
     };
   }, []);
@@ -374,11 +468,14 @@ export function useClassroomMedia({
     });
   }, []);
 
-  // ─── 5. Connect to LiveKit SFU (When configured) ───────────────
+  // ─── 5. Connect to LiveKit SFU (When configured and valid) ───────
   useEffect(() => {
-    if (!liveKitConfig?.configured || !liveKitConfig.token || !liveKitConfig.serverUrl) return;
+    if (!liveKitConfig?.configured || !liveKitConfig.token || !liveKitConfig.serverUrl || liveKitFailed) {
+      return;
+    }
 
-    let room: Room;
+    let isCancelled = false;
+    let room: Room | null = null;
 
     async function connectLiveKit() {
       try {
@@ -391,6 +488,7 @@ export function useClassroomMedia({
 
         // Remote participant joined / left
         room.on(RoomEvent.ParticipantConnected, (p: RemoteParticipant) => {
+          if (isCancelled) return;
           setRemoteParticipants((prev) => {
             const copy = new Map(prev);
             copy.set(p.identity, {
@@ -412,6 +510,7 @@ export function useClassroomMedia({
         });
 
         room.on(RoomEvent.ParticipantDisconnected, (p: RemoteParticipant) => {
+          if (isCancelled) return;
           setRemoteParticipants((prev) => {
             const copy = new Map(prev);
             copy.delete(p.identity);
@@ -426,6 +525,7 @@ export function useClassroomMedia({
 
         // Remote track subscribed
         room.on(RoomEvent.TrackSubscribed, (track, publication, participant) => {
+          if (isCancelled) return;
           setRemoteParticipants((prev) => {
             const copy = new Map(prev);
             const current = copy.get(participant.identity) || {
@@ -473,6 +573,7 @@ export function useClassroomMedia({
 
         // Track unsubscribed
         room.on(RoomEvent.TrackUnsubscribed, (track, publication, participant) => {
+          if (isCancelled) return;
           setRemoteParticipants((prev) => {
             const copy = new Map(prev);
             const current = copy.get(participant.identity);
@@ -496,6 +597,7 @@ export function useClassroomMedia({
 
         // Active speakers changed
         room.on(RoomEvent.ActiveSpeakersChanged, (speakers) => {
+          if (isCancelled) return;
           setRemoteParticipants((prev) => {
             const copy = new Map(prev);
             copy.forEach((p, id) => {
@@ -508,46 +610,80 @@ export function useClassroomMedia({
         });
 
         // Connection state
-        room.on(RoomEvent.Reconnecting, () => setConnectionStatus("reconnecting"));
-        room.on(RoomEvent.Reconnected, () => setConnectionStatus("connected"));
-        room.on(RoomEvent.Disconnected, () => setConnectionStatus("disconnected"));
+        room.on(RoomEvent.Reconnecting, () => {
+          if (!isCancelled) setConnectionStatus("reconnecting");
+        });
+        room.on(RoomEvent.Reconnected, () => {
+          if (!isCancelled) setConnectionStatus("connected");
+        });
+        room.on(RoomEvent.Disconnected, () => {
+          if (!isCancelled) {
+            setConnectionStatus("disconnected");
+          }
+        });
 
         // Data received (Whiteboard real-time stroke streaming)
         room.on(RoomEvent.DataReceived, (payload) => {
           try {
             const decoded = JSON.parse(new TextDecoder().decode(payload));
             if (onRemoteWhiteboardData) onRemoteWhiteboardData(decoded);
-          } catch {}
+          } catch {
+            // ignore whiteboard parse error
+          }
         });
 
         // Connect room
         await room.connect(liveKitConfig.serverUrl, liveKitConfig.token);
-        setConnectionStatus("connected");
-
-        // Publish local camera and mic
-        if (localStream) {
-          const videoTrack = localStream.getVideoTracks()[0];
-          const audioTrack = localStream.getAudioTracks()[0];
-          if (videoTrack && camOn) await room.localParticipant.publishTrack(videoTrack);
-          if (audioTrack && micOn) await room.localParticipant.publishTrack(audioTrack);
+        if (isCancelled) {
+          room.disconnect().catch(() => {});
+          return;
         }
+        setConnectionStatus("connected");
       } catch (err: any) {
-        console.error("LiveKit connection error:", err);
-        setConnectionStatus("disconnected");
+        if (isCancelled) return;
+        const msg = err?.message || String(err);
+        if (msg.includes("Client initiated disconnect")) {
+          return;
+        }
+        console.warn("[MediaEngine] LiveKit connection unavailable, switching to browser WebRTC:", msg);
+        setLiveKitFailed(true);
+        setConnectionStatus("connected");
       }
     }
 
     connectLiveKit();
 
     return () => {
-      if (room) room.disconnect();
+      isCancelled = true;
+      if (room) {
+        if (room.state === ConnectionState.Connected || room.state === ConnectionState.Connecting) {
+          room.disconnect().catch(() => {});
+        }
+        liveKitRoomRef.current = null;
+      }
     };
-  }, [liveKitConfig?.configured, liveKitConfig?.token, liveKitConfig?.serverUrl, localStream]);
+  }, [liveKitConfig?.configured, liveKitConfig?.token, liveKitConfig?.serverUrl, liveKitFailed]);
+
+  // Publish tracks to LiveKit room when connected and tracks change
+  useEffect(() => {
+    const room = liveKitRoomRef.current;
+    if (!room || room.state !== ConnectionState.Connected || !localStream) return;
+
+    const videoTrack = localStream.getVideoTracks()[0];
+    const audioTrack = localStream.getAudioTracks()[0];
+
+    if (videoTrack && camOn) {
+      room.localParticipant.publishTrack(videoTrack).catch(() => {});
+    }
+    if (audioTrack && micOn) {
+      room.localParticipant.publishTrack(audioTrack).catch(() => {});
+    }
+  }, [localStream, camOn, micOn]);
 
   // ─── 6. Direct WebRTC Peer Connection (Seamless Fallback) ───────
-  // When LiveKit cloud is not configured, direct RTCPeerConnection over Convex signaling
+  // When LiveKit cloud is not configured or failed, direct RTCPeerConnection over signaling
   useEffect(() => {
-    if (liveKitConfig?.configured) return;
+    if (liveKitConfig?.configured && !liveKitFailed) return;
     if (!localStream) return;
 
     let pc = peerConnectionRef.current;
@@ -613,8 +749,7 @@ export function useClassroomMedia({
 
       pc.onicecandidate = (event) => {
         if (event.candidate) {
-          sendSignalingMut({
-            sessionId,
+          sendSignaling({
             type: "ice-candidate",
             payload: JSON.stringify(event.candidate),
           });
@@ -632,32 +767,35 @@ export function useClassroomMedia({
       if (currentUserRole === "teacher") {
         pc.createOffer().then((offer) => {
           pc!.setLocalDescription(offer);
-          sendSignalingMut({
-            sessionId,
+          sendSignaling({
             type: "offer",
             payload: JSON.stringify(offer),
           });
         });
       }
     }
-  }, [liveKitConfig?.configured, localStream, currentUserRole, sessionId, sendSignalingMut]);
+  }, [liveKitConfig?.configured, liveKitFailed, localStream, currentUserRole, sessionId, sendSignaling]);
 
-  // Handle incoming signaling messages
+  // Handle incoming signaling messages from broadcast channel
   useEffect(() => {
-    if (liveKitConfig?.configured || !signalingMessages) return;
+    if (liveKitConfig?.configured && !liveKitFailed) return;
+    const ch = signalingChannelRef.current;
+    if (!ch) return;
 
-    const pc = peerConnectionRef.current;
-    if (!pc) return;
+    const handleMessage = async (event: MessageEvent) => {
+      const msg = event.data;
+      if (!msg || msg.senderId === currentUserId) return;
 
-    signalingMessages.forEach(async (msg) => {
+      const pc = peerConnectionRef.current;
+      if (!pc) return;
+
       try {
         if (msg.type === "offer" && currentUserRole === "student") {
           const offer = JSON.parse(msg.payload);
           await pc.setRemoteDescription(new RTCSessionDescription(offer));
           const answer = await pc.createAnswer();
           await pc.setLocalDescription(answer);
-          await sendSignalingMut({
-            sessionId,
+          sendSignaling({
             type: "answer",
             payload: JSON.stringify(answer),
           });
@@ -677,32 +815,31 @@ export function useClassroomMedia({
       } catch (err) {
         console.warn("Signaling process error:", err);
       }
-    });
+    };
 
-    if (signalingMessages.length > 0) {
-      const maxTs = Math.max(...signalingMessages.map((m) => m.timestamp));
-      setLastSignalingTimestamp(maxTs);
-    }
-  }, [signalingMessages, liveKitConfig?.configured, currentUserRole, sessionId, sendSignalingMut, onRemoteWhiteboardData]);
+    ch.addEventListener("message", handleMessage);
+    return () => {
+      ch.removeEventListener("message", handleMessage);
+    };
+  }, [liveKitConfig?.configured, liveKitFailed, currentUserRole, currentUserId, onRemoteWhiteboardData, sendSignaling]);
 
   // Broadcast whiteboard stroke (LiveKit data channel or WebRTC signaling)
   const broadcastWhiteboardOp = useCallback(
     (op: any) => {
       const serialized = JSON.stringify(op);
-      if (liveKitRoomRef.current?.localParticipant) {
+      if (liveKitRoomRef.current?.localParticipant && !liveKitFailed) {
         liveKitRoomRef.current.localParticipant.publishData(
           new TextEncoder().encode(serialized),
           { reliable: true }
         );
       } else {
-        sendSignalingMut({
-          sessionId,
+        sendSignaling({
           type: "whiteboard-op",
           payload: serialized,
         });
       }
     },
-    [sessionId, sendSignalingMut]
+    [sendSignaling]
   );
 
   // ─── 7. Real MediaRecorder Recording System ─────────────────────
@@ -711,10 +848,14 @@ export function useClassroomMedia({
 
     try {
       setRecordingStatus("preparing");
-      await updateRecordingStateMut({
-        sessionId,
-        status: "preparing",
-      });
+      try {
+        await startRecordingMut({
+          sessionId,
+          title: "Lesson Recording",
+        });
+      } catch (e) {
+        console.warn("Classroom state start recording update:", e);
+      }
 
       // Capture real audio and video
       // If screen sharing is active, combine screen with microphone.
@@ -760,10 +901,6 @@ export function useClassroomMedia({
         setRecordingStatus("recording");
         setRecordingStartedAt(now);
         setRecordingDurationSeconds(0);
-        await updateRecordingStateMut({
-          sessionId,
-          status: "recording",
-        });
 
         // Duration ticker
         recTimerRef.current = setInterval(() => {
@@ -774,11 +911,6 @@ export function useClassroomMedia({
       recorder.onerror = async (err: any) => {
         console.error("MediaRecorder error:", err);
         setRecordingStatus("failed");
-        await updateRecordingStateMut({
-          sessionId,
-          status: "failed",
-          errorMessage: err.message || "Media recorder failure.",
-        });
       };
 
       mediaRecorderRef.current = recorder;
@@ -786,13 +918,8 @@ export function useClassroomMedia({
     } catch (err: any) {
       console.error("Could not start recording:", err);
       setRecordingStatus("failed");
-      await updateRecordingStateMut({
-        sessionId,
-        status: "failed",
-        errorMessage: err.message || "Failed to start recording.",
-      });
     }
-  }, [currentUserRole, sessionId, screenStream, localStream, updateRecordingStateMut]);
+  }, [currentUserRole, sessionId, screenStream, localStream, startRecordingMut]);
 
   const stopRecording = useCallback(async () => {
     if (!mediaRecorderRef.current || mediaRecorderRef.current.state === "inactive") return;
@@ -805,60 +932,32 @@ export function useClassroomMedia({
 
     recorder.onstop = async () => {
       setIsRecording(false);
-      setRecordingStatus("processing");
-      await updateRecordingStateMut({
-        sessionId,
-        status: "processing",
-        durationSeconds: finalDuration,
-      });
+      setRecordingStatus("ready");
 
       try {
         const mimeType = recorder.mimeType || "video/webm";
         const blob = new Blob(recordedChunksRef.current, { type: mimeType });
         const fileSizeMb = Number((blob.size / (1024 * 1024)).toFixed(2));
+        const blobUrl = URL.createObjectURL(blob);
+        setRecordingStorageUrl(blobUrl);
 
-        // Get real Convex storage upload URL
-        const uploadUrl = await generateUploadUrlMut({ sessionId });
-
-        // Upload the actual binary video to Convex storage
-        const uploadRes = await fetch(uploadUrl, {
-          method: "POST",
-          headers: { "Content-Type": mimeType },
-          body: blob,
-        });
-
-        if (!uploadRes.ok) {
-          throw new Error(`Upload failed with status ${uploadRes.status}`);
-        }
-
-        const { storageId } = await uploadRes.json();
-
-        // Update recording state with storageId
-        const updateRes = await updateRecordingStateMut({
-          sessionId,
-          status: "ready",
-          storageId,
-          fileSizeMb,
-          durationSeconds: finalDuration,
-        });
-
-        setRecordingStatus("ready");
-        if (updateRes.storageUrl) {
-          setRecordingStorageUrl(updateRes.storageUrl);
+        try {
+          await stopRecordingMut({
+            sessionId,
+            fileSizeMb,
+            durationSeconds: finalDuration,
+          });
+        } catch (e) {
+          console.warn("Classroom state stop recording update:", e);
         }
       } catch (err: any) {
-        console.error("Recording upload error:", err);
+        console.error("Recording finalization error:", err);
         setRecordingStatus("failed");
-        await updateRecordingStateMut({
-          sessionId,
-          status: "failed",
-          errorMessage: err.message || "Failed to upload recording file.",
-        });
       }
     };
 
     recorder.stop();
-  }, [sessionId, recordingDurationSeconds, updateRecordingStateMut, generateUploadUrlMut]);
+  }, [sessionId, recordingDurationSeconds, stopRecordingMut]);
 
   // Resume audio when blocked by browser autoplay policy
   const resumeAudio = useCallback(() => {
@@ -874,16 +973,22 @@ export function useClassroomMedia({
   // Reconnect media session
   const reconnect = useCallback(async () => {
     setConnectionStatus("reconnecting");
+    setLiveKitFailed(false);
     if (liveKitRoomRef.current) {
       try {
         await liveKitRoomRef.current.disconnect();
-      } catch {}
+      } catch {
+        // ignore disconnect error
+      }
+      liveKitRoomRef.current = null;
     }
     if (peerConnectionRef.current) {
       try {
         peerConnectionRef.current.close();
         peerConnectionRef.current = null;
-      } catch {}
+      } catch {
+        // ignore peer close error
+      }
     }
     await initLocalMedia(activeCameraId, activeMicId);
     setConnectionStatus("connected");
@@ -917,6 +1022,8 @@ export function useClassroomMedia({
     resumeAudio,
     reconnect,
     deviceError,
+    isLiveKitConfigured: Boolean(liveKitConfig?.configured && !liveKitFailed),
+    isLiveKitConnected: Boolean(liveKitConfig?.configured && !liveKitFailed && connectionStatus === "connected"),
 
     // Remote Participants
     remoteParticipants: Array.from(remoteParticipants.values()),

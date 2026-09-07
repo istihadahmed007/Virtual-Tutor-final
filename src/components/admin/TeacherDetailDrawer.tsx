@@ -233,8 +233,8 @@ export function TeacherDetailDrawer({
               {/* Key Stats Grid */}
               <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
                 <div className="bg-stone-50 p-3 rounded-xl border border-stone-200">
-                  <p className="text-[11px] text-slate-500">Hourly Rate</p>
-                  <p className="text-sm font-bold text-slate-900 mt-0.5">${profile?.hourlyRate || 0}/hr</p>
+                  <p className="text-[11px] text-slate-500">Monthly Tuition</p>
+                  <p className="text-sm font-bold text-slate-900 mt-0.5">৳{((profile?.hourlyRate || 0) >= 500 ? profile?.hourlyRate : (profile?.hourlyRate || 35) * 100).toLocaleString()}/mo</p>
                 </div>
                 <div className="bg-stone-50 p-3 rounded-xl border border-stone-200">
                   <p className="text-[11px] text-slate-500">Experience</p>

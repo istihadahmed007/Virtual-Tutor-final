@@ -10,7 +10,6 @@ import { StatusBadge } from "@/components/StatusBadge";
 import { EmptyState } from "@/components/EmptyState";
 import { ProfileAvatar } from "@/components/ProfileAvatar";
 import { LiveClassAvailability } from "@/components/classroom/LiveClassAvailability";
-import { LiveClassDemoPanel } from "@/components/classroom/LiveClassDemoPanel";
 import {
   Video,
   Users,
@@ -55,11 +54,6 @@ export default function TeacherDashboard() {
           title={`Teacher Dashboard${user?.name ? `, ${user.name}` : ""}`}
           description="Manage your live classes, schedule, student discovery, and teaching requests"
         />
-
-        {/* Live Class Availability & Simulation Testing Bar */}
-        <div className="mb-6">
-          <LiveClassDemoPanel />
-        </div>
 
         {/* Verification/Profile Status */}
         {teacherProfile && !teacherProfile.isVerified && (

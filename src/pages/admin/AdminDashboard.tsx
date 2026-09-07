@@ -225,7 +225,7 @@ export default function AdminDashboard() {
                     </div>
 
                     <div className="text-right shrink-0">
-                      <span className="text-xs font-bold text-slate-900">${app.hourlyRate}/hr</span>
+                      <span className="text-xs font-bold text-slate-900">৳{((app.hourlyRate || 35) >= 500 ? app.hourlyRate : (app.hourlyRate || 35) * 100).toLocaleString()}/mo</span>
                       <p className="text-[11px] text-slate-400">
                         {app.nidSubmittedAt ? new Date(app.nidSubmittedAt).toLocaleDateString() : "Recent"}
                       </p>

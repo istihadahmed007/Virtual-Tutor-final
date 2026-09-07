@@ -139,13 +139,14 @@ export default function TeachersPage() {
       });
     }
 
-    // 5. Price Range
+    // 5. Monthly Tuition Plan (Tk)
     if (filters.priceRange !== "all") {
       list = list.filter((t) => {
-        if (filters.priceRange === "under_35") return t.hourlyRate < 35;
-        if (filters.priceRange === "35_50") return t.hourlyRate >= 35 && t.hourlyRate <= 50;
-        if (filters.priceRange === "50_70") return t.hourlyRate > 50 && t.hourlyRate <= 70;
-        if (filters.priceRange === "over_70") return t.hourlyRate > 70;
+        const tuition = t.monthlyTuition || t.hourlyRate;
+        if (filters.priceRange === "under_3000" || filters.priceRange === "under_35") return tuition < 3000;
+        if (filters.priceRange === "3000_5000" || filters.priceRange === "35_50") return tuition >= 3000 && tuition <= 5000;
+        if (filters.priceRange === "5000_8000" || filters.priceRange === "50_70") return tuition > 5000 && tuition <= 8000;
+        if (filters.priceRange === "over_8000" || filters.priceRange === "over_70") return tuition > 8000;
         return true;
       });
     }
@@ -171,7 +172,9 @@ export default function TeachersPage() {
         return b.rating - a.rating || b.reviewCount - a.reviewCount;
       }
       if (filters.sortBy === "lowest_price") {
-        return a.hourlyRate - b.hourlyRate;
+        const rateA = a.monthlyTuition || a.hourlyRate;
+        const rateB = b.monthlyTuition || b.hourlyRate;
+        return rateA - rateB;
       }
       if (filters.sortBy === "earliest_available") {
         if (a.isAvailable && !b.isAvailable) return -1;

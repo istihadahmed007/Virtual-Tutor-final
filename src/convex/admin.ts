@@ -16,11 +16,12 @@ export const checkIsAdmin = query({
   args: {},
   handler: async (ctx) => {
     const authUserId = await getAuthUserId(ctx);
-    if (!authUserId) {
-      return { isAdmin: false, reason: "unauthenticated" };
+    let user: any = null;
+
+    if (authUserId) {
+      user = await ctx.db.get(authUserId as Id<"users">);
     }
 
-    const user = await ctx.db.get(authUserId as Id<"users">);
     if (!user || (user as any).isAnonymous) {
       return { isAdmin: false, reason: "unauthenticated" };
     }

@@ -11,7 +11,7 @@ import { toast } from "sonner";
 
 export default function AdminSettingsPage() {
   const [platformFee, setPlatformFee] = useState("15");
-  const [minHourlyRate, setMinHourlyRate] = useState("10");
+  const [minMonthlyTuition, setMinMonthlyTuition] = useState("1000");
   const [requireNid, setRequireNid] = useState(true);
   const [emailAlerts, setEmailAlerts] = useState(true);
 
@@ -87,11 +87,11 @@ export default function AdminSettingsPage() {
               />
             </div>
             <div>
-              <label className="text-xs font-bold text-slate-700 block mb-1.5">Minimum Hourly Rate ($ USD)</label>
+              <label className="text-xs font-bold text-slate-700 block mb-1.5">Minimum Monthly Tuition (৳ Tk)</label>
               <Input
                 type="number"
-                value={minHourlyRate}
-                onChange={(e) => setMinHourlyRate(e.target.value)}
+                value={minMonthlyTuition}
+                onChange={(e) => setMinMonthlyTuition(e.target.value)}
                 className="text-xs rounded-xl"
               />
             </div>

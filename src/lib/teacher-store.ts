@@ -91,77 +91,37 @@ export function calculateTeacherCompletion(data: Partial<TeacherApplicationData>
   return Math.min(100, Math.round(score));
 }
 
-// Initial seed applications for discovery derived from authoritative data source
-const DEFAULT_VERIFIED_TEACHERS: TeacherApplicationData[] = AUTHORITATIVE_SEED_TEACHERS.map((t) => ({
-  _id: t._id,
-  userId: t.userId,
-  name: t.name,
-  email: t.email || `${t.userId}@liveclass.edu`,
-  title: t.title,
-  bio: t.bio,
-  avatarUrl: t.avatarUrl,
-  country: t.country,
-  timezone: t.timezone,
-  hourlyRate: t.hourlyRate,
-  price30min: t.price30min,
-  price60min: t.price60min,
-  groupPrice: t.groupPrice,
-  trialPrice: t.trialPrice,
-  subjects: t.subjects,
-  classLevels: t.classLevels,
-  expertise: t.expertise,
-  languages: t.languages,
-  yearsExperience: t.yearsExperience,
-  education: t.education,
-  preferredPlatforms: ["Virtual Tutor Pro Classroom", "Interactive Digital Whiteboard"],
-  onlineTools: ["Interactive Digital Whiteboard", "Noise-Cancelling Studio Mic", "HD Webcam"],
-  preferredClassDuration: "60 mins",
-  classTypes: ["1-on-1 Private Lessons", "Small Group Cohorts", "Exam Review"],
-  verificationStatus: "verified",
-  isVerified: true,
-  isAvailable: t.isAvailable,
-  profileCompletionScore: 100,
-  profileCompletionPct: 100,
-  rating: t.rating,
-  reviewCount: t.reviewCount,
-  totalStudents: t.totalStudents,
-  totalHours: t.totalHours,
-}));
+// No fabricated seed teacher applications
+const DEFAULT_VERIFIED_TEACHERS: TeacherApplicationData[] = [];
+
+const LEGACY_FAKE_IDS = new Set([
+  "teacher_prof_sarah",
+  "teacher_prof_marcus",
+  "teacher_prof_elena",
+  "teacher_prof_david",
+  "teacher_prof_amira",
+  "teacher_prof_marcus_thorne",
+]);
 
 export function getAllTeacherApplications(): TeacherApplicationData[] {
-  if (typeof window === "undefined") return DEFAULT_VERIFIED_TEACHERS;
+  if (typeof window === "undefined") return [];
   try {
     const raw = localStorage.getItem(STORAGE_TEACHER_APPS_KEY);
     if (!raw) {
-      localStorage.setItem(STORAGE_TEACHER_APPS_KEY, JSON.stringify(DEFAULT_VERIFIED_TEACHERS));
-      return DEFAULT_VERIFIED_TEACHERS;
+      return [];
     }
     const parsed = JSON.parse(raw);
-    if (Array.isArray(parsed) && parsed.length > 0) {
-      // Merge with default seed teachers so ratings, reviews, and subjects stay enriched
-      const merged = [...parsed];
-      for (const def of DEFAULT_VERIFIED_TEACHERS) {
-        const idx = merged.findIndex((m) => m.userId === def.userId);
-        if (idx >= 0) {
-          merged[idx] = {
-            ...def,
-            ...merged[idx],
-            rating: def.rating, // Authoritative rating
-            reviewCount: def.reviewCount, // Authoritative reviews
-            totalStudents: def.totalStudents,
-            totalHours: def.totalHours,
-            isVerified: true,
-            verificationStatus: "verified",
-          };
-        } else {
-          merged.push(def);
-        }
+    if (Array.isArray(parsed)) {
+      // Purge any legacy fake seed records that were stored in localStorage
+      const realOnly = parsed.filter((item) => item && !LEGACY_FAKE_IDS.has(item.userId) && !LEGACY_FAKE_IDS.has(item._id));
+      if (realOnly.length !== parsed.length) {
+        localStorage.setItem(STORAGE_TEACHER_APPS_KEY, JSON.stringify(realOnly));
       }
-      return merged;
+      return realOnly;
     }
-    return DEFAULT_VERIFIED_TEACHERS;
+    return [];
   } catch {
-    return DEFAULT_VERIFIED_TEACHERS;
+    return [];
   }
 }
 

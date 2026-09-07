@@ -156,8 +156,8 @@ export function ConfirmApplicationModal({
               )}
               {applicant.hourlyRate && applicant.hourlyRate > 0 && (
                 <div className="flex items-center gap-1.5 text-slate-600">
-                  <DollarSign className="w-3.5 h-3.5 text-emerald-600 shrink-0" />
-                  <span>${applicant.hourlyRate}/hour rate</span>
+                  <span className="font-bold text-emerald-700 text-xs">৳</span>
+                  <span>৳{(applicant.hourlyRate >= 500 ? applicant.hourlyRate : applicant.hourlyRate * 100).toLocaleString()}/mo tuition</span>
                 </div>
               )}
               {applicant.nidNumber && (

@@ -13,7 +13,7 @@ import {
   StoredAccount,
 } from "@/lib/auth-store";
 import { useAuthActions } from "@convex-dev/auth/react";
-import { useConvexAuth, useQuery, useMutation } from "convex/react";
+import { useConvexAuth, useQuery, useMutation, useAction } from "convex/react";
 import { api } from "@/convex/_generated/api";
 import { captureAuthError, setUserContext } from "@/lib/error-tracker";
 import { authLogger, maskEmail, maskToken } from "@/lib/auth-handshake-logger";
@@ -93,6 +93,15 @@ async function callConvexMutationHttp<T = any>(
   }
 }
 
+function cleanConvexErrorMessage(raw: unknown): string {
+  if (!raw) return "Invalid email or password.";
+  let msg = typeof raw === "string" ? raw : raw instanceof Error ? raw.message : String(raw);
+  msg = msg.replace(/\[Request ID: [^\]]+\]\s*Server Error/gi, "").trim();
+  msg = msg.replace(/Uncaught Error:\s*/gi, "").trim();
+  msg = msg.split(/\n?\s*at\s+/)[0].trim();
+  return msg || "Invalid email or password.";
+}
+
 export function useAuth() {
   const [localUser, setLocalUser] = useState<AuthUser | null>(() => getActiveSession());
   const [isInitializing, setIsInitializing] = useState(true);
@@ -100,13 +109,13 @@ export function useAuth() {
   const rawConvexUser = useQuery(api.users.currentUser);
   const { signOut: convexSignOut } = useAuthActions();
 
-  // Convex Mutations for Reliable Auth & Persistence
+  // Convex Mutations and Actions for Reliable Auth & Persistence
   const verifyRegistrationOTPMutation = useMutation(api.otp.verifyRegistrationOTP);
   const verifyLoginOTPMutation = useMutation(api.otp.verifyLoginOTP);
+  const requestPasswordResetOTPAction = useAction(api.otp.requestPasswordResetOTP);
   const verifyPasswordResetOTPMutation = useMutation(api.otp.verifyPasswordResetOTP);
   const passwordLoginMutation = useMutation(api.otp.passwordLogin);
   const registerWithPasswordMutation = useMutation(api.otp.registerWithPassword);
-  const quickDemoLoginMutation = useMutation(api.users.quickDemoLogin);
 
   // Synchronize session across windows, tabs, and mobile storage changes
   useEffect(() => {
@@ -200,7 +209,7 @@ export function useAuth() {
     }
   }, [convexSignOut]);
 
-  // Direct Registration with Password (instant onboarding & session sync)
+  // Direct Registration with Password (authoritative Convex backend persistence)
   const handleRegisterWithPassword = useCallback(
     async (params: RegisterParams): Promise<{ success: boolean; user?: AuthUser; error?: string }> => {
       try {
@@ -223,39 +232,17 @@ export function useAuth() {
             user: authUser,
           };
         }
-      } catch (err) {
-        console.warn("[Auth] Backend registration mutation delayed or failed, registering local account:", err);
-        const cleanEmail = params.email.trim().toLowerCase();
-        const localUser: StoredAccount = {
-          _id: `user_reg_${Date.now()}`,
-          name: params.name.trim(),
-          email: cleanEmail,
-          role: params.role,
-          passwordHash: params.password,
-          isEmailVerified: true,
-          accountStatus: "active",
-          createdAt: Date.now(),
-        };
-        const users = getRegisteredUsers();
-        const existingIdx = users.findIndex((u) => u.email.toLowerCase() === cleanEmail);
-        if (existingIdx >= 0) {
-          users[existingIdx] = localUser;
-        } else {
-          users.push(localUser);
-        }
-        saveRegisteredUsers(users);
-        const { passwordHash: _, ...authUser } = localUser;
-        setActiveSession(authUser);
-        setLocalUser(authUser);
         return {
-          success: true,
-          user: authUser,
+          success: false,
+          error: "Registration could not be completed. Please try again.",
+        };
+      } catch (err) {
+        const cleanMsg = cleanConvexErrorMessage(err);
+        return {
+          success: false,
+          error: cleanMsg || "Registration failed. Please check your details and try again.",
         };
       }
-      return {
-        success: false,
-        error: "Registration could not be completed.",
-      };
     },
     [registerWithPasswordMutation],
   );
@@ -356,6 +343,8 @@ export function useAuth() {
       }
 
       const isSuperAdminEmail = cleanEmail === "istihadahmed1163@gmail.com";
+      const effectivePassword = cleanPassword;
+
       const startTime = performance.now();
 
       authLogger.info("Handshake:Start", "Initiating multi-channel authentication handshake", {
@@ -373,73 +362,68 @@ export function useAuth() {
         // Direct HTTPS POST is immune to mobile WebSocket stall / sleep / cellular proxy delays
         const httpPromise = callConvexMutationHttp<{ success: boolean; user?: AuthUser; token?: string }>(
           "otp:passwordLogin",
-          { email: cleanEmail, password: cleanPassword },
+          { email: cleanEmail, password: effectivePassword },
           5000,
-        ).then((res) => {
-          authLogger.info("Handshake:HTTP", "Direct HTTPS login responded", {
-            success: res?.success,
-            hasUser: Boolean(res?.user),
-            tokenPresent: Boolean(res?.token),
-            tokenSnippet: maskToken(res?.token),
+        )
+          .then((res) => {
+            authLogger.info("Handshake:HTTP", "Direct HTTPS login responded", {
+              success: res?.success,
+              hasUser: Boolean(res?.user),
+              tokenPresent: Boolean(res?.token),
+              tokenSnippet: maskToken(res?.token),
+            });
+            return { ...res, channel: "http" as const, error: undefined };
+          })
+          .catch((err) => {
+            const cleanMsg = cleanConvexErrorMessage(err);
+            return { success: false, user: undefined, error: cleanMsg, channel: "http" as const };
           });
-          return { ...res, channel: "http" as const };
-        });
 
         const wsPromise = passwordLoginMutation({
           email: cleanEmail,
-          password: cleanPassword,
-        }).then((res) => {
-          authLogger.info("Handshake:WebSocket", "WebSocket mutation responded", {
-            success: Boolean(res),
-            hasUser: Boolean((res as { user?: AuthUser })?.user),
+          password: effectivePassword,
+        })
+          .then((res) => {
+            authLogger.info("Handshake:WebSocket", "WebSocket mutation responded", {
+              success: Boolean(res),
+              hasUser: Boolean((res as { user?: AuthUser })?.user),
+            });
+            return { ...(res as { success: boolean; user?: AuthUser }), channel: "websocket" as const, error: undefined };
+          })
+          .catch((err) => {
+            const cleanMsg = cleanConvexErrorMessage(err);
+            return { success: false, user: undefined, error: cleanMsg, channel: "websocket" as const };
           });
-          return { ...(res as { success: boolean; user?: AuthUser }), channel: "websocket" as const };
-        });
 
-        // Whichever channel responds first wins!
-        const res = await Promise.race([httpPromise, wsPromise]);
-        if (res?.user) {
-          serverUser = res.user as AuthUser;
-          handshakeChannel = res.channel;
+        // Fast path: whichever channel succeeds with an authenticated user wins
+        const fastResult = await Promise.race([
+          httpPromise.then((r) => (r.success && r.user ? r : new Promise<never>(() => {}))),
+          wsPromise.then((r) => (r.success && r.user ? r : new Promise<never>(() => {}))),
+          new Promise<null>((resolve) => setTimeout(() => resolve(null), 3000)),
+        ]);
+
+        if (fastResult && fastResult.user) {
+          serverUser = fastResult.user as AuthUser;
+          handshakeChannel = fastResult.channel;
+        } else {
+          // If neither immediately succeeded, await both settled results
+          const [httpRes, wsRes] = await Promise.all([httpPromise, wsPromise]);
+          if (httpRes.success && httpRes.user) {
+            serverUser = httpRes.user as AuthUser;
+            handshakeChannel = "http";
+          } else if (wsRes.success && wsRes.user) {
+            serverUser = wsRes.user as AuthUser;
+            handshakeChannel = "websocket";
+          } else {
+            // Both channels failed, capture the authoritative error
+            serverError = wsRes.error || httpRes.error || null;
+          }
         }
       } catch (err: unknown) {
         authLogger.warn("Handshake:PrimaryChannelError", "Primary login attempt encountered an issue", {
           error: err instanceof Error ? `${err.name}: ${err.message}` : String(err),
         });
-        const errMsg = err instanceof Error ? err.message : String(err);
-
-        if (
-          errMsg.includes("Invalid password") ||
-          errMsg.includes("suspended") ||
-          errMsg.includes("locked")
-        ) {
-          serverError = errMsg;
-        } else {
-          // If WebSocket or primary attempt errored, try direct HTTP individually
-          try {
-            const httpRes = await callConvexMutationHttp<{ success: boolean; user?: AuthUser; token?: string }>(
-              "otp:passwordLogin",
-              { email: cleanEmail, password: cleanPassword },
-              5000,
-            );
-            if (httpRes?.user) {
-              serverUser = httpRes.user as AuthUser;
-              handshakeChannel = "http-fallback";
-            }
-          } catch (httpErr: unknown) {
-            const hMsg = httpErr instanceof Error ? httpErr.message : String(httpErr);
-            authLogger.warn("Handshake:HttpFallbackError", "HTTP fallback login failed", {
-              error: hMsg,
-            });
-            if (
-              hMsg.includes("Invalid password") ||
-              hMsg.includes("suspended") ||
-              hMsg.includes("locked")
-            ) {
-              serverError = hMsg;
-            }
-          }
-        }
+        serverError = cleanConvexErrorMessage(err);
       }
 
       if (serverUser) {
@@ -472,132 +456,32 @@ export function useAuth() {
         };
       }
 
-      // If server returned an explicit auth rejection (e.g. wrong password), display that directly unless superadmin
-      if (serverError && !isSuperAdminEmail) {
-        authLogger.info("Handshake:Rejected", "Server rejected credentials", {
-          serverError,
-          maskedEmail: maskEmail(cleanEmail),
-        });
-        return {
-          success: false,
-          error: serverError,
-        };
-      }
-
-      // Self-healing local/offline fallback
-      authLogger.info("Handshake:Fallback", "Invoking local offline account store", {
-        maskedEmail: maskEmail(cleanEmail),
-      });
-      const localRes = loginUser(cleanEmail, cleanPassword);
-      if (localRes.success && localRes.user) {
-        const finalUser = localRes.user;
-        if (isSuperAdminEmail) {
-          finalUser.role = "admin";
-          if (!finalUser.name || finalUser.name === "Member") {
-            finalUser.name = "Istihad Ahmed";
-          }
-        }
-        try {
-          setActiveSession(finalUser);
-          authLogger.info("Handshake:OfflineStorageSuccess", "Offline session stored successfully", {
-            userRole: finalUser.role,
-            maskedEmail: maskEmail(finalUser.email),
-          });
-        } catch (storageErr) {
-          authLogger.warn("Handshake:OfflineStorageError", "Could not persist offline session", {
-            error: storageErr instanceof Error ? storageErr.message : String(storageErr),
-          });
-        }
-        setLocalUser(finalUser);
-        return {
-          success: true,
-          user: finalUser,
-        };
-      }
-
-      authLogger.warn("Handshake:Failed", "All authentication channels failed", {
+      // If server returned an explicit auth rejection or error, display that directly
+      authLogger.warn("Handshake:Failed", "Authentication failed", {
         serverError,
-        localError: localRes.error,
         durationMs: Math.round(performance.now() - startTime),
       });
 
       return {
         success: false,
-        error: serverError || localRes.error || "Invalid email or password. Please check your credentials.",
+        error: serverError || "Invalid email or password. Please check your credentials.",
       };
     },
     [passwordLoginMutation],
   );
 
-  // Quick Demo Login (One-click instant login for testing & previews)
+  // Demo accounts are disabled in production - platform operates on real accounts only
   const handleQuickDemoLogin = useCallback(
     async (
-      role: "student" | "teacher" | "parent",
-      demoType?: string,
+      _role: "student" | "teacher" | "parent" | "admin",
+      _demoType?: string,
     ): Promise<{ success: boolean; user?: AuthUser; error?: string }> => {
-      try {
-        const res = await withTimeout(
-          quickDemoLoginMutation({ role, demoType }),
-          5000,
-          "Quick demo login delayed.",
-        );
-        if (res?.user) {
-          const authUser = res.user as AuthUser;
-          setActiveSession(authUser);
-          setLocalUser(authUser);
-          return {
-            success: true,
-            user: authUser,
-          };
-        }
-      } catch (err) {
-        console.warn("[Auth] Quick demo server call timed out or failed, activating instant local profile:", err);
-      }
-
-      // Guaranteed instantaneous fallback user
-      const fallbackUsers: Record<string, AuthUser> = {
-        student: {
-          _id: "demo_student_01",
-          name: "Alex Rivera",
-          email: "alex.rivera@liveclass.edu",
-          role: "student",
-          isEmailVerified: true,
-          accountStatus: "active",
-          institution: "Oakridge High Academy",
-          grade: "Grade 11",
-          subjects: ["Mathematics", "Physics", "Chemistry"],
-        },
-        teacher: {
-          _id: "demo_teacher_01",
-          name: demoType === "language" ? "Prof. Marcus Vance" : "Dr. Sarah Chen",
-          email: demoType === "language" ? "marcus.vance@virtualtutorpro.com" : "sarah.chen@virtualtutorpro.com",
-          role: "teacher",
-          isEmailVerified: true,
-          accountStatus: "active",
-          title: demoType === "language" ? "Senior IELTS & Spanish Language Specialist" : "Senior AP Calculus & Physics Specialist",
-          subjects: demoType === "language" ? ["English", "Spanish", "IELTS Preparation"] : ["Mathematics", "Calculus", "Physics"],
-          hourlyRate: 45,
-          rating: 4.95,
-        },
-        parent: {
-          _id: "demo_parent_01",
-          name: "Elena Rivera",
-          email: "elena.rivera@parent.edu",
-          role: "parent",
-          isEmailVerified: true,
-          accountStatus: "active",
-        },
-      };
-
-      const fallbackUser = fallbackUsers[role] || fallbackUsers.student;
-      setActiveSession(fallbackUser);
-      setLocalUser(fallbackUser);
       return {
-        success: true,
-        user: fallbackUser,
+        success: false,
+        error: "Demo accounts have been disabled. Please log in with your registered account.",
       };
     },
-    [quickDemoLoginMutation],
+    [],
   );
 
   // Request Passwordless Login OTP
@@ -660,7 +544,7 @@ export function useAuth() {
     [verifyLoginOTPMutation],
   );
 
-  // Request Password Reset OTP
+  // Request Password Reset OTP (Dispatches real email with secure OTP from Convex)
   const handleRequestResetOTP = useCallback(
     async (email: string): Promise<{
       success: boolean;
@@ -676,88 +560,79 @@ export function useAuth() {
           error: "Please enter a valid email address.",
         };
       }
+      try {
+        await withTimeout(
+          requestPasswordResetOTPAction({ email: cleanEmail }),
+          10000,
+          "Password reset request timed out.",
+        );
+        return {
+          success: true,
+          email: cleanEmail,
+          expiresAt: Date.now() + 10 * 60 * 1000,
+          cooldownSeconds: 60,
+        };
+      } catch (err) {
+        const cleanMsg = cleanConvexErrorMessage(err);
+        return {
+          success: false,
+          error: cleanMsg || "Unable to send password reset code. Please try again.",
+        };
+      }
+    },
+    [requestPasswordResetOTPAction],
+  );
+
+  // Direct Password Reset via Verified Token/OTP
+  const handleResetPassword = useCallback(
+    async (email: string, _newPass: string): Promise<{ success: boolean; message?: string; error?: string }> => {
+      const cleanEmail = email.trim().toLowerCase();
+      if (!cleanEmail || !cleanEmail.includes("@")) {
+        return { success: false, error: "Please enter a valid email address." };
+      }
       return {
-        success: true,
-        email: cleanEmail,
-        expiresAt: Date.now() + 15 * 60 * 1000,
-        cooldownSeconds: 60,
+        success: false,
+        error: "Password reset requires email verification code.",
       };
     },
     [],
   );
 
-  // Direct Password Reset
-  const handleResetPassword = useCallback(
-    async (email: string, newPass: string): Promise<{ success: boolean; message?: string; error?: string }> => {
+  // Verify Password Reset OTP & Set New Password in Convex
+  const handleVerifyResetOTP = useCallback(
+    async (email: string, code: string, newPass: string): Promise<{ success: boolean; message?: string; error?: string }> => {
       const cleanEmail = email.trim().toLowerCase();
-      if (!cleanEmail || !cleanEmail.includes("@")) {
-        return { success: false, error: "Please enter a valid email address." };
+      const cleanCode = code.trim().replace(/\D/g, "");
+      if (cleanCode.length !== 6) {
+        return { success: false, error: "Please enter the 6-digit reset code." };
       }
       if (!newPass || newPass.length < 8) {
         return { success: false, error: "Password must be at least 8 characters long." };
       }
 
       try {
-        const users = getRegisteredUsers();
-        const index = users.findIndex((u) => u.email.toLowerCase() === cleanEmail);
-        if (index >= 0) {
-          users[index].passwordHash = newPass;
-          saveRegisteredUsers(users);
-          return {
-            success: true,
-            message: "Password updated successfully. You can now log in.",
-          };
-        }
-
-        const newRecord = {
-          _id: `user_${Date.now()}`,
-          name: cleanEmail.split("@")[0],
-          email: cleanEmail,
-          role: "student" as const,
-          passwordHash: newPass,
-          isEmailVerified: true,
-          accountStatus: "active" as const,
-          createdAt: Date.now(),
-        };
-        users.push(newRecord);
-        saveRegisteredUsers(users);
-
-        return {
-          success: true,
-          message: "Password updated successfully. You can now log in.",
-        };
-      } catch (err) {
-        return {
-          success: false,
-          error: err instanceof Error ? err.message : "Password reset failed.",
-        };
-      }
-    },
-    [],
-  );
-
-  // Verify Password Reset OTP & Set New Password
-  const handleVerifyResetOTP = useCallback(
-    async (email: string, code: string, newPass: string): Promise<{ success: boolean; message?: string; error?: string }> => {
-      try {
         const res = await withTimeout(
           verifyPasswordResetOTPMutation({
-            email,
-            code,
+            email: cleanEmail,
+            code: cleanCode,
             newPassword: newPass,
           }),
-          5000,
+          10000,
           "Password reset request timed out.",
         );
         return {
           success: true,
-          message: res?.message,
+          message: res?.message || "Password reset successfully. You can now log in.",
         };
       } catch (err) {
-        return handleResetPassword(email, newPass);
+        const cleanMsg = cleanConvexErrorMessage(err);
+        return {
+          success: false,
+          error: cleanMsg || "Failed to reset password. Please check your verification code.",
+        };
       }
     },
-    [verifyPasswordResetOTPMutation, handleResetPassword],
+    [verifyPasswordResetOTPMutation],
   );
 
   const handleUpdateProfile = useCallback((updates: Partial<AuthUser>) => {

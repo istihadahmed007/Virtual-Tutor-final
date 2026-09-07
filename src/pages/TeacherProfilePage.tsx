@@ -429,20 +429,8 @@ export default function TeacherProfilePage() {
                       </div>
                     ))
                   ) : (
-                    // Default authentic verified student testimonials for seed teacher
-                    <div className="p-4 bg-slate-50/70 rounded-xl border border-slate-200/60 space-y-1.5">
-                      <div className="flex items-center justify-between">
-                        <span className="text-xs font-bold text-slate-900">Alex M. (AP Student)</span>
-                        <div className="flex items-center gap-0.5">
-                          {[1, 2, 3, 4, 5].map((s) => (
-                            <Star key={s} className="w-3.5 h-3.5 fill-amber-400 text-amber-400" />
-                          ))}
-                        </div>
-                      </div>
-                      <p className="text-xs sm:text-sm text-slate-600 leading-relaxed">
-                        "Outstanding instruction! Helped me transition from struggling with complex problem sets to scoring a 5 on my AP exam. The live whiteboard step-by-step breakdowns made all the difference."
-                      </p>
-                      <p className="text-[10px] text-slate-400">Verified Student Session</p>
+                    <div className="py-6 text-center text-slate-500 text-xs">
+                      No student reviews yet. Reviews will appear here once verified lessons are completed.
                     </div>
                   )}
                 </div>
