@@ -35,6 +35,7 @@ import {
   getClientDiagnostics,
   checkRedirectLoop,
 } from "@/lib/auth-handshake-logger";
+import { BrandLogo } from "@/components/BrandLogo";
 
 const logo = "/logo.svg";
 
@@ -304,7 +305,7 @@ export default function Auth({ redirectAfterAuth }: AuthProps = {}) {
       }
 
       if ((res as any).directLoggedIn) {
-        setSuccessMessage("Account created successfully! Welcome to Virtual Tutor Pro.");
+        setSuccessMessage("Account created successfully! Welcome to ভার্চুয়াল টিউটর.");
         const target =
           selectedRole === "teacher" || (res as any).user?.role === "teacher"
             ? "/teacher-application"
@@ -367,7 +368,7 @@ export default function Auth({ redirectAfterAuth }: AuthProps = {}) {
         return;
       }
 
-      setSuccessMessage("Email verified! Welcome to Virtual Tutor Pro.");
+      setSuccessMessage("Email verified! Welcome to ভার্চুয়াল টিউটর.");
 
       // Two-Stage Onboarding: Teachers are directed to complete their teacher application & onboarding
       if (selectedRole === "teacher" || res.user?.role === "teacher") {
@@ -572,11 +573,8 @@ export default function Auth({ redirectAfterAuth }: AuthProps = {}) {
     <div className="min-h-screen bg-[#F8FAFC] flex flex-col justify-center py-12 sm:px-6 lg:px-8">
       {/* Brand Header */}
       <div className="sm:mx-auto sm:w-full sm:max-w-md text-center mb-6">
-        <div className="inline-flex items-center justify-center gap-2 mb-3 cursor-pointer" onClick={() => navigate("/")}>
-          <img src={logo} alt="Virtual Tutor Pro" className="w-10 h-10 object-contain" />
-          <span className="text-2xl font-bold text-slate-900 tracking-tight">
-            Virtual Tutor <span className="text-teal-600">Pro</span>
-          </span>
+        <div className="inline-flex items-center justify-center mb-2 cursor-pointer hover:opacity-90 transition-opacity" onClick={() => navigate("/")}>
+          <BrandLogo variant="horizontal" size="lg" />
         </div>
       </div>
 
@@ -730,7 +728,7 @@ export default function Auth({ redirectAfterAuth }: AuthProps = {}) {
                   <CardHeader className="pb-3 pt-6 px-6">
                     <CardTitle className="text-2xl font-bold text-slate-900">Create your account</CardTitle>
                     <CardDescription className="text-sm text-slate-500">
-                      Join Virtual Tutor Pro to access live classrooms and interactive learning.
+                      Join ভার্চুয়াল টিউটর to access live classrooms and interactive learning.
                     </CardDescription>
                   </CardHeader>
 
@@ -937,7 +935,7 @@ export default function Auth({ redirectAfterAuth }: AuthProps = {}) {
                   <CardHeader className="pb-3 pt-6 px-6">
                     <CardTitle className="text-2xl font-bold text-slate-900">Welcome back</CardTitle>
                     <CardDescription className="text-sm text-slate-500">
-                      Sign in to your Virtual Tutor Pro account.
+                      Sign in to your account.
                     </CardDescription>
                   </CardHeader>
 

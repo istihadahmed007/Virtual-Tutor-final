@@ -11,6 +11,7 @@ import { createOrGetLocalConversation } from "@/lib/messages-store";
 import { Button } from "@/components/ui/button";
 import { EmptyState } from "@/components/EmptyState";
 import { TeacherCard } from "@/components/teachers/TeacherCard";
+import { SEO } from "@/components/SEO";
 import { 
   TeacherFilters, 
   FilterState 
@@ -223,6 +224,19 @@ export default function TeachersPage() {
 
   return (
     <main className="min-h-screen bg-[#FAFAF8] pb-16">
+      <SEO
+        title="Find Verified Tutors & Educators"
+        description="Explore verified, top-tier tutors across mathematics, sciences, languages, and test preparation with transparent monthly tuition plans in Bangladeshi Taka."
+        keywords={[
+          "verified tutors",
+          "math tutor",
+          "physics educator",
+          "STEM tutoring",
+          "monthly tuition plan",
+          "hire tutor online",
+          "Virtual Tutor Pro",
+        ]}
+      />
       {/* Header Bar */}
       <div className="bg-white border-b border-slate-200/80 shadow-xs">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-5">

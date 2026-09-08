@@ -14,6 +14,7 @@ import { EmptyState } from "@/components/EmptyState";
 import { TeacherProfileHeader } from "@/components/teachers/TeacherProfileHeader";
 import { AvailabilityPreview } from "@/components/teachers/AvailabilityPreview";
 import { BookingSummary, BookingDetails } from "@/components/teachers/BookingSummary";
+import { SEO } from "@/components/SEO";
 import { useAuth } from "@/hooks/use-auth";
 import { toast } from "sonner";
 import {
@@ -179,6 +180,24 @@ export default function TeacherProfilePage() {
 
   return (
     <main className="min-h-screen bg-[#FAFAF8] pb-16">
+      <SEO
+        title={`${teacher.name} - ${teacher.title || teacher.subjects.join(", ") || "Educator"}`}
+        description={
+          teacher.bio
+            ? teacher.bio.slice(0, 160)
+            : `Book online lessons with ${teacher.name}, verified educator specializing in ${teacher.subjects.join(", ")} on Virtual Tutor Pro.`
+        }
+        ogType="profile"
+        ogImage={teacher.avatarUrl}
+        keywords={[teacher.name, ...teacher.subjects, "online tutor", "tutoring", "Virtual Tutor Pro"]}
+        structuredData={{
+          "@type": "Person",
+          name: teacher.name,
+          jobTitle: teacher.title || "Educator",
+          description: teacher.bio,
+          image: teacher.avatarUrl,
+        }}
+      />
       {/* Top Navigation Bar */}
       <header className="bg-white border-b border-slate-200/80 shadow-2xs">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 h-14 flex items-center justify-between">

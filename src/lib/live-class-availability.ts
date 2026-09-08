@@ -137,23 +137,32 @@ export function verifyLessonUserAuthorization(
   }
 
   // 3. Teacher check
-  if (
-    userId === lesson.teacherId ||
-    userRole === "teacher"
-  ) {
+  if (lesson.teacherId) {
+    if (userId === lesson.teacherId) {
+      return {
+        isAuthorized: true,
+        role: "teacher",
+        reason: "Authorized as assigned course instructor.",
+      };
+    }
+  } else if (userRole === "teacher") {
     return {
       isAuthorized: true,
       role: "teacher",
-      reason: "Authorized as assigned course instructor.",
+      reason: "Authorized as course instructor.",
     };
   }
 
   // 4. Student check
-  if (
-    userId === lesson.studentId ||
-    userRole === "student" ||
-    userRole === "user"
-  ) {
+  if (lesson.studentId) {
+    if (userId === lesson.studentId) {
+      return {
+        isAuthorized: true,
+        role: "student",
+        reason: "Authorized as enrolled student.",
+      };
+    }
+  } else if (userRole === "student" || userRole === "user") {
     return {
       isAuthorized: true,
       role: "student",
@@ -170,11 +179,11 @@ export function verifyLessonUserAuthorization(
     };
   }
 
-  // 6. Safe fallback for any logged-in user
+  // 6. If user is neither assigned teacher nor assigned student, reject
   return {
-    isAuthorized: true,
-    role: (userRole === "teacher" ? "teacher" : "student") as "teacher" | "student",
-    reason: "Authorized as classroom participant.",
+    isAuthorized: false,
+    role: "unauthorized",
+    reason: "You are not enrolled or assigned to this scheduled lesson.",
   };
 }
 

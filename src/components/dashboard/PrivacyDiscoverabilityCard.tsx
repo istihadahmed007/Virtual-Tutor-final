@@ -100,7 +100,7 @@ export function PrivacyDiscoverabilityCard({
             <span>Who Can Discover You</span>
           </div>
           <p className="text-slate-500 leading-relaxed">
-            Only verified, identity-checked educators on Virtual Tutor Pro can view discoverable student requests.
+            Only verified, identity-checked educators on ভার্চুয়াল টিউটর can view discoverable student requests.
           </p>
         </div>
 

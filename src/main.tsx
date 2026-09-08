@@ -12,6 +12,8 @@ import { BrowserRouter, Route, Routes, Navigate, useLocation } from "react-route
 import { ErrorBoundary } from "@/components/ErrorBoundary";
 import { RouteErrorBoundary } from "@/components/RouteErrorBoundary";
 import { errorTracker } from "@/lib/error-tracker";
+import { HelmetProvider } from "react-helmet-async";
+import { AppHelmet } from "@/components/AppHelmet";
 import "./index.css";
 
 // Core views loaded synchronously to prevent dynamic import fetch issues
@@ -121,6 +123,7 @@ function AppShell({ children }: { children: React.ReactNode }) {
 
   return (
     <div className={`min-h-screen bg-[#FAFAF8] ${isMobileActiveChat ? "pb-0" : "pb-16 md:pb-0"}`}>
+      <AppHelmet />
       <Navigation />
       {children}
     </div>
@@ -190,60 +193,63 @@ const root = existingRoot || createRoot(container);
 root.render(
   <StrictMode>
     <ErrorBoundary name="RootApp">
-      <ConvexAuthProvider
-        client={convex}
-        storage={loggedConvexAuthStorage}
-        shouldHandleCode={false}
-      >
-        <BrowserRouter>
-          <RouteErrorBoundary>
-            <Suspense fallback={<RouteLoading />}>
-              <Routes>
-                <Route path="/" element={<Landing />} />
-                <Route path="/auth" element={<AuthPage redirectAfterAuth="/dashboard" />} />
-                <Route path="/classroom" element={<RequireAuth><ClassroomPage /></RequireAuth>} />
-                <Route path="/classroom/:lessonId" element={<RequireAuth><ClassroomPage /></RequireAuth>} />
-                <Route path="/dashboard" element={<RequireAuth><AppShell><Dashboard /></AppShell></RequireAuth>} />
-                <Route path="/teachers" element={<RequireAuth><AppShell><TeachersPage /></AppShell></RequireAuth>} />
-                <Route path="/students" element={<RequireAuth><AppShell><StudentsPage /></AppShell></RequireAuth>} />
-                <Route path="/teachers/:id" element={<RequireAuth><AppShell><TeacherProfilePage /></AppShell></RequireAuth>} />
-                <Route path="/lessons" element={<RequireAuth><AppShell><LessonsPage /></AppShell></RequireAuth>} />
-                <Route path="/calendar" element={<RequireAuth><AppShell><CalendarPage /></AppShell></RequireAuth>} />
-                <Route path="/assignments" element={<RequireAuth><AppShell><AssignmentsPage /></AppShell></RequireAuth>} />
-                <Route path="/progress" element={<RequireAuth><AppShell><ProgressPage /></AppShell></RequireAuth>} />
-                <Route path="/ai-assistant" element={<RequireAuth><AppShell><AiAssistantPage /></AppShell></RequireAuth>} />
-                <Route path="/profile" element={<RequireAuth><AppShell><ProfilePage /></AppShell></RequireAuth>} />
-                <Route path="/teacher-application" element={<RequireAuth><AppShell><TeacherApplicationPage /></AppShell></RequireAuth>} />
-                <Route path="/teacher-dashboard" element={<RequireApprovedTeacher><AppShell><TeacherDashboard /></AppShell></RequireApprovedTeacher>} />
-                <Route path="/messages" element={<RequireAuth><AppShell><MessagesPage /></AppShell></RequireAuth>} />
-                <Route path="/community" element={<RequireAuth><AppShell><CommunityPage /></AppShell></RequireAuth>} />
-                <Route path="/resume-builder" element={<ResumeBuilder />} />
+      <HelmetProvider>
+        <ConvexAuthProvider
+          client={convex}
+          storage={loggedConvexAuthStorage}
+          shouldHandleCode={false}
+        >
+          <BrowserRouter>
+            <AppHelmet />
+            <RouteErrorBoundary>
+              <Suspense fallback={<RouteLoading />}>
+                <Routes>
+                  <Route path="/" element={<Landing />} />
+                  <Route path="/auth" element={<AuthPage redirectAfterAuth="/dashboard" />} />
+                  <Route path="/classroom" element={<RequireAuth><ClassroomPage /></RequireAuth>} />
+                  <Route path="/classroom/:lessonId" element={<RequireAuth><ClassroomPage /></RequireAuth>} />
+                  <Route path="/dashboard" element={<RequireAuth><AppShell><Dashboard /></AppShell></RequireAuth>} />
+                  <Route path="/teachers" element={<RequireAuth><AppShell><TeachersPage /></AppShell></RequireAuth>} />
+                  <Route path="/students" element={<RequireAuth><AppShell><StudentsPage /></AppShell></RequireAuth>} />
+                  <Route path="/teachers/:id" element={<RequireAuth><AppShell><TeacherProfilePage /></AppShell></RequireAuth>} />
+                  <Route path="/lessons" element={<RequireAuth><AppShell><LessonsPage /></AppShell></RequireAuth>} />
+                  <Route path="/calendar" element={<RequireAuth><AppShell><CalendarPage /></AppShell></RequireAuth>} />
+                  <Route path="/assignments" element={<RequireAuth><AppShell><AssignmentsPage /></AppShell></RequireAuth>} />
+                  <Route path="/progress" element={<RequireAuth><AppShell><ProgressPage /></AppShell></RequireAuth>} />
+                  <Route path="/ai-assistant" element={<RequireAuth><AppShell><AiAssistantPage /></AppShell></RequireAuth>} />
+                  <Route path="/profile" element={<RequireAuth><AppShell><ProfilePage /></AppShell></RequireAuth>} />
+                  <Route path="/teacher-application" element={<RequireAuth><AppShell><TeacherApplicationPage /></AppShell></RequireAuth>} />
+                  <Route path="/teacher-dashboard" element={<RequireApprovedTeacher><AppShell><TeacherDashboard /></AppShell></RequireApprovedTeacher>} />
+                  <Route path="/messages" element={<RequireAuth><AppShell><MessagesPage /></AppShell></RequireAuth>} />
+                  <Route path="/community" element={<RequireAuth><AppShell><CommunityPage /></AppShell></RequireAuth>} />
+                  <Route path="/resume-builder" element={<ResumeBuilder />} />
 
-                {/* Admin Console Dedicated Area */}
-                <Route path="/admin" element={<RequireAdmin><AdminLayout><AdminDashboard /></AdminLayout></RequireAdmin>} />
-                <Route path="/admin/applications" element={<RequireAdmin><AdminLayout><AdminApplicationsPage /></AdminLayout></RequireAdmin>} />
-                <Route path="/admin/verification" element={<RequireAdmin><AdminLayout><AdminVerificationPage /></AdminLayout></RequireAdmin>} />
-                <Route path="/admin/users" element={<RequireAdmin><AdminLayout><AdminUsersPage /></AdminLayout></RequireAdmin>} />
-                <Route path="/admin/teachers" element={<RequireAdmin><AdminLayout><AdminTeachersPage /></AdminLayout></RequireAdmin>} />
-                <Route path="/admin/students" element={<RequireAdmin><AdminLayout><AdminStudentsPage /></AdminLayout></RequireAdmin>} />
-                <Route path="/admin/bookings" element={<RequireAdmin><AdminLayout><AdminBookingsPage /></AdminLayout></RequireAdmin>} />
-                <Route path="/admin/sessions" element={<RequireAdmin><AdminLayout><AdminSessionsPage /></AdminLayout></RequireAdmin>} />
-                <Route path="/admin/reviews" element={<RequireAdmin><AdminLayout><AdminReviewsPage /></AdminLayout></RequireAdmin>} />
-                <Route path="/admin/community" element={<RequireAdmin><AdminLayout><AdminCommunityPage /></AdminLayout></RequireAdmin>} />
-                <Route path="/admin/payments" element={<RequireAdmin><AdminLayout><AdminPaymentsPage /></AdminLayout></RequireAdmin>} />
-                <Route path="/admin/reports" element={<RequireAdmin><AdminLayout><AdminReportsPage /></AdminLayout></RequireAdmin>} />
-                <Route path="/admin/notifications" element={<RequireAdmin><AdminLayout><AdminNotificationsPage /></AdminLayout></RequireAdmin>} />
-                <Route path="/admin/audit-logs" element={<RequireAdmin><AdminLayout><AdminAuditLogsPage /></AdminLayout></RequireAdmin>} />
-                <Route path="/admin/settings" element={<RequireAdmin><AdminLayout><AdminSettingsPage /></AdminLayout></RequireAdmin>} />
-                <Route path="/admin/teacher-applications" element={<Navigate to="/admin/applications" replace />} />
+                  {/* Admin Console Dedicated Area */}
+                  <Route path="/admin" element={<RequireAdmin><AdminLayout><AdminDashboard /></AdminLayout></RequireAdmin>} />
+                  <Route path="/admin/applications" element={<RequireAdmin><AdminLayout><AdminApplicationsPage /></AdminLayout></RequireAdmin>} />
+                  <Route path="/admin/verification" element={<RequireAdmin><AdminLayout><AdminVerificationPage /></AdminLayout></RequireAdmin>} />
+                  <Route path="/admin/users" element={<RequireAdmin><AdminLayout><AdminUsersPage /></AdminLayout></RequireAdmin>} />
+                  <Route path="/admin/teachers" element={<RequireAdmin><AdminLayout><AdminTeachersPage /></AdminLayout></RequireAdmin>} />
+                  <Route path="/admin/students" element={<RequireAdmin><AdminLayout><AdminStudentsPage /></AdminLayout></RequireAdmin>} />
+                  <Route path="/admin/bookings" element={<RequireAdmin><AdminLayout><AdminBookingsPage /></AdminLayout></RequireAdmin>} />
+                  <Route path="/admin/sessions" element={<RequireAdmin><AdminLayout><AdminSessionsPage /></AdminLayout></RequireAdmin>} />
+                  <Route path="/admin/reviews" element={<RequireAdmin><AdminLayout><AdminReviewsPage /></AdminLayout></RequireAdmin>} />
+                  <Route path="/admin/community" element={<RequireAdmin><AdminLayout><AdminCommunityPage /></AdminLayout></RequireAdmin>} />
+                  <Route path="/admin/payments" element={<RequireAdmin><AdminLayout><AdminPaymentsPage /></AdminLayout></RequireAdmin>} />
+                  <Route path="/admin/reports" element={<RequireAdmin><AdminLayout><AdminReportsPage /></AdminLayout></RequireAdmin>} />
+                  <Route path="/admin/notifications" element={<RequireAdmin><AdminLayout><AdminNotificationsPage /></AdminLayout></RequireAdmin>} />
+                  <Route path="/admin/audit-logs" element={<RequireAdmin><AdminLayout><AdminAuditLogsPage /></AdminLayout></RequireAdmin>} />
+                  <Route path="/admin/settings" element={<RequireAdmin><AdminLayout><AdminSettingsPage /></AdminLayout></RequireAdmin>} />
+                  <Route path="/admin/teacher-applications" element={<Navigate to="/admin/applications" replace />} />
 
-                <Route path="*" element={<NotFound />} />
-              </Routes>
-            </Suspense>
-          </RouteErrorBoundary>
-        </BrowserRouter>
-        <Toaster />
-      </ConvexAuthProvider>
+                  <Route path="*" element={<NotFound />} />
+                </Routes>
+              </Suspense>
+            </RouteErrorBoundary>
+          </BrowserRouter>
+          <Toaster />
+        </ConvexAuthProvider>
+      </HelmetProvider>
     </ErrorBoundary>
   </StrictMode>,
 );

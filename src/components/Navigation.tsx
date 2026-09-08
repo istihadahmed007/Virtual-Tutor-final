@@ -6,6 +6,7 @@ import { api } from "@/convex/_generated/api";
 import { useNavigate, useLocation } from "react-router";
 import { ProfileAvatar } from "@/components/ProfileAvatar";
 import { ContactModal } from "@/components/ContactModal";
+import { BrandLogo } from "@/components/BrandLogo";
 import {
   GraduationCap,
   Users,
@@ -111,14 +112,9 @@ export function Navigation() {
                       : "/"
                   )
                 }
-                className="flex items-center gap-2.5 shrink-0 group focus:outline-none"
+                className="flex items-center shrink-0 focus:outline-none focus-visible:ring-2 focus-visible:ring-teal-500 rounded-xl"
               >
-                <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-teal-600 to-teal-700 flex items-center justify-center shadow-md shadow-teal-600/20 group-hover:scale-105 transition-transform">
-                  <GraduationCap className="w-5 h-5 text-white" />
-                </div>
-                <span className="text-xl font-bold text-slate-900 tracking-tight">
-                  Live<span className="text-teal-600">Class</span>
-                </span>
+                <BrandLogo variant="horizontal" size="md" />
               </button>
 
               {/* Desktop Nav */}

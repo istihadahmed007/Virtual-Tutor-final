@@ -30,6 +30,7 @@ import {
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { ErrorLogsViewerModal } from "@/components/ErrorLogsViewerModal";
+import { BrandLogo } from "@/components/BrandLogo";
 
 interface AdminLayoutProps {
   children: ReactNode;
@@ -110,12 +111,14 @@ export function AdminLayout({ children }: AdminLayoutProps) {
           onClick={() => navigate("/admin")}
           className="flex items-center gap-3 cursor-pointer group"
         >
-          <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-teal-500 to-emerald-600 flex items-center justify-center text-white shadow-lg shadow-teal-500/20 group-hover:scale-105 transition-transform">
-            <ShieldCheck className="w-6 h-6" />
+          <div className="w-10 h-10 rounded-xl bg-white p-1 flex items-center justify-center shadow-md group-hover:scale-105 transition-transform shrink-0">
+            <BrandLogo variant="icon" size={32} />
           </div>
           <div>
             <div className="flex items-center gap-1.5">
-              <span className="font-bold text-white tracking-tight text-base">Virtual Tutor Pro</span>
+              <span className="font-bold text-white tracking-tight text-base font-['Hind_Siliguri',sans-serif]">
+                ভার্চুয়াল <span className="text-sky-400">টিউটর</span>
+              </span>
             </div>
             <div className="flex items-center gap-1.5 mt-0.5">
               <span className="inline-flex items-center px-1.5 py-0.2 rounded text-[10px] font-bold bg-teal-500/20 text-teal-400 border border-teal-500/30">

@@ -229,7 +229,7 @@ export function ClassroomPresentation({
                 </div>
 
                 <div className="pt-4 border-t border-stone-200 flex items-center justify-between text-xs text-slate-500">
-                  <span>Virtual Tutor Pro · Verified Learning Material</span>
+                  <span>ভার্চুয়াল টিউটর · Verified Learning Material</span>
                   <span>Page {currentPage} / {totalPages}</span>
                 </div>
               </div>

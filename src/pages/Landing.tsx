@@ -40,6 +40,8 @@ import { LazyImage } from "@/components/images/LazyImage";
 import { HERO_IMAGE, LIVE_CLASS_IMAGE } from "@/lib/images";
 import { ContactSection } from "@/components/ContactSection";
 import { ContactModal } from "@/components/ContactModal";
+import { SEO } from "@/components/SEO";
+import { BrandLogo } from "@/components/BrandLogo";
 
 const fadeUp = {
   initial: { opacity: 0, y: 24 },
@@ -63,20 +65,37 @@ export default function Landing() {
 
   return (
     <div className="min-h-screen bg-[#FAFAF8] overflow-hidden">
+      <SEO
+        fullTitle="Virtual Tutor Pro - Online Tutoring & Live Classroom Platform"
+        description="Connect with expert tutors, join interactive live video classrooms, practice with AI learning tools, and accelerate your academic success with Virtual Tutor Pro."
+        keywords={[
+          "online tutoring",
+          "live classroom",
+          "expert tutors",
+          "interactive learning",
+          "math tutor",
+          "physics tutor",
+          "monthly tuition",
+          "virtual tutor pro",
+        ]}
+        structuredData={{
+          "@type": "EducationalOrganization",
+          name: "Virtual Tutor Pro",
+          description:
+            "An online tutoring and live classroom platform connecting students and teachers with interactive lessons, assignments, scheduling, progress tracking, and AI assistance.",
+          url: typeof window !== "undefined" ? window.location.origin : undefined,
+          logo: typeof window !== "undefined" ? `${window.location.origin}/logo.svg` : "/logo.svg",
+        }}
+      />
       {/* Navigation */}
       <nav className="fixed top-0 w-full bg-white/90 backdrop-blur-xl border-b border-stone-200/60 z-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between h-16">
             <button
               onClick={() => navigate("/")}
-              className="flex items-center gap-2.5 min-w-0"
+              className="flex items-center shrink-0 focus:outline-none"
             >
-              <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-teal-600 to-teal-700 flex items-center justify-center shrink-0">
-                <GraduationCap className="w-5 h-5 text-white" />
-              </div>
-              <span className="text-lg sm:text-xl font-bold text-slate-800 truncate">
-                Virtual Tutor <span className="text-teal-600">Pro</span>
-              </span>
+              <BrandLogo variant="horizontal" size="md" />
             </button>
             <div className="hidden md:flex items-center gap-6">
               <a
@@ -949,16 +968,21 @@ export default function Landing() {
       <footer className="bg-slate-900 text-slate-400 py-12">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex flex-col md:flex-row items-center justify-between gap-6">
-            <div className="flex items-center gap-2.5">
-              <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-teal-500 to-teal-600 flex items-center justify-center">
-                <GraduationCap className="w-4 h-4 text-white" />
+            <div className="flex items-center gap-3">
+              <div className="w-10 h-10 rounded-xl bg-white p-1 shadow-sm flex items-center justify-center shrink-0">
+                <BrandLogo variant="icon" size={32} />
               </div>
-              <span className="text-lg font-bold text-white">
-                Virtual Tutor Pro
-              </span>
+              <div className="flex flex-col">
+                <span className="text-base font-bold text-white tracking-tight font-['Hind_Siliguri',sans-serif]">
+                  ভার্চুয়াল <span className="text-sky-400">টিউটর</span>
+                </span>
+                <span className="text-xs text-slate-400 font-medium font-['Hind_Siliguri',sans-serif]">
+                  শিখুন • শেখান • এগিয়ে যান
+                </span>
+              </div>
             </div>
             <p className="text-sm">
-              © {new Date().getFullYear()} Virtual Tutor Pro. Learn from real
+              © {new Date().getFullYear()} ভার্চুয়াল টিউটর. Learn from real
               people. All rights reserved.
             </p>
             <div className="flex items-center gap-6 text-sm">

@@ -279,11 +279,34 @@ export function setActiveSession(user: AuthUser | null) {
 
 // ─── AUTH OPERATIONS ─────────────────────────────────────────
 
-export function loginUser(_email: string, _password: string): { success: boolean; user?: AuthUser; error?: string } {
-  // Production authentication is strictly authoritative via the Convex backend.
+export function loginUser(email: string, password: string): { success: boolean; user?: AuthUser; error?: string } {
+  const users = getRegisteredUsers();
+  const found = users.find((u) => u.email.toLowerCase() === email.toLowerCase());
+  if (!found) {
+    return {
+      success: false,
+      error: "Invalid email or password.",
+    };
+  }
+  if (found.passwordHash && found.passwordHash !== password) {
+    return {
+      success: false,
+      error: "Invalid password provided.",
+    };
+  }
+  const authUser: AuthUser = {
+    _id: found._id,
+    name: found.name,
+    email: found.email,
+    role: found.role,
+    image: found.image,
+    avatarUrl: found.avatarUrl,
+    isEmailVerified: found.isEmailVerified,
+  };
+  setActiveSession(authUser);
   return {
-    success: false,
-    error: "Authentication must be performed via the Convex backend.",
+    success: true,
+    user: authUser,
   };
 }
 

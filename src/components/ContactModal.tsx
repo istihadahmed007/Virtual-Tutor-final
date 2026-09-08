@@ -148,7 +148,7 @@ export function ContactModal({
                 Contact Support & Inquiries
               </DialogTitle>
               <DialogDescription className="text-xs text-teal-100/90 mt-0.5">
-                Direct communication with Virtual Tutor Pro administration
+                Direct communication with ভার্চুয়াল টিউটর administration
               </DialogDescription>
             </div>
           </div>

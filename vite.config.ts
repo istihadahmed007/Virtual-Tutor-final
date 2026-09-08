@@ -140,7 +140,8 @@ export default defineConfig({
             if (
               id.includes('/node_modules/react/') ||
               id.includes('/node_modules/react-dom/') ||
-              id.includes('/node_modules/react-router/')
+              id.includes('/node_modules/react-router/') ||
+              id.includes('react-helmet-async')
             ) {
               return 'react-vendor';
             }
@@ -189,6 +190,7 @@ export default defineConfig({
       'react-dom',
       'react-dom/client',
       'react-router',
+      'react-helmet-async',
       '@convex-dev/auth/react',
       'framer-motion',
     ],
