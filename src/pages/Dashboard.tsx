@@ -2,36 +2,33 @@ import { useState, useEffect, useMemo } from "react";
 import { useQuery } from "convex/react";
 import { api } from "@/convex/_generated/api";
 import { useAuth } from "@/hooks/use-auth";
-import { Button } from "@/components/ui/button";
-import { PageHeader } from "@/components/PageHeader";
-import { StatCard } from "@/components/StatCard";
-import { StatusBadge } from "@/components/StatusBadge";
+import { useNavigate } from "react-router";
+import {
+  StatBlock,
+  SectionLabel,
+  LessonCard,
+  PillButton,
+  PrimaryButton,
+} from "@/components/redesign";
 import { DashboardEmptyState } from "@/components/dashboard/DashboardEmptyState";
 import { OnboardingChecklist, OnboardingStatus } from "@/components/dashboard/OnboardingChecklist";
 import { WeeklyLearningSummary } from "@/components/dashboard/WeeklyLearningSummary";
 import { NextBestAction, NextActionState } from "@/components/dashboard/NextBestAction";
 import { PrivacyDiscoverabilityCard } from "@/components/dashboard/PrivacyDiscoverabilityCard";
-import { LiveClassAvailability } from "@/components/classroom/LiveClassAvailability";
 import {
-  Video,
-  Users,
-  BookOpen,
-  MessageCircle,
   Calendar,
+  BookOpen,
   TrendingUp,
+  CheckCircle,
+  Users,
+  MessageCircle,
   Sparkles,
   ArrowRight,
-  CheckCircle,
   AlertCircle,
-  Target,
-  GraduationCap,
-  Compass,
-  Search,
-  ChevronRight,
   ShieldCheck,
+  ChevronRight,
   Clock,
 } from "lucide-react";
-import { useNavigate } from "react-router";
 
 export default function Dashboard() {
   const { user } = useAuth();
@@ -44,7 +41,7 @@ export default function Dashboard() {
   const profileStatus = useQuery(api.users.getProfileStatus);
   const studentProfile = useQuery(api.studentProfiles.get);
 
-  // Local student state (for immediate prototype synchronization and testing)
+  // Local student state
   const [localLessons, setLocalLessons] = useState<any[]>([]);
   const [hasViewedTeachers, setHasViewedTeachers] = useState(false);
   const [hasGoals, setHasGoals] = useState(false);
@@ -58,14 +55,19 @@ export default function Dashboard() {
         const parsed = JSON.parse(storedLessons);
         if (Array.isArray(parsed)) {
           const realLessons = parsed.filter(
-            (l) => l && l.teacherId !== "demo_teacher_01" && l.studentId !== "demo_student_01"
+            (l) =>
+              l &&
+              l.teacherId !== "demo_teacher_01" &&
+              l.studentId !== "demo_student_01"
           );
           setLocalLessons(realLessons);
         }
       }
-      setHasViewedTeachers(localStorage.getItem("vtp_has_viewed_teachers") === "true");
+      setHasViewedTeachers(
+        localStorage.getItem("vtp_has_viewed_teachers") === "true"
+      );
       setHasGoals(localStorage.getItem("vtp_student_goals") !== null);
-      
+
       const storedTarget = localStorage.getItem("vtp_weekly_target_hours");
       if (storedTarget) setWeeklyTarget(parseFloat(storedTarget));
 
@@ -97,7 +99,8 @@ export default function Dashboard() {
     hasGoals: hasGoals || !!studentProfile?.subjects?.length,
     hasProfile: !!profileStatus?.isComplete,
     hasViewedTeachers,
-    hasBookedLesson: upcomingLessons.length > 0 || (progress?.classesCompleted ?? 0) > 0,
+    hasBookedLesson:
+      upcomingLessons.length > 0 || (progress?.classesCompleted ?? 0) > 0,
   };
 
   // Determine next best action state for active students
@@ -120,36 +123,66 @@ export default function Dashboard() {
   }, [progress, isNewStudent]);
 
   return (
-    <main className="min-h-screen bg-[#FAFAF8] pb-16">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 lg:py-8">
-        <PageHeader
-          title={`Welcome back${user?.name ? `, ${user.name}` : ""}`}
-          description="Your personalized learning workspace and live tutoring dashboard"
-        />
+    <main className="min-h-screen bg-[#F5F4EF] text-[#111111] pb-24 pt-6 sm:pt-8">
+      <div className="max-w-[1440px] mx-auto px-4 sm:px-8">
+        {/* Editorial Top Heading */}
+        <div className="flex flex-col sm:flex-row sm:items-end justify-between mb-8 sm:mb-10 gap-4">
+          <div>
+            <SectionLabel number="01" text="Learning Workspace" className="mb-3" />
+            <h1 className="text-2xl sm:text-4xl font-medium tracking-[-0.03em] text-[#111111]">
+              Welcome back{user?.name ? `, ${user.name}` : ""}
+            </h1>
+            <p className="text-xs sm:text-sm text-[#111111]/70 mt-1 font-normal">
+              Your personalized schedule, upcoming live classrooms, and progress.
+            </p>
+          </div>
+
+          <div className="flex items-center gap-3">
+            <PillButton
+              variant="white"
+              size="sm"
+              onClick={() => navigate("/teachers")}
+              showArrow
+            >
+              Find Tutors
+            </PillButton>
+            <PrimaryButton
+              size="sm"
+              onClick={() => navigate("/ai-assistant")}
+            >
+              Ask AI Assistant
+            </PrimaryButton>
+          </div>
+        </div>
 
         {/* Profile Completion Alert Banner if incomplete */}
-        {profileStatus && !profileStatus.isComplete && profileStatus.role === "student" && (
-          <div className="bg-amber-50 border border-amber-200/80 rounded-2xl p-4 mb-6 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 shadow-xs">
-            <div className="flex items-center gap-3">
-              <AlertCircle className="w-5 h-5 text-amber-600 shrink-0" />
-              <div>
-                <p className="text-sm font-bold text-amber-900">
-                  Complete your learning profile
-                </p>
-                <p className="text-xs text-amber-700 mt-0.5">
-                  Your profile is {profileStatus.completionPercentage}% complete. Add your target exams and grade to receive curated teacher recommendations.
-                </p>
+        {profileStatus &&
+          !profileStatus.isComplete &&
+          profileStatus.role === "student" && (
+            <div className="bg-white border border-[#F26522]/30 rounded-2xl p-5 mb-8 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 shadow-xs">
+              <div className="flex items-center gap-3.5">
+                <div className="w-10 h-10 rounded-full bg-[#F26522]/10 text-[#F26522] flex items-center justify-center shrink-0">
+                  <AlertCircle className="w-5 h-5" />
+                </div>
+                <div>
+                  <p className="text-sm font-semibold text-[#111111]">
+                    Complete your learning goals & academic profile
+                  </p>
+                  <p className="text-xs text-[#111111]/70 mt-0.5">
+                    Your profile is {profileStatus.completionPercentage}% complete.
+                    Adding target exams helps tutors prepare custom lesson plans.
+                  </p>
+                </div>
               </div>
+              <PrimaryButton
+                size="sm"
+                onClick={() => navigate("/profile")}
+                className="shrink-0"
+              >
+                Complete profile
+              </PrimaryButton>
             </div>
-            <Button
-              size="sm"
-              className="bg-amber-600 hover:bg-amber-700 text-white shrink-0 rounded-xl font-semibold text-xs"
-              onClick={() => navigate("/profile")}
-            >
-              Complete profile
-            </Button>
-          </div>
-        )}
+          )}
 
         {/* =========================================================================
             STATE-AWARE HERO WORKSPACE:
@@ -157,79 +190,91 @@ export default function Dashboard() {
             ACTIVE STUDENT: NextBestAction & WeeklyLearningSummary
         ========================================================================= */}
         {isNewStudent ? (
-          <div className="mb-8">
+          <div className="mb-10 bg-white rounded-3xl border border-[#E5E4DE] p-6 sm:p-8">
             <OnboardingChecklist
               status={onboardingStatus}
-              onUpdateGoals={(subjects) => {
+              onUpdateGoals={() => {
                 setHasGoals(true);
               }}
             />
           </div>
         ) : (
-          <div className="space-y-6 mb-8">
+          <div className="space-y-6 mb-10">
             {/* Contextual Next Best Action Banner */}
-            <NextBestAction
-              state={nextActionState}
-              lesson={nextLesson}
-              pendingAssignment={pendingAssignments[0]}
-              completedLessonsCount={progress?.classesCompleted ?? 0}
-            />
+            <div className="bg-white rounded-3xl border border-[#E5E4DE] p-6 sm:p-8">
+              <NextBestAction
+                state={nextActionState}
+                lesson={nextLesson}
+                pendingAssignment={pendingAssignments[0]}
+                completedLessonsCount={progress?.classesCompleted ?? 0}
+              />
+            </div>
 
             {/* Active Student Weekly Workspace Summary */}
-            <WeeklyLearningSummary
-              nextLesson={nextLesson}
-              pendingAssignmentsCount={pendingAssignments.length}
-              soonestAssignmentDueDate={pendingAssignments[0]?.dueDate}
-              hoursStudiedThisWeek={hoursStudiedThisWeek}
-              weeklyTargetHours={weeklyTarget}
-              onUpdateTargetHours={(newTarget) => setWeeklyTarget(newTarget)}
-            />
+            <div className="bg-white rounded-3xl border border-[#E5E4DE] p-6 sm:p-8">
+              <WeeklyLearningSummary
+                nextLesson={nextLesson}
+                pendingAssignmentsCount={pendingAssignments.length}
+                soonestAssignmentDueDate={pendingAssignments[0]?.dueDate}
+                hoursStudiedThisWeek={hoursStudiedThisWeek}
+                weeklyTargetHours={weeklyTarget}
+                onUpdateTargetHours={(newTarget) => setWeeklyTarget(newTarget)}
+              />
+            </div>
           </div>
         )}
 
-        {/* Quick Quantitative Metrics */}
-        <div className="grid grid-cols-2 lg:grid-cols-4 gap-3.5 mb-8">
-          <StatCard
-            icon={Calendar}
+        {/* 4 Quantitative Metric Cards */}
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6 mb-10">
+          <StatBlock
             label="Upcoming lessons"
             value={upcomingLessons.length}
-            iconBg="bg-teal-50"
+            icon={Calendar}
+            trend={upcomingLessons.length > 0 ? "Active schedule" : undefined}
           />
-          <StatCard
-            icon={BookOpen}
+          <StatBlock
             label="Pending assignments"
             value={pendingAssignments.length}
-            iconBg="bg-amber-50"
+            icon={BookOpen}
+            trend={pendingAssignments.length > 0 ? "Due soon" : "All caught up"}
           />
-          <StatCard
-            icon={TrendingUp}
+          <StatBlock
             label="Hours studied"
             value={progress?.totalHoursLearned ?? 0}
-            iconBg="bg-indigo-50"
+            suffix="hrs"
+            icon={TrendingUp}
+            subtext="Tracked classroom time"
           />
-          <StatCard
-            icon={CheckCircle}
+          <StatBlock
             label="Lessons completed"
             value={progress?.classesCompleted ?? 0}
-            iconBg="bg-emerald-50"
+            icon={CheckCircle}
+            subtext="Verified completions"
           />
         </div>
 
-        {/* Workspace Main Columns */}
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-          <div className="lg:col-span-2 space-y-6">
+        {/* Main Columns */}
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+          {/* Left / Center: Upcoming Lessons & Assignments */}
+          <div className="lg:col-span-2 space-y-8">
             {/* Upcoming Lessons Card */}
-            <div className="bg-white rounded-2xl border border-slate-200/80 p-5 md:p-6 shadow-xs">
-              <div className="flex items-center justify-between mb-4">
-                <h3 className="text-sm md:text-base font-bold text-slate-900 flex items-center gap-2">
-                  <Calendar className="w-4 h-4 text-teal-600" /> Upcoming lessons
-                </h3>
+            <div className="bg-white rounded-3xl border border-[#E5E4DE] p-6 sm:p-8">
+              <div className="flex items-center justify-between mb-6 pb-4 border-b border-[#E5E4DE]">
+                <div>
+                  <h3 className="text-base sm:text-lg font-semibold text-[#111111] flex items-center gap-2">
+                    <Calendar className="w-4 h-4 text-[#F26522]" />
+                    <span>Upcoming Lessons</span>
+                  </h3>
+                  <p className="text-xs text-[#111111]/60 mt-0.5">
+                    Live classroom rooms become active 10 minutes prior to session
+                  </p>
+                </div>
                 {upcomingLessons.length > 0 && (
                   <button
                     onClick={() => navigate("/lessons")}
-                    className="text-xs font-semibold text-teal-700 hover:text-teal-800"
+                    className="text-xs font-semibold text-[#111111] hover:text-[#F26522] transition-colors cursor-pointer"
                   >
-                    View all ({upcomingLessons.length})
+                    View all ({upcomingLessons.length}) →
                   </button>
                 )}
               </div>
@@ -241,30 +286,29 @@ export default function Dashboard() {
                   actionPath="/teachers"
                 />
               ) : (
-                <div className="space-y-4">
+                <div className="space-y-3.5">
                   {upcomingLessons.slice(0, 3).map((lesson: any, index: number) => {
                     const normalizedLesson = {
                       _id: lesson._id || `lesson_${index}`,
-                      title: lesson.title || `${lesson.subject} Lesson`,
+                      title: lesson.title || `${lesson.subject || "Academic"} Lesson`,
                       subject: lesson.subject || "Academic Tutoring",
-                      teacherId: lesson.teacherId || "teacher_default",
-                      teacherName: lesson.teacherName || "Dr. Sarah Chen",
-                      teacherTimezone: lesson.teacherTimezone || "America/New_York",
-                      studentId: lesson.studentId || user?._id || "student_default",
-                      studentName: lesson.studentName || user?.name || "Alex Rivera",
-                      studentTimezone: lesson.studentTimezone || (typeof Intl !== "undefined" ? Intl.DateTimeFormat().resolvedOptions().timeZone : "UTC"),
-                      scheduledAt: lesson.scheduledAt || 0,
+                      teacherName: lesson.teacherName || "Instructor",
+                      studentName: lesson.studentName || user?.name || "Student",
+                      scheduledAt: lesson.scheduledAt || Date.now() + 3600000,
                       durationMinutes: lesson.durationMinutes || 60,
                       status: lesson.status || "scheduled",
                       meetingCode: lesson.meetingCode || `CLASS-${lesson._id?.slice(-4) || "7710"}`,
                     };
 
                     return (
-                      <LiveClassAvailability
+                      <LessonCard
                         key={lesson._id || index}
                         lesson={normalizedLesson}
-                        user={user}
-                        compact={index > 0}
+                        onJoin={() =>
+                          navigate(
+                            `/classroom/${lesson._id || normalizedLesson.meetingCode}`
+                          )
+                        }
                       />
                     );
                   })}
@@ -273,17 +317,23 @@ export default function Dashboard() {
             </div>
 
             {/* Assignments Card */}
-            <div className="bg-white rounded-2xl border border-slate-200/80 p-5 md:p-6 shadow-xs">
-              <div className="flex items-center justify-between mb-4">
-                <h3 className="text-sm md:text-base font-bold text-slate-900 flex items-center gap-2">
-                  <BookOpen className="w-4 h-4 text-amber-600" /> Pending Assignments
-                </h3>
+            <div className="bg-white rounded-3xl border border-[#E5E4DE] p-6 sm:p-8">
+              <div className="flex items-center justify-between mb-6 pb-4 border-b border-[#E5E4DE]">
+                <div>
+                  <h3 className="text-base sm:text-lg font-semibold text-[#111111] flex items-center gap-2">
+                    <BookOpen className="w-4 h-4 text-[#F26522]" />
+                    <span>Pending Assignments & Homework</span>
+                  </h3>
+                  <p className="text-xs text-[#111111]/60 mt-0.5">
+                    Tasks assigned by your tutors to reinforce classroom concepts
+                  </p>
+                </div>
                 {pendingAssignments.length > 0 && (
                   <button
                     onClick={() => navigate("/assignments")}
-                    className="text-xs font-semibold text-teal-700 hover:text-teal-800"
+                    className="text-xs font-semibold text-[#111111] hover:text-[#F26522] transition-colors cursor-pointer"
                   >
-                    View all ({pendingAssignments.length})
+                    View all ({pendingAssignments.length}) →
                   </button>
                 )}
               </div>
@@ -299,24 +349,33 @@ export default function Dashboard() {
                   {pendingAssignments.slice(0, 3).map((assignment) => (
                     <div
                       key={assignment._id}
-                      className="flex items-center justify-between p-3.5 rounded-xl border border-slate-100 bg-slate-50 hover:bg-white transition-all"
+                      className="flex items-center justify-between p-4 rounded-2xl border border-[#E5E4DE] bg-[#FAF9F5] hover:bg-white transition-all"
                     >
                       <div>
-                        <h4 className="text-sm font-bold text-slate-900">
+                        <h4 className="text-sm font-semibold text-[#111111]">
                           {assignment.title}
                         </h4>
-                        <p className="text-xs text-slate-500 mt-0.5">
-                          {assignment.subject}
-                        </p>
+                        <div className="flex items-center gap-3 text-xs text-[#111111]/60 mt-1">
+                          <span className="font-medium text-[#111111]">
+                            {assignment.subject}
+                          </span>
+                          {assignment.dueDate && (
+                            <span>
+                              · Due{" "}
+                              {new Date(assignment.dueDate).toLocaleDateString()}
+                            </span>
+                          )}
+                        </div>
                       </div>
-                      <Button
+
+                      <PillButton
                         size="sm"
-                        variant="outline"
+                        variant="white"
                         onClick={() => navigate("/assignments")}
-                        className="rounded-xl text-xs font-semibold"
+                        showArrow
                       >
                         Submit
-                      </Button>
+                      </PillButton>
                     </div>
                   ))}
                 </div>
@@ -324,17 +383,19 @@ export default function Dashboard() {
             </div>
           </div>
 
-          {/* Right Column: Quick Navigation, Privacy, and Progress */}
-          <div className="space-y-6">
+          {/* Right Column: Discoverability, Quick Links, Progress */}
+          <div className="space-y-8">
             {/* Transparent Privacy & Teacher Discoverability Card */}
-            <PrivacyDiscoverabilityCard
-              isDiscoverable={isDiscoverable}
-              onToggleDiscoverable={(val) => setIsDiscoverable(val)}
-            />
+            <div className="bg-white rounded-3xl border border-[#E5E4DE] p-6 sm:p-8">
+              <PrivacyDiscoverabilityCard
+                isDiscoverable={isDiscoverable}
+                onToggleDiscoverable={(val) => setIsDiscoverable(val)}
+              />
+            </div>
 
-            {/* Quick Actions */}
-            <div className="bg-white rounded-2xl border border-slate-200/80 p-5 shadow-xs">
-              <h4 className="text-xs font-bold uppercase tracking-wider text-slate-400 mb-3">
+            {/* Quick Navigation Links */}
+            <div className="bg-white rounded-3xl border border-[#E5E4DE] p-6 sm:p-8">
+              <h4 className="text-xs font-bold uppercase tracking-wider text-[#111111]/40 mb-4">
                 Learning Workspace
               </h4>
               <div className="space-y-2">
@@ -369,51 +430,65 @@ export default function Dashboard() {
                   <button
                     key={link.path}
                     onClick={() => navigate(link.path)}
-                    className={`w-full flex items-center justify-between p-3 rounded-xl text-xs font-bold transition-all ${
+                    className={`w-full flex items-center justify-between p-3.5 rounded-2xl text-xs font-semibold transition-all cursor-pointer ${
                       link.primary
-                        ? "bg-teal-600 text-white hover:bg-teal-700 shadow-xs"
-                        : "bg-slate-50 text-slate-700 hover:bg-slate-100/80 hover:text-slate-900"
+                        ? "bg-[#111111] text-white hover:bg-[#222222]"
+                        : "bg-[#FAF9F5] text-[#111111] hover:bg-[#F5F4EF] border border-[#E5E4DE]/60"
                     }`}
                   >
                     <div className="flex items-center gap-2.5">
-                      <link.icon className={`w-4 h-4 ${link.primary ? "text-white" : "text-teal-600"}`} />
+                      <link.icon
+                        className={`w-4 h-4 ${
+                          link.primary ? "text-[#F26522]" : "text-[#111111]/60"
+                        }`}
+                      />
                       <span>{link.label}</span>
                     </div>
-                    <ChevronRight className={`w-3.5 h-3.5 ${link.primary ? "text-teal-200" : "text-slate-400"}`} />
+                    <ChevronRight
+                      className={`w-3.5 h-3.5 ${
+                        link.primary ? "text-white/50" : "text-[#111111]/40"
+                      }`}
+                    />
                   </button>
                 ))}
               </div>
             </div>
 
-            {/* Progress & Mastery Overview */}
-            <div className="bg-white rounded-2xl border border-slate-200/80 p-5 shadow-xs">
-              <h4 className="text-xs font-bold uppercase tracking-wider text-slate-400 mb-3 flex items-center gap-1.5">
-                <TrendingUp className="w-3.5 h-3.5 text-teal-600" />
+            {/* Mastery & Milestones Overview */}
+            <div className="bg-white rounded-3xl border border-[#E5E4DE] p-6 sm:p-8">
+              <h4 className="text-xs font-bold uppercase tracking-wider text-[#111111]/40 mb-4 flex items-center gap-1.5">
+                <TrendingUp className="w-3.5 h-3.5 text-[#F26522]" />
                 <span>Mastery & Milestones</span>
               </h4>
 
               {progress && progress.classesCompleted > 0 ? (
-                <div className="space-y-3 text-xs">
-                  <div className="flex justify-between py-1 border-b border-slate-100">
-                    <span className="text-slate-500">Total Hours:</span>
-                    <span className="font-bold text-slate-900">{progress.totalHoursLearned}h</span>
+                <div className="space-y-3.5 text-xs">
+                  <div className="flex justify-between py-2 border-b border-[#E5E4DE]">
+                    <span className="text-[#111111]/60">Total Hours:</span>
+                    <span className="font-bold text-[#111111]">
+                      {progress.totalHoursLearned}h
+                    </span>
                   </div>
-                  <div className="flex justify-between py-1 border-b border-slate-100">
-                    <span className="text-slate-500">Completed Sessions:</span>
-                    <span className="font-bold text-slate-900">{progress.classesCompleted}</span>
+                  <div className="flex justify-between py-2 border-b border-[#E5E4DE]">
+                    <span className="text-[#111111]/60">Completed Sessions:</span>
+                    <span className="font-bold text-[#111111]">
+                      {progress.classesCompleted}
+                    </span>
                   </div>
-                  <div className="flex justify-between py-1 border-b border-slate-100">
-                    <span className="text-slate-500">Active Streak:</span>
-                    <span className="font-bold text-teal-700">{progress.streakDays || 1} days 🔥</span>
+                  <div className="flex justify-between py-2 border-b border-[#E5E4DE]">
+                    <span className="text-[#111111]/60">Active Streak:</span>
+                    <span className="font-bold text-[#F26522]">
+                      {progress.streakDays || 1} days 🔥
+                    </span>
                   </div>
-                  <Button
+                  <PillButton
                     variant="outline"
                     size="sm"
                     onClick={() => navigate("/progress")}
-                    className="w-full mt-2 rounded-xl text-xs font-semibold"
+                    className="w-full justify-center mt-3"
                   >
                     View detailed analytics
-                  </Button>
+                  </PillButton>
                 </div>
               ) : (
                 <DashboardEmptyState

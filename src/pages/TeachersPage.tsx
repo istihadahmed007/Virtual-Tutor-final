@@ -25,6 +25,7 @@ import {
 import { useNavigate } from "react-router";
 import { useAuth } from "@/hooks/use-auth";
 import { toast } from "sonner";
+import { SectionLabel } from "@/components/redesign";
 
 const INITIAL_FILTERS: FilterState = {
   query: "",
@@ -223,7 +224,7 @@ export default function TeachersPage() {
   };
 
   return (
-    <main className="min-h-screen bg-[#FAFAF8] pb-16">
+    <main className="min-h-screen bg-[#F5F4EF] text-[#111111] pb-24">
       <SEO
         title="Find Verified Tutors & Educators"
         description="Explore verified, top-tier tutors across mathematics, sciences, languages, and test preparation with transparent monthly tuition plans in Bangladeshi Taka."
@@ -237,52 +238,39 @@ export default function TeachersPage() {
           "Virtual Tutor Pro",
         ]}
       />
-      {/* Header Bar */}
-      <div className="bg-white border-b border-slate-200/80 shadow-xs">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-5">
-          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-            <div className="flex items-center gap-3">
-              <Button
-                variant="ghost"
-                size="sm"
-                onClick={() => navigate("/dashboard")}
-                className="gap-1.5 text-slate-600 rounded-xl"
-              >
-                <ArrowLeft className="w-4 h-4" />
-                <span>Dashboard</span>
-              </Button>
-              <div className="h-4 w-px bg-slate-200" />
-              <div>
-                <h1 className="text-xl sm:text-2xl font-bold text-slate-900 tracking-tight flex items-center gap-2">
-                  <span>Verified Tutors</span>
-                  <span className="inline-flex items-center px-2.5 py-0.5 text-xs font-semibold rounded-full bg-teal-50 text-teal-700 border border-teal-200/60">
-                    Live Booking
-                  </span>
-                </h1>
-                <p className="text-xs text-slate-500 mt-0.5">
-                  Explore verified educators, compare reviews, convert timezones, and reserve 1-on-1 sessions
-                </p>
-              </div>
+      
+      {/* Editorial Header Section */}
+      <div className="border-b border-[#E5E4DE] bg-white/50 backdrop-blur-xs">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+          <div className="flex flex-col lg:flex-row lg:items-end justify-between gap-6">
+            <div>
+              <SectionLabel number="01" text="Verified Faculty Directory" />
+              <h1 className="text-3xl sm:text-5xl font-extrabold text-[#111111] tracking-tight font-display mt-2">
+                Find World-Class Educators.
+              </h1>
+              <p className="text-sm sm:text-base text-[#111111]/70 mt-2 max-w-2xl">
+                Compare verified educators, read student reviews, inspect monthly plans, and reserve your 1-on-1 trial session.
+              </p>
             </div>
 
             {/* Quick schedule shortcuts */}
-            <div className="flex items-center gap-2">
+            <div className="flex items-center gap-2.5 shrink-0">
               <Button
                 variant="outline"
                 size="sm"
                 onClick={() => navigate("/lessons")}
-                className="text-xs border-slate-200 text-slate-700 rounded-xl gap-1.5"
+                className="rounded-full border-[#E5E4DE] text-[#111111] hover:bg-[#F5F4EF] text-xs font-semibold px-4 py-2 gap-1.5"
               >
-                <BookOpen className="w-3.5 h-3.5 text-teal-600" />
+                <BookOpen className="w-3.5 h-3.5 text-[#F26522]" />
                 <span>My Lessons</span>
               </Button>
               <Button
                 size="sm"
                 onClick={() => navigate("/calendar")}
-                className="bg-teal-600 hover:bg-teal-700 text-white text-xs font-semibold rounded-xl gap-1.5 shadow-xs"
+                className="rounded-full bg-[#111111] hover:bg-[#F26522] text-white text-xs font-semibold px-4 py-2 gap-1.5 shadow-xs transition-all"
               >
                 <Calendar className="w-3.5 h-3.5" />
-                <span>Calendar</span>
+                <span>Schedule Calendar</span>
               </Button>
             </div>
           </div>
@@ -290,9 +278,9 @@ export default function TeachersPage() {
       </div>
 
       {/* Main Content Area */}
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {/* Comprehensive Filter Bar */}
-        <div className="mb-6">
+        <div className="mb-8">
           <TeacherFilters
             filters={filters}
             onFilterChange={setFilters}

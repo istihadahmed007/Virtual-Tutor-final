@@ -123,18 +123,18 @@ export function TeacherFilters({
       <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3">
         {/* Search Field */}
         <div className="relative flex-1">
-          <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400" />
+          <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-[#111111]/40" />
           <input
             type="text"
             value={filters.query}
             onChange={(e) => handleUpdate("query", e.target.value)}
             placeholder="Search by teacher name, subject, topic (e.g. Calculus, Python, IELTS)..."
-            className="w-full h-11 pl-10 pr-4 text-sm rounded-xl border border-slate-200 bg-white placeholder-slate-400 focus:outline-hidden focus:ring-2 focus:ring-teal-500 focus:border-teal-500 transition-all shadow-xs"
+            className="w-full h-11 pl-11 pr-10 text-sm rounded-full border border-[#E5E4DE] bg-white placeholder-[#111111]/40 focus:outline-hidden focus:border-[#111111] transition-all shadow-xs"
           />
           {filters.query && (
             <button
               onClick={() => handleUpdate("query", "")}
-              className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 p-1"
+              className="absolute right-3.5 top-1/2 -translate-y-1/2 text-[#111111]/40 hover:text-[#111111] p-1"
               aria-label="Clear search"
             >
               <X className="h-4 w-4" />
@@ -149,7 +149,7 @@ export function TeacherFilters({
               value={filters.sortBy}
               onChange={(e) => handleUpdate("sortBy", e.target.value as FilterState["sortBy"])}
               aria-label="Sort educators"
-              className="h-11 pl-3.5 pr-8 text-xs font-semibold rounded-xl border border-slate-200 bg-white text-slate-700 hover:border-slate-300 focus:outline-hidden focus:ring-2 focus:ring-teal-500 shadow-xs appearance-none cursor-pointer"
+              className="h-11 pl-4 pr-9 text-xs font-semibold rounded-full border border-[#E5E4DE] bg-white text-[#111111] hover:border-[#111111]/40 focus:outline-hidden shadow-xs appearance-none cursor-pointer"
             >
               {SORT_OPTIONS.map((opt) => (
                 <option key={opt.value} value={opt.value}>
@@ -157,19 +157,19 @@ export function TeacherFilters({
                 </option>
               ))}
             </select>
-            <ArrowUpDown className="pointer-events-none absolute right-2.5 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-slate-400" />
+            <ArrowUpDown className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-[#111111]/40" />
           </div>
 
           {/* Filter Drawer Toggle Button */}
           <Button
             variant="outline"
             onClick={() => setIsDrawerOpen(true)}
-            className="h-11 px-4 rounded-xl border-slate-200 bg-white hover:bg-slate-50 text-slate-700 text-xs font-semibold shadow-xs inline-flex items-center gap-2"
+            className="h-11 px-4 rounded-full border-[#E5E4DE] bg-white hover:bg-[#F5F4EF] text-[#111111] text-xs font-semibold shadow-xs inline-flex items-center gap-2"
           >
-            <SlidersHorizontal className="h-4 w-4 text-teal-600" />
+            <SlidersHorizontal className="h-4 w-4 text-[#F26522]" />
             <span>Filters</span>
             {activeFilterCount > 0 && (
-              <span className="flex h-5 w-5 items-center justify-center rounded-full bg-teal-600 text-white text-[11px] font-bold">
+              <span className="flex h-5 w-5 items-center justify-center rounded-full bg-[#F26522] text-white text-[11px] font-bold">
                 {activeFilterCount}
               </span>
             )}
@@ -188,10 +188,10 @@ export function TeacherFilters({
                 key={cur}
                 type="button"
                 onClick={() => handleUpdate("curriculum", cur)}
-                className={`px-3 py-1.5 rounded-lg font-medium transition-all ${
+                className={`px-3.5 py-1.5 rounded-full font-medium transition-all ${
                   isSelected
-                    ? "bg-teal-600 text-white shadow-xs"
-                    : "bg-white border border-slate-200 text-slate-600 hover:border-slate-300"
+                    ? "bg-[#111111] text-white shadow-xs"
+                    : "bg-white border border-[#E5E4DE] text-[#111111]/70 hover:border-[#111111]/40"
                 }`}
               >
                 {cur}
@@ -203,10 +203,10 @@ export function TeacherFilters({
           <button
             type="button"
             onClick={() => handleUpdate("ratingMin", filters.ratingMin === 4.8 ? 0 : 4.8)}
-            className={`px-3 py-1.5 rounded-lg font-medium transition-all inline-flex items-center gap-1 ${
+            className={`px-3.5 py-1.5 rounded-full font-medium transition-all inline-flex items-center gap-1 ${
               filters.ratingMin === 4.8
-                ? "bg-amber-500 text-white shadow-xs"
-                : "bg-white border border-slate-200 text-slate-600 hover:border-slate-300"
+                ? "bg-[#F26522] text-white shadow-xs"
+                : "bg-white border border-[#E5E4DE] text-[#111111]/70 hover:border-[#111111]/40"
             }`}
           >
             <span>★ 4.8+ Stars</span>

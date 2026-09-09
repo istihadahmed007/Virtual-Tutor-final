@@ -1087,13 +1087,21 @@ export const getLiveKitToken = query({
     const identity = `user_${auth.userId}`;
     const name = auth.user.name || (auth.isTeacher ? "Teacher" : "Student");
 
+    const hasMaskedSecret =
+      !apiSecret ||
+      apiSecret.length < 8 ||
+      apiSecret.includes("placeholder") ||
+      Array.from(apiSecret).some((c) => {
+        const code = c.charCodeAt(0);
+        return code === 8226 || code === 42 || code === 8250 || code === 9679;
+      });
+
     if (
       !livekitUrl ||
       !apiKey ||
-      !apiSecret ||
+      hasMaskedSecret ||
       livekitUrl.includes("placeholder") ||
-      apiKey.includes("placeholder") ||
-      apiKey.startsWith("API7a3eNsnr6m")
+      apiKey.includes("placeholder")
     ) {
       return {
         configured: false,

@@ -1,6 +1,6 @@
 {
-  "name": "Virtual Tutor Pro",
-  "description": "An online tutoring and live classroom platform connecting students and teachers with interactive lessons, assignments, scheduling, progress tracking, and AI assistance.",
+  "name": "LiveClass",
+  "description": "Virtual Tutor (ভার্চুয়াল টিউটর) - Modern live education platform connecting students and educators with interactive classrooms, academic scheduling, assignments, and AI tutoring.",
   "requestFramePermissions": [
     "camera",
     "microphone"

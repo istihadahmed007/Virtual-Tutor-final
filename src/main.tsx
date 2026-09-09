@@ -110,8 +110,8 @@ const AdminSettingsPage = lazyWithRetry(() => import("./pages/admin/AdminSetting
 
 function RouteLoading() {
   return (
-    <div className="min-h-screen flex items-center justify-center bg-[#FAFAF8]">
-      <div className="animate-pulse text-slate-400 text-sm">Loading...</div>
+    <div className="min-h-screen flex items-center justify-center bg-[#F5F4EF]">
+      <div className="animate-pulse text-[#111111]/40 text-sm font-medium">Loading...</div>
     </div>
   );
 }
@@ -122,7 +122,7 @@ function AppShell({ children }: { children: React.ReactNode }) {
   const isMobileActiveChat = location.pathname === "/messages" && Boolean(searchParams.get("id"));
 
   return (
-    <div className={`min-h-screen bg-[#FAFAF8] ${isMobileActiveChat ? "pb-0" : "pb-16 md:pb-0"}`}>
+    <div className={`min-h-screen bg-[#F5F4EF] text-[#111111] ${isMobileActiveChat ? "pb-0" : "pb-16 md:pb-0"}`}>
       <AppHelmet />
       <Navigation />
       {children}

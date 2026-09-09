@@ -89,47 +89,53 @@ export default function AiAssistantPage() {
   };
 
   return (
-    <main className="min-h-screen bg-[#FAFAF8]">
-      <header className="bg-white border-b border-stone-200/60 shadow-2xs">
-        <div className="max-w-4xl mx-auto px-4 sm:px-6 h-14 flex items-center justify-between">
+    <main className="min-h-screen bg-[#F5F4EF] text-[#111111] pb-24">
+      <header className="bg-white/70 backdrop-blur-xs border-b border-[#E5E4DE] sticky top-0 z-10">
+        <div className="max-w-4xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between">
           <div className="flex items-center gap-3">
             <Button
               variant="ghost"
               size="sm"
               onClick={() => navigate("/dashboard")}
+              className="rounded-full text-xs font-semibold gap-1.5 text-[#111111]/70 hover:text-[#111111] hover:bg-white"
             >
               <ArrowLeft className="w-4 h-4" /> Dashboard
             </Button>
           </div>
           <div className="flex items-center gap-2">
-            <Sparkles className="w-4 h-4 text-purple-500" />
-            <h1 className="text-sm font-bold text-slate-900">
+            <Sparkles className="w-4 h-4 text-[#F26522]" />
+            <h1 className="text-sm font-bold text-[#111111] font-display">
               AI Study Assistant
             </h1>
           </div>
-          <Button variant="ghost" size="sm" onClick={startNew}>
-            <Plus className="w-4 h-4" />
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={startNew}
+            className="rounded-full border-[#E5E4DE] text-[#111111] hover:bg-white text-xs font-semibold px-3 py-1 gap-1"
+          >
+            <Plus className="w-3.5 h-3.5" />
+            <span>New Chat</span>
           </Button>
         </div>
       </header>
 
-      <div className="max-w-4xl mx-auto px-4 sm:px-6 py-6">
+      <div className="max-w-4xl mx-auto px-4 sm:px-6 py-8">
         {/* Conversation list (when no active conversation) */}
         {!conversationId && (
           <div className="space-y-6">
             {/* Intro text */}
-            <div className="bg-white rounded-xl border border-stone-200/80 p-5">
-              <div className="flex items-start gap-3">
-                <div className="w-10 h-10 rounded-xl bg-purple-50 flex items-center justify-center shrink-0">
-                  <Sparkles className="w-5 h-5 text-purple-600" />
+            <div className="bg-white rounded-3xl border border-[#E5E4DE] p-6 lg:p-8 shadow-xs">
+              <div className="flex items-start gap-4">
+                <div className="w-12 h-12 rounded-2xl bg-[#F5F4EF] border border-[#E5E4DE] flex items-center justify-center shrink-0">
+                  <Sparkles className="w-6 h-6 text-[#F26522]" />
                 </div>
                 <div>
-                  <h2 className="text-sm font-bold text-slate-900 mb-1">
-                    Your AI learning companion
+                  <h2 className="text-xl font-bold text-[#111111] mb-1 font-display">
+                    Your AI Learning Companion
                   </h2>
-                  <p className="text-sm text-slate-500 leading-relaxed">
-                    Ask for an explanation, example, practice question, or study
-                    plan. This is a supplement to your tutor, not a replacement.
+                  <p className="text-sm text-[#111111]/70 leading-relaxed">
+                    Ask for comprehensive explanations, step-by-step problem walkthroughs, practice questions, or curriculum study plans. This is designed to support your live educator sessions.
                   </p>
                 </div>
               </div>
@@ -138,20 +144,20 @@ export default function AiAssistantPage() {
             {/* Recent conversations */}
             {conversations && conversations.length > 0 && (
               <div>
-                <h2 className="text-sm font-bold text-slate-900 mb-3">
-                  Recent conversations
+                <h2 className="text-sm font-bold text-[#111111] mb-3 uppercase tracking-wider text-xs">
+                  Recent Discussions
                 </h2>
-                <div className="space-y-2">
+                <div className="space-y-2.5">
                   {conversations.map((c) => (
                     <button
                       key={c._id}
                       onClick={() => setConversationId(c._id)}
-                      className="w-full text-left p-4 bg-white rounded-xl border border-stone-200/80 hover:border-teal-200 hover:shadow-md transition-all"
+                      className="w-full text-left p-5 bg-white rounded-2xl border border-[#E5E4DE] hover:border-[#111111]/40 hover:shadow-md transition-all shadow-xs"
                     >
-                      <p className="text-sm font-bold text-slate-900">
+                      <p className="text-sm font-bold text-[#111111]">
                         {c.title}
                       </p>
-                      <p className="text-xs text-slate-400 mt-1">
+                      <p className="text-xs text-[#111111]/50 mt-1">
                         {new Date(c.lastMessageAt).toLocaleDateString()}
                       </p>
                     </button>
@@ -162,25 +168,25 @@ export default function AiAssistantPage() {
 
             {/* Suggested prompts */}
             <div>
-              <h2 className="text-sm font-bold text-slate-900 mb-3">
-                What can I help you with?
+              <h2 className="text-sm font-bold text-[#111111] mb-3 uppercase tracking-wider text-xs">
+                Suggested Prompts
               </h2>
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
                 {suggestedPrompts.map((p, i) => (
                   <button
                     key={i}
                     onClick={() => handleSend(p.prompt)}
-                    className="p-4 bg-white rounded-xl border border-stone-200/80 hover:border-teal-200 hover:shadow-md transition-all text-left group"
+                    className="p-5 bg-white rounded-3xl border border-[#E5E4DE] hover:border-[#111111]/40 hover:shadow-md transition-all text-left group shadow-xs"
                   >
-                    <div className="flex items-center gap-3">
-                      <div className="w-10 h-10 rounded-xl bg-purple-50 flex items-center justify-center group-hover:bg-purple-100 transition-colors">
-                        <p.icon className="w-5 h-5 text-purple-600" />
+                    <div className="flex items-center gap-3.5">
+                      <div className="w-11 h-11 rounded-2xl bg-[#F5F4EF] border border-[#E5E4DE] flex items-center justify-center shrink-0">
+                        <p.icon className="w-5 h-5 text-[#F26522]" />
                       </div>
                       <div>
-                        <p className="text-sm font-bold text-slate-900">
+                        <p className="text-sm font-bold text-[#111111]">
                           {p.label}
                         </p>
-                        <p className="text-xs text-slate-500 mt-0.5">
+                        <p className="text-xs text-[#111111]/60 mt-0.5">
                           {p.prompt}
                         </p>
                       </div>
@@ -191,12 +197,10 @@ export default function AiAssistantPage() {
             </div>
 
             {/* Disclaimer */}
-            <div className="flex items-start gap-2 p-3 bg-amber-50 rounded-xl border border-amber-100">
-              <AlertTriangle className="w-4 h-4 text-amber-600 shrink-0 mt-0.5" />
-              <p className="text-xs text-amber-700 leading-relaxed">
-                AI-generated answers may contain mistakes. Always verify with
-                your tutor or a trusted source before using this information for
-                exams or assignments.
+            <div className="flex items-start gap-3 p-4 bg-white rounded-2xl border border-[#E5E4DE] text-xs text-[#111111]/80">
+              <AlertTriangle className="w-4 h-4 text-[#F26522] shrink-0 mt-0.5" />
+              <p className="leading-relaxed">
+                AI-generated answers are for research and learning support. Always verify foundational proof steps and exam criteria with your educator.
               </p>
             </div>
           </div>
@@ -204,18 +208,18 @@ export default function AiAssistantPage() {
 
         {/* Active conversation */}
         {conversationId && (
-          <div className="space-y-4">
-            <div className="space-y-4 min-h-[400px]">
+          <div className="space-y-6">
+            <div className="space-y-4 min-h-[420px]">
               {messages?.map((msg) => (
                 <div
                   key={msg._id}
                   className={`flex ${msg.role === "user" ? "justify-end" : "justify-start"}`}
                 >
                   <div
-                    className={`max-w-[80%] p-4 rounded-2xl ${
+                    className={`max-w-[80%] p-5 rounded-3xl ${
                       msg.role === "user"
-                        ? "bg-teal-600 text-white rounded-br-md"
-                        : "bg-white border border-stone-200/80 text-slate-900 rounded-bl-md"
+                        ? "bg-[#111111] text-white rounded-br-md"
+                        : "bg-white border border-[#E5E4DE] text-[#111111] rounded-bl-md shadow-xs"
                     }`}
                   >
                     <p className="text-sm leading-relaxed whitespace-pre-wrap">
@@ -226,18 +230,18 @@ export default function AiAssistantPage() {
               ))}
               {isTyping && (
                 <div className="flex justify-start">
-                  <div className="bg-white border border-stone-200/80 rounded-2xl rounded-bl-md px-4 py-3">
-                    <div className="flex gap-1">
+                  <div className="bg-white border border-[#E5E4DE] rounded-3xl rounded-bl-md px-5 py-4 shadow-xs">
+                    <div className="flex gap-1.5">
                       <div
-                        className="w-2 h-2 bg-slate-400 rounded-full animate-bounce"
+                        className="w-2 h-2 bg-[#111111] rounded-full animate-bounce"
                         style={{ animationDelay: "0ms" }}
                       />
                       <div
-                        className="w-2 h-2 bg-slate-400 rounded-full animate-bounce"
+                        className="w-2 h-2 bg-[#111111] rounded-full animate-bounce"
                         style={{ animationDelay: "150ms" }}
                       />
                       <div
-                        className="w-2 h-2 bg-slate-400 rounded-full animate-bounce"
+                        className="w-2 h-2 bg-[#111111] rounded-full animate-bounce"
                         style={{ animationDelay: "300ms" }}
                       />
                     </div>
@@ -247,17 +251,8 @@ export default function AiAssistantPage() {
               <div ref={messagesEndRef} />
             </div>
 
-            {/* Disclaimer in conversation */}
-            <div className="flex items-start gap-2 px-1">
-              <AlertTriangle className="w-3 h-3 text-slate-400 shrink-0 mt-0.5" />
-              <p className="text-[10px] text-slate-400 leading-relaxed">
-                AI responses are for study support only. Verify important
-                information with your tutor.
-              </p>
-            </div>
-
             {/* Input */}
-            <div className="sticky bottom-0 bg-[#FAFAF8] pt-2 pb-2">
+            <div className="sticky bottom-4 bg-[#F5F4EF]/90 backdrop-blur-xs pt-2 pb-2">
               <div className="flex gap-2">
                 <input
                   value={input}
@@ -267,14 +262,14 @@ export default function AiAssistantPage() {
                     !e.shiftKey &&
                     handleSend()
                   }
-                  placeholder="Ask about your studies..."
-                  className="flex-1 px-4 py-3 bg-white border border-stone-200 rounded-xl text-sm text-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-teal-500/20 focus:border-teal-400 transition-all"
+                  placeholder="Ask a question about your curriculum or study topics..."
+                  className="flex-1 px-5 py-3.5 bg-white border border-[#E5E4DE] rounded-full text-sm text-[#111111] placeholder:text-[#111111]/40 focus:outline-none focus:border-[#111111] transition-all shadow-xs"
                   disabled={isTyping}
                 />
                 <Button
                   onClick={() => handleSend()}
                   disabled={!input.trim() || isTyping}
-                  className="bg-teal-600 hover:bg-teal-700 text-white px-4"
+                  className="rounded-full bg-[#111111] hover:bg-[#F26522] text-white h-12 w-12 flex items-center justify-center shrink-0 shadow-xs transition-all"
                 >
                   <Send className="w-4 h-4" />
                 </Button>

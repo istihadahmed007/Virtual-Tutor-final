@@ -102,31 +102,31 @@ export default function AssignmentsPage() {
   };
 
   return (
-    <main className="min-h-screen bg-[#FAFAF8]">
-      <div className="max-w-5xl mx-auto px-4 sm:px-6 py-6 lg:py-8">
+    <main className="min-h-screen bg-[#F5F4EF] text-[#111111] pb-24">
+      <div className="max-w-5xl mx-auto px-4 sm:px-6 py-8 lg:py-12">
         <PageHeader
-          title="Assignments"
+          title="Assignments & Coursework"
           description={
             isTeacher
               ? "Track, review, and grade homework assigned to your students"
-              : "View, submit, and track your assignment progress"
+              : "View, submit, and track your assignment progress and academic feedback"
           }
         />
 
         {/* Tabs */}
-        <div className="flex gap-2 mb-6">
+        <div className="flex gap-2 mb-8">
           {([
             { key: "pending" as Tab, label: isTeacher ? "Needs Review / Active" : "Needs attention" },
             { key: "graded" as Tab, label: "Completed" },
-            { key: "all" as Tab, label: "All" },
+            { key: "all" as Tab, label: "All Assignments" },
           ]).map((t) => (
             <button
               key={t.key}
               onClick={() => setTab(t.key)}
-              className={`px-4 py-2 rounded-lg text-sm font-semibold transition-colors ${
+              className={`px-5 py-2.5 rounded-full text-xs font-semibold transition-all ${
                 tab === t.key
-                  ? "bg-teal-600 text-white"
-                  : "bg-white border border-stone-200 text-slate-600 hover:bg-stone-50"
+                  ? "bg-[#111111] text-white shadow-xs"
+                  : "bg-white border border-[#E5E4DE] text-[#111111]/70 hover:border-[#111111]/40"
               }`}
             >
               {t.label}
@@ -154,7 +154,7 @@ export default function AssignmentsPage() {
             }
           />
         ) : (
-          <div className="space-y-3">
+          <div className="space-y-4">
             {filtered.map((a) => {
               const isOverdue =
                 (a.status === "assigned" || a.status === "in_progress") &&
@@ -167,29 +167,29 @@ export default function AssignmentsPage() {
               return (
                 <div
                   key={a._id}
-                  className="bg-white rounded-xl border border-stone-200/80 p-5 hover:border-stone-300/80 transition-colors"
+                  className="bg-white rounded-3xl border border-[#E5E4DE] p-6 hover:border-[#111111]/40 transition-all shadow-xs"
                 >
                   <div className="flex items-start gap-4">
                     <div
-                      className={`w-10 h-10 rounded-xl flex items-center justify-center shrink-0 ${
+                      className={`w-11 h-11 rounded-2xl flex items-center justify-center shrink-0 border ${
                         a.status === "graded"
-                          ? "bg-emerald-100"
+                          ? "bg-[#F5F4EF] text-[#111111] border-[#E5E4DE]"
                           : isOverdue
-                            ? "bg-red-100"
-                            : "bg-amber-100"
+                            ? "bg-rose-50 text-rose-600 border-rose-200"
+                            : "bg-[#F5F4EF] text-[#F26522] border-[#E5E4DE]"
                       }`}
                     >
                       {a.status === "graded" ? (
-                        <CheckCircle className="w-5 h-5 text-emerald-600" />
+                        <CheckCircle className="w-5 h-5 text-[#111111]" />
                       ) : isOverdue ? (
-                        <AlertCircle className="w-5 h-5 text-red-600" />
+                        <AlertCircle className="w-5 h-5 text-rose-600" />
                       ) : (
-                        <Clock className="w-5 h-5 text-amber-600" />
+                        <Clock className="w-5 h-5 text-[#F26522]" />
                       )}
                     </div>
                     <div className="flex-1 min-w-0">
                       <div className="flex items-center gap-2 flex-wrap">
-                        <h3 className="text-sm font-bold text-slate-900">
+                        <h3 className="text-base font-bold text-[#111111] font-display">
                           {a.title}
                         </h3>
                         <StatusBadge
@@ -205,10 +205,10 @@ export default function AssignmentsPage() {
                           }
                         />
                       </div>
-                      <p className="text-xs text-slate-500 mt-1">
+                      <p className="text-xs text-[#111111]/60 mt-1">
                         {a.subject} · {isTeacher ? `Student: ${a.studentName}` : `Assigned by ${a.teacherName}`}
                       </p>
-                      <p className="text-sm text-slate-600 mt-2 leading-relaxed line-clamp-2">
+                      <p className="text-sm text-[#111111]/80 mt-2 leading-relaxed line-clamp-2">
                         {a.description}
                       </p>
 

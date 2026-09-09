@@ -39,27 +39,27 @@ export default function LessonsPage() {
         : lessons;
 
   return (
-    <main className="min-h-screen bg-[#FAFAF8]">
-      <div className="max-w-5xl mx-auto px-4 sm:px-6 py-6 lg:py-8">
+    <main className="min-h-screen bg-[#F5F4EF] text-[#111111] pb-24">
+      <div className="max-w-5xl mx-auto px-4 sm:px-6 py-8 lg:py-12">
         <PageHeader
-          title="Lessons"
-          description="View and manage your learning sessions"
+          title="Lessons & Classes"
+          description="View and manage your real-time learning sessions and history"
         />
 
         {/* Tabs */}
-        <div className="flex gap-2 mb-6">
+        <div className="flex gap-2 mb-8">
           {([
             { key: "upcoming" as Tab, label: "Upcoming" },
             { key: "completed" as Tab, label: "Completed" },
-            { key: "all" as Tab, label: "All" },
+            { key: "all" as Tab, label: "All Sessions" },
           ]).map((t) => (
             <button
               key={t.key}
               onClick={() => setTab(t.key)}
-              className={`px-4 py-2 rounded-lg text-sm font-semibold transition-colors ${
+              className={`px-5 py-2.5 rounded-full text-xs font-semibold transition-all ${
                 tab === t.key
-                  ? "bg-teal-600 text-white"
-                  : "bg-white border border-stone-200 text-slate-600 hover:bg-stone-50"
+                  ? "bg-[#111111] text-white shadow-xs"
+                  : "bg-white border border-[#E5E4DE] text-[#111111]/70 hover:border-[#111111]/40"
               }`}
             >
               {t.label}
@@ -89,7 +89,7 @@ export default function LessonsPage() {
             actionPath={tab === "upcoming" ? "/teachers" : undefined}
           />
         ) : (
-          <div className="space-y-2">
+          <div className="space-y-3">
             {filtered.map((lesson) => {
               const date = new Date(lesson.scheduledAt);
               const isUpcoming = lesson.status === "scheduled";
@@ -99,46 +99,46 @@ export default function LessonsPage() {
                 <button
                   key={lesson._id}
                   onClick={() => navigate(`/classroom?session=${lesson._id}`)}
-                  className="w-full bg-white rounded-xl border border-stone-200/80 p-4 flex items-center gap-4 hover:border-stone-300/80 hover:shadow-md transition-all text-left"
+                  className="w-full bg-white rounded-3xl border border-[#E5E4DE] p-5 flex items-center gap-4 hover:border-[#111111]/40 hover:shadow-md transition-all text-left group shadow-xs"
                 >
                   <div
-                    className={`w-11 h-11 rounded-xl flex items-center justify-center text-white shrink-0 ${
+                    className={`w-12 h-12 rounded-2xl flex items-center justify-center shrink-0 border transition-all ${
                       lesson.status === "completed"
-                        ? "bg-emerald-500"
+                        ? "bg-[#F5F4EF] text-[#111111] border-[#E5E4DE]"
                         : isNow
-                          ? "bg-indigo-500 animate-pulse"
-                          : "bg-gradient-to-br from-teal-500 to-teal-600"
+                          ? "bg-[#F26522] text-white border-transparent animate-pulse"
+                          : "bg-[#111111] text-white border-[#111111] group-hover:bg-[#F26522] group-hover:border-[#F26522]"
                     }`}
                   >
                     {lesson.status === "completed" ? (
-                      <CheckCircle className="w-5 h-5" />
+                      <CheckCircle className="w-5 h-5 text-[#111111]" />
                     ) : (
-                      <Play className="w-5 h-5" />
+                      <Play className="w-5 h-5 fill-current" />
                     )}
                   </div>
                   <div className="flex-1 min-w-0">
-                    <p className="text-sm font-bold text-slate-900 truncate">
+                    <p className="text-base font-bold text-[#111111] truncate font-display">
                       {lesson.title}
                     </p>
-                    <p className="text-xs text-slate-500 mt-0.5">
+                    <p className="text-xs text-[#111111]/60 mt-0.5">
                       {lesson.teacherName} · {lesson.subject} ·{" "}
                       {lesson.durationMinutes} min
                     </p>
                   </div>
                   <div className="text-right shrink-0">
-                    <p className="text-xs font-semibold text-slate-900">
+                    <p className="text-xs font-semibold text-[#111111]">
                       {date.toLocaleDateString("en-US", {
                         month: "short",
                         day: "numeric",
                       })}
                     </p>
-                    <p className="text-xs text-slate-400">
+                    <p className="text-xs text-[#111111]/50">
                       {date.toLocaleTimeString("en-US", {
                         hour: "2-digit",
                         minute: "2-digit",
                       })}
                     </p>
-                    <div className="mt-1">
+                    <div className="mt-1.5">
                       <StatusBadge
                         label={statusLabels[lesson.status] || lesson.status}
                         variant={statusVariants[lesson.status] || "neutral"}

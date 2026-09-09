@@ -26,6 +26,7 @@ import { useAuth } from "@/hooks/use-auth";
 import { ConfirmApplicationModal } from "@/components/admin/ConfirmApplicationModal";
 import { ApplicationActionModal, AdminActionType } from "@/components/admin/ApplicationActionModal";
 import { TeacherDetailDrawer } from "@/components/admin/TeacherDetailDrawer";
+import { SectionLabel } from "@/components/redesign/SectionLabel";
 
 export default function AdminDashboard() {
   const navigate = useNavigate();
@@ -70,22 +71,20 @@ export default function AdminDashboard() {
   return (
     <div className="space-y-8">
       {/* Welcome Banner */}
-      <div className="bg-white rounded-2xl border border-stone-200 p-6 shadow-xs flex flex-col md:flex-row md:items-center justify-between gap-4">
+      <div className="bg-white rounded-3xl border border-[#E5E4DE] p-6 sm:p-8 shadow-xs flex flex-col md:flex-row md:items-center justify-between gap-6">
         <div>
-          <div className="flex items-center gap-2">
-            <span className="w-2.5 h-2.5 rounded-full bg-emerald-500" />
-            <h1 className="text-xl sm:text-2xl font-bold text-slate-900 tracking-tight">
-              Administrative Control Center
-            </h1>
-          </div>
-          <p className="text-xs text-slate-500 mt-1 max-w-2xl">
+          <SectionLabel label="ADMINISTRATIVE CONSOLE" />
+          <h1 className="text-2xl sm:text-3xl font-bold text-[#111111] tracking-tight font-display mt-1">
+            Control Center & Oversight
+          </h1>
+          <p className="text-xs text-[#111111]/60 mt-1 max-w-2xl">
             Real-time verification queue, active user roster, academic operations, and compliance telemetry.
           </p>
         </div>
         <div className="flex items-center gap-2.5 shrink-0">
           <Button
             onClick={() => navigate("/admin/applications")}
-            className="bg-teal-600 hover:bg-teal-700 text-white text-xs font-bold rounded-xl shadow-xs"
+            className="bg-[#111111] hover:bg-[#F26522] text-white text-xs font-semibold rounded-full shadow-xs transition-colors h-9 px-4"
           >
             <FileCheck2 className="w-4 h-4 mr-1.5" />
             Review Applications ({stats?.underReviewApplications || 0})
@@ -93,7 +92,7 @@ export default function AdminDashboard() {
           <Button
             variant="outline"
             onClick={() => navigate("/admin/audit-logs")}
-            className="border-stone-300 text-slate-700 hover:bg-stone-100 text-xs font-semibold rounded-xl"
+            className="border-[#E5E4DE] text-[#111111] hover:bg-[#F5F4EF] text-xs font-semibold rounded-full h-9 px-4"
           >
             <History className="w-4 h-4 mr-1.5" /> Audit Stream
           </Button>
@@ -103,66 +102,66 @@ export default function AdminDashboard() {
       {/* Primary KPI Metrics */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
         {/* Pending Verification */}
-        <div className="bg-white p-5 rounded-2xl border border-stone-200 shadow-xs flex items-center justify-between">
+        <div className="bg-white p-6 rounded-3xl border border-[#E5E4DE] shadow-xs flex items-center justify-between">
           <div>
-            <p className="text-xs font-bold text-slate-400 uppercase tracking-wider">Pending Review</p>
-            <div className="flex items-baseline gap-2 mt-1">
-              <span className="text-2xl font-bold text-slate-900">
+            <p className="text-[10px] font-bold text-[#111111]/40 uppercase tracking-wider font-display">Pending Review</p>
+            <div className="flex items-baseline gap-2 mt-1.5">
+              <span className="text-2xl font-bold text-[#111111] font-display">
                 {stats ? stats.underReviewApplications : <Loader2 className="w-4 h-4 animate-spin inline" />}
               </span>
-              <span className="text-xs font-bold text-amber-600">Action Required</span>
+              <span className="text-xs font-bold text-[#F26522]">Action Required</span>
             </div>
           </div>
-          <div className="w-12 h-12 rounded-xl bg-amber-50 text-amber-600 flex items-center justify-center">
-            <Clock className="w-6 h-6" />
+          <div className="w-12 h-12 rounded-2xl bg-[#F5F4EF] border border-[#E5E4DE] text-[#F26522] flex items-center justify-center">
+            <Clock className="w-5 h-5" />
           </div>
         </div>
 
         {/* Verified Teachers */}
-        <div className="bg-white p-5 rounded-2xl border border-stone-200 shadow-xs flex items-center justify-between">
+        <div className="bg-white p-6 rounded-3xl border border-[#E5E4DE] shadow-xs flex items-center justify-between">
           <div>
-            <p className="text-xs font-bold text-slate-400 uppercase tracking-wider">Verified Educators</p>
-            <div className="flex items-baseline gap-2 mt-1">
-              <span className="text-2xl font-bold text-slate-900">
+            <p className="text-[10px] font-bold text-[#111111]/40 uppercase tracking-wider font-display">Verified Educators</p>
+            <div className="flex items-baseline gap-2 mt-1.5">
+              <span className="text-2xl font-bold text-[#111111] font-display">
                 {stats ? stats.verifiedTeachers : <Loader2 className="w-4 h-4 animate-spin inline" />}
               </span>
-              <span className="text-xs text-slate-500 font-medium">of {stats?.totalTeachers || 0} registered</span>
+              <span className="text-xs text-[#111111]/50 font-medium">of {stats?.totalTeachers || 0} registered</span>
             </div>
           </div>
-          <div className="w-12 h-12 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center">
-            <GraduationCap className="w-6 h-6" />
+          <div className="w-12 h-12 rounded-2xl bg-[#F5F4EF] border border-[#E5E4DE] text-[#111111] flex items-center justify-center">
+            <GraduationCap className="w-5 h-5" />
           </div>
         </div>
 
         {/* Total Students */}
-        <div className="bg-white p-5 rounded-2xl border border-stone-200 shadow-xs flex items-center justify-between">
+        <div className="bg-white p-6 rounded-3xl border border-[#E5E4DE] shadow-xs flex items-center justify-between">
           <div>
-            <p className="text-xs font-bold text-slate-400 uppercase tracking-wider">Active Students</p>
-            <div className="flex items-baseline gap-2 mt-1">
-              <span className="text-2xl font-bold text-slate-900">
+            <p className="text-[10px] font-bold text-[#111111]/40 uppercase tracking-wider font-display">Active Students</p>
+            <div className="flex items-baseline gap-2 mt-1.5">
+              <span className="text-2xl font-bold text-[#111111] font-display">
                 {stats ? stats.totalStudents : <Loader2 className="w-4 h-4 animate-spin inline" />}
               </span>
-              <span className="text-xs text-slate-500 font-medium">enrolled</span>
+              <span className="text-xs text-[#111111]/50 font-medium">enrolled</span>
             </div>
           </div>
-          <div className="w-12 h-12 rounded-xl bg-indigo-50 text-indigo-600 flex items-center justify-center">
-            <BookOpen className="w-6 h-6" />
+          <div className="w-12 h-12 rounded-2xl bg-[#F5F4EF] border border-[#E5E4DE] text-[#111111] flex items-center justify-center">
+            <BookOpen className="w-5 h-5" />
           </div>
         </div>
 
         {/* Total Lessons & Bookings */}
-        <div className="bg-white p-5 rounded-2xl border border-stone-200 shadow-xs flex items-center justify-between">
+        <div className="bg-white p-6 rounded-3xl border border-[#E5E4DE] shadow-xs flex items-center justify-between">
           <div>
-            <p className="text-xs font-bold text-slate-400 uppercase tracking-wider">Sessions Conducted</p>
-            <div className="flex items-baseline gap-2 mt-1">
-              <span className="text-2xl font-bold text-slate-900">
+            <p className="text-[10px] font-bold text-[#111111]/40 uppercase tracking-wider font-display">Sessions Conducted</p>
+            <div className="flex items-baseline gap-2 mt-1.5">
+              <span className="text-2xl font-bold text-[#111111] font-display">
                 {stats ? stats.totalLessons : <Loader2 className="w-4 h-4 animate-spin inline" />}
               </span>
-              <span className="text-xs text-slate-500 font-medium">{stats?.completedLessons || 0} completed</span>
+              <span className="text-xs text-[#111111]/50 font-medium">{stats?.completedLessons || 0} completed</span>
             </div>
           </div>
-          <div className="w-12 h-12 rounded-xl bg-teal-50 text-teal-600 flex items-center justify-center">
-            <Video className="w-6 h-6" />
+          <div className="w-12 h-12 rounded-2xl bg-[#F5F4EF] border border-[#E5E4DE] text-[#F26522] flex items-center justify-center">
+            <Video className="w-5 h-5" />
           </div>
         </div>
       </div>
@@ -173,31 +172,31 @@ export default function AdminDashboard() {
         <div className="lg:col-span-2 space-y-4">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2">
-              <FileCheck2 className="w-5 h-5 text-teal-600" />
-              <h2 className="text-base font-bold text-slate-900">
+              <FileCheck2 className="w-5 h-5 text-[#F26522]" />
+              <h2 className="text-base font-bold text-[#111111] font-display">
                 Urgent Teacher Verification Queue
               </h2>
             </div>
             <button
               onClick={() => navigate("/admin/applications")}
-              className="text-xs font-bold text-teal-600 hover:text-teal-700 flex items-center gap-1"
+              className="text-xs font-semibold text-[#F26522] hover:text-[#111111] flex items-center gap-1 transition-colors"
             >
               View All ({stats?.totalTeachers || 0}) <ArrowRight className="w-3.5 h-3.5" />
             </button>
           </div>
 
           {!pendingApplications ? (
-            <div className="bg-white p-12 rounded-2xl border border-stone-200 text-center text-slate-400">
-              <Loader2 className="w-6 h-6 animate-spin mx-auto mb-2 text-teal-600" />
+            <div className="bg-white p-12 rounded-3xl border border-[#E5E4DE] text-center text-[#111111]/40">
+              <Loader2 className="w-6 h-6 animate-spin mx-auto mb-2 text-[#F26522]" />
               <p className="text-xs">Fetching application records...</p>
             </div>
           ) : pendingApplications.length === 0 ? (
-            <div className="bg-white p-8 rounded-2xl border border-stone-200 text-center space-y-2">
-              <div className="w-12 h-12 rounded-full bg-emerald-50 text-emerald-600 flex items-center justify-center mx-auto">
-                <CheckCircle2 className="w-6 h-6" />
+            <div className="bg-white p-10 rounded-3xl border border-[#E5E4DE] text-center space-y-2">
+              <div className="w-12 h-12 rounded-full bg-[#F5F4EF] text-[#111111] flex items-center justify-center mx-auto border border-[#E5E4DE]">
+                <CheckCircle2 className="w-6 h-6 text-emerald-600" />
               </div>
-              <h3 className="text-sm font-bold text-slate-900">Verification Queue is Clear</h3>
-              <p className="text-xs text-slate-500 max-w-sm mx-auto">
+              <h3 className="text-sm font-bold text-[#111111] font-display">Verification Queue is Clear</h3>
+              <p className="text-xs text-[#111111]/50 max-w-sm mx-auto">
                 No teacher applications are currently awaiting review. All submitted credentials have been processed.
               </p>
             </div>
@@ -206,37 +205,37 @@ export default function AdminDashboard() {
               {pendingApplications.slice(0, 5).map((app: any) => (
                 <div
                   key={app.userId}
-                  className="bg-white p-5 rounded-2xl border border-stone-200 shadow-xs hover:border-teal-300 transition-all space-y-3"
+                  className="bg-white p-5 rounded-3xl border border-[#E5E4DE] shadow-xs hover:border-[#111111] transition-all space-y-3"
                 >
                   <div className="flex items-start justify-between gap-4">
                     <div className="flex items-center gap-3.5">
-                      <div className="w-11 h-11 rounded-xl bg-teal-50 text-teal-700 font-bold text-sm flex items-center justify-center border border-teal-200 shrink-0">
+                      <div className="w-11 h-11 rounded-2xl bg-[#F5F4EF] text-[#111111] font-bold text-sm flex items-center justify-center border border-[#E5E4DE] shrink-0 font-display">
                         {app.name.charAt(0)}
                       </div>
                       <div>
                         <div className="flex items-center gap-2">
-                          <h4 className="text-sm font-bold text-slate-900">{app.name}</h4>
-                          <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-amber-100 text-amber-800 border border-amber-200">
+                          <h4 className="text-sm font-bold text-[#111111] font-display">{app.name}</h4>
+                          <span className="px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-[#F5F4EF] text-[#111111] border border-[#E5E4DE]">
                             Under Review
                           </span>
                         </div>
-                        <p className="text-xs text-slate-500">{app.title || "Educator Applicant"} • {app.userEmail}</p>
+                        <p className="text-xs text-[#111111]/50">{app.title || "Educator Applicant"} • {app.userEmail}</p>
                       </div>
                     </div>
 
                     <div className="text-right shrink-0">
-                      <span className="text-xs font-bold text-slate-900">৳{((app.hourlyRate || 35) >= 500 ? app.hourlyRate : (app.hourlyRate || 35) * 100).toLocaleString()}/mo</span>
-                      <p className="text-[11px] text-slate-400">
+                      <span className="text-xs font-bold text-[#111111] font-display">৳{((app.hourlyRate || 35) >= 500 ? app.hourlyRate : (app.hourlyRate || 35) * 100).toLocaleString()}/mo</span>
+                      <p className="text-[11px] text-[#111111]/40">
                         {app.nidSubmittedAt ? new Date(app.nidSubmittedAt).toLocaleDateString() : "Recent"}
                       </p>
                     </div>
                   </div>
 
                   {/* Subjects & Details */}
-                  <div className="flex flex-wrap items-center justify-between gap-2 pt-2 border-t border-stone-100 text-xs">
+                  <div className="flex flex-wrap items-center justify-between gap-2 pt-3 border-t border-[#E5E4DE] text-xs">
                     <div className="flex flex-wrap gap-1">
                       {(app.subjects || []).map((sub: string, i: number) => (
-                        <span key={i} className="px-2 py-0.5 rounded bg-stone-100 text-slate-700 text-[11px] font-medium">
+                        <span key={i} className="px-2.5 py-0.5 rounded-full bg-[#F5F4EF] text-[#111111] border border-[#E5E4DE] text-[10px] font-medium">
                           {sub}
                         </span>
                       ))}
@@ -248,14 +247,14 @@ export default function AdminDashboard() {
                         size="sm"
                         variant="outline"
                         onClick={() => setInspectTeacherId(app.userId)}
-                        className="h-8 text-xs font-semibold rounded-lg border-stone-200"
+                        className="h-8 text-xs font-semibold rounded-full border-[#E5E4DE] text-[#111111] hover:bg-[#F5F4EF]"
                       >
                         Inspect
                       </Button>
                       <Button
                         size="sm"
                         onClick={() => handleOpenConfirm(app)}
-                        className="h-8 bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold rounded-lg shadow-xs shadow-emerald-600/20"
+                        className="h-8 bg-[#111111] hover:bg-[#F26522] text-white text-xs font-semibold rounded-full shadow-xs transition-colors"
                       >
                         <ShieldCheck className="w-3.5 h-3.5 mr-1" /> Confirm Application
                       </Button>
@@ -271,41 +270,41 @@ export default function AdminDashboard() {
         <div className="space-y-4">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2">
-              <History className="w-5 h-5 text-slate-700" />
-              <h2 className="text-base font-bold text-slate-900">Recent Audit Events</h2>
+              <History className="w-5 h-5 text-[#111111]" />
+              <h2 className="text-base font-bold text-[#111111] font-display">Recent Audit Events</h2>
             </div>
             <button
               onClick={() => navigate("/admin/audit-logs")}
-              className="text-xs font-bold text-slate-500 hover:text-slate-800"
+              className="text-xs font-semibold text-[#111111]/50 hover:text-[#111111] transition-colors"
             >
               View Full
             </button>
           </div>
 
-          <div className="bg-white rounded-2xl border border-stone-200 p-4 divide-y divide-stone-100 shadow-xs">
+          <div className="bg-white rounded-3xl border border-[#E5E4DE] p-5 divide-y divide-[#E5E4DE] shadow-xs">
             {!recentLogs ? (
-              <div className="py-8 text-center text-slate-400">
-                <Loader2 className="w-5 h-5 animate-spin mx-auto text-teal-600" />
+              <div className="py-8 text-center text-[#111111]/40">
+                <Loader2 className="w-5 h-5 animate-spin mx-auto text-[#F26522]" />
               </div>
             ) : recentLogs.length === 0 ? (
-              <p className="text-xs text-slate-500 py-6 text-center">No recent audit entries.</p>
+              <p className="text-xs text-[#111111]/50 py-6 text-center">No recent audit entries.</p>
             ) : (
               recentLogs.map((log: any) => (
                 <div key={log._id} className="py-3 first:pt-0 last:pb-0 text-xs space-y-1">
                   <div className="flex items-center justify-between">
-                    <span className="font-bold text-slate-800 capitalize">
+                    <span className="font-bold text-[#111111] capitalize font-display">
                       {log.action.replace(/_/g, " ")}
                     </span>
-                    <span className="text-[10px] text-slate-400">
+                    <span className="text-[10px] text-[#111111]/40">
                       {new Date(log.timestamp).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}
                     </span>
                   </div>
                   {log.reason && (
-                    <p className="text-slate-600 text-[11px] line-clamp-1 italic">
+                    <p className="text-[#111111]/70 text-[11px] line-clamp-1 italic">
                       "{log.reason}"
                     </p>
                   )}
-                  <p className="text-[10px] text-slate-400">
+                  <p className="text-[10px] text-[#111111]/40">
                     By: {log.adminName || log.adminId}
                   </p>
                 </div>

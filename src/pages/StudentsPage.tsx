@@ -31,6 +31,7 @@ import {
   ChevronRight,
 } from "lucide-react";
 import { useNavigate } from "react-router";
+import { SectionLabel } from "@/components/redesign";
 
 const popularSubjects = [
   "All Subjects",
@@ -199,105 +200,92 @@ export default function StudentsPage() {
   };
 
   return (
-    <main className="min-h-screen bg-[#FAFAF8] pb-16">
+    <main className="min-h-screen bg-[#F5F4EF] text-[#111111] pb-24">
       {/* Header */}
-      <div className="bg-white border-b border-stone-200/60 shadow-xs">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-5">
-          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-            <div className="flex items-center gap-3">
-              <Button
-                variant="ghost"
-                size="sm"
-                onClick={() => navigate(user?.role === "teacher" ? "/teacher-dashboard" : "/dashboard")}
-                className="gap-1.5 text-slate-600"
-              >
-                <ArrowLeft className="w-4 h-4" /> Dashboard
-              </Button>
-              <div className="h-4 w-px bg-stone-200" />
-              <div>
-                <h1 className="text-xl sm:text-2xl font-extrabold text-slate-900 tracking-tight flex items-center gap-2">
-                  Find Students
-                  <span className="inline-flex items-center px-2 py-0.5 text-xs font-semibold rounded-full bg-teal-50 text-teal-700 border border-teal-200/60">
-                    Reciprocal Discovery
-                  </span>
-                </h1>
-                <p className="text-xs text-slate-500 mt-0.5">
-                  Browse discoverable student learning requirements, connect with learners, and propose lessons
-                </p>
-              </div>
+      <div className="border-b border-[#E5E4DE] bg-white/50 backdrop-blur-xs">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+          <div className="flex flex-col lg:flex-row lg:items-end justify-between gap-6">
+            <div>
+              <SectionLabel number="02" text="Academic Inquiries & Student Directory" />
+              <h1 className="text-3xl sm:text-5xl font-extrabold text-[#111111] tracking-tight font-display mt-2">
+                Student Learning Demands.
+              </h1>
+              <p className="text-sm sm:text-base text-[#111111]/70 mt-2 max-w-2xl">
+                Browse discoverable student learning requirements, connect with learners, and propose personalized lessons.
+              </p>
             </div>
 
             {/* Quick action buttons */}
-            <div className="flex items-center gap-2">
+            <div className="flex items-center gap-2.5 shrink-0">
               <Button
                 variant="outline"
                 size="sm"
                 onClick={() => navigate("/calendar")}
-                className="text-xs border-stone-200 text-slate-700 gap-1.5"
+                className="rounded-full border-[#E5E4DE] text-[#111111] hover:bg-[#F5F4EF] text-xs font-semibold px-4 py-2 gap-1.5"
               >
-                <Calendar className="w-3.5 h-3.5 text-teal-600" />
-                My Schedule
+                <Calendar className="w-3.5 h-3.5 text-[#F26522]" />
+                <span>My Schedule</span>
               </Button>
               <Button
                 size="sm"
                 onClick={() => navigate("/teacher-dashboard")}
-                className="bg-teal-600 hover:bg-teal-700 text-white text-xs gap-1.5"
+                className="rounded-full bg-[#111111] hover:bg-[#F26522] text-white text-xs font-semibold px-4 py-2 gap-1.5 shadow-xs transition-all"
               >
                 <GraduationCap className="w-3.5 h-3.5" />
-                Teacher Space
+                <span>Teacher Space</span>
               </Button>
             </div>
           </div>
 
           {/* Privacy & Opt-In Assurance Banner */}
-          <div className="mt-4 p-3 bg-teal-50/70 border border-teal-200/70 rounded-xl flex items-start gap-2.5 text-xs text-teal-900">
-            <ShieldCheck className="w-4 h-4 text-teal-600 mt-0.5 shrink-0" />
-            <div className="flex-1">
-              <span className="font-bold">Student Privacy Protected:</span> All students listed below have opted into educator discovery. Only academic needs, target subjects, learning goals, and schedule preferences are displayed. Private contact information and records are never exposed.
+          <div className="mt-6 p-4 bg-white rounded-2xl border border-[#E5E4DE] flex items-start gap-3 text-xs text-[#111111]/80">
+            <ShieldCheck className="w-4 h-4 text-[#F26522] mt-0.5 shrink-0" />
+            <div className="flex-1 leading-relaxed">
+              <span className="font-bold text-[#111111]">Student Privacy Protected:</span> All students listed below have explicitly opted into educator discovery. Only academic needs, target subjects, learning goals, and schedule preferences are displayed.
             </div>
           </div>
 
           {/* Search bar & filter trigger */}
-          <div className="mt-4 flex flex-col sm:flex-row gap-2.5">
+          <div className="mt-6 flex flex-col sm:flex-row gap-3">
             <div className="relative flex-1">
-              <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
+              <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-[#111111]/40" />
               <input
                 type="text"
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
                 placeholder="Search students by subject, curriculum, grade, or learning goal..."
-                className="w-full pl-10 pr-4 py-2.5 bg-stone-50 border border-stone-200 rounded-xl text-sm text-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-teal-500/20 focus:border-teal-400 transition-all"
+                className="w-full h-11 pl-11 pr-4 bg-white border border-[#E5E4DE] rounded-full text-sm text-[#111111] placeholder:text-[#111111]/40 focus:outline-none focus:border-[#111111] transition-all shadow-xs"
               />
             </div>
             <Button
               variant="outline"
               onClick={() => setShowFilters(!showFilters)}
-              className={`gap-2 text-xs font-semibold ${
+              className={`h-11 px-5 rounded-full text-xs font-semibold gap-2 border-[#E5E4DE] transition-all ${
                 showFilters || hasFilters
-                  ? "bg-teal-50 border-teal-300 text-teal-800"
-                  : "border-stone-200 text-slate-700"
+                  ? "bg-[#111111] text-white"
+                  : "bg-white text-[#111111] hover:bg-[#F5F4EF]"
               }`}
             >
-              <SlidersHorizontal className="w-3.5 h-3.5 text-teal-600" />
-              Filters
+              <SlidersHorizontal className="w-3.5 h-3.5" />
+              <span>Filters</span>
               {hasFilters && (
-                <span className="w-2 h-2 bg-teal-600 rounded-full animate-pulse" />
+                <span className="w-2 h-2 bg-[#F26522] rounded-full animate-pulse" />
               )}
             </Button>
           </div>
 
           {/* Subject Pills */}
-          <div className="mt-3 flex items-center gap-1.5 overflow-x-auto pb-1 scrollbar-none">
+          <div className="mt-4 flex items-center gap-2 overflow-x-auto pb-1 scrollbar-none">
             {popularSubjects.map((sub) => {
               const isSelected = selectedSubject === sub || (!selectedSubject && sub === "All Subjects");
               return (
                 <button
                   key={sub}
                   onClick={() => setSelectedSubject(sub === "All Subjects" ? "" : sub)}
-                  className={`px-3 py-1 text-xs font-medium rounded-lg whitespace-nowrap transition-all ${
+                  className={`px-3.5 py-1.5 text-xs font-medium rounded-full whitespace-nowrap transition-all ${
                     isSelected
-                      ? "bg-slate-900 text-white shadow-xs"
-                      : "bg-stone-100 text-slate-600 hover:bg-stone-200 hover:text-slate-900"
+                      ? "bg-[#111111] text-white shadow-xs"
+                      : "bg-white border border-[#E5E4DE] text-[#111111]/70 hover:border-[#111111]/40"
                   }`}
                 >
                   {sub}
@@ -757,9 +745,9 @@ function StudentCard({
   return (
     <div
       onClick={onViewProfile}
-      className="bg-white rounded-2xl border border-stone-200/80 hover:border-teal-300 hover:shadow-md transition-all cursor-pointer group flex flex-col justify-between overflow-hidden"
+      className="bg-white rounded-3xl border border-[#E5E4DE] hover:border-[#111111]/40 hover:shadow-md transition-all cursor-pointer group flex flex-col justify-between overflow-hidden shadow-xs"
     >
-      <div className="p-5">
+      <div className="p-6">
         {/* Header */}
         <div className="flex items-start gap-3.5">
           <ProfileAvatar
@@ -774,38 +762,38 @@ function StudentCard({
           />
           <div className="flex-1 min-w-0">
             <div className="flex items-center justify-between">
-              <h3 className="text-sm font-bold text-slate-900 truncate">
+              <h3 className="text-base font-bold text-[#111111] truncate font-display">
                 {student.name}
               </h3>
               {student.verificationStatus === "verified" && (
-                <span className="inline-flex items-center gap-0.5 text-[10px] font-semibold text-emerald-700 bg-emerald-50 px-1.5 py-0.5 rounded-full border border-emerald-200/60">
-                  <ShieldCheck className="w-3 h-3 text-emerald-600" />
+                <span className="inline-flex items-center gap-1 text-[10px] font-semibold text-[#111111] bg-[#F5F4EF] px-2 py-0.5 rounded-full border border-[#E5E4DE]">
+                  <ShieldCheck className="w-3 h-3 text-[#F26522]" />
                   Verified
                 </span>
               )}
             </div>
-            <p className="text-xs text-slate-500 mt-0.5">
+            <p className="text-xs text-[#111111]/60 mt-0.5">
               {student.classLevel} · {student.curriculum}
             </p>
           </div>
         </div>
 
         {/* Subjects Needed */}
-        <div className="mt-3.5">
-          <span className="text-[11px] font-semibold text-slate-400 uppercase tracking-wider block mb-1.5">
-            Needs Help With
+        <div className="mt-4">
+          <span className="text-[11px] font-semibold text-[#111111]/50 uppercase tracking-wider block mb-2">
+            Target Subjects
           </span>
           <div className="flex flex-wrap gap-1.5">
             {student.subjects.slice(0, 3).map((sub: string) => (
               <span
                 key={sub}
-                className="px-2 py-0.5 bg-teal-50 text-teal-800 text-xs font-semibold rounded-md border border-teal-100"
+                className="px-3 py-1 bg-[#F5F4EF] text-[#111111] text-xs font-semibold rounded-full border border-[#E5E4DE]"
               >
                 {sub}
               </span>
             ))}
             {student.subjects.length > 3 && (
-              <span className="px-1.5 py-0.5 text-slate-400 text-xs font-medium">
+              <span className="px-2.5 py-1 text-[#111111]/50 bg-white text-xs font-medium rounded-full border border-[#E5E4DE]">
                 +{student.subjects.length - 3} more
               </span>
             )}
@@ -813,38 +801,38 @@ function StudentCard({
         </div>
 
         {/* Learning Goal summary */}
-        <div className="mt-3 text-xs text-slate-600 leading-relaxed bg-stone-50 p-2.5 rounded-xl border border-stone-100">
+        <div className="mt-4 text-xs text-[#111111]/80 leading-relaxed bg-[#F5F4EF] p-3 rounded-2xl border border-[#E5E4DE]">
           <p className="line-clamp-2">
-            <span className="font-bold text-slate-900">Goal: </span>
+            <span className="font-bold text-[#111111]">Goal: </span>
             {student.learningGoals[0] || "Master course syllabus and excel in examinations."}
           </p>
         </div>
 
         {/* Schedule & Style tags */}
-        <div className="mt-3 flex items-center gap-2 text-[11px] text-slate-500 flex-wrap">
+        <div className="mt-4 flex items-center gap-2 text-[11px] text-[#111111]/60 flex-wrap">
           <span className="inline-flex items-center gap-1">
-            <Clock className="w-3 h-3 text-teal-600" />
+            <Clock className="w-3 h-3 text-[#F26522]" />
             {student.preferredSchedule}
           </span>
-          <span className="text-slate-300">·</span>
+          <span className="text-[#111111]/30">·</span>
           <span className="inline-flex items-center gap-1">
-            <Globe2 className="w-3 h-3 text-indigo-500" />
+            <Globe2 className="w-3 h-3 text-[#111111]/40" />
             {student.preferredLanguages.join(", ")}
           </span>
         </div>
       </div>
 
       {/* Card Actions */}
-      <div className="px-5 py-3 bg-[#FAFAF8] border-t border-stone-100 flex items-center justify-between gap-2">
+      <div className="px-6 py-3.5 bg-white border-t border-[#E5E4DE] flex items-center justify-between gap-3">
         <button
           onClick={(e) => {
             e.stopPropagation();
             onChat();
           }}
-          className="text-xs font-semibold text-slate-600 hover:text-teal-700 flex items-center gap-1 transition-colors"
+          className="text-xs font-semibold text-[#111111] hover:text-[#F26522] flex items-center gap-1.5 transition-colors"
         >
-          <MessageCircle className="w-3.5 h-3.5 text-teal-600" />
-          Message
+          <MessageCircle className="w-3.5 h-3.5 text-[#F26522]" />
+          <span>Message</span>
         </button>
 
         <Button
@@ -853,10 +841,10 @@ function StudentCard({
             e.stopPropagation();
             onInvite();
           }}
-          className="bg-teal-600 hover:bg-teal-700 text-white text-xs font-semibold gap-1 shadow-xs"
+          className="rounded-full bg-[#111111] hover:bg-[#F26522] text-white text-xs font-semibold px-4 py-1.5 gap-1.5 shadow-xs transition-all"
         >
           <GraduationCap className="w-3.5 h-3.5" />
-          Invite to Lesson
+          <span>Invite to Lesson</span>
         </Button>
       </div>
     </div>

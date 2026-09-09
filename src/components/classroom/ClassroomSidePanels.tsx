@@ -18,6 +18,7 @@ import {
   HelpCircle,
   Sparkles,
   UserX,
+  X,
 } from "lucide-react";
 import { ParticipantPresence } from "./ClassroomVideoGrid";
 
@@ -62,6 +63,7 @@ interface ClassroomSidePanelsProps {
       | "remove_participant",
   ) => void;
   onOpenHostControls?: () => void;
+  onClose?: () => void;
 }
 
 export function ClassroomSidePanels({
@@ -77,6 +79,7 @@ export function ClassroomSidePanels({
   onToggleObjective,
   onManageParticipant,
   onOpenHostControls,
+  onClose,
 }: ClassroomSidePanelsProps) {
   const [chatInput, setChatInput] = useState("");
   const [filterQuestionsOnly, setFilterQuestionsOnly] = useState(false);
@@ -126,6 +129,17 @@ export function ClassroomSidePanels({
             )}
           </button>
         ))}
+        {onClose && (
+          <button
+            type="button"
+            onClick={onClose}
+            className="p-1 text-slate-400 hover:text-white rounded-md hover:bg-slate-800 transition-colors ml-1 mb-1 shrink-0"
+            title="Close Panel"
+            aria-label="Close Panel"
+          >
+            <X className="w-4 h-4" />
+          </button>
+        )}
       </div>
 
       {/* ─── TAB CONTENT ──────────────────────────────────────────────── */}

@@ -570,16 +570,16 @@ export default function Auth({ redirectAfterAuth }: AuthProps = {}) {
   };
 
   return (
-    <div className="min-h-screen bg-[#F8FAFC] flex flex-col justify-center py-12 sm:px-6 lg:px-8">
+    <div className="min-h-screen bg-[#F5F4EF] flex flex-col justify-center py-12 px-4 sm:px-6 lg:px-8">
       {/* Brand Header */}
       <div className="sm:mx-auto sm:w-full sm:max-w-md text-center mb-6">
         <div className="inline-flex items-center justify-center mb-2 cursor-pointer hover:opacity-90 transition-opacity" onClick={() => navigate("/")}>
-          <BrandLogo variant="horizontal" size="lg" />
+          <BrandLogo variant="horizontal" size="lg" showSubtext />
         </div>
       </div>
 
       <div className="sm:mx-auto sm:w-full sm:max-w-md">
-        <Card className="border-stone-200/80 shadow-md bg-white rounded-2xl overflow-hidden">
+        <Card className="border-[#E5E4DE] shadow-[0_4px_24px_rgba(0,0,0,0.04)] bg-white rounded-3xl overflow-hidden">
           {/* Notification Messages */}
           {error && (
             <div className="bg-rose-50 border-b border-rose-200/60 p-4 flex items-start gap-3">
@@ -640,7 +640,7 @@ export default function Auth({ redirectAfterAuth }: AuthProps = {}) {
                   <Button
                     type="submit"
                     disabled={isLoading || otpDigits.join("").length !== 6}
-                    className="w-full h-11 bg-teal-600 hover:bg-teal-700 text-white font-semibold rounded-xl text-base shadow-sm transition-all"
+                    className="w-full h-11 bg-[#F26522] hover:bg-[#d85518] text-white font-semibold rounded-full text-sm shadow-xs transition-all cursor-pointer"
                   >
                     {isLoading ? (
                       <span className="flex items-center gap-2">
@@ -691,17 +691,17 @@ export default function Auth({ redirectAfterAuth }: AuthProps = {}) {
               {/* ══════════════════════════════════════════════════════════
                   VIEW 2: CREATE ACCOUNT OR LOG IN FORM
                  ══════════════════════════════════════════════════════════ */}
-              <div className="flex border-b border-stone-200">
+              <div className="flex border-b border-[#E5E4DE]">
                 <button
                   type="button"
                   onClick={() => {
                     setMode("register");
                     setError(null);
                   }}
-                  className={`flex-1 py-3.5 text-center text-sm font-semibold transition-colors cursor-pointer ${
+                  className={`flex-1 py-3.5 text-center text-xs sm:text-sm font-semibold transition-colors cursor-pointer ${
                     mode === "register"
-                      ? "text-teal-700 border-b-2 border-teal-600 bg-teal-50/40"
-                      : "text-slate-500 hover:text-slate-800"
+                      ? "text-[#111111] border-b-2 border-[#F26522] bg-[#F5F4EF]/60 font-bold"
+                      : "text-[#111111]/50 hover:text-[#111111]"
                   }`}
                 >
                   Create Account
@@ -712,10 +712,10 @@ export default function Auth({ redirectAfterAuth }: AuthProps = {}) {
                     setMode("login");
                     setError(null);
                   }}
-                  className={`flex-1 py-3.5 text-center text-sm font-semibold transition-colors cursor-pointer ${
+                  className={`flex-1 py-3.5 text-center text-xs sm:text-sm font-semibold transition-colors cursor-pointer ${
                     mode === "login"
-                      ? "text-teal-700 border-b-2 border-teal-600 bg-teal-50/40"
-                      : "text-slate-500 hover:text-slate-800"
+                      ? "text-[#111111] border-b-2 border-[#F26522] bg-[#F5F4EF]/60 font-bold"
+                      : "text-[#111111]/50 hover:text-[#111111]"
                   }`}
                 >
                   Log In
@@ -743,39 +743,39 @@ export default function Auth({ redirectAfterAuth }: AuthProps = {}) {
                           <button
                             type="button"
                             onClick={() => setSelectedRole("student")}
-                            className={`py-2.5 px-3 rounded-xl border text-xs font-semibold flex items-center justify-center gap-1.5 transition-all cursor-pointer ${
+                            className={`py-2.5 px-3 rounded-full border text-xs font-semibold flex items-center justify-center gap-1.5 transition-all cursor-pointer ${
                               selectedRole === "student"
-                                ? "bg-teal-50 border-teal-600 text-teal-800 shadow-xs ring-1 ring-teal-600"
-                                : "border-stone-200 text-slate-600 hover:bg-stone-50"
+                                ? "bg-[#F26522]/10 border-[#F26522] text-[#111111] shadow-xs ring-1 ring-[#F26522]"
+                                : "border-[#E5E4DE] text-[#111111]/70 hover:bg-[#F5F4EF]"
                             }`}
                           >
-                            <GraduationCap className="w-4 h-4 text-teal-600" />
+                            <GraduationCap className={`w-4 h-4 ${selectedRole === "student" ? "text-[#F26522]" : "text-[#111111]/50"}`} />
                             Student
                           </button>
 
                           <button
                             type="button"
                             onClick={() => setSelectedRole("teacher")}
-                            className={`py-2.5 px-3 rounded-xl border text-xs font-semibold flex items-center justify-center gap-1.5 transition-all cursor-pointer ${
+                            className={`py-2.5 px-3 rounded-full border text-xs font-semibold flex items-center justify-center gap-1.5 transition-all cursor-pointer ${
                               selectedRole === "teacher"
-                                ? "bg-teal-50 border-teal-600 text-teal-800 shadow-xs ring-1 ring-teal-600"
-                                : "border-stone-200 text-slate-600 hover:bg-stone-50"
+                                ? "bg-[#F26522]/10 border-[#F26522] text-[#111111] shadow-xs ring-1 ring-[#F26522]"
+                                : "border-[#E5E4DE] text-[#111111]/70 hover:bg-[#F5F4EF]"
                             }`}
                           >
-                            <BookOpen className="w-4 h-4 text-teal-600" />
+                            <BookOpen className={`w-4 h-4 ${selectedRole === "teacher" ? "text-[#F26522]" : "text-[#111111]/50"}`} />
                             Teacher
                           </button>
 
                           <button
                             type="button"
                             onClick={() => setSelectedRole("parent")}
-                            className={`py-2.5 px-3 rounded-xl border text-xs font-semibold flex items-center justify-center gap-1.5 transition-all cursor-pointer ${
+                            className={`py-2.5 px-3 rounded-full border text-xs font-semibold flex items-center justify-center gap-1.5 transition-all cursor-pointer ${
                               selectedRole === "parent"
-                                ? "bg-teal-50 border-teal-600 text-teal-800 shadow-xs ring-1 ring-teal-600"
-                                : "border-stone-200 text-slate-600 hover:bg-stone-50"
+                                ? "bg-[#F26522]/10 border-[#F26522] text-[#111111] shadow-xs ring-1 ring-[#F26522]"
+                                : "border-[#E5E4DE] text-[#111111]/70 hover:bg-[#F5F4EF]"
                             }`}
                           >
-                            <Users className="w-4 h-4 text-teal-600" />
+                            <Users className={`w-4 h-4 ${selectedRole === "parent" ? "text-[#F26522]" : "text-[#111111]/50"}`} />
                             Parent
                           </button>
                         </div>
@@ -902,7 +902,7 @@ export default function Auth({ redirectAfterAuth }: AuthProps = {}) {
                       <Button
                         type="submit"
                         disabled={isLoading}
-                        className="w-full h-11 bg-teal-600 hover:bg-teal-700 text-white font-semibold rounded-xl text-base shadow-sm mt-2 transition-all cursor-pointer"
+                        className="w-full h-11 bg-[#F26522] hover:bg-[#d85518] text-white font-semibold rounded-full text-sm shadow-xs mt-2 transition-all cursor-pointer"
                       >
                         {isLoading ? (
                           <span className="flex items-center gap-2">
@@ -1016,7 +1016,7 @@ export default function Auth({ redirectAfterAuth }: AuthProps = {}) {
                         type="submit"
                         disabled={isLoading}
                         style={{ touchAction: "manipulation" }}
-                        className="w-full h-11 bg-teal-600 hover:bg-teal-700 text-white font-semibold rounded-xl text-base shadow-sm mt-2 transition-all cursor-pointer touch-manipulation active:scale-[0.99]"
+                        className="w-full h-11 bg-[#F26522] hover:bg-[#d85518] text-white font-semibold rounded-full text-sm shadow-xs mt-2 transition-all cursor-pointer touch-manipulation active:scale-[0.99]"
                       >
                         {isLoading ? (
                           <span className="flex items-center gap-2">

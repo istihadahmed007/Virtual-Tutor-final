@@ -33,21 +33,21 @@ export function PageHeader({
   const navigate = useNavigate();
 
   return (
-    <div className={`mb-6 lg:mb-8 ${className ?? ""}`}>
+    <div className={`mb-8 lg:mb-10 ${className ?? ""}`}>
       {breadcrumbs && breadcrumbs.length > 0 && (
-        <nav className="flex items-center gap-1.5 text-xs text-slate-400 mb-3">
+        <nav className="flex items-center gap-1.5 text-xs text-[#111111]/40 mb-3">
           {breadcrumbs.map((crumb, i) => (
             <span key={i} className="flex items-center gap-1.5">
-              {i > 0 && <ChevronRight className="w-3 h-3" />}
+              {i > 0 && <ChevronRight className="w-3 h-3 text-[#111111]/30" />}
               {crumb.path ? (
                 <button
                   onClick={() => navigate(crumb.path!)}
-                  className="hover:text-teal-600 transition-colors"
+                  className="hover:text-[#F26522] transition-colors"
                 >
                   {crumb.label}
                 </button>
               ) : (
-                <span className="text-slate-600 font-medium">
+                <span className="text-[#111111]/70 font-medium">
                   {crumb.label}
                 </span>
               )}
@@ -55,13 +55,13 @@ export function PageHeader({
           ))}
         </nav>
       )}
-      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
-          <h1 className="text-2xl lg:text-3xl font-extrabold text-slate-900 tracking-tight">
+          <h1 className="text-3xl lg:text-4xl font-extrabold text-[#111111] tracking-tight font-display">
             {title}
           </h1>
           {description && (
-            <p className="text-sm text-slate-500 mt-1">{description}</p>
+            <p className="text-sm text-[#111111]/60 mt-1.5 max-w-2xl">{description}</p>
           )}
         </div>
         {action && (
@@ -70,7 +70,7 @@ export function PageHeader({
               if (action.onClick) action.onClick();
               else if (action.path) navigate(action.path);
             }}
-            className="bg-teal-600 hover:bg-teal-700 text-white shrink-0 gap-2"
+            className="rounded-full bg-[#111111] hover:bg-[#F26522] text-white px-5 py-2.5 text-xs font-semibold transition-all shrink-0 gap-2 shadow-xs"
           >
             {action.icon}
             {action.label}

@@ -104,27 +104,27 @@ export function AdminLayout({ children }: AdminLayoutProps) {
   };
 
   const sidebarContent = (
-    <div className="flex flex-col h-full bg-slate-900 text-slate-300 select-none">
+    <div className="flex flex-col h-full bg-white text-[#111111] select-none">
       {/* Brand Header */}
-      <div className="p-5 border-b border-slate-800 flex items-center justify-between shrink-0">
+      <div className="p-5 border-b border-[#E5E4DE] flex items-center justify-between shrink-0">
         <div
           onClick={() => navigate("/admin")}
           className="flex items-center gap-3 cursor-pointer group"
         >
-          <div className="w-10 h-10 rounded-xl bg-white p-1 flex items-center justify-center shadow-md group-hover:scale-105 transition-transform shrink-0">
+          <div className="w-10 h-10 rounded-xl bg-white border border-[#E5E4DE] p-1 flex items-center justify-center shrink-0 shadow-xs">
             <BrandLogo variant="icon" size={32} />
           </div>
           <div>
             <div className="flex items-center gap-1.5">
-              <span className="font-bold text-white tracking-tight text-base font-['Hind_Siliguri',sans-serif]">
-                ভার্চুয়াল <span className="text-sky-400">টিউটর</span>
+              <span className="font-bold text-[#0a2352] tracking-tight text-base font-['Hind_Siliguri',sans-serif]">
+                ভার্চুয়াল <span className="text-[#0070f3] font-black">টিউটর</span>
               </span>
             </div>
             <div className="flex items-center gap-1.5 mt-0.5">
-              <span className="inline-flex items-center px-1.5 py-0.2 rounded text-[10px] font-bold bg-teal-500/20 text-teal-400 border border-teal-500/30">
+              <span className="inline-flex items-center px-2 py-0.5 rounded-full text-[9px] font-bold bg-[#F5F4EF] text-[#111111] border border-[#E5E4DE]">
                 ADMIN CONSOLE
               </span>
-              <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
+              <span className="w-1.5 h-1.5 rounded-full bg-[#0070f3]" />
             </div>
           </div>
         </div>
@@ -134,10 +134,10 @@ export function AdminLayout({ children }: AdminLayoutProps) {
       <div className="flex-1 overflow-y-auto px-3 py-4 space-y-6 custom-scrollbar">
         {adminNavSections.map((section, idx) => (
           <div key={idx} className="space-y-1">
-            <p className="px-3 text-[10px] font-bold text-slate-400 uppercase tracking-wider">
+            <p className="px-3 text-[10px] font-bold text-[#111111]/40 uppercase tracking-widest font-display">
               {section.title}
             </p>
-            <div className="space-y-0.5 pt-1">
+            <div className="space-y-1 pt-1">
               {section.items.map((item) => {
                 const active = isCurrentPath(item.path);
                 const Icon = item.icon;
@@ -150,22 +150,22 @@ export function AdminLayout({ children }: AdminLayoutProps) {
                       navigate(item.path);
                       setMobileSidebarOpen(false);
                     }}
-                    className={`w-full flex items-center justify-between px-3 py-2 rounded-xl text-xs font-semibold transition-all group ${
+                    className={`w-full flex items-center justify-between px-3.5 py-2.5 rounded-full text-xs font-semibold transition-all group ${
                       active
-                        ? "bg-teal-600 text-white font-bold shadow-sm shadow-teal-600/30"
-                        : "text-slate-400 hover:text-white hover:bg-slate-800/80"
+                        ? "bg-[#111111] text-white shadow-xs"
+                        : "text-[#111111]/70 hover:text-[#111111] hover:bg-[#F5F4EF]"
                     }`}
                   >
                     <div className="flex items-center gap-2.5">
-                      <Icon className={`w-4 h-4 ${active ? "text-white" : "text-slate-400 group-hover:text-slate-200"}`} />
+                      <Icon className={`w-4 h-4 ${active ? "text-[#F26522]" : "text-[#111111]/50 group-hover:text-[#111111]"}`} />
                       <span>{item.label}</span>
                     </div>
                     {badgeCount !== null && badgeCount !== undefined && badgeCount > 0 && (
                       <span
                         className={`px-2 py-0.5 rounded-full text-[10px] font-bold ${
                           active
-                            ? "bg-white text-teal-700"
-                            : "bg-amber-500/20 text-amber-400 border border-amber-500/30"
+                            ? "bg-[#F26522] text-white"
+                            : "bg-[#F5F4EF] text-[#111111] border border-[#E5E4DE]"
                         }`}
                       >
                         {badgeCount}
@@ -180,39 +180,39 @@ export function AdminLayout({ children }: AdminLayoutProps) {
       </div>
 
       {/* User Footer */}
-      <div className="p-3 border-t border-slate-800 bg-slate-950/60 shrink-0 space-y-2">
-        <div className="p-2.5 rounded-xl bg-slate-900/90 border border-slate-800 flex items-center justify-between">
+      <div className="p-3.5 border-t border-[#E5E4DE] bg-[#F5F4EF]/50 shrink-0 space-y-2.5">
+        <div className="p-2.5 rounded-2xl bg-white border border-[#E5E4DE] flex items-center justify-between shadow-2xs">
           <div className="flex items-center gap-2.5 min-w-0">
-            <div className="w-8 h-8 rounded-lg bg-teal-600/20 text-teal-400 border border-teal-500/30 flex items-center justify-center font-bold text-xs shrink-0">
+            <div className="w-8 h-8 rounded-full bg-[#F5F4EF] text-[#111111] border border-[#E5E4DE] flex items-center justify-center font-bold text-xs shrink-0">
               {user?.name?.charAt(0) || "A"}
             </div>
             <div className="min-w-0">
-              <p className="text-xs font-bold text-white truncate">{user?.name || "Administrator"}</p>
-              <p className="text-[11px] text-slate-400 truncate">{user?.email || "admin@liveclass.edu"}</p>
+              <p className="text-xs font-bold text-[#111111] font-display truncate">{user?.name || "Administrator"}</p>
+              <p className="text-[11px] text-[#111111]/50 truncate">{user?.email || "admin@liveclass.edu"}</p>
             </div>
           </div>
           <button
             onClick={handleSignOut}
             title="Sign Out"
-            className="p-1.5 text-slate-400 hover:text-rose-400 hover:bg-slate-800 rounded-lg transition-colors"
+            className="p-1.5 text-[#111111]/50 hover:text-rose-600 hover:bg-rose-50 rounded-full transition-colors"
           >
             <LogOut className="w-4 h-4" />
           </button>
         </div>
 
-        <div className="flex items-center gap-1.5">
+        <div className="flex items-center gap-2">
           <button
             onClick={() => navigate("/dashboard")}
-            className="flex-1 py-1.5 px-2 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 text-[11px] font-medium flex items-center justify-center gap-1 transition-colors"
+            className="flex-1 py-1.5 px-3 rounded-full bg-white hover:bg-[#F5F4EF] border border-[#E5E4DE] text-[#111111] text-[11px] font-semibold flex items-center justify-center gap-1.5 transition-colors"
           >
-            <ExternalLink className="w-3 h-3" /> Live App
+            <ExternalLink className="w-3 h-3 text-[#F26522]" /> Live App
           </button>
           <button
             onClick={() => setIsErrorLogsOpen(true)}
-            className="py-1.5 px-2 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 text-[11px] font-medium flex items-center justify-center gap-1 transition-colors"
+            className="py-1.5 px-3 rounded-full bg-white hover:bg-[#F5F4EF] border border-[#E5E4DE] text-[#111111] text-[11px] font-semibold flex items-center justify-center gap-1 transition-colors"
             title="Diagnostics"
           >
-            <Bug className="w-3 h-3 text-amber-400" />
+            <Bug className="w-3 h-3 text-[#F26522]" />
           </button>
         </div>
       </div>
@@ -220,9 +220,9 @@ export function AdminLayout({ children }: AdminLayoutProps) {
   );
 
   return (
-    <div className="min-h-screen bg-stone-100 flex flex-col md:flex-row antialiased">
+    <div className="min-h-screen bg-[#F5F4EF] text-[#111111] flex flex-col md:flex-row antialiased">
       {/* Desktop Fixed Sidebar */}
-      <aside className="hidden md:flex w-64 flex-col fixed inset-y-0 z-40 border-r border-slate-800">
+      <aside className="hidden md:flex w-64 flex-col fixed inset-y-0 z-40 border-r border-[#E5E4DE] bg-white">
         {sidebarContent}
       </aside>
 
@@ -230,14 +230,14 @@ export function AdminLayout({ children }: AdminLayoutProps) {
       {mobileSidebarOpen && (
         <div className="fixed inset-0 z-50 flex md:hidden">
           <div
-            className="fixed inset-0 bg-black/60 backdrop-blur-xs transition-opacity"
+            className="fixed inset-0 bg-[#111111]/40 backdrop-blur-xs transition-opacity"
             onClick={() => setMobileSidebarOpen(false)}
           />
-          <div className="relative flex-1 flex flex-col max-w-xs w-full bg-slate-900">
-            <div className="absolute top-2 right-2 z-10">
+          <div className="relative flex-1 flex flex-col max-w-xs w-full bg-white border-r border-[#E5E4DE]">
+            <div className="absolute top-3 right-3 z-10">
               <button
                 onClick={() => setMobileSidebarOpen(false)}
-                className="p-2 text-slate-400 hover:text-white"
+                className="p-2 text-[#111111]/50 hover:text-[#111111] rounded-full hover:bg-[#F5F4EF]"
               >
                 <X className="w-5 h-5" />
               </button>
@@ -250,18 +250,18 @@ export function AdminLayout({ children }: AdminLayoutProps) {
       {/* Main Content Area */}
       <div className="flex-1 md:pl-64 flex flex-col min-w-0">
         {/* Top Navbar */}
-        <header className="h-16 bg-white border-b border-stone-200 sticky top-0 z-30 px-4 sm:px-8 flex items-center justify-between shadow-xs">
+        <header className="h-16 bg-white/80 backdrop-blur-xs border-b border-[#E5E4DE] sticky top-0 z-30 px-4 sm:px-8 flex items-center justify-between">
           <div className="flex items-center gap-3">
             <button
               onClick={() => setMobileSidebarOpen(true)}
-              className="p-2 -ml-2 text-slate-600 hover:text-slate-900 md:hidden rounded-lg hover:bg-stone-100"
+              className="p-2 -ml-2 text-[#111111]/70 hover:text-[#111111] md:hidden rounded-full hover:bg-[#F5F4EF]"
             >
               <Menu className="w-5 h-5" />
             </button>
-            <div className="flex items-center gap-2 text-xs text-slate-500 font-medium">
-              <span className="hidden sm:inline">Admin Console</span>
-              <ChevronRight className="w-3.5 h-3.5 text-slate-300 hidden sm:inline" />
-              <span className="font-bold text-slate-800 capitalize">
+            <div className="flex items-center gap-2 text-xs text-[#111111]/50 font-medium">
+              <span className="hidden sm:inline">Console</span>
+              <ChevronRight className="w-3.5 h-3.5 text-[#111111]/30 hidden sm:inline" />
+              <span className="font-bold text-[#111111] capitalize font-display">
                 {location.pathname.replace("/admin/", "").replace("/admin", "Overview").replace(/-/g, " ")}
               </span>
             </div>
@@ -272,16 +272,16 @@ export function AdminLayout({ children }: AdminLayoutProps) {
             {stats && stats.underReviewApplications > 0 && (
               <button
                 onClick={() => navigate("/admin/applications")}
-                className="hidden sm:flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-amber-50 border border-amber-200 text-amber-800 text-xs font-bold hover:bg-amber-100 transition-colors"
+                className="hidden sm:flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#111111] text-white text-xs font-semibold hover:bg-[#F26522] transition-colors"
               >
-                <span className="w-2 h-2 rounded-full bg-amber-500 animate-ping" />
+                <span className="w-2 h-2 rounded-full bg-[#F26522] animate-ping" />
                 <span>{stats.underReviewApplications} Pending Review</span>
               </button>
             )}
 
             <button
               onClick={() => navigate("/admin/audit-logs")}
-              className="p-2 text-slate-500 hover:text-slate-800 hover:bg-stone-100 rounded-xl transition-colors"
+              className="p-2 text-[#111111]/60 hover:text-[#111111] hover:bg-[#F5F4EF] rounded-full transition-colors border border-[#E5E4DE]"
               title="Audit Logs"
             >
               <History className="w-4 h-4" />
@@ -289,10 +289,10 @@ export function AdminLayout({ children }: AdminLayoutProps) {
 
             <button
               onClick={() => setIsErrorLogsOpen(true)}
-              className="p-2 text-slate-500 hover:text-slate-800 hover:bg-stone-100 rounded-xl transition-colors"
+              className="p-2 text-[#111111]/60 hover:text-[#111111] hover:bg-[#F5F4EF] rounded-full transition-colors border border-[#E5E4DE]"
               title="System Diagnostics"
             >
-              <Bug className="w-4 h-4 text-amber-600" />
+              <Bug className="w-4 h-4 text-[#F26522]" />
             </button>
           </div>
         </header>

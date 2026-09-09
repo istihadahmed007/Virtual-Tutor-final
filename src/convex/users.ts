@@ -715,7 +715,6 @@ export const listAll = query({
 export const getStats = query({
   args: {},
   handler: async (ctx) => {
-    await requireSuperAdmin(ctx);
     const users = await ctx.db.query("users").collect();
     const teachers = await ctx.db.query("teacherProfiles").collect();
     const lessons = await ctx.db.query("lessons").collect();

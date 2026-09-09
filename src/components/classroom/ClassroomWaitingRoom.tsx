@@ -451,7 +451,7 @@ export function ClassroomWaitingRoom({
 
       {/* Footer */}
       <footer className="p-4 border-t border-slate-900 text-center text-xs text-slate-500">
-        LiveClass Protected Environment · 1-on-1 Encrypted Session
+        ভার্চুয়াল টিউটর (Virtual Tutor) Protected Environment · 1-on-1 Encrypted Session
       </footer>
     </main>
   );

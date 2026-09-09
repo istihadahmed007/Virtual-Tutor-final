@@ -11,72 +11,66 @@ export default function ProgressPage() {
   const subjects = subjectBreakdown ?? [];
 
   return (
-    <main className="min-h-screen bg-[#FAFAF8]">
-      <div className="max-w-5xl mx-auto px-4 sm:px-6 py-6 lg:py-8">
+    <main className="min-h-screen bg-[#F5F4EF] text-[#111111] pb-24">
+      <div className="max-w-5xl mx-auto px-4 sm:px-6 py-8 lg:py-12">
         <PageHeader
-          title="Your progress"
-          description="Track your learning journey and see how far you've come"
+          title="Performance & Analytics"
+          description="Track your learning milestones, total hours studied, and curriculum progression"
         />
 
         {progress ? (
           <>
             {/* Stats Grid */}
-            <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-6">
+            <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 mb-8">
               {[
                 {
                   icon: Clock,
                   label: "Hours studied",
                   value: `${progress.totalHoursLearned}h`,
-                  hint: "Total time spent in lessons",
-                  color: "bg-teal-50 text-teal-600",
+                  hint: "Total time spent in live sessions",
                 },
                 {
                   icon: BookOpen,
                   label: "Lessons completed",
                   value: progress.classesCompleted,
-                  hint: "Finished and attended lessons",
-                  color: "bg-indigo-50 text-indigo-600",
+                  hint: "Completed and attended classes",
                 },
                 {
                   icon: Flame,
                   label: "Current streak",
                   value: `${progress.streakDays} days`,
-                  hint: "Consecutive days with at least one lesson",
-                  color: "bg-amber-50 text-amber-600",
+                  hint: "Consecutive active learning days",
                 },
                 {
                   icon: Target,
                   label: "Subjects studied",
                   value: progress.subjectsStudied.length,
-                  hint: "Different subjects you've had lessons in",
-                  color: "bg-purple-50 text-purple-600",
+                  hint: "Active courses in curriculum",
                 },
               ].map((s, i) => (
                 <div
                   key={i}
-                  className="bg-white rounded-xl border border-stone-200/80 p-4"
+                  className="bg-white rounded-3xl border border-[#E5E4DE] p-6 hover:border-[#111111]/40 transition-all shadow-xs"
                 >
-                  <div
-                    className={`w-10 h-10 rounded-xl ${s.color} flex items-center justify-center mb-3`}
-                  >
-                    <s.icon className="w-5 h-5" />
+                  <div className="w-10 h-10 rounded-2xl bg-[#F5F4EF] text-[#111111] border border-[#E5E4DE] flex items-center justify-center mb-4">
+                    <s.icon className="w-5 h-5 text-[#F26522]" />
                   </div>
-                  <p className="text-2xl font-extrabold text-slate-900">
+                  <p className="text-3xl font-extrabold text-[#111111] font-display">
                     {s.value}
                   </p>
-                  <p className="text-xs text-slate-500 mt-0.5">{s.label}</p>
-                  <p className="text-[10px] text-slate-400 mt-1">{s.hint}</p>
+                  <p className="text-xs font-semibold text-[#111111]/70 mt-1">{s.label}</p>
+                  <p className="text-[11px] text-[#111111]/40 mt-1">{s.hint}</p>
                 </div>
               ))}
             </div>
 
             {/* Subject Breakdown */}
             {subjects.length > 0 && (
-              <div className="bg-white rounded-xl border border-stone-200/80 p-5 mb-6">
-                <h3 className="text-sm font-bold text-slate-900 mb-4">
-                  Subject breakdown
+              <div className="bg-white rounded-3xl border border-[#E5E4DE] p-6 lg:p-8 mb-8 shadow-xs">
+                <h3 className="text-lg font-bold text-[#111111] mb-6 font-display">
+                  Subject Breakdown & Hours
                 </h3>
-                <div className="space-y-4">
+                <div className="space-y-5">
                   {subjects.map((s) => {
                     const maxHours = Math.max(
                       ...subjects.map((x) => x.hoursLearned),
@@ -85,19 +79,19 @@ export default function ProgressPage() {
                     const pct = (s.hoursLearned / maxHours) * 100;
                     return (
                       <div key={s.subject}>
-                        <div className="flex items-center justify-between mb-1.5">
-                          <span className="text-sm font-semibold text-slate-700">
+                        <div className="flex items-center justify-between mb-2">
+                          <span className="text-sm font-semibold text-[#111111]">
                             {s.subject}
                           </span>
-                          <span className="text-xs text-slate-500">
+                          <span className="text-xs text-[#111111]/60 font-medium">
                             {s.lessonsCompleted} lesson
                             {s.lessonsCompleted !== 1 ? "s" : ""} ·{" "}
                             {s.hoursLearned}h
                           </span>
                         </div>
-                        <div className="h-2 bg-stone-100 rounded-full overflow-hidden">
+                        <div className="h-2.5 bg-[#F5F4EF] rounded-full overflow-hidden border border-[#E5E4DE]/60">
                           <div
-                            className="h-full bg-gradient-to-r from-teal-500 to-teal-600 rounded-full transition-all"
+                            className="h-full bg-[#111111] rounded-full transition-all"
                             style={{ width: `${pct}%` }}
                           />
                         </div>
@@ -110,15 +104,15 @@ export default function ProgressPage() {
 
             {/* Subjects Studied */}
             {progress.subjectsStudied.length > 0 && (
-              <div className="bg-white rounded-xl border border-stone-200/80 p-5">
-                <h3 className="text-sm font-bold text-slate-900 mb-3">
-                  Subjects you're studying
+              <div className="bg-white rounded-3xl border border-[#E5E4DE] p-6 lg:p-8 shadow-xs">
+                <h3 className="text-lg font-bold text-[#111111] mb-4 font-display">
+                  Active Enrolled Subjects
                 </h3>
                 <div className="flex flex-wrap gap-2">
                   {progress.subjectsStudied.map((s) => (
                     <span
                       key={s}
-                      className="px-3 py-1.5 bg-teal-50 text-teal-700 text-xs font-semibold rounded-lg border border-teal-100"
+                      className="px-4 py-2 bg-[#F5F4EF] text-[#111111] text-xs font-semibold rounded-full border border-[#E5E4DE]"
                     >
                       {s}
                     </span>

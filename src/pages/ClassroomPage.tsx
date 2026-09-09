@@ -17,7 +17,8 @@ import { ClassroomHostControlsModal } from "@/components/classroom/ClassroomHost
 import { ClassroomTeacherToolbar } from "@/components/classroom/ClassroomTeacherToolbar";
 import { ClassroomDeviceSettingsModal } from "@/components/classroom/ClassroomDeviceSettingsModal";
 import { ClassroomWaitingRoom } from "@/components/classroom/ClassroomWaitingRoom";
-import { DevVideoFallbackBanner } from "@/components/classroom/DevVideoFallback";
+import { ClassroomConnectionBanner } from "@/components/classroom/ClassroomConnectionBanner";
+import { ClassroomPreJoinScreen } from "@/components/classroom/ClassroomPreJoinScreen";
 import {
   computeLessonAvailability,
   LessonData,
@@ -127,6 +128,13 @@ export default function ClassroomPage() {
     onRemoteWhiteboardData: handleRemoteWhiteboardData,
   });
 
+  const presenceQuality: "excellent" | "fair" | "poor" =
+    media.connectionQuality === "excellent"
+      ? "excellent"
+      : media.connectionQuality === "good"
+        ? "fair"
+        : "poor";
+
   const [handRaised, setHandRaised] = useState(false);
 
   // Classroom UI View States - default to full video call grid so users see the video call right away
@@ -148,6 +156,13 @@ export default function ClassroomPage() {
   const [sidePanelTab, setSidePanelTab] = useState<"chat" | "participants" | "plan" | "notes">("chat");
   const [endModalOpen, setEndModalOpen] = useState(false);
   const [hostControlsOpen, setHostControlsOpen] = useState(false);
+  const [hasJoinedPreJoin, setHasJoinedPreJoin] = useState<boolean>(() => {
+    try {
+      return new URLSearchParams(window.location.search).get("skipPreJoin") === "true";
+    } catch {
+      return false;
+    }
+  });
 
   // Handle Screen Sharing via Media Engine
   const handleToggleScreenShare = async () => {
@@ -191,16 +206,13 @@ export default function ClassroomPage() {
     }
 
     const sendHeartbeat = () => {
-      const connQuality: "excellent" | "fair" | "poor" =
-        media.connectionQuality || "excellent";
-
       heartbeatMut({
         sessionId,
         micOn: isMutedByTeacher ? false : media.micOn,
         camOn: isCamDisabledByTeacher ? false : media.camOn,
         isScreenSharing: media.isScreenSharing,
         handRaised,
-        connectionQuality: connQuality,
+        connectionQuality: presenceQuality,
       }).catch((e) => {
         // Catch gracefully to avoid uncaught rejection noise during navigation or session termination
         console.debug("Presence heartbeat sync notice:", e);
@@ -241,16 +253,13 @@ export default function ClassroomPage() {
   // Emoji Reaction
   const handleSendReaction = (emoji: string) => {
     if (context?.authenticated) {
-      const connQuality: "excellent" | "fair" | "poor" =
-        media.connectionQuality || "excellent";
-
       heartbeatMut({
         sessionId,
         micOn: isMutedByTeacher ? false : media.micOn,
         camOn: isCamDisabledByTeacher ? false : media.camOn,
         isScreenSharing: media.isScreenSharing,
         handRaised,
-        connectionQuality: connQuality,
+        connectionQuality: presenceQuality,
         lastReaction: emoji,
       }).catch((e) => console.warn("Reaction heartbeat error:", e));
 
@@ -425,6 +434,30 @@ export default function ClassroomPage() {
     );
   }
 
+  if (!hasJoinedPreJoin) {
+    return (
+      <ClassroomPreJoinScreen
+        sessionId={sessionId}
+        sessionTitle={context.title || "Live Class Session"}
+        subject={context.subject || "General"}
+        teacherName={context.teacherName || "Course Instructor"}
+        userName={context.userName || authUserName}
+        userRole={isTeacher ? "teacher" : "student"}
+        initialCamOn={media.camOn}
+        initialMicOn={media.micOn}
+        onJoin={(cfg) => {
+          if (cfg.camDeviceId) media.switchCamera(cfg.camDeviceId);
+          if (cfg.micDeviceId) media.switchMicrophone(cfg.micDeviceId);
+          if (cfg.speakerDeviceId) media.switchSpeaker(cfg.speakerDeviceId);
+          if (!cfg.camOn && media.camOn) media.toggleCam(false);
+          if (!cfg.micOn && media.micOn) media.toggleMic(false);
+          setHasJoinedPreJoin(true);
+        }}
+        onCancel={() => navigate(-1)}
+      />
+    );
+  }
+
   const activeMaterial = (materials || []).find((m: any) => m._id === activeMaterialId) || materials?.[0] || null;
 
   return (
@@ -457,60 +490,58 @@ export default function ClassroomPage() {
         onUpdateTimer={(rem, run) =>
           updateStateMut({ sessionId, timerRemainingSeconds: rem, timerRunning: run })
         }
-        connectionQuality={
-          media.connectionStatus === "connected"
-            ? "excellent"
-            : media.connectionStatus === "connecting"
-              ? "fair"
-              : "poor"
-        }
+        connectionQuality={presenceQuality}
       />
 
-      {/* ─── LIVE MEDIA INFRASTRUCTURE NOTICE (LIVEKIT SFU / DEV FALLBACK) ─── */}
-      <DevVideoFallbackBanner
-        isConfigured={media.isLiveKitConnected}
-        serverUrl={import.meta.env.VITE_LIVEKIT_URL}
-        onSimulateReconnect={media.reconnect}
+      {/* ─── LIVE MEDIA INFRASTRUCTURE & DIAGNOSTICS BANNER ─────────── */}
+      <ClassroomConnectionBanner
+        connectionStatus={media.connectionStatus}
+        connectionQuality={media.connectionQuality}
+        latencyMs={media.latencyMs}
+        audioBlocked={media.audioBlocked}
+        connectionError={media.connectionError}
+        onReconnect={media.reconnect}
+        onResumeAudio={media.resumeAudio}
       />
 
       {/* ─── PRIMARY MODE SELECTOR (Video Call vs Whiteboard) ──────── */}
-      <div className="bg-slate-900/95 border-b border-slate-800/80 px-3 sm:px-4 py-1.5 flex items-center justify-between gap-2 shrink-0 z-20">
-        <div className="flex items-center gap-1.5">
+      <div className="bg-[#111111] border-b border-white/10 px-3 sm:px-4 py-2 flex items-center justify-between gap-2 shrink-0 z-20">
+        <div className="flex items-center gap-2">
           <button
             onClick={() => setViewMode("grid")}
-            className={`px-3 py-1.5 rounded-xl text-xs font-bold flex items-center gap-1.5 transition-all ${
+            className={`px-3.5 py-1.5 rounded-full text-xs font-semibold flex items-center gap-1.5 transition-all cursor-pointer ${
               viewMode === "grid"
-                ? "bg-teal-600 text-white shadow-md shadow-teal-900/40"
-                : "bg-slate-800 text-slate-300 hover:bg-slate-700 hover:text-white"
+                ? "bg-[#F26522] text-white shadow-xs"
+                : "bg-white/10 text-white/70 hover:bg-white/20 hover:text-white"
             }`}
           >
-            <Video className="w-3.5 h-3.5 text-teal-300" />
+            <Video className="w-3.5 h-3.5" />
             <span>Video Call Gallery</span>
           </button>
 
           <button
             onClick={() => setViewMode("whiteboard")}
-            className={`px-3 py-1.5 rounded-xl text-xs font-semibold flex items-center gap-1.5 transition-all ${
+            className={`px-3.5 py-1.5 rounded-full text-xs font-semibold flex items-center gap-1.5 transition-all cursor-pointer ${
               viewMode !== "grid"
-                ? "bg-teal-600 text-white shadow-md shadow-teal-900/40"
-                : "bg-slate-800 text-slate-300 hover:bg-slate-700 hover:text-white"
+                ? "bg-[#F26522] text-white shadow-xs"
+                : "bg-white/10 text-white/70 hover:bg-white/20 hover:text-white"
             }`}
           >
-            <PenTool className="w-3.5 h-3.5 text-amber-300" />
+            <PenTool className="w-3.5 h-3.5" />
             <span>Interactive Board</span>
           </button>
         </div>
 
         <div className="flex items-center gap-2">
           {viewMode === "grid" ? (
-            <span className="text-[11px] text-emerald-400 flex items-center gap-1 font-medium">
-              <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
+            <span className="text-[11px] text-[#F26522] flex items-center gap-1.5 font-semibold bg-[#F26522]/10 px-2.5 py-1 rounded-full border border-[#F26522]/20">
+              <span className="w-2 h-2 rounded-full bg-[#F26522] animate-pulse" />
               <span>Full Video Call Active</span>
             </span>
           ) : (
             <button
               onClick={() => setViewMode("grid")}
-              className="text-[11px] text-teal-400 hover:text-teal-300 font-medium underline sm:no-underline sm:bg-slate-800/80 sm:px-2 sm:py-1 sm:rounded-lg"
+              className="text-[11px] text-white/70 hover:text-white font-medium bg-white/10 px-2.5 py-1 rounded-full transition-colors cursor-pointer"
             >
               Switch to Video Call
             </button>
@@ -759,6 +790,7 @@ export default function ClassroomPage() {
               manageParticipantMut({ sessionId, targetUserId, action })
             }
             onOpenHostControls={() => setHostControlsOpen(true)}
+            onClose={() => setSidePanelOpen(false)}
           />
         )}
       </div>

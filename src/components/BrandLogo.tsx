@@ -23,6 +23,14 @@ export interface BrandLogoProps {
    */
   showSubtext?: boolean;
   /**
+   * Custom subtitle text override
+   */
+  subtitle?: string;
+  /**
+   * Whether to optimize colors for a dark background (e.g. footer, dark hero)
+   */
+  isDark?: boolean;
+  /**
    * Optional click handler
    */
   onClick?: () => void;
@@ -40,6 +48,8 @@ export const BrandLogo: React.FC<BrandLogoProps> = ({
   size = "md",
   className = "",
   showSubtext = false,
+  subtitle,
+  isDark = false,
   onClick,
 }) => {
   const pixelSize = typeof size === "number" ? size : SIZE_MAP[size].icon;
@@ -92,7 +102,9 @@ export const BrandLogo: React.FC<BrandLogoProps> = ({
       } ${className}`}
     >
       <div
-        className="relative shrink-0 rounded-xl overflow-hidden shadow-xs group-hover:scale-105 transition-transform"
+        className={`relative shrink-0 rounded-xl overflow-hidden shadow-xs group-hover:scale-105 transition-transform ${
+          isDark ? "bg-white p-0.5" : ""
+        }`}
         style={{ width: pixelSize, height: pixelSize }}
       >
         <img
@@ -106,12 +118,20 @@ export const BrandLogo: React.FC<BrandLogoProps> = ({
       </div>
 
       <div className="flex flex-col justify-center leading-none">
-        <span className="font-extrabold tracking-tight text-[#0a2352] text-lg sm:text-xl font-['Hind_Siliguri',sans-serif]">
-          ভার্চুয়াল <span className="text-[#0070f3] font-black">টিউটর</span>
+        <span
+          className={`font-extrabold tracking-tight text-lg sm:text-xl font-['Hind_Siliguri',sans-serif] ${
+            isDark ? "text-white" : "text-[#0a2352]"
+          }`}
+        >
+          ভার্চুয়াল <span className={isDark ? "text-[#38bdf8] font-black" : "text-[#0070f3] font-black"}>টিউটর</span>
         </span>
         {showSubtext && (
-          <span className="text-[11px] font-semibold text-slate-500 tracking-wide font-['Hind_Siliguri',sans-serif] mt-0.5">
-            শিখুন • শেখান • এগিয়ে যান
+          <span
+            className={`text-[11px] font-semibold tracking-wide font-['Hind_Siliguri',sans-serif] mt-0.5 ${
+              isDark ? "text-slate-300" : "text-slate-500"
+            }`}
+          >
+            {subtitle ?? "শিখুন • শেখান • এগিয়ে যান"}
           </span>
         )}
       </div>
