@@ -1,5 +1,6 @@
 import React from "react";
 import { ArrowRight, LucideIcon } from "lucide-react";
+import { motion } from "framer-motion";
 
 interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
   children: React.ReactNode;
@@ -52,9 +53,12 @@ export const PillButton: React.FC<ButtonProps> = ({
   };
 
   return (
-    <button
-      className={`group relative inline-flex items-center justify-between font-medium rounded-full transition-all duration-300 select-none cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed ${variantStyles[variant]} ${sizeClasses[size]} ${className}`}
-      {...props}
+    <motion.button
+      whileTap={{ scale: 0.97 }}
+      whileHover={{ scale: 1.01 }}
+      transition={{ duration: 0.15 }}
+      className={`group relative inline-flex items-center justify-between font-medium rounded-full transition-colors duration-200 select-none cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed ${variantStyles[variant]} ${sizeClasses[size]} ${className}`}
+      {...(props as any)}
     >
       {/* Hover Text Roll Effect */}
       <span className="relative overflow-hidden h-[18px] sm:h-[20px] flex flex-col justify-start">
@@ -78,7 +82,7 @@ export const PillButton: React.FC<ButtonProps> = ({
           )}
         </span>
       )}
-    </button>
+    </motion.button>
   );
 };
 

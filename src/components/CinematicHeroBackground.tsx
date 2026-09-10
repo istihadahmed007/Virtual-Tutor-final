@@ -12,7 +12,15 @@ import { useReducedMotion } from "framer-motion";
  * 5. Smooth 3D mouse parallax tracking
  * 6. Resilient 2D canvas fallback
  */
-export const CinematicHeroBackground: React.FC = () => {
+interface CinematicHeroBackgroundProps {
+  className?: string;
+  isFixed?: boolean;
+}
+
+export const CinematicHeroBackground: React.FC<CinematicHeroBackgroundProps> = ({
+  className = "",
+  isFixed = true,
+}) => {
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
   const shouldReduceMotion = useReducedMotion();
 
@@ -22,21 +30,14 @@ export const CinematicHeroBackground: React.FC = () => {
 
     const dpr = Math.min(window.devicePixelRatio || 1, 2);
 
-    let gl: WebGLRenderingContext | null = null;
-    try {
-      gl = canvas.getContext("webgl", {
-        alpha: true,
-        antialias: true,
-        depth: false,
-        premultipliedAlpha: false,
-      });
-    } catch {
-      gl = null;
-    }
+    const getWidth = () =>
+      Math.max(10, (isFixed ? window.innerWidth : canvas.parentElement?.clientWidth || window.innerWidth) * dpr);
+    const getHeight = () =>
+      Math.max(10, (isFixed ? window.innerHeight : canvas.parentElement?.clientHeight || window.innerHeight) * dpr);
 
     let animId: number;
-    let width = (canvas.width = window.innerWidth * dpr);
-    let height = (canvas.height = window.innerHeight * dpr);
+    let width = (canvas.width = getWidth());
+    let height = (canvas.height = getHeight());
 
     // Mouse tracking for 3D parallax
     const mouse = {
@@ -55,12 +56,134 @@ export const CinematicHeroBackground: React.FC = () => {
 
     const handleResize = () => {
       if (!canvas) return;
-      width = canvas.width = window.innerWidth * dpr;
-      height = canvas.height = window.innerHeight * dpr;
+      width = canvas.width = getWidth();
+      height = canvas.height = getHeight();
       if (gl) {
         gl.viewport(0, 0, width, height);
       }
     };
+
+    window.addEventListener("mousemove", handleMouseMove, { passive: true });
+    window.addEventListener("resize", handleResize);
+
+    let resizeObserver: ResizeObserver | null = null;
+    if (typeof ResizeObserver !== "undefined" && canvas.parentElement) {
+      resizeObserver = new ResizeObserver(() => {
+        handleResize();
+      });
+      resizeObserver.observe(canvas.parentElement);
+    }
+
+    // ─── 2D CANVAS FALLBACK HANDLER ───
+    const start2DFallback = () => {
+      const ctx = canvas.getContext("2d");
+      if (!ctx) return;
+
+      // Generate 250 flowing stardust particles for 2D fallback
+      const fallbackParticles = Array.from({ length: 280 }, () => ({
+        u: Math.random(),
+        radius: Math.random() * 0.4 + 0.05,
+        speed: (Math.random() * 0.15 + 0.08) * (Math.random() > 0.5 ? 1 : -1),
+        size: Math.random() * 2.2 + 0.8,
+        phase: Math.random() * Math.PI * 2,
+        isRibbon: Math.random() < 0.75,
+        ambientX: Math.random(),
+        ambientY: Math.random(),
+      }));
+
+      const render2D = () => {
+        const time = performance.now() * 0.001;
+        mouse.currentX += (mouse.targetX - mouse.currentX) * 0.05;
+        mouse.currentY += (mouse.targetY - mouse.currentY) * 0.05;
+
+        ctx.fillStyle = "#000000";
+        ctx.fillRect(0, 0, width, height);
+
+        ctx.save();
+        ctx.globalCompositeOperation = "screen";
+
+        // Parallax offset
+        const pX = mouse.currentX * 24 * dpr;
+        const pY = -mouse.currentY * 18 * dpr;
+
+        // Draw flowing luminous ribbon layers
+        for (let b = 0; b < 4; b++) {
+          ctx.beginPath();
+          const offsetTime = time * 0.4 + b * 0.7;
+          ctx.strokeStyle = `rgba(240, 246, 255, ${0.45 - b * 0.09})`;
+          ctx.lineWidth = (52 - b * 9) * dpr;
+
+          for (let x = -20; x <= width + 20; x += 14) {
+            const u = x / width;
+            const archLeft = Math.exp(-Math.pow((u - 0.24) / 0.14, 2)) * 0.38 * height;
+            const archRight = Math.exp(-Math.pow((u - 0.76) / 0.18, 2)) * 0.26 * height;
+            const centerDip = -Math.exp(-Math.pow((u - 0.50) / 0.13, 2)) * 0.14 * height;
+            const wave = Math.sin(u * 5.5 - offsetTime) * 32 * dpr;
+            const wave2 = Math.cos(u * 8.2 + offsetTime * 0.6) * 14 * dpr;
+            const y = height * 0.32 - archLeft - archRight - centerDip + wave + wave2 + pY;
+
+            if (x === -20) ctx.moveTo(x + pX, y);
+            else ctx.lineTo(x + pX, y);
+          }
+          ctx.stroke();
+        }
+
+        // Draw flowing stardust particles
+        for (const p of fallbackParticles) {
+          let px = 0;
+          let py = 0;
+          const twinkle = 0.4 + 0.6 * Math.sin(p.phase + time * 3.5);
+
+          if (p.isRibbon) {
+            const u = (p.u + time * p.speed * 0.25) % 1;
+            const xBase = u * width;
+            const archLeft = Math.exp(-Math.pow((u - 0.24) / 0.14, 2)) * 0.38 * height;
+            const archRight = Math.exp(-Math.pow((u - 0.76) / 0.18, 2)) * 0.26 * height;
+            const centerDip = -Math.exp(-Math.pow((u - 0.50) / 0.13, 2)) * 0.14 * height;
+            const wave = Math.sin(u * 5.5 - time * 0.4) * 32 * dpr;
+            const yBase = height * 0.32 - archLeft - archRight - centerDip + wave;
+
+            const scatter = Math.sin(p.phase + time * 2) * p.radius * 75 * dpr;
+            px = xBase + pX + scatter * 0.4;
+            py = yBase + pY + scatter;
+          } else {
+            px = p.ambientX * width + pX * 0.4;
+            py = p.ambientY * height + pY * 0.4;
+          }
+
+          ctx.fillStyle = `rgba(255, 255, 255, ${twinkle * (p.isRibbon ? 0.9 : 0.4)})`;
+          ctx.beginPath();
+          ctx.arc(px, py, p.size * dpr * (0.8 + 0.3 * twinkle), 0, Math.PI * 2);
+          ctx.fill();
+        }
+
+        ctx.restore();
+        animId = requestAnimationFrame(render2D);
+      };
+
+      animId = requestAnimationFrame(render2D);
+    };
+
+    let gl: WebGLRenderingContext | null = null;
+    try {
+      gl = canvas.getContext("webgl", {
+        alpha: true,
+        antialias: true,
+        depth: false,
+        premultipliedAlpha: false,
+      });
+    } catch {
+      gl = null;
+    }
+
+    if (!gl) {
+      start2DFallback();
+      return () => {
+        window.removeEventListener("mousemove", handleMouseMove);
+        window.removeEventListener("resize", handleResize);
+        cancelAnimationFrame(animId);
+      };
+    }
 
     window.addEventListener("mousemove", handleMouseMove, { passive: true });
     window.addEventListener("resize", handleResize);
@@ -315,6 +438,7 @@ export const CinematicHeroBackground: React.FC = () => {
       const particleProgram = createProgram(particleVS, particleFS);
 
       if (!ribbonProgram || !particleProgram) {
+        start2DFallback();
         return;
       }
 
@@ -467,49 +591,12 @@ export const CinematicHeroBackground: React.FC = () => {
       };
 
       animId = requestAnimationFrame(renderGL);
-    } else {
-      // ─── 2D CANVAS FALLBACK ───
-      const ctx = canvas.getContext("2d");
-      if (!ctx) return;
-
-      const render2D = () => {
-        const time = performance.now() * 0.001;
-        ctx.fillStyle = "#000000";
-        ctx.fillRect(0, 0, width, height);
-
-        ctx.save();
-        ctx.globalCompositeOperation = "screen";
-
-        for (let b = 0; b < 4; b++) {
-          ctx.beginPath();
-          const offsetTime = time * 0.5 + b * 0.8;
-          ctx.strokeStyle = `rgba(255, 255, 255, ${0.4 - b * 0.08})`;
-          ctx.lineWidth = (55 - b * 10) * dpr;
-
-          for (let x = 0; x <= width; x += 12) {
-            const u = x / width;
-            const archLeft = Math.exp(-Math.pow((u - 0.24) / 0.14, 2)) * 0.38 * height;
-            const archRight = Math.exp(-Math.pow((u - 0.76) / 0.18, 2)) * 0.26 * height;
-            const centerDip = -Math.exp(-Math.pow((u - 0.50) / 0.13, 2)) * 0.14 * height;
-            const wave = Math.sin(u * 5.5 - offsetTime) * 30 * dpr;
-            const y = height * 0.34 - archLeft - archRight - centerDip + wave;
-
-            if (x === 0) ctx.moveTo(x, y);
-            else ctx.lineTo(x, y);
-          }
-          ctx.stroke();
-        }
-
-        ctx.restore();
-        animId = requestAnimationFrame(render2D);
-      };
-
-      animId = requestAnimationFrame(render2D);
     }
 
     return () => {
       window.removeEventListener("mousemove", handleMouseMove);
       window.removeEventListener("resize", handleResize);
+      resizeObserver?.disconnect();
       cancelAnimationFrame(animId);
     };
   }, [shouldReduceMotion]);
@@ -518,7 +605,7 @@ export const CinematicHeroBackground: React.FC = () => {
     <>
       {/* ─── Vesper WebGL Volumetric Stardust Ribbon Background ─── */}
       <div
-        className="fixed inset-0 pointer-events-none z-0 overflow-hidden bg-black select-none"
+        className={`${isFixed ? "fixed" : "absolute"} inset-0 pointer-events-none z-0 overflow-hidden bg-black select-none ${className}`}
         aria-hidden="true"
       >
         <canvas
@@ -530,8 +617,9 @@ export const CinematicHeroBackground: React.FC = () => {
         <div
           className="absolute inset-0 pointer-events-none z-[1]"
           style={{
-            background:
-              "radial-gradient(ellipse 70% 45% at 50% 40%, rgba(0, 0, 0, 0.6) 0%, rgba(0, 0, 0, 0.18) 60%, transparent 92%), linear-gradient(to bottom, transparent 80%, #000000 100%)",
+            background: isFixed
+              ? "radial-gradient(ellipse 85% 65% at 50% 50%, rgba(0, 0, 0, 0.45) 0%, rgba(0, 0, 0, 0.15) 55%, rgba(0, 0, 0, 0.65) 100%)"
+              : "radial-gradient(ellipse 70% 45% at 50% 40%, rgba(0, 0, 0, 0.6) 0%, rgba(0, 0, 0, 0.18) 60%, transparent 92%), linear-gradient(to bottom, transparent 80%, #000000 100%)",
           }}
         />
       </div>

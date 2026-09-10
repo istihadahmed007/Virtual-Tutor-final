@@ -26,7 +26,7 @@ export interface SEOProps {
 
 export const DEFAULT_TITLE = "Virtual Tutor Pro";
 export const DEFAULT_DESCRIPTION =
-  "An online tutoring and live classroom platform connecting students and teachers with interactive lessons, assignments, scheduling, progress tracking, and AI assistance.";
+  "Virtual Tutor (ভার্চুয়াল টিউটর) - Modern live education platform connecting students and educators with interactive classrooms, academic scheduling, assignments, and AI tutoring.";
 export const SITE_NAME = "Virtual Tutor Pro";
 export const DEFAULT_OG_IMAGE = "/logo.svg";
 

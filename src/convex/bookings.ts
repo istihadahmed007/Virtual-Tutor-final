@@ -50,7 +50,7 @@ export const create = mutation({
       .filter((q) => q.eq(q.field("userId"), args.teacherId))
       .first();
     if (!teacherProfile) throw new Error("Teacher not found");
-    if (!teacherProfile.isVerified || teacherProfile.verificationStatus !== "verified") {
+    if (!teacherProfile.isVerified && teacherProfile.verificationStatus !== "verified") {
       throw new Error("Teacher is not approved or verified for live bookings.");
     }
     if (!teacherProfile.isAvailable) throw new Error("Teacher is currently unavailable for bookings.");

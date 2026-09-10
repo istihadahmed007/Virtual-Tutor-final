@@ -136,7 +136,6 @@ export default function Dashboard() {
               Your personalized schedule, upcoming live classrooms, and progress.
             </p>
           </div>
-
           <div className="flex items-center gap-3">
             <PillButton
               variant="white"

@@ -1,7 +1,8 @@
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import { useQuery, useMutation } from "convex/react";
 import { api } from "@/convex/_generated/api";
-import { getAllTeacherApplications } from "@/lib/teacher-store";
+import { getAllTeacherApplications, LEGACY_FAKE_IDS, TEACHER_STORE_EVENT } from "@/lib/teacher-store";
+import { getRegisteredUsers } from "@/lib/auth-store";
 import { 
   normalizeTeacherData, 
   AuthoritativeTeacher, 
@@ -43,16 +44,98 @@ export default function TeacherProfilePage() {
     id ? { teacherId: id } : "skip",
   );
 
-  const localTeacher = getAllTeacherApplications().find(
-    (t) => t.userId === id || (t as any)._id === id
-  );
+  const isFakeId = id ? LEGACY_FAKE_IDS.has(id) : false;
 
-  const seedTeacher = AUTHORITATIVE_SEED_TEACHERS.find(
-    (t) => t.userId === id || t._id === id
-  );
+  // Reactive store state
+  const [localApps, setLocalApps] = useState(() => getAllTeacherApplications());
+  const [registeredUsersList, setRegisteredUsersList] = useState(() => getRegisteredUsers());
+
+  useEffect(() => {
+    const handleUpdate = () => {
+      setLocalApps(getAllTeacherApplications());
+      setRegisteredUsersList(getRegisteredUsers());
+    };
+    window.addEventListener(TEACHER_STORE_EVENT, handleUpdate);
+    window.addEventListener("vtp_auth_change", handleUpdate);
+    window.addEventListener("storage", handleUpdate);
+    return () => {
+      window.removeEventListener(TEACHER_STORE_EVENT, handleUpdate);
+      window.removeEventListener("vtp_auth_change", handleUpdate);
+      window.removeEventListener("storage", handleUpdate);
+    };
+  }, []);
+
+  const localTeacher = useMemo(() => {
+    if (isFakeId || !id) return null;
+    const lowerId = id.toLowerCase();
+    return (
+      localApps.find(
+        (t) =>
+          (t.userId === id ||
+            (t as any)._id === id ||
+            t.email?.toLowerCase() === lowerId) &&
+          !LEGACY_FAKE_IDS.has(t.userId) &&
+          !LEGACY_FAKE_IDS.has(t._id) &&
+          !LEGACY_FAKE_IDS.has(t.email)
+      ) || null
+    );
+  }, [id, isFakeId, localApps]);
+
+  const registeredTeacher = useMemo(() => {
+    if (isFakeId || !id) return null;
+    const lowerId = id.toLowerCase();
+    return (
+      registeredUsersList.find(
+        (u) =>
+          (u._id === id || u.email?.toLowerCase() === lowerId) &&
+          u.role === "teacher" &&
+          !LEGACY_FAKE_IDS.has(u._id) &&
+          !LEGACY_FAKE_IDS.has(u.email)
+      ) || null
+    );
+  }, [id, isFakeId, registeredUsersList]);
+
+  const seedTeacher = isFakeId
+    ? null
+    : AUTHORITATIVE_SEED_TEACHERS.find(
+        (t) => t.userId === id || t._id === id
+      );
 
   // Authoritatively normalized teacher data
-  const rawTeacher = convexTeacher || localTeacher || seedTeacher;
+  const rawTeacher = useMemo(() => {
+    if (isFakeId) return null;
+    return (
+      convexTeacher ||
+      localTeacher ||
+      (registeredTeacher
+        ? {
+            _id: registeredTeacher._id,
+            userId: registeredTeacher._id,
+            name: registeredTeacher.name,
+            email: registeredTeacher.email,
+            title: registeredTeacher.title || "Educator & Subject Specialist",
+            bio: registeredTeacher.bio || "Dedicated educator ready to assist students with interactive lessons.",
+            avatarUrl: registeredTeacher.avatarUrl || registeredTeacher.image,
+            country: "Bangladesh",
+            timezone: Intl.DateTimeFormat().resolvedOptions().timeZone || "Asia/Dhaka",
+            hourlyRate: registeredTeacher.hourlyRate || 35,
+            monthlyTuition: 4500,
+            subjects: registeredTeacher.subjects?.length ? registeredTeacher.subjects : ["General Studies"],
+            classLevels: ["All Levels"],
+            expertise: registeredTeacher.subjects || ["Tutoring"],
+            languages: ["English", "Bangla"],
+            yearsExperience: registeredTeacher.yearsExperience || 2,
+            isVerified: registeredTeacher.isEmailVerified ?? false,
+            isAvailable: true,
+            rating: registeredTeacher.rating || 5.0,
+            reviewCount: 0,
+            totalStudents: 0,
+            totalHours: 0,
+          }
+        : null) ||
+      seedTeacher
+    );
+  }, [convexTeacher, localTeacher, registeredTeacher, seedTeacher, isFakeId]);
   const teacher: AuthoritativeTeacher | null = useMemo(() => {
     if (!rawTeacher) return null;
     return normalizeTeacherData(rawTeacher);

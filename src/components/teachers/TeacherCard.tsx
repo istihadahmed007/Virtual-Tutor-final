@@ -71,12 +71,19 @@ export function TeacherCard({
                 {teacher.name.slice(0, 2).toUpperCase()}
               </div>
             )}
-            {teacher.isVerified && (
+            {teacher.isVerified ? (
               <div 
                 className="absolute -bottom-1 -right-1 flex h-5 w-5 items-center justify-center rounded-full bg-[#F26522] text-white shadow-xs"
                 title="Verified Educator"
               >
                 <CheckCircle2 className="h-3.5 w-3.5" />
+              </div>
+            ) : (
+              <div 
+                className="absolute -bottom-1 -right-1 flex h-5 w-5 items-center justify-center rounded-full bg-emerald-600 text-white shadow-xs"
+                title="Registered Instructor"
+              >
+                <GraduationCap className="h-3 w-3" />
               </div>
             )}
           </div>

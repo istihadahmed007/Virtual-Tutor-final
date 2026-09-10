@@ -90,6 +90,7 @@ const MessagesPage = lazyWithRetry(() => import("./pages/MessagesPage"), "Messag
 const CommunityPage = lazyWithRetry(() => import("./pages/CommunityPage"), "CommunityPage");
 const NotFound = lazyWithRetry(() => import("./pages/NotFound"), "NotFound");
 const ResumeBuilder = lazyWithRetry(() => import("./pages/ResumeBuilder"), "ResumeBuilder");
+const PrivacyPolicy = lazyWithRetry(() => import("./pages/PrivacyPolicy"), "PrivacyPolicy");
 
 // Admin Console Pages
 const AdminDashboard = lazyWithRetry(() => import("./pages/admin/AdminDashboard"), "AdminDashboard");
@@ -209,9 +210,9 @@ root.render(
                   <Route path="/classroom" element={<RequireAuth><ClassroomPage /></RequireAuth>} />
                   <Route path="/classroom/:lessonId" element={<RequireAuth><ClassroomPage /></RequireAuth>} />
                   <Route path="/dashboard" element={<RequireAuth><AppShell><Dashboard /></AppShell></RequireAuth>} />
-                  <Route path="/teachers" element={<RequireAuth><AppShell><TeachersPage /></AppShell></RequireAuth>} />
-                  <Route path="/students" element={<RequireAuth><AppShell><StudentsPage /></AppShell></RequireAuth>} />
-                  <Route path="/teachers/:id" element={<RequireAuth><AppShell><TeacherProfilePage /></AppShell></RequireAuth>} />
+                  <Route path="/teachers" element={<AppShell><TeachersPage /></AppShell>} />
+                  <Route path="/students" element={<AppShell><StudentsPage /></AppShell>} />
+                  <Route path="/teachers/:id" element={<AppShell><TeacherProfilePage /></AppShell>} />
                   <Route path="/lessons" element={<RequireAuth><AppShell><LessonsPage /></AppShell></RequireAuth>} />
                   <Route path="/calendar" element={<RequireAuth><AppShell><CalendarPage /></AppShell></RequireAuth>} />
                   <Route path="/assignments" element={<RequireAuth><AppShell><AssignmentsPage /></AppShell></RequireAuth>} />
@@ -223,6 +224,9 @@ root.render(
                   <Route path="/messages" element={<RequireAuth><AppShell><MessagesPage /></AppShell></RequireAuth>} />
                   <Route path="/community" element={<RequireAuth><AppShell><CommunityPage /></AppShell></RequireAuth>} />
                   <Route path="/resume-builder" element={<ResumeBuilder />} />
+                  <Route path="/privacy" element={<PrivacyPolicy />} />
+                  <Route path="/privacy-policy" element={<PrivacyPolicy />} />
+                  <Route path="/terms" element={<PrivacyPolicy />} />
 
                   {/* Admin Console Dedicated Area */}
                   <Route path="/admin" element={<RequireAdmin><AdminLayout><AdminDashboard /></AdminLayout></RequireAdmin>} />

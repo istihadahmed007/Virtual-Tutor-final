@@ -1,7 +1,9 @@
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useQuery, useMutation } from "convex/react";
 import { api } from "@/convex/_generated/api";
+import { getAllStudentProfiles, STUDENT_STORE_EVENT } from "@/lib/student-store";
+import { getRegisteredUsers } from "@/lib/auth-store";
 import { Button } from "@/components/ui/button";
 import { EmptyState } from "@/components/EmptyState";
 import { ProfileAvatar } from "@/components/ProfileAvatar";
@@ -117,8 +119,114 @@ export default function StudentsPage() {
   const sendLessonInviteMut = useMutation(api.studentProfiles.sendLessonInvite);
   const createConversationMut = useMutation(api.messages.createConversation);
 
-  const studentList = students ?? [];
-  const isLoading = students === undefined;
+  const [localStudents, setLocalStudents] = useState(() => getAllStudentProfiles());
+
+  useEffect(() => {
+    const handleUpdate = () => {
+      setLocalStudents(getAllStudentProfiles());
+    };
+    window.addEventListener(STUDENT_STORE_EVENT, handleUpdate);
+    window.addEventListener("vtp_auth_change", handleUpdate);
+    return () => {
+      window.removeEventListener(STUDENT_STORE_EVENT, handleUpdate);
+      window.removeEventListener("vtp_auth_change", handleUpdate);
+    };
+  }, []);
+
+  const registeredStudents = useMemo(() => {
+    return getRegisteredUsers()
+      .filter((u) => u.role === "student" && u.accountStatus !== "suspended")
+      .map((u) => ({
+        _id: u._id,
+        userId: u._id,
+        name: u.name,
+        email: u.email,
+        classLevel: u.grade || "Grade 10 / High School",
+        curriculum: "Cambridge",
+        institution: u.institution || "Student Scholar",
+        subjects: u.subjects && u.subjects.length > 0 ? u.subjects : ["Mathematics", "Science"],
+        preferredSchedule: "Flexible Evenings",
+        learningGoal: "Master core concepts and excel in upcoming board exams",
+        avatarUrl: u.avatarUrl || u.image,
+        isVerified: true,
+        verificationStatus: "verified",
+        languages: ["English", "Bangla"],
+        completedLessonsCount: 0,
+        isDiscoverable: true,
+        accountStatus: "active",
+        _creationTime: u.createdAt || Date.now(),
+      }));
+  }, [localStudents]);
+
+  const rawCombinedStudents = useMemo(() => {
+    const map = new Map<string, any>();
+
+    // 1. Convex remote students
+    if (students && Array.isArray(students)) {
+      for (const s of students) {
+        const id = s.userId || s._id;
+        if (id) map.set(id, s);
+      }
+    }
+
+    // 2. Local students from student-store
+    for (const ls of localStudents) {
+      const id = ls.userId || ls._id;
+      if (id && !map.has(id)) {
+        map.set(id, ls);
+      }
+    }
+
+    // 3. Registered student accounts
+    for (const rs of registeredStudents) {
+      if (!map.has(rs.userId)) {
+        map.set(rs.userId, rs);
+      }
+    }
+
+    return Array.from(map.values()).filter((s) => s.accountStatus !== "suspended");
+  }, [students, localStudents, registeredStudents]);
+
+  // Combined and filtered student list
+  const studentList = useMemo(() => {
+    let list = [...rawCombinedStudents];
+
+    if (selectedSubject && selectedSubject !== "All Subjects") {
+      list = list.filter((s) =>
+        s.subjects?.some((sub: string) => sub.toLowerCase().includes(selectedSubject.toLowerCase()))
+      );
+    }
+    if (selectedGrade) {
+      list = list.filter((s) => s.classLevel?.toLowerCase().includes(selectedGrade.toLowerCase()));
+    }
+    if (selectedCurriculum) {
+      list = list.filter((s) => s.curriculum?.toLowerCase().includes(selectedCurriculum.toLowerCase()));
+    }
+    if (selectedLanguage) {
+      list = list.filter((s) => s.languages?.includes(selectedLanguage));
+    }
+    if (selectedGoal) {
+      list = list.filter((s) => s.learningGoal?.toLowerCase().includes(selectedGoal.toLowerCase()));
+    }
+    if (search.trim()) {
+      const q = search.toLowerCase().trim();
+      list = list.filter(
+        (s) =>
+          s.name?.toLowerCase().includes(q) ||
+          s.institution?.toLowerCase().includes(q) ||
+          s.learningGoal?.toLowerCase().includes(q) ||
+          s.subjects?.some((sub: string) => sub.toLowerCase().includes(q))
+      );
+    }
+
+    if (sortBy === "name") {
+      list.sort((a, b) => a.name.localeCompare(b.name));
+    }
+
+    return list;
+  }, [rawCombinedStudents, selectedSubject, selectedGrade, selectedCurriculum, selectedLanguage, selectedGoal, search, sortBy]);
+
+  const isLoading = students === undefined && localStudents.length === 0;
 
   const hasFilters = Boolean(
     (selectedSubject && selectedSubject !== "All Subjects") ||

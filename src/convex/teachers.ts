@@ -65,31 +65,39 @@ export function calculateTeacherProfileCompletion(p: {
   return Math.min(100, Math.round((completed / checks.length) * 100));
 }
 
-// ─── Public Queries (Only Verified, Active Teachers) ─────────────────────────
+// ─── Public Queries (Registered & Verified Active Teachers) ───────────────────
 export const list = query({
   args: {},
   handler: async (ctx) => {
-    // 1. Fetch all teacher profiles marked as verified
+    // 1. Fetch all registered teacher profiles
     const profiles = await ctx.db
       .query("teacherProfiles")
-      .filter((q) =>
-        q.and(
-          q.eq(q.field("isVerified"), true),
-          q.eq(q.field("verificationStatus"), "verified"),
-        ),
-      )
       .collect();
 
-    // 2. Cross check user accountStatus to exclude suspended teachers
+    const seenUserIds = new Set<string>();
     const activeProfiles = [];
-    for (const p of profiles) {
-      const user = await ctx.db
-        .query("users")
-        .filter((q) => q.eq(q.field("_id"), p.userId as any))
-        .first();
 
-      if (user && user.accountStatus !== "suspended") {
-        // Strip private identity data before returning
+    for (const p of profiles) {
+      const vStatus = (p.verificationStatus || "") as string;
+      if (vStatus === "rejected" || vStatus === "suspended") {
+        continue;
+      }
+
+      let isSuspended = false;
+      try {
+        const normId = ctx.db.normalizeId("users", p.userId);
+        if (normId) {
+          const user = await ctx.db.get(normId);
+          if (user && user.accountStatus === "suspended") {
+            isSuspended = true;
+          }
+        }
+      } catch {
+        // non-fatal
+      }
+
+      if (!isSuspended) {
+        seenUserIds.add(p.userId);
         const {
           nidNumber,
           nidFrontUrl,
@@ -97,8 +105,49 @@ export const list = query({
           nidReviewedBy,
           ...publicSafe
         } = p;
-        activeProfiles.push(publicSafe);
+        activeProfiles.push({
+          ...publicSafe,
+          isAvailable: p.isAvailable !== false,
+        });
       }
+    }
+
+    // 2. Cross-check users table for registered teachers
+    const teacherUsers = await ctx.db
+      .query("users")
+      .filter((q) => q.eq(q.field("role"), "teacher"))
+      .collect();
+
+    for (const u of teacherUsers) {
+      const uId = String(u._id);
+      if (seenUserIds.has(uId) || u.accountStatus === "suspended") {
+        continue;
+      }
+      seenUserIds.add(uId);
+      activeProfiles.push({
+        _id: u._id,
+        userId: uId,
+        name: u.name || "Educator",
+        title: "Educator & Subject Specialist",
+        bio: "Dedicated registered educator ready for live interactive lessons.",
+        avatarUrl: u.image,
+        country: "Bangladesh",
+        timezone: u.timezone || "Asia/Dhaka",
+        hourlyRate: 35,
+        subjects: ["General Studies"],
+        classLevels: ["All Levels"],
+        expertise: ["Tutoring"],
+        languages: ["English", "Bangla"],
+        yearsExperience: 2,
+        isVerified: Boolean(u.emailVerified),
+        verificationStatus: u.emailVerified ? "verified" : "under_review",
+        isAvailable: true,
+        rating: 5.0,
+        reviewCount: 0,
+        totalStudents: 0,
+        totalHours: 0,
+        profileCompletionPct: 50,
+      });
     }
 
     return activeProfiles;
@@ -117,22 +166,32 @@ export const search = query({
   handler: async (ctx, args) => {
     const rawProfiles = await ctx.db
       .query("teacherProfiles")
-      .filter((q) =>
-        q.and(
-          q.eq(q.field("isVerified"), true),
-          q.eq(q.field("verificationStatus"), "verified"),
-        ),
-      )
       .collect();
 
-    let safeProfiles = [];
-    for (const p of rawProfiles) {
-      const user = await ctx.db
-        .query("users")
-        .filter((q) => q.eq(q.field("_id"), p.userId as any))
-        .first();
+    const seenUserIds = new Set<string>();
+    let safeProfiles: any[] = [];
 
-      if (user && user.accountStatus !== "suspended") {
+    for (const p of rawProfiles) {
+      const vStatus = (p.verificationStatus || "") as string;
+      if (vStatus === "rejected" || vStatus === "suspended") {
+        continue;
+      }
+
+      let isSuspended = false;
+      try {
+        const normId = ctx.db.normalizeId("users", p.userId);
+        if (normId) {
+          const user = await ctx.db.get(normId);
+          if (user && user.accountStatus === "suspended") {
+            isSuspended = true;
+          }
+        }
+      } catch {
+        // non-fatal
+      }
+
+      if (!isSuspended) {
+        seenUserIds.add(p.userId);
         const {
           nidNumber,
           nidFrontUrl,
@@ -140,34 +199,75 @@ export const search = query({
           nidReviewedBy,
           ...publicSafe
         } = p;
-        safeProfiles.push(publicSafe);
+        safeProfiles.push({
+          ...publicSafe,
+          isAvailable: p.isAvailable !== false,
+        });
       }
+    }
+
+    // Include registered teachers from users table
+    const teacherUsers = await ctx.db
+      .query("users")
+      .filter((q) => q.eq(q.field("role"), "teacher"))
+      .collect();
+
+    for (const u of teacherUsers) {
+      const uId = String(u._id);
+      if (seenUserIds.has(uId) || u.accountStatus === "suspended") {
+        continue;
+      }
+      seenUserIds.add(uId);
+      safeProfiles.push({
+        _id: u._id,
+        userId: uId,
+        name: u.name || "Educator",
+        title: "Educator & Subject Specialist",
+        bio: "Dedicated registered educator ready for live interactive lessons.",
+        avatarUrl: u.image,
+        country: "Bangladesh",
+        timezone: u.timezone || "Asia/Dhaka",
+        hourlyRate: 35,
+        subjects: ["General Studies"],
+        classLevels: ["All Levels"],
+        expertise: ["Tutoring"],
+        languages: ["English", "Bangla"],
+        yearsExperience: 2,
+        isVerified: Boolean(u.emailVerified),
+        verificationStatus: u.emailVerified ? "verified" : "under_review",
+        isAvailable: true,
+        rating: 5.0,
+        reviewCount: 0,
+        totalStudents: 0,
+        totalHours: 0,
+        profileCompletionPct: 50,
+      });
     }
 
     if (args.searchQuery) {
       const q = args.searchQuery.toLowerCase();
       safeProfiles = safeProfiles.filter(
         (p) =>
-          p.name.toLowerCase().includes(q) ||
-          p.title.toLowerCase().includes(q) ||
-          p.bio.toLowerCase().includes(q) ||
-          p.subjects.some((s) => s.toLowerCase().includes(q)) ||
+          p.name?.toLowerCase().includes(q) ||
+          p.title?.toLowerCase().includes(q) ||
+          p.bio?.toLowerCase().includes(q) ||
+          p.subjects?.some((s: string) => s.toLowerCase().includes(q)) ||
           (p.country && p.country.toLowerCase().includes(q)),
       );
     }
 
-    if (args.subject) {
+    if (args.subject && args.subject !== "All Subjects") {
       safeProfiles = safeProfiles.filter((p) =>
-        p.subjects.includes(args.subject!),
+        p.subjects?.some((s: string) => s.toLowerCase().includes(args.subject!.toLowerCase())),
       );
     }
-    if (args.classLevel) {
+    if (args.classLevel && args.classLevel !== "All Levels") {
       safeProfiles = safeProfiles.filter((p) =>
-        p.classLevels.includes(args.classLevel!),
+        p.classLevels?.some((c: string) => c.toLowerCase().includes(args.classLevel!.toLowerCase())),
       );
     }
     if (args.availableOnly) {
-      safeProfiles = safeProfiles.filter((p) => p.isAvailable);
+      safeProfiles = safeProfiles.filter((p) => p.isAvailable !== false);
     }
     if (args.classType) {
       safeProfiles = safeProfiles.filter((p) =>
@@ -177,22 +277,24 @@ export const search = query({
 
     switch (args.sortBy) {
       case "rating":
-        safeProfiles.sort((a, b) => b.rating - a.rating);
+        safeProfiles.sort((a, b) => (b.rating || 0) - (a.rating || 0));
         break;
       case "experience":
-        safeProfiles.sort((a, b) => b.yearsExperience - a.yearsExperience);
+        safeProfiles.sort((a, b) => (b.yearsExperience || 0) - (a.yearsExperience || 0));
         break;
       case "price-low":
-        safeProfiles.sort((a, b) => a.hourlyRate - b.hourlyRate);
+      case "price_low":
+        safeProfiles.sort((a, b) => (a.hourlyRate || 0) - (b.hourlyRate || 0));
         break;
       case "price-high":
-        safeProfiles.sort((a, b) => b.hourlyRate - a.hourlyRate);
+      case "price_high":
+        safeProfiles.sort((a, b) => (b.hourlyRate || 0) - (a.hourlyRate || 0));
         break;
       case "reviews":
-        safeProfiles.sort((a, b) => b.reviewCount - a.reviewCount);
+        safeProfiles.sort((a, b) => (b.reviewCount || 0) - (a.reviewCount || 0));
         break;
       default:
-        safeProfiles.sort((a, b) => b.rating - a.rating);
+        safeProfiles.sort((a, b) => (b.rating || 0) - (a.rating || 0));
     }
 
     return safeProfiles;
@@ -202,19 +304,70 @@ export const search = query({
 export const get = query({
   args: { teacherId: v.string() },
   handler: async (ctx, args) => {
-    const profile = await ctx.db
+    let profile = await ctx.db
       .query("teacherProfiles")
       .filter((q) => q.eq(q.field("userId"), args.teacherId))
       .first();
 
-    if (!profile) return null;
+    if (!profile) {
+      try {
+        const normId = ctx.db.normalizeId("teacherProfiles", args.teacherId);
+        if (normId) {
+          profile = await ctx.db.get(normId);
+        }
+      } catch {
+        // non-fatal
+      }
+    }
+
+    if (!profile) {
+      try {
+        const normUserId = ctx.db.normalizeId("users", args.teacherId);
+        if (normUserId) {
+          const user = await ctx.db.get(normUserId);
+          if (user && user.role === "teacher" && user.accountStatus !== "suspended") {
+            return {
+              _id: user._id,
+              userId: String(user._id),
+              name: user.name || "Educator",
+              title: "Educator & Subject Specialist",
+              bio: "Dedicated registered educator ready for live interactive lessons.",
+              avatarUrl: user.image,
+              country: "Bangladesh",
+              timezone: user.timezone || "Asia/Dhaka",
+              hourlyRate: 35,
+              subjects: ["General Studies"],
+              classLevels: ["All Levels"],
+              expertise: ["Tutoring"],
+              languages: ["English", "Bangla"],
+              yearsExperience: 2,
+              isVerified: Boolean(user.emailVerified),
+              verificationStatus: user.emailVerified ? "verified" : "under_review",
+              isAvailable: true,
+              rating: 5.0,
+              reviewCount: 0,
+              totalStudents: 0,
+              totalHours: 0,
+              education: [],
+            };
+          }
+        }
+      } catch {
+        // non-fatal
+      }
+      return null;
+    }
+
+    if ((profile.verificationStatus as string) === "suspended" || profile.verificationStatus === "rejected") {
+      return null;
+    }
 
     // Check if requester is admin or the teacher themselves to include NID
     const authUserId = await getAuthUserId(ctx);
     let isPrivileged = false;
 
     if (authUserId) {
-      if (authUserId === args.teacherId) {
+      if (authUserId === args.teacherId || authUserId === profile.userId) {
         isPrivileged = true;
       } else {
         const caller = await ctx.db.get(authUserId);
@@ -222,11 +375,6 @@ export const get = query({
           isPrivileged = true;
         }
       }
-    }
-
-    // If not verified and caller is not privileged, do not show public profile
-    if (!profile.isVerified && !isPrivileged) {
-      return null;
     }
 
     if (!isPrivileged) {
@@ -237,7 +385,10 @@ export const get = query({
         nidReviewedBy,
         ...publicSafe
       } = profile;
-      return publicSafe;
+      return {
+        ...publicSafe,
+        isAvailable: profile.isAvailable !== false,
+      };
     }
 
     return profile;

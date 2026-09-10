@@ -30,10 +30,10 @@ import {
 
 const publicLinks = [
   { label: "Find Tutors", path: "/teachers" },
+  { label: "Become a Tutor", path: "/teacher-application" },
   { label: "How It Works", path: "/#how-it-works" },
-  { label: "Features", path: "/#features" },
-  { label: "For Tutors", path: "/teacher-application" },
-  { label: "FAQ", path: "/#faq" },
+  { label: "FAQ", path: "/faq" },
+  { label: "Contact", path: "/contact" },
 ];
 
 const studentLinks = [

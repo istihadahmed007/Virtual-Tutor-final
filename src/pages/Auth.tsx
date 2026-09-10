@@ -894,7 +894,25 @@ export default function Auth({ redirectAfterAuth }: AuthProps = {}) {
                           className="mt-1 h-4 w-4 rounded border-stone-300 text-teal-600 focus:ring-teal-500"
                         />
                         <label htmlFor="terms" className="text-xs text-slate-600 leading-tight">
-                          I agree to the Terms of Service and Privacy Policy.
+                          I agree to the{" "}
+                          <a
+                            href="/terms"
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="text-teal-700 hover:text-teal-800 underline font-medium"
+                          >
+                            Terms of Service
+                          </a>{" "}
+                          and{" "}
+                          <a
+                            href="/privacy"
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="text-teal-700 hover:text-teal-800 underline font-medium"
+                          >
+                            Privacy Policy
+                          </a>
+                          .
                         </label>
                       </div>
 

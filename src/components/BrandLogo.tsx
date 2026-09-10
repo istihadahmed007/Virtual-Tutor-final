@@ -119,16 +119,16 @@ export const BrandLogo: React.FC<BrandLogoProps> = ({
 
       <div className="flex flex-col justify-center leading-none">
         <span
-          className={`font-extrabold tracking-tight text-lg sm:text-xl font-['Hind_Siliguri',sans-serif] ${
-            isDark ? "text-white" : "text-[#0a2352]"
+          className={`font-black tracking-tight text-lg sm:text-xl font-heading ${
+            isDark ? "text-white" : "text-[#111111]"
           }`}
         >
-          ভার্চুয়াল <span className={isDark ? "text-[#38bdf8] font-black" : "text-[#0070f3] font-black"}>টিউটর</span>
+          ভার্চুয়াল <span className={isDark ? "text-[#F26522]" : "text-[#F26522]"}>টিউটর</span>
         </span>
         {showSubtext && (
           <span
-            className={`text-[11px] font-semibold tracking-wide font-['Hind_Siliguri',sans-serif] mt-0.5 ${
-              isDark ? "text-slate-300" : "text-slate-500"
+            className={`text-[11px] font-medium tracking-normal mt-0.5 ${
+              isDark ? "text-white/60" : "text-[#111111]/60"
             }`}
           >
             {subtitle ?? "শিখুন • শেখান • এগিয়ে যান"}

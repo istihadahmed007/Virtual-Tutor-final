@@ -1,5 +1,6 @@
 import React from "react";
 import { LucideIcon } from "lucide-react";
+import { motion } from "framer-motion";
 
 interface FloatingBadgeProps {
   icon?: LucideIcon;
@@ -9,6 +10,7 @@ interface FloatingBadgeProps {
   badge?: string;
   className?: string;
   pulse?: boolean;
+  animateFloat?: boolean;
 }
 
 export const FloatingBadge: React.FC<FloatingBadgeProps> = ({
@@ -19,9 +21,20 @@ export const FloatingBadge: React.FC<FloatingBadgeProps> = ({
   badge,
   className = "",
   pulse = false,
+  animateFloat = true,
 }) => {
   return (
-    <div
+    <motion.div
+      animate={animateFloat ? { y: [0, -5, 0] } : undefined}
+      transition={
+        animateFloat
+          ? {
+              duration: 4,
+              repeat: Infinity,
+              ease: "easeInOut",
+            }
+          : undefined
+      }
       className={`inline-flex items-center gap-2 sm:gap-2.5 bg-white/95 backdrop-blur-sm border border-[#E5E4DE] px-3 sm:px-3.5 py-1.5 sm:py-2 rounded-full shadow-[0_2px_12px_rgba(0,0,0,0.04)] text-xs sm:text-[13px] font-medium text-[#111111] transition-all hover:border-[#111111]/30 ${className}`}
     >
       {pulse && (
@@ -52,6 +65,6 @@ export const FloatingBadge: React.FC<FloatingBadgeProps> = ({
           {badge}
         </span>
       )}
-    </div>
+    </motion.div>
   );
 };

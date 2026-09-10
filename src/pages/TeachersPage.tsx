@@ -1,11 +1,11 @@
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import { useQuery, useMutation } from "convex/react";
 import { api } from "@/convex/_generated/api";
-import { getAllTeacherApplications } from "@/lib/teacher-store";
+import { getAllTeacherApplications, TEACHER_STORE_EVENT, LEGACY_FAKE_IDS } from "@/lib/teacher-store";
+import { getRegisteredUsers } from "@/lib/auth-store";
 import { 
   normalizeTeacherData, 
-  AuthoritativeTeacher, 
-  AUTHORITATIVE_SEED_TEACHERS 
+  AuthoritativeTeacher 
 } from "@/lib/teacher-authoritative-data";
 import { createOrGetLocalConversation } from "@/lib/messages-store";
 import { Button } from "@/components/ui/button";
@@ -17,7 +17,6 @@ import {
   FilterState 
 } from "@/components/teachers/TeacherFilters";
 import {
-  ArrowLeft,
   Calendar,
   BookOpen,
   Users,
@@ -47,48 +46,141 @@ export default function TeachersPage() {
 
   const createConversationMut = useMutation(api.messages.createConversation);
 
-  // Cloud search query
-  const cloudTeachers = useQuery(api.teachers.search, {
-    subject: filters.subject !== "All Subjects" ? filters.subject : undefined,
-    classLevel: filters.gradeLevel !== "All Levels" ? filters.gradeLevel : undefined,
-    sortBy: filters.sortBy === "highest_rated" ? "rating" : undefined,
-  });
+  // Authoritative cloud teachers query (reactive across all registered educators)
+  const cloudTeachers = useQuery(api.teachers.list, {});
 
-  // Local authoritative applications
-  const localTeacherApps = useMemo(() => {
-    return getAllTeacherApplications().filter(
-      (t) => t.isVerified || t.verificationStatus === "verified"
-    );
+  // Local authoritative applications with reactive updates
+  const [localApps, setLocalApps] = useState(() => getAllTeacherApplications());
+  const [registeredUsersList, setRegisteredUsersList] = useState(() => getRegisteredUsers());
+
+  useEffect(() => {
+    const handleUpdate = () => {
+      setLocalApps(getAllTeacherApplications());
+      setRegisteredUsersList(getRegisteredUsers());
+    };
+    window.addEventListener(TEACHER_STORE_EVENT, handleUpdate);
+    window.addEventListener("vtp_auth_change", handleUpdate);
+    window.addEventListener("storage", handleUpdate);
+    return () => {
+      window.removeEventListener(TEACHER_STORE_EVENT, handleUpdate);
+      window.removeEventListener("vtp_auth_change", handleUpdate);
+      window.removeEventListener("storage", handleUpdate);
+    };
   }, []);
+
+  const localTeacherApps = useMemo(() => {
+    return localApps.filter(
+      (t) =>
+        t.userAccountStatus !== "suspended" &&
+        t.verificationStatus !== "rejected" &&
+        t.verificationStatus !== "suspended" &&
+        !LEGACY_FAKE_IDS.has(t.userId) &&
+        !LEGACY_FAKE_IDS.has(t._id) &&
+        !LEGACY_FAKE_IDS.has(t.email)
+    );
+  }, [localApps]);
+
+  const registeredTeacherUsers = useMemo(() => {
+    return registeredUsersList
+      .filter(
+        (u) =>
+          u.role === "teacher" &&
+          u.accountStatus !== "suspended" &&
+          !LEGACY_FAKE_IDS.has(u._id) &&
+          !LEGACY_FAKE_IDS.has(u.email)
+      )
+      .map((u) => ({
+        _id: u._id,
+        userId: u._id,
+        name: u.name,
+        email: u.email,
+        title: u.title || "Educator & Subject Specialist",
+        bio: u.bio || "Dedicated registered educator ready for live interactive lessons.",
+        avatarUrl: u.avatarUrl || u.image,
+        country: "Bangladesh",
+        timezone: Intl.DateTimeFormat().resolvedOptions().timeZone || "Asia/Dhaka",
+        hourlyRate: u.hourlyRate || 35,
+        monthlyTuition: 4500,
+        subjects: u.subjects && u.subjects.length > 0 ? u.subjects : ["General Studies"],
+        classLevels: ["All Levels"],
+        expertise: u.subjects || ["Tutoring"],
+        languages: ["English", "Bangla"],
+        yearsExperience: u.yearsExperience || 2,
+        isVerified: u.isEmailVerified ?? false,
+        verificationStatus: u.isEmailVerified ? "verified" : "under_review",
+        isAvailable: true,
+        rating: u.rating || 5.0,
+        reviewCount: 0,
+        totalStudents: 0,
+        totalHours: 0,
+      }));
+  }, [registeredUsersList]);
 
   // Merge and normalize all teachers through the single authoritative layer
   const allAuthoritativeTeachers: AuthoritativeTeacher[] = useMemo(() => {
-    const rawList = cloudTeachers && cloudTeachers.length > 0 
-      ? cloudTeachers 
-      : localTeacherApps.length > 0 
-      ? localTeacherApps 
-      : AUTHORITATIVE_SEED_TEACHERS;
-
-    // Use normalizeTeacherData for each entry to prevent any discrepancies
-    const normalized = rawList.map((t) => normalizeTeacherData(t));
-
-    // Ensure unique by userId
     const uniqueMap = new Map<string, AuthoritativeTeacher>();
-    for (const item of normalized) {
-      if (!uniqueMap.has(item.userId)) {
-        uniqueMap.set(item.userId, item);
+
+    // 1. Cloud teachers
+    if (cloudTeachers && Array.isArray(cloudTeachers)) {
+      for (const t of cloudTeachers) {
+        if (
+          LEGACY_FAKE_IDS.has((t as any)._id) ||
+          LEGACY_FAKE_IDS.has((t as any).userId) ||
+          LEGACY_FAKE_IDS.has((t as any).email)
+        ) {
+          continue;
+        }
+        const normalized = normalizeTeacherData(t);
+        if (normalized.userId) {
+          uniqueMap.set(normalized.userId, normalized);
+        }
+        if (normalized._id) {
+          uniqueMap.set(normalized._id, normalized);
+        }
       }
     }
 
-    // Also make sure authoritative seed educators are available for discovery
-    for (const seed of AUTHORITATIVE_SEED_TEACHERS) {
-      if (!uniqueMap.has(seed.userId)) {
-        uniqueMap.set(seed.userId, seed);
+    // 2. Local teacher applications (includes registered educators with full details)
+    for (const app of localTeacherApps) {
+      const normalized = normalizeTeacherData(app);
+      if (normalized.userId) {
+        const existing = uniqueMap.get(normalized.userId);
+        if (!existing) {
+          uniqueMap.set(normalized.userId, normalized);
+        } else {
+          // Merge rich details if present
+          uniqueMap.set(normalized.userId, {
+            ...existing,
+            ...normalized,
+            _id: existing._id || normalized._id,
+            subjects: normalized.subjects.length > 0 ? normalized.subjects : existing.subjects,
+            classLevels: normalized.classLevels.length > 0 ? normalized.classLevels : existing.classLevels,
+          });
+        }
       }
     }
 
-    return Array.from(uniqueMap.values());
-  }, [cloudTeachers, localTeacherApps]);
+    // 3. Registered teacher accounts
+    for (const r of registeredTeacherUsers) {
+      const normalized = normalizeTeacherData(r);
+      if (normalized.userId && !uniqueMap.has(normalized.userId)) {
+        uniqueMap.set(normalized.userId, normalized);
+      }
+    }
+
+    // Deduplicate by userId to ensure clean array
+    const result: AuthoritativeTeacher[] = [];
+    const seen = new Set<string>();
+    for (const teacher of uniqueMap.values()) {
+      const key = teacher.userId || teacher._id;
+      if (key && !seen.has(key)) {
+        seen.add(key);
+        result.push(teacher);
+      }
+    }
+
+    return result;
+  }, [cloudTeachers, localTeacherApps, registeredTeacherUsers]);
 
   // Client-side filtering & multi-criteria sorting pipeline
   const filteredTeachers = useMemo(() => {
@@ -239,17 +331,17 @@ export default function TeachersPage() {
         ]}
       />
       
-      {/* Editorial Header Section */}
-      <div className="border-b border-[#E5E4DE] bg-white/50 backdrop-blur-xs">
+      {/* Header Section */}
+      <div className="border-b border-[#E5E4DE] bg-white/70 backdrop-blur-xs">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
           <div className="flex flex-col lg:flex-row lg:items-end justify-between gap-6">
             <div>
               <SectionLabel number="01" text="Verified Faculty Directory" />
               <h1 className="text-3xl sm:text-5xl font-extrabold text-[#111111] tracking-tight font-display mt-2">
-                Find World-Class Educators.
+                Find Qualified Tutors.
               </h1>
               <p className="text-sm sm:text-base text-[#111111]/70 mt-2 max-w-2xl">
-                Compare verified educators, read student reviews, inspect monthly plans, and reserve your 1-on-1 trial session.
+                Compare verified educators, read student reviews, inspect monthly plans, and book your 1-on-1 session.
               </p>
             </div>
 
@@ -267,7 +359,7 @@ export default function TeachersPage() {
               <Button
                 size="sm"
                 onClick={() => navigate("/calendar")}
-                className="rounded-full bg-[#111111] hover:bg-[#F26522] text-white text-xs font-semibold px-4 py-2 gap-1.5 shadow-xs transition-all"
+                className="rounded-full bg-[#111111] hover:bg-[#222222] text-white text-xs font-semibold px-4 py-2 gap-1.5 shadow-xs transition-all"
               >
                 <Calendar className="w-3.5 h-3.5" />
                 <span>Schedule Calendar</span>

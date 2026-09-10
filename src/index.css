@@ -42,7 +42,7 @@
   --color-sidebar-ring: var(--sidebar-ring);
 }
 
-/* CHANGE VALUES FOR THEME — Virtual Tutor: Editorial Minimalist Aesthetic */
+/* CHANGE VALUES FOR THEME — Virtual Tutor: Editorial Minimalist */
 :root {
   --font-heading: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
   --font-body: 'Inter', system-ui, -apple-system, sans-serif;
@@ -55,29 +55,29 @@
   --popover-foreground: #111111;
   --primary: #F26522;
   --primary-foreground: #FFFFFF;
-  --secondary: #FAF9F5;
+  --secondary: #EBEAE5;
   --secondary-foreground: #111111;
-  --muted: #EFEFE9;
+  --muted: #EBEAE5;
   --muted-foreground: #666666;
-  --accent: #FAF9F5;
+  --accent: #EBEAE5;
   --accent-foreground: #111111;
-  --destructive: #EF4444;
+  --destructive: #DC2626;
   --border: #E5E4DE;
   --input: #E5E4DE;
-  --ring: #F26522;
+  --ring: #111111;
   --chart-1: #F26522;
   --chart-2: #111111;
-  --chart-3: #D97706;
-  --chart-4: #2563EB;
-  --chart-5: #10B981;
+  --chart-3: #22C55E;
+  --chart-4: #3B82F6;
+  --chart-5: #A855F7;
   --sidebar: #FFFFFF;
   --sidebar-foreground: #111111;
-  --sidebar-primary: #F26522;
+  --sidebar-primary: #111111;
   --sidebar-primary-foreground: #FFFFFF;
-  --sidebar-accent: #FAF9F5;
+  --sidebar-accent: #F5F4EF;
   --sidebar-accent-foreground: #111111;
   --sidebar-border: #E5E4DE;
-  --sidebar-ring: #F26522;
+  --sidebar-ring: #111111;
 }
 
 .dark {

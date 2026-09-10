@@ -8,6 +8,7 @@ interface SectionHeaderProps {
   description?: string;
   align?: "left" | "center";
   className?: string;
+  theme?: "light" | "dark";
 }
 
 export const SectionHeader: React.FC<SectionHeaderProps> = ({
@@ -17,7 +18,10 @@ export const SectionHeader: React.FC<SectionHeaderProps> = ({
   description,
   align = "left",
   className = "",
+  theme = "light",
 }) => {
+  const isDark = theme === "dark";
+
   return (
     <div
       className={`max-w-3xl ${
@@ -26,16 +30,24 @@ export const SectionHeader: React.FC<SectionHeaderProps> = ({
     >
       {(label || number !== undefined) && (
         <div className="mb-4 sm:mb-6">
-          <SectionLabel number={number} text={label || ""} />
+          <SectionLabel number={number} text={label || ""} theme={theme} />
         </div>
       )}
 
-      <h2 className="text-[1.75rem] sm:text-[2.25rem] lg:text-[2.75rem] font-medium leading-[1.12] tracking-[-0.03em] text-[#111111]">
+      <h2
+        className={`text-[1.75rem] sm:text-[2.25rem] lg:text-[2.75rem] font-medium leading-[1.12] tracking-[-0.03em] ${
+          isDark ? "text-white" : "text-[#111111]"
+        }`}
+      >
         {title}
       </h2>
 
       {description && (
-        <p className="mt-4 sm:mt-5 text-sm sm:text-base text-[#111111]/70 leading-[1.65] max-w-2xl font-normal">
+        <p
+          className={`mt-4 sm:mt-5 text-sm sm:text-base leading-[1.65] max-w-2xl font-normal ${
+            isDark ? "text-white/70" : "text-[#111111]/70"
+          }`}
+        >
           {description}
         </p>
       )}

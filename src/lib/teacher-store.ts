@@ -66,7 +66,7 @@ export interface TeacherApplicationData {
 }
 
 const STORAGE_TEACHER_APPS_KEY = "vtp_teacher_applications_v1";
-const TEACHER_STORE_EVENT = "vtp_teacher_store_change";
+export const TEACHER_STORE_EVENT = "vtp_teacher_store_change";
 
 function notifyTeacherStoreChange() {
   if (typeof window !== "undefined") {
@@ -91,10 +91,11 @@ export function calculateTeacherCompletion(data: Partial<TeacherApplicationData>
   return Math.min(100, Math.round(score));
 }
 
-// No fabricated seed teacher applications
-const DEFAULT_VERIFIED_TEACHERS: TeacherApplicationData[] = [];
+export const DEFAULT_REGISTERED_TEACHERS: TeacherApplicationData[] = [];
 
-const LEGACY_FAKE_IDS = new Set([
+export const LEGACY_FAKE_IDS = new Set([
+  "demo_teacher_01",
+  "demo_teacher_02",
   "teacher_prof_sarah",
   "teacher_prof_marcus",
   "teacher_prof_elena",
@@ -111,9 +112,15 @@ export function getAllTeacherApplications(): TeacherApplicationData[] {
       return [];
     }
     const parsed = JSON.parse(raw);
-    if (Array.isArray(parsed)) {
-      // Purge any legacy fake seed records that were stored in localStorage
-      const realOnly = parsed.filter((item) => item && !LEGACY_FAKE_IDS.has(item.userId) && !LEGACY_FAKE_IDS.has(item._id));
+    if (Array.isArray(parsed) && parsed.length > 0) {
+      // Purge any legacy fake seed records or demo teachers that were stored in localStorage
+      const realOnly = parsed.filter(
+        (item) =>
+          item &&
+          !LEGACY_FAKE_IDS.has(item.userId) &&
+          !LEGACY_FAKE_IDS.has(item._id) &&
+          !LEGACY_FAKE_IDS.has(item.email)
+      );
       if (realOnly.length !== parsed.length) {
         localStorage.setItem(STORAGE_TEACHER_APPS_KEY, JSON.stringify(realOnly));
       }
@@ -157,31 +164,32 @@ export function saveTeacherDraft(
       ...updates,
       userId,
       email: userEmail || prev.email,
-      verificationStatus: prev.verificationStatus === "verified" ? "verified" : (prev.verificationStatus === "under_review" ? "under_review" : "draft"),
-      isVerified: prev.isVerified,
+      verificationStatus: updates.verificationStatus || prev.verificationStatus || "under_review",
+      isVerified: updates.isVerified !== undefined ? updates.isVerified : prev.isVerified,
+      isAvailable: updates.isAvailable !== undefined ? updates.isAvailable : (prev.isAvailable !== false),
       profileCompletionScore: calculateTeacherCompletion({ ...prev, ...updates }),
     };
     apps[existingIndex] = record;
   } else {
     record = {
       userId,
-      name: updates.name || "Teacher Applicant",
+      name: updates.name || "Educator",
       email: userEmail,
-      title: updates.title || "",
-      bio: updates.bio || "",
+      title: updates.title || "Educator & Subject Specialist",
+      bio: updates.bio || "Dedicated educator ready to assist students with interactive lessons.",
       avatarUrl: updates.avatarUrl || "",
-      country: updates.country || "United States",
-      timezone: updates.timezone || Intl.DateTimeFormat().resolvedOptions().timeZone || "America/New_York",
+      country: updates.country || "Bangladesh",
+      timezone: updates.timezone || Intl.DateTimeFormat().resolvedOptions().timeZone || "Asia/Dhaka",
       hourlyRate: updates.hourlyRate || 35,
       price30min: updates.price30min || 20,
       price60min: updates.price60min || 35,
       groupPrice: updates.groupPrice || 25,
       trialPrice: updates.trialPrice || 15,
-      subjects: updates.subjects || [],
-      classLevels: updates.classLevels || [],
-      expertise: updates.expertise || [],
-      languages: updates.languages || ["English"],
-      yearsExperience: updates.yearsExperience || 1,
+      subjects: updates.subjects && updates.subjects.length > 0 ? updates.subjects : ["General Studies"],
+      classLevels: updates.classLevels && updates.classLevels.length > 0 ? updates.classLevels : ["All Levels"],
+      expertise: updates.expertise && updates.expertise.length > 0 ? updates.expertise : ["Tutoring"],
+      languages: updates.languages && updates.languages.length > 0 ? updates.languages : ["English", "Bangla"],
+      yearsExperience: updates.yearsExperience || 2,
       currentPosition: updates.currentPosition || "",
       previousExperience: updates.previousExperience || "",
       education: updates.education || [],
@@ -195,8 +203,9 @@ export function saveTeacherDraft(
       nidBackUrl: updates.nidBackUrl || "",
       nidFrontFileName: updates.nidFrontFileName || "",
       nidBackFileName: updates.nidBackFileName || "",
-      verificationStatus: "draft",
-      isVerified: false,
+      verificationStatus: updates.verificationStatus || "under_review",
+      isVerified: updates.isVerified ?? false,
+      isAvailable: updates.isAvailable ?? true,
       profileCompletionScore: calculateTeacherCompletion(updates),
       ...updates,
     };

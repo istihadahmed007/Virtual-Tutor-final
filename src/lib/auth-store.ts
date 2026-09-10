@@ -132,6 +132,7 @@ export function saveRegisteredUsers(users: StoredAccount[]) {
   if (typeof window === "undefined") return;
   try {
     localStorage.setItem(STORAGE_USERS_KEY, JSON.stringify(users));
+    notifyAuthChange();
   } catch (err) {
     console.error("Failed to save users database:", err);
   }

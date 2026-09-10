@@ -1,4 +1,4 @@
-import { useMemo } from "react";
+import { useMemo, useState } from "react";
 import { useQuery } from "convex/react";
 import { api } from "@/convex/_generated/api";
 import { useAuth } from "@/hooks/use-auth";
@@ -6,14 +6,15 @@ import { useTeacherProfile } from "@/hooks/use-teacher-profile";
 import { useNavigate } from "react-router";
 import {
   StatBlock,
-  SectionLabel,
   LessonCard,
   PillButton,
   PrimaryButton,
+  SectionLabel,
 } from "@/components/redesign";
 import { ProfileAvatar } from "@/components/ProfileAvatar";
 import { EmptyState } from "@/components/EmptyState";
 import { StatusBadge } from "@/components/StatusBadge";
+import { toast } from "sonner";
 import {
   Video,
   Users,
@@ -23,9 +24,9 @@ import {
   BookOpen,
   AlertCircle,
   Search,
-  Sparkles,
   ChevronRight,
   ShieldCheck,
+  Sparkles,
 } from "lucide-react";
 
 export default function TeacherDashboard() {
@@ -35,6 +36,10 @@ export default function TeacherDashboard() {
   const { profile: teacherProfile } = useTeacherProfile();
   const bookings = useQuery(api.bookings.listByTeacher);
   const discoverableStudents = useQuery(api.studentProfiles.listDiscoverable, {});
+
+  const [isAvailable, setIsAvailable] = useState<boolean>(
+    teacherProfile?.isAvailable ?? true
+  );
 
   const sessionList = useMemo(() => sessions ?? [], [sessions]);
   const bookingList = bookings ?? [];
@@ -47,6 +52,16 @@ export default function TeacherDashboard() {
   }, [sessionList]);
 
   const needsAttention = pendingBookings.length > 0;
+
+  const handleToggleAvailability = () => {
+    const next = !isAvailable;
+    setIsAvailable(next);
+    toast.success(
+      next
+        ? "You are now marked Available for new student bookings."
+        : "You are marked Unavailable. Existing sessions remain scheduled."
+    );
+  };
 
   return (
     <main className="min-h-screen bg-[#F5F4EF] text-[#111111] pb-24 pt-6 sm:pt-8">
@@ -62,8 +77,22 @@ export default function TeacherDashboard() {
               Manage your live classes, schedule, student discovery, and teaching requests.
             </p>
           </div>
-
           <div className="flex items-center gap-3">
+            <button
+              onClick={handleToggleAvailability}
+              className={`inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full border text-xs font-semibold transition-all cursor-pointer ${
+                isAvailable
+                  ? "bg-emerald-50 border-emerald-200 text-emerald-800"
+                  : "bg-[#EBEAE5] border-[#E5E4DE] text-[#111111]/60"
+              }`}
+            >
+              <span
+                className={`w-2 h-2 rounded-full ${
+                  isAvailable ? "bg-emerald-500 animate-pulse" : "bg-stone-400"
+                }`}
+              />
+              <span>{isAvailable ? "Accepting Students" : "Unavailable"}</span>
+            </button>
             <PillButton
               variant="white"
               size="sm"
@@ -81,7 +110,7 @@ export default function TeacherDashboard() {
           </div>
         </div>
 
-        {/* Verification Status Banner if under review */}
+        {/* Verification Status Banner if Pending */}
         {teacherProfile && !teacherProfile.isVerified && (
           <div className="bg-white border border-[#F26522]/30 rounded-2xl p-5 mb-8 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 shadow-xs">
             <div className="flex items-center gap-3.5">
@@ -109,7 +138,7 @@ export default function TeacherDashboard() {
           </div>
         )}
 
-        {/* Prominent Discovery Callout: Find Students */}
+        {/* Hero Banner: Student Discovery Invitation */}
         <div className="relative rounded-3xl bg-[#111111] text-white p-7 sm:p-9 mb-8 overflow-hidden">
           <div className="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-6">
             <div className="max-w-xl">
@@ -124,7 +153,6 @@ export default function TeacherDashboard() {
                 Discover active students seeking guidance in your subjects. Review academic goals, curriculum targets, and preferred schedules, then send custom lesson invitations.
               </p>
             </div>
-
             <div className="flex items-center gap-3 shrink-0">
               <PrimaryButton
                 size="lg"
@@ -169,37 +197,37 @@ export default function TeacherDashboard() {
 
         {/* Pending Bookings Alert */}
         {needsAttention && (
-          <div className="bg-white rounded-3xl border border-[#F26522]/30 p-6 sm:p-8 mb-8 shadow-xs">
-            <h3 className="text-base font-semibold text-[#111111] flex items-center gap-2 mb-4">
-              <AlertCircle className="w-4 h-4 text-[#F26522]" />
+          <div className="bg-white rounded-3xl border border-blue-200 p-6 sm:p-8 mb-8 shadow-xs">
+            <h3 className="text-base font-bold text-slate-900 flex items-center gap-2 mb-4">
+              <AlertCircle className="w-4 h-4 text-blue-600" />
               <span>Booking requests awaiting your response</span>
             </h3>
             <div className="space-y-3">
               {pendingBookings.slice(0, 3).map((booking) => (
                 <div
                   key={booking._id}
-                  className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 p-4 bg-[#FAF9F5] rounded-2xl border border-[#E5E4DE]"
+                  className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 p-4 bg-slate-50 rounded-2xl border border-slate-200"
                 >
                   <div className="flex items-center gap-3">
-                    <div className="w-9 h-9 rounded-full bg-[#111111] text-white flex items-center justify-center font-bold text-xs shrink-0">
+                    <div className="w-9 h-9 rounded-full bg-blue-600 text-white flex items-center justify-center font-bold text-xs shrink-0">
                       {booking.studentName.charAt(0)}
                     </div>
                     <div>
-                      <p className="text-sm font-semibold text-[#111111]">
+                      <p className="text-sm font-bold text-slate-900">
                         {booking.studentName}
                       </p>
-                      <p className="text-xs text-[#111111]/60">
+                      <p className="text-xs text-slate-600">
                         {booking.subject} · {booking.date} · {booking.timeSlot}
                       </p>
                     </div>
                   </div>
                   <div className="flex items-center gap-2 self-end sm:self-center">
-                    <PrimaryButton
-                      size="sm"
+                    <button
                       onClick={() => navigate("/lessons")}
+                      className="px-4 py-2 rounded-full bg-blue-600 hover:bg-blue-700 text-white text-xs font-bold transition-all shadow-xs"
                     >
                       Accept Booking
-                    </PrimaryButton>
+                    </button>
                   </div>
                 </div>
               ))}
@@ -212,21 +240,21 @@ export default function TeacherDashboard() {
           {/* Left Column: Upcoming Sessions & Student Requests */}
           <div className="lg:col-span-2 space-y-8">
             {/* Upcoming Sessions Card */}
-            <div className="bg-white rounded-3xl border border-[#E5E4DE] p-6 sm:p-8">
-              <div className="flex items-center justify-between mb-6 pb-4 border-b border-[#E5E4DE]">
+            <div className="bg-white rounded-3xl border border-slate-200 p-6 sm:p-8">
+              <div className="flex items-center justify-between mb-6 pb-4 border-b border-slate-200">
                 <div>
-                  <h3 className="text-base sm:text-lg font-semibold text-[#111111] flex items-center gap-2">
-                    <Calendar className="w-4 h-4 text-[#F26522]" />
+                  <h3 className="text-base sm:text-lg font-bold text-slate-900 flex items-center gap-2">
+                    <Calendar className="w-4 h-4 text-blue-600" />
                     <span>Upcoming Live Sessions</span>
                   </h3>
-                  <p className="text-xs text-[#111111]/60 mt-0.5">
-                    Launch live classrooms or review attendee attendance
+                  <p className="text-xs text-slate-500 mt-0.5">
+                    Launch live classrooms or review student attendees
                   </p>
                 </div>
                 {upcomingSessions.length > 0 && (
                   <button
                     onClick={() => navigate("/calendar")}
-                    className="text-xs font-semibold text-[#111111] hover:text-[#F26522] transition-colors cursor-pointer"
+                    className="text-xs font-semibold text-slate-700 hover:text-blue-600 transition-colors cursor-pointer"
                   >
                     View calendar →
                   </button>

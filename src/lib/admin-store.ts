@@ -1,6 +1,8 @@
 // Persistent administrative store for Virtual Tutor Pro Admin Console
 // Operates on real database and real authenticated records only.
 import { getAllTeacherApplications, TeacherApplicationData, saveAllTeacherApplications } from "./teacher-store";
+import { getRegisteredUsers } from "./auth-store";
+import { getAllStudentProfiles } from "./student-store";
 
 export interface AdminUserRecord {
   _id: string;
@@ -127,9 +129,12 @@ function notifyAdminStoreChange() {
 // ─── NO FAKE INITIAL SEED RECORDS ─────────────────────────────────
 
 const LEGACY_FAKE_ADMIN_IDS = new Set([
+  "demo_teacher_01",
+  "demo_teacher_02",
   "teacher_prof_sarah",
   "teacher_prof_marcus",
   "teacher_prof_elena",
+  "teacher_prof_marcus_thorne",
   "student_alex_rivers",
   "student_priya_sharma",
   "student_liam_smith",
@@ -174,23 +179,134 @@ const INITIAL_POSTS: AdminCommunityPostRecord[] = [];
 export function getAdminUsers(): AdminUserRecord[] {
   if (typeof window === "undefined") return INITIAL_USERS;
   try {
+    let baseUsers: AdminUserRecord[] = [...INITIAL_USERS];
     const raw = localStorage.getItem(STORAGE_USERS_KEY);
-    if (!raw) {
-      localStorage.setItem(STORAGE_USERS_KEY, JSON.stringify(INITIAL_USERS));
-      return INITIAL_USERS;
-    }
-    const parsed = JSON.parse(raw);
-    if (Array.isArray(parsed)) {
-      const realOnly = parsed.filter((u) => u && !LEGACY_FAKE_ADMIN_IDS.has(u._id));
-      if (realOnly.length !== parsed.length) {
-        localStorage.setItem(STORAGE_USERS_KEY, JSON.stringify(realOnly));
+    if (raw) {
+      const parsed = JSON.parse(raw);
+      if (Array.isArray(parsed)) {
+        baseUsers = parsed.filter((u) => u && !LEGACY_FAKE_ADMIN_IDS.has(u._id));
       }
-      return realOnly;
     }
-    return INITIAL_USERS;
+
+    const userMap = new Map<string, AdminUserRecord>();
+    for (const u of baseUsers) {
+      if (u && (u._id || u.email)) {
+        userMap.set(u.email ? u.email.toLowerCase() : u._id, u);
+      }
+    }
+
+    // Include all registered accounts
+    try {
+      const reg = getRegisteredUsers();
+      for (const r of reg) {
+        if (!r || !r.email) continue;
+        const key = r.email.toLowerCase();
+        if (!userMap.has(key)) {
+          userMap.set(key, {
+            _id: r._id,
+            name: r.name,
+            email: r.email,
+            role: r.role,
+            accountStatus: r.accountStatus === "suspended" ? "suspended" : "active",
+            isVerified: r.isEmailVerified ?? (r.role === "student" ? true : false),
+            avatarUrl: r.avatarUrl || r.image,
+            _creationTime: r.createdAt || Date.now(),
+            lastLoginAt: Date.now(),
+          });
+        }
+      }
+    } catch {
+      // safe
+    }
+
+    // Include all registered teachers
+    try {
+      const teachers = getAllTeacherApplications();
+      for (const t of teachers) {
+        if (!t || !t.email) continue;
+        const key = t.email.toLowerCase();
+        const existing = userMap.get(key);
+        if (!existing) {
+          userMap.set(key, {
+            _id: t.userId || t._id,
+            name: t.name,
+            email: t.email,
+            role: "teacher",
+            accountStatus: t.userAccountStatus === "suspended" ? "suspended" : "active",
+            isVerified: t.isVerified || t.verificationStatus === "verified",
+            avatarUrl: t.avatarUrl,
+            _creationTime: Date.now() - 7 * 86400000,
+            lastLoginAt: Date.now(),
+          });
+        } else if (existing.role !== "admin") {
+          existing.isVerified = t.isVerified || t.verificationStatus === "verified";
+          if (t.avatarUrl && !existing.avatarUrl) existing.avatarUrl = t.avatarUrl;
+        }
+      }
+    } catch {
+      // safe
+    }
+
+    // Include all registered students
+    try {
+      const students = getAllStudentProfiles();
+      for (const s of students) {
+        if (!s) continue;
+        const key = s.email ? s.email.toLowerCase() : s.userId;
+        if (!userMap.has(key)) {
+          userMap.set(key, {
+            _id: s.userId || s._id,
+            name: s.name,
+            email: s.email || `${s.userId}@student.local`,
+            role: "student",
+            accountStatus: s.accountStatus === "suspended" ? "suspended" : "active",
+            isVerified: s.isVerified ?? true,
+            avatarUrl: s.avatarUrl,
+            _creationTime: s._creationTime || Date.now(),
+            lastLoginAt: Date.now(),
+          });
+        }
+      }
+    } catch {
+      // safe
+    }
+
+    return Array.from(userMap.values());
   } catch {
     return INITIAL_USERS;
   }
+}
+
+export function syncUserToAdminStore(user: {
+  _id: string;
+  name: string;
+  email: string;
+  role: "admin" | "teacher" | "student" | "parent";
+  accountStatus?: "active" | "suspended";
+  isVerified?: boolean;
+  avatarUrl?: string;
+}) {
+  const users = getAdminUsers();
+  const idx = users.findIndex(
+    (u) => u._id === user._id || (user.email && u.email?.toLowerCase() === user.email.toLowerCase())
+  );
+  const record: AdminUserRecord = {
+    _id: user._id,
+    name: user.name,
+    email: user.email,
+    role: user.role,
+    accountStatus: user.accountStatus || "active",
+    isVerified: user.isVerified ?? (user.role === "student" ? true : false),
+    avatarUrl: user.avatarUrl,
+    _creationTime: Date.now(),
+    lastLoginAt: Date.now(),
+  };
+  if (idx >= 0) {
+    users[idx] = { ...users[idx], ...record };
+  } else {
+    users.push(record);
+  }
+  saveAdminUsers(users);
 }
 
 export function saveAdminUsers(users: AdminUserRecord[]) {
