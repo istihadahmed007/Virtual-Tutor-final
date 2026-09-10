@@ -937,6 +937,150 @@ const schema = defineSchema(
       .index("by_status", ["status"])
       .index("by_created", ["createdAt"])
       .index("by_email", ["email"]),
+
+    // ─── Financial: Payments (SSLCOMMERZ) ─────────────────
+    payments: defineTable({
+      bookingId: v.string(),
+      studentId: v.string(),
+      studentName: v.optional(v.string()),
+      teacherId: v.string(),
+      teacherName: v.optional(v.string()),
+      amount: v.number(),
+      currency: v.string(), // "BDT"
+      gateway: v.string(), // "sslcommerz"
+      transactionId: v.string(), // Virtual Tutor internal Tran ID (e.g. VT-TXN-...)
+      gatewayTransactionId: v.optional(v.string()), // val_id or bank_tran_id
+      paymentMethod: v.optional(v.string()), // e.g. "BKASH-BKash", "NAGAD-Nagad", "VISA-CityBank"
+      status: v.union(
+        v.literal("initiated"),
+        v.literal("pending"),
+        v.literal("paid"),
+        v.literal("failed"),
+        v.literal("cancelled"),
+        v.literal("refunded"),
+      ),
+      sessionKey: v.optional(v.string()),
+      gatewayUrl: v.optional(v.string()),
+      paidAt: v.optional(v.number()),
+      refundReason: v.optional(v.string()),
+      refundedAt: v.optional(v.number()),
+      refundedBy: v.optional(v.string()),
+      createdAt: v.number(),
+      updatedAt: v.number(),
+    })
+      .index("by_booking", ["bookingId"])
+      .index("by_student", ["studentId"])
+      .index("by_teacher", ["teacherId"])
+      .index("by_transaction", ["transactionId"])
+      .index("by_status", ["status"])
+      .index("by_created", ["createdAt"]),
+
+    // ─── Financial: Teacher Earnings (Commission Engine) ───
+    teacherEarnings: defineTable({
+      teacherId: v.string(),
+      teacherName: v.optional(v.string()),
+      bookingId: v.string(),
+      paymentId: v.optional(v.string()),
+      studentId: v.string(),
+      studentName: v.optional(v.string()),
+      grossAmount: v.number(), // Authoritative verified student payment
+      platformFee: v.number(), // 15% platform commission
+      teacherAmount: v.number(), // 85% teacher earning
+      status: v.union(
+        v.literal("pending"),
+        v.literal("earned"),
+        v.literal("payable"),
+        v.literal("processing"),
+        v.literal("paid"),
+        v.literal("held"),
+        v.literal("reversed"),
+      ),
+      earnedAt: v.number(),
+      payableAt: v.optional(v.number()),
+      paidAt: v.optional(v.number()),
+      payoutId: v.optional(v.string()),
+      notes: v.optional(v.string()),
+      createdAt: v.number(),
+      updatedAt: v.number(),
+    })
+      .index("by_teacher", ["teacherId"])
+      .index("by_status", ["status"])
+      .index("by_booking", ["bookingId"])
+      .index("by_payout", ["payoutId"])
+      .index("by_earnedAt", ["earnedAt"]),
+
+    // ─── Financial: Monthly Teacher Payouts ───────────────
+    teacherPayouts: defineTable({
+      teacherId: v.string(),
+      teacherName: v.string(),
+      teacherEmail: v.optional(v.string()),
+      settlementPeriodStart: v.number(), // timestamp start of period
+      settlementPeriodEnd: v.number(), // timestamp end of period
+      grossEarnings: v.number(),
+      platformCommission: v.number(),
+      teacherPayable: v.number(),
+      status: v.union(
+        v.literal("pending"),
+        v.literal("approved"),
+        v.literal("processing"),
+        v.literal("paid"),
+        v.literal("failed"),
+      ),
+      payoutMethod: v.optional(
+        v.union(
+          v.literal("bank"),
+          v.literal("bkash"),
+          v.literal("nagad"),
+          v.literal("rocket"),
+          v.literal("other"),
+        ),
+      ),
+      payoutReference: v.optional(v.string()), // Bank Trx / MFS ID
+      notes: v.optional(v.string()),
+      approvedAt: v.optional(v.number()),
+      paidAt: v.optional(v.number()),
+      createdAt: v.number(),
+      updatedAt: v.number(),
+    })
+      .index("by_teacher", ["teacherId"])
+      .index("by_status", ["status"])
+      .index("by_period", ["settlementPeriodStart", "settlementPeriodEnd"])
+      .index("by_created", ["createdAt"]),
+
+    // ─── Financial: Audit Trail ───────────────────────────
+    financialAuditLogs: defineTable({
+      actor: v.string(),
+      actorRole: v.string(),
+      action: v.string(), // "payment_initiated", "payment_verified", "refund_completed", etc.
+      entity: v.string(), // "payment", "teacher_earning", "payout", "refund"
+      entityId: v.string(),
+      amount: v.optional(v.number()),
+      previousStatus: v.optional(v.string()),
+      newStatus: v.string(),
+      notes: v.optional(v.string()),
+      metadata: v.optional(v.string()),
+      timestamp: v.number(),
+    })
+      .index("by_timestamp", ["timestamp"])
+      .index("by_entity", ["entity", "entityId"])
+      .index("by_action", ["action"]),
+
+    // ─── Financial: Adjustments & Reversals ───────────────
+    financialAdjustments: defineTable({
+      teacherId: v.string(),
+      originalPaymentId: v.string(),
+      earningId: v.string(),
+      adjustmentAmount: v.number(),
+      reason: v.string(),
+      recoveryStatus: v.union(
+        v.literal("pending_deduction"),
+        v.literal("deducted"),
+        v.literal("waived"),
+      ),
+      deductedFromPayoutId: v.optional(v.string()),
+      createdAt: v.number(),
+      updatedAt: v.number(),
+    }).index("by_teacher", ["teacherId"]),
   },
   {
     schemaValidation: false,

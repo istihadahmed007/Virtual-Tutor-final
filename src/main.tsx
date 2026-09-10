@@ -91,6 +91,7 @@ const CommunityPage = lazyWithRetry(() => import("./pages/CommunityPage"), "Comm
 const NotFound = lazyWithRetry(() => import("./pages/NotFound"), "NotFound");
 const ResumeBuilder = lazyWithRetry(() => import("./pages/ResumeBuilder"), "ResumeBuilder");
 const PrivacyPolicy = lazyWithRetry(() => import("./pages/PrivacyPolicy"), "PrivacyPolicy");
+const CheckoutPage = lazyWithRetry(() => import("./pages/CheckoutPage"), "CheckoutPage");
 
 // Admin Console Pages
 const AdminDashboard = lazyWithRetry(() => import("./pages/admin/AdminDashboard"), "AdminDashboard");
@@ -209,6 +210,7 @@ root.render(
                   <Route path="/auth" element={<AuthPage redirectAfterAuth="/dashboard" />} />
                   <Route path="/classroom" element={<RequireAuth><ClassroomPage /></RequireAuth>} />
                   <Route path="/classroom/:lessonId" element={<RequireAuth><ClassroomPage /></RequireAuth>} />
+                  <Route path="/checkout/:transactionId" element={<RequireAuth><CheckoutPage /></RequireAuth>} />
                   <Route path="/dashboard" element={<RequireAuth><AppShell><Dashboard /></AppShell></RequireAuth>} />
                   <Route path="/teachers" element={<AppShell><TeachersPage /></AppShell>} />
                   <Route path="/students" element={<AppShell><StudentsPage /></AppShell>} />

@@ -1,6 +1,7 @@
 import { useMemo, useState } from "react";
 import { useQuery } from "convex/react";
 import { api } from "@/convex/_generated/api";
+import { useTeacherEarnings } from "@/hooks/use-payments";
 import { useAuth } from "@/hooks/use-auth";
 import { useTeacherProfile } from "@/hooks/use-teacher-profile";
 import { useNavigate } from "react-router";
@@ -27,6 +28,9 @@ import {
   ChevronRight,
   ShieldCheck,
   Sparkles,
+  Wallet,
+  DollarSign,
+  CheckCircle,
 } from "lucide-react";
 
 export default function TeacherDashboard() {
@@ -36,6 +40,7 @@ export default function TeacherDashboard() {
   const { profile: teacherProfile } = useTeacherProfile();
   const bookings = useQuery(api.bookings.listByTeacher);
   const discoverableStudents = useQuery(api.studentProfiles.listDiscoverable, {});
+  const earningsData = useTeacherEarnings();
 
   const [isAvailable, setIsAvailable] = useState<boolean>(
     teacherProfile?.isAvailable ?? true
@@ -239,6 +244,131 @@ export default function TeacherDashboard() {
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           {/* Left Column: Upcoming Sessions & Student Requests */}
           <div className="lg:col-span-2 space-y-8">
+            {/* Educator Earnings & Month-End Settlement Card */}
+            <div className="bg-white rounded-3xl border border-stone-200 p-6 sm:p-8 shadow-xs">
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between pb-4 border-b border-stone-100 gap-2 mb-6">
+                <div>
+                  <h3 className="text-base sm:text-lg font-bold text-slate-900 flex items-center gap-2">
+                    <Wallet className="w-5 h-5 text-teal-700" />
+                    <span>Tuition Earnings & Monthly Settlement (85% Allocation)</span>
+                  </h3>
+                  <p className="text-xs text-slate-500 mt-0.5">
+                    Student tuition fees collected up front; your 85% share accumulates for month-end disbursement.
+                  </p>
+                </div>
+                <span className="text-[11px] font-bold text-teal-800 bg-teal-50 border border-teal-200 px-3 py-1 rounded-full w-fit">
+                  Month-End Payout Model
+                </span>
+              </div>
+
+              {/* 3 Metric Cards */}
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-6">
+                <div className="bg-stone-50 rounded-2xl p-4 border border-stone-200/80">
+                  <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400">
+                    This Month (85% Net)
+                  </span>
+                  <div className="flex items-baseline gap-1 mt-1">
+                    <span className="text-xl font-black text-slate-900">
+                      ৳{(earningsData?.currentMonthEarnings ?? 0).toLocaleString()}
+                    </span>
+                    <span className="text-[10px] text-slate-400 font-bold">BDT</span>
+                  </div>
+                  <p className="text-[10px] text-slate-500 mt-1">Accumulating for payout</p>
+                </div>
+
+                <div className="bg-teal-50/50 rounded-2xl p-4 border border-teal-200/80">
+                  <span className="text-[10px] font-bold uppercase tracking-wider text-teal-700">
+                    Payable Month-End Settlement
+                  </span>
+                  <div className="flex items-baseline gap-1 mt-1">
+                    <span className="text-xl font-black text-teal-800">
+                      ৳{(earningsData?.pendingPayout ?? 0).toLocaleString()}
+                    </span>
+                    <span className="text-[10px] text-teal-600 font-bold">BDT</span>
+                  </div>
+                  <p className="text-[10px] text-teal-600 mt-1">Scheduled for end of month</p>
+                </div>
+
+                <div className="bg-stone-50 rounded-2xl p-4 border border-stone-200/80">
+                  <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400">
+                    Lifetime Received
+                  </span>
+                  <div className="flex items-baseline gap-1 mt-1">
+                    <span className="text-xl font-black text-slate-900">
+                      ৳{(earningsData?.lifetimeEarnings ?? 0).toLocaleString()}
+                    </span>
+                    <span className="text-[10px] text-slate-400 font-bold">BDT</span>
+                  </div>
+                  <p className="text-[10px] text-slate-500 mt-1">Total earned on Virtual Tutor</p>
+                </div>
+              </div>
+
+              {/* Recent Lesson Earnings Breakdown */}
+              <div className="border border-stone-200 rounded-2xl overflow-hidden">
+                <div className="p-3 bg-stone-50 border-b border-stone-200 text-xs font-bold text-slate-700 flex justify-between items-center">
+                  <span>Recent Lesson Earnings (85% Split)</span>
+                  <span className="text-[10px] font-normal text-slate-500">
+                    Virtual Tutor retains 15% platform commission
+                  </span>
+                </div>
+
+                {(!earningsData || earningsData.earningsList.length === 0) ? (
+                  <div className="p-6 text-center text-slate-400 text-xs">
+                    No tuition earnings recorded yet. When students book and pay for your classes, your 85% earnings will accumulate here.
+                  </div>
+                ) : (
+                  <div className="overflow-x-auto">
+                    <table className="w-full text-left text-xs">
+                      <thead>
+                        <tr className="border-b border-stone-100 text-[10px] font-bold text-slate-400 uppercase bg-white">
+                          <th className="py-2.5 px-4">Student</th>
+                          <th className="py-2.5 px-4">Gross Tuition</th>
+                          <th className="py-2.5 px-4">Platform Fee (15%)</th>
+                          <th className="py-2.5 px-4">Your Earning (85%)</th>
+                          <th className="py-2.5 px-4">Status</th>
+                          <th className="py-2.5 px-4">Date</th>
+                        </tr>
+                      </thead>
+                      <tbody className="divide-y divide-stone-100">
+                        {earningsData.earningsList.slice(0, 5).map((e) => (
+                          <tr key={e._id} className="hover:bg-stone-50/60">
+                            <td className="py-2.5 px-4 font-bold text-slate-900">
+                              {e.studentName || "Student"}
+                            </td>
+                            <td className="py-2.5 px-4 text-slate-600">
+                              ৳{e.grossAmount.toLocaleString()}
+                            </td>
+                            <td className="py-2.5 px-4 text-slate-500 text-[11px]">
+                              ৳{e.platformFee.toLocaleString()}
+                            </td>
+                            <td className="py-2.5 px-4 font-bold text-teal-700">
+                              ৳{e.teacherAmount.toLocaleString()}
+                            </td>
+                            <td className="py-2.5 px-4">
+                              <span
+                                className={`px-2 py-0.5 rounded-full text-[10px] font-bold ${
+                                  e.status === "paid"
+                                    ? "bg-emerald-100 text-emerald-800"
+                                    : e.status === "processing"
+                                    ? "bg-blue-100 text-blue-800"
+                                    : "bg-amber-100 text-amber-800"
+                                }`}
+                              >
+                                {e.status === "payable" ? "Accruing" : e.status.toUpperCase()}
+                              </span>
+                            </td>
+                            <td className="py-2.5 px-4 text-slate-400 text-[11px]">
+                              {new Date(e.earnedAt).toLocaleDateString()}
+                            </td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
+                )}
+              </div>
+            </div>
+
             {/* Upcoming Sessions Card */}
             <div className="bg-white rounded-3xl border border-slate-200 p-6 sm:p-8">
               <div className="flex items-center justify-between mb-6 pb-4 border-b border-slate-200">

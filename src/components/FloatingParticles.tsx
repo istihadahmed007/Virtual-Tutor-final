@@ -1,9 +1,11 @@
-import React, { useEffect, useMemo } from "react";
+import React, { useEffect, useMemo, useState, useCallback } from "react";
 import {
   motion,
+  AnimatePresence,
   useMotionValue,
   useSpring,
   useTransform,
+  useVelocity,
   useReducedMotion,
   type MotionValue,
 } from "framer-motion";
@@ -24,6 +26,12 @@ interface ParticleItem {
   driftRangeY: number;
   opacityRange: [number, number, number];
   rotate: boolean;
+}
+
+interface ClickRipple {
+  id: number;
+  x: number;
+  y: number;
 }
 
 interface FloatingParticlesProps {
@@ -246,6 +254,40 @@ export const FloatingParticles: React.FC<FloatingParticlesProps> = ({
   const smoothCursorX = useSpring(cursorPageX, { damping: 35, stiffness: 120 });
   const smoothCursorY = useSpring(cursorPageY, { damping: 35, stiffness: 120 });
 
+  // Velocity tracking: as user moves the pointer quickly, the aura expands and blooms
+  const velX = useVelocity(smoothCursorX);
+  const velY = useVelocity(smoothCursorY);
+
+  const velocityCombined = useTransform([velX, velY], ([latestX, latestY]: number[]) => {
+    const vx = latestX || 0;
+    const vy = latestY || 0;
+    return Math.min(Math.sqrt(vx * vx + vy * vy), 1400);
+  });
+
+  const smoothVelocity = useSpring(velocityCombined, { damping: 30, stiffness: 80 });
+
+  // Map velocity to dynamic scale (1.0 -> 1.35) and opacity (0.28 -> 0.48)
+  const glowScale = useTransform(smoothVelocity, [0, 1000], [1.0, 1.32]);
+  const glowOpacity = useTransform(smoothVelocity, [0, 1000], [0.28, 0.45]);
+
+  // Click ripple bursts
+  const [ripples, setRipples] = useState<ClickRipple[]>([]);
+
+  const handlePointerDown = useCallback((e: PointerEvent) => {
+    // Only capture primary button clicks
+    if (e.button !== 0 && e.button !== -1) return;
+    const newRipple: ClickRipple = {
+      id: Date.now() + Math.random(),
+      x: e.clientX,
+      y: e.clientY,
+    };
+    setRipples((prev) => [...prev.slice(-4), newRipple]);
+  }, []);
+
+  const removeRipple = useCallback((id: number) => {
+    setRipples((prev) => prev.filter((r) => r.id !== id));
+  }, []);
+
   useEffect(() => {
     const handlePointerMove = (e: PointerEvent) => {
       // Offset from viewport center
@@ -260,10 +302,12 @@ export const FloatingParticles: React.FC<FloatingParticlesProps> = ({
     };
 
     window.addEventListener("pointermove", handlePointerMove, { passive: true });
+    window.addEventListener("pointerdown", handlePointerDown, { passive: true });
     return () => {
       window.removeEventListener("pointermove", handlePointerMove);
+      window.removeEventListener("pointerdown", handlePointerDown);
     };
-  }, [rawMouseX, rawMouseY, cursorPageX, cursorPageY]);
+  }, [rawMouseX, rawMouseY, cursorPageX, cursorPageY, handlePointerDown]);
 
   const particles = useMemo(() => generateParticles(count), [count]);
 
@@ -272,18 +316,43 @@ export const FloatingParticles: React.FC<FloatingParticlesProps> = ({
       className={`fixed inset-0 overflow-hidden pointer-events-none select-none z-0 ${className}`}
       aria-hidden="true"
     >
-      {/* Interactive Soft Cursor Glow following pointer movement */}
+      {/* Interactive Velocity-Aware Soft Cursor Glow */}
       {showCursorGlow && !shouldReduceMotion && (
         <motion.div
-          className="absolute w-[440px] h-[440px] -translate-x-1/2 -translate-y-1/2 rounded-full pointer-events-none blur-3xl opacity-30"
+          className="absolute w-[440px] h-[440px] -translate-x-1/2 -translate-y-1/2 rounded-full pointer-events-none blur-3xl will-change-transform"
           style={{
             x: smoothCursorX,
             y: smoothCursorY,
+            scale: glowScale,
+            opacity: glowOpacity,
             background:
-              "radial-gradient(circle, rgba(242, 101, 34, 0.18) 0%, rgba(251, 146, 60, 0.08) 40%, transparent 70%)",
+              "radial-gradient(circle, rgba(242, 101, 34, 0.22) 0%, rgba(251, 146, 60, 0.1) 42%, transparent 72%)",
           }}
         />
       )}
+
+      {/* Interactive Click Ripples */}
+      <AnimatePresence>
+        {!shouldReduceMotion &&
+          ripples.map((ripple) => (
+            <motion.div
+              key={ripple.id}
+              initial={{ scale: 0.1, opacity: 0.8 }}
+              animate={{ scale: 2.2, opacity: 0 }}
+              exit={{ opacity: 0 }}
+              transition={{ duration: 0.85, ease: "easeOut" }}
+              onAnimationComplete={() => removeRipple(ripple.id)}
+              className="absolute pointer-events-none -translate-x-1/2 -translate-y-1/2 rounded-full border border-[#F26522]/40"
+              style={{
+                left: ripple.x,
+                top: ripple.y,
+                width: 140,
+                height: 140,
+                boxShadow: "0 0 35px rgba(242, 101, 34, 0.35)",
+              }}
+            />
+          ))}
+      </AnimatePresence>
 
       {/* Floating Particles Layer */}
       {particles.map((p) => (

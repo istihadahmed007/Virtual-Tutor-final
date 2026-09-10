@@ -30,6 +30,7 @@ import type * as studentProfiles from "../studentProfiles.js";
 import type * as teachers from "../teachers.js";
 import type * as users from "../users.js";
 import type * as securityAudit from "../securityAudit.js";
+import type * as payments from "../payments.js";
 
 import type {
   ApiFromModules,
@@ -60,6 +61,7 @@ declare const fullApi: ApiFromModules<{
   teachers: typeof teachers;
   users: typeof users;
   securityAudit: typeof securityAudit;
+  payments: typeof payments;
 }>;
 
 /**

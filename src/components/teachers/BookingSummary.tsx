@@ -2,6 +2,7 @@ import { useState } from "react";
 import { useNavigate } from "react-router";
 import { useMutation } from "convex/react";
 import { api } from "@/convex/_generated/api";
+import { usePaymentMutations } from "@/hooks/use-payments";
 import { toast } from "sonner";
 import { 
   CheckCircle2, 
@@ -72,15 +73,16 @@ export function BookingSummary({
   const [bookingDate, setBookingDate] = useState<string>(() => getNextWeekdayDate(booking.day));
 
   const createBookingMut = useMutation(api.bookings.create);
+  const { initiatePayment } = usePaymentMutations();
 
   const studentTz = Intl.DateTimeFormat().resolvedOptions().timeZone || "UTC";
 
-  const handleConfirm = async () => {
+  const handleConfirmAndPay = async () => {
     setIsSubmitting(true);
     const resolvedDate = bookingDate || getNextWeekdayDate(booking.day);
 
     try {
-      // 1. Attempt official Convex booking mutation
+      // 1. Create the booking in pending state
       const res = await createBookingMut({
         teacherId: teacher.userId,
         date: resolvedDate,
@@ -90,78 +92,57 @@ export function BookingSummary({
         sessionType: booking.sessionType || "1-to-1",
       });
 
-      const newId = res.bookingId as string;
-      const code = res.meetingCode || `BK-${Date.now().toString(36).toUpperCase()}`;
-      setCreatedSessionId(newId);
-      setMeetingCode(code);
+      const newBookingId = res.bookingId as any;
 
-      // 2. Sync to local state for instant dashboard view
+      // 2. Authoritatively initiate the payment transaction record
+      const paymentRes = await initiatePayment({
+        bookingId: String(newBookingId),
+        teacherId: teacher.userId,
+        teacherName: teacher.name,
+        subject: booking.subject,
+        amount: booking.price,
+      });
+
+      if (!paymentRes || !paymentRes.success) {
+        throw new Error("Failed to initiate tuition payment.");
+      }
+
+      toast.success("Tuition booking created. Redirecting to SSLCOMMERZ checkout...");
+
+      // 3. Initiate SSLCOMMERZ session
       try {
-        const existingLessonsRaw = localStorage.getItem("vtp_mock_student_lessons");
-        const existingLessons = existingLessonsRaw ? JSON.parse(existingLessonsRaw) : [];
-        const scheduledTimestamp = new Date(`${resolvedDate} ${booking.time}`).getTime() || Date.now() + 86400000;
-
-        existingLessons.push({
-          _id: newId,
-          subject: booking.subject,
-          sessionType: booking.sessionType || "1-to-1",
-          scheduledAt: scheduledTimestamp,
-          durationMinutes: booking.durationMinutes,
-          teacherId: teacher.userId,
-          teacherName: teacher.name,
-          price: booking.price,
-          status: "confirmed",
-          meetingCode: code,
+        const initResponse = await fetch("/api/sslcommerz/init", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            transactionId: paymentRes.transactionId,
+            amount: paymentRes.amount,
+            bookingId: newBookingId,
+            studentName: paymentRes.studentName,
+            teacherName: teacher.name,
+            subject: booking.subject,
+          }),
         });
-
-        localStorage.setItem("vtp_mock_student_lessons", JSON.stringify(existingLessons));
-        localStorage.setItem("vtp_has_booked_first_lesson", "true");
+        const initData = await initResponse.json();
+        if (initData.redirectUrl) {
+          navigate(initData.redirectUrl);
+          return;
+        }
       } catch (_) {}
 
-      toast.success("Lesson successfully booked! Notification sent to teacher.");
-      setIsConfirmed(true);
-
-      if (onConfirmed) {
-        onConfirmed(newId);
-      }
+      // Default redirect to interactive checkout
+      navigate(`/checkout/${paymentRes.transactionId}`);
     } catch (err: unknown) {
-      console.warn("Convex booking attempt error:", err);
+      console.warn("Booking/payment error:", err);
       const errMsg = err instanceof Error ? err.message : "Booking could not be completed";
 
-      // If slot conflict
       if (errMsg.includes("already booked")) {
         toast.error("This time slot is already booked. Please choose another slot.");
-      } else if (errMsg.includes("Not authenticated")) {
-        toast.error("Please sign in to book a session.");
+      } else if (errMsg.includes("Not authenticated") || errMsg.includes("Unauthenticated")) {
+        toast.error("Please sign in to book and pay for a session.");
         navigate(`/auth?returnTo=/teachers/${teacher._id}`);
       } else {
-        // Fallback for demo or network boundary
-        const fallbackId = `bk_${Date.now()}`;
-        const fallbackCode = `BK-${Date.now().toString(36).toUpperCase()}`;
-        setCreatedSessionId(fallbackId);
-        setMeetingCode(fallbackCode);
-
-        try {
-          const existingLessonsRaw = localStorage.getItem("vtp_mock_student_lessons");
-          const existingLessons = existingLessonsRaw ? JSON.parse(existingLessonsRaw) : [];
-          existingLessons.push({
-            _id: fallbackId,
-            subject: booking.subject,
-            sessionType: booking.sessionType || "1-to-1",
-            scheduledAt: Date.now() + 86400000,
-            durationMinutes: booking.durationMinutes,
-            teacherId: teacher.userId,
-            teacherName: teacher.name,
-            price: booking.price,
-            status: "confirmed",
-            meetingCode: fallbackCode,
-          });
-          localStorage.setItem("vtp_mock_student_lessons", JSON.stringify(existingLessons));
-        } catch (_) {}
-
-        toast.success("Lesson confirmed for your schedule!");
-        setIsConfirmed(true);
-        if (onConfirmed) onConfirmed(fallbackId);
+        toast.error(errMsg);
       }
     } finally {
       setIsSubmitting(false);
@@ -292,11 +273,11 @@ export function BookingSummary({
                 Cancel
               </Button>
               <Button
-                onClick={handleConfirm}
+                onClick={handleConfirmAndPay}
                 disabled={isSubmitting}
-                className="rounded-full bg-blue-600 hover:bg-blue-700 text-white text-xs font-bold px-6 shadow-xs"
+                className="rounded-full bg-teal-700 hover:bg-teal-800 text-white text-xs font-bold px-6 shadow-xs gap-1.5"
               >
-                {isSubmitting ? "Confirming..." : "Confirm & Book Session"}
+                {isSubmitting ? "Initiating Checkout..." : "Pay Tuition & Confirm"}
               </Button>
             </DialogFooter>
           </>

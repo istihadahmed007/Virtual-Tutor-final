@@ -1,6 +1,7 @@
 import { useState, useEffect, useMemo } from "react";
 import { useQuery } from "convex/react";
 import { api } from "@/convex/_generated/api";
+import { useStudentPayments } from "@/hooks/use-payments";
 import { useAuth } from "@/hooks/use-auth";
 import { useNavigate } from "react-router";
 import {
@@ -28,6 +29,7 @@ import {
   ShieldCheck,
   ChevronRight,
   Clock,
+  CreditCard,
 } from "lucide-react";
 
 export default function Dashboard() {
@@ -40,6 +42,7 @@ export default function Dashboard() {
   const assignments = useQuery(api.assignments.getPending);
   const profileStatus = useQuery(api.users.getProfileStatus);
   const studentProfile = useQuery(api.studentProfiles.get);
+  const studentPayments = useStudentPayments();
 
   // Local student state
   const [localLessons, setLocalLessons] = useState<any[]>([]);
@@ -375,6 +378,78 @@ export default function Dashboard() {
                       >
                         Submit
                       </PillButton>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+
+            {/* Tuition Invoices & Payment Receipts Card */}
+            <div className="bg-white rounded-3xl border border-[#E5E4DE] p-6 sm:p-8">
+              <div className="flex items-center justify-between mb-6 pb-4 border-b border-[#E5E4DE]">
+                <div>
+                  <h3 className="text-base sm:text-lg font-semibold text-[#111111] flex items-center gap-2">
+                    <CreditCard className="w-4 h-4 text-teal-700" />
+                    <span>Tuition Invoices & Payment Receipts</span>
+                  </h3>
+                  <p className="text-xs text-[#111111]/60 mt-0.5">
+                    Official SSLCOMMERZ receipts for your private tutoring bookings
+                  </p>
+                </div>
+                <span className="text-[10px] font-bold text-teal-800 bg-teal-50 px-2.5 py-1 rounded-full border border-teal-200">
+                  SSLCOMMERZ Verified
+                </span>
+              </div>
+
+              {(!studentPayments || studentPayments.length === 0) ? (
+                <div className="p-6 text-center text-[#111111]/50 text-xs bg-[#FAF9F5] rounded-2xl border border-[#E5E4DE]/60">
+                  <CreditCard className="w-6 h-6 mx-auto mb-2 text-[#111111]/30" />
+                  <p className="font-semibold text-slate-700">No payment receipts yet</p>
+                  <p className="text-[11px] text-slate-500 mt-0.5">
+                    When you book and confirm a live tutoring session, your official invoice and payment receipt will appear here.
+                  </p>
+                </div>
+              ) : (
+                <div className="space-y-3">
+                  {studentPayments.slice(0, 4).map((pmt) => (
+                    <div
+                      key={pmt._id}
+                      className="p-3.5 bg-[#FAF9F5] rounded-2xl border border-[#E5E4DE] flex flex-col sm:flex-row sm:items-center justify-between gap-3"
+                    >
+                      <div>
+                        <div className="flex items-center gap-2">
+                          <span className="font-mono text-xs font-bold text-slate-900">
+                            {pmt.transactionId}
+                          </span>
+                          <span
+                            className={`px-2 py-0.5 rounded-full text-[10px] font-bold ${
+                              pmt.status === "paid"
+                                ? "bg-emerald-100 text-emerald-800"
+                                : pmt.status === "refunded"
+                                ? "bg-rose-100 text-rose-800"
+                                : "bg-amber-100 text-amber-800"
+                            }`}
+                          >
+                            {pmt.status.toUpperCase()}
+                          </span>
+                        </div>
+                        <p className="text-xs text-[#111111]/70 mt-1">
+                          Teacher: <span className="font-semibold text-slate-800">{pmt.teacherName || "Instructor"}</span> · Tuition:{" "}
+                          <span className="font-bold text-teal-700">৳{pmt.amount.toLocaleString()} BDT</span>
+                        </p>
+                        <p className="text-[10px] text-slate-400 mt-0.5">
+                          Date: {new Date(pmt.createdAt).toLocaleDateString()}
+                        </p>
+                      </div>
+
+                      <div className="flex items-center gap-2 self-end sm:self-center">
+                        <button
+                          onClick={() => navigate(`/checkout/${pmt.transactionId}`)}
+                          className="px-3.5 py-1.5 rounded-full bg-white hover:bg-slate-50 border border-[#E5E4DE] text-xs font-semibold text-slate-800 transition-colors shadow-2xs cursor-pointer"
+                        >
+                          {pmt.status === "paid" ? "View Receipt" : "Complete Payment"}
+                        </button>
+                      </div>
                     </div>
                   ))}
                 </div>

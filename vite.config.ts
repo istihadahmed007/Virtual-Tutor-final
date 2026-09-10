@@ -237,9 +237,248 @@ function livekitApiPlugin(): Plugin {
   };
 }
 
+function sslcommerzApiPlugin(): Plugin {
+  return {
+    name: "sslcommerz-api-plugin",
+    configureServer(server) {
+      // Configuration check endpoint (safe non-sensitive status)
+      server.middlewares.use("/api/sslcommerz/config", (req, res) => {
+        const storeId = process.env.SSLCOMMERZ_STORE_ID;
+        const storePassword = process.env.SSLCOMMERZ_STORE_PASSWORD;
+        const isConfigured = Boolean(
+          storeId &&
+            storePassword &&
+            !storeId.includes("placeholder") &&
+            !storePassword.includes("placeholder") &&
+            storeId.trim().length > 3 &&
+            storePassword.trim().length > 3
+        );
+        const isSandbox = process.env.SSLCOMMERZ_SANDBOX_MODE !== "false";
+
+        res.setHeader("Content-Type", "application/json");
+        res.end(
+          JSON.stringify({
+            configured: isConfigured,
+            isSandbox,
+            currency: "BDT",
+            gatewayName: "SSLCOMMERZ Bangladesh",
+            commissionRate: 0.15,
+          })
+        );
+      });
+
+      // Session Initialization Endpoint
+      server.middlewares.use("/api/sslcommerz/init", async (req, res) => {
+        if (req.method !== "POST") {
+          res.statusCode = 405;
+          res.end("Method Not Allowed");
+          return;
+        }
+
+        try {
+          const raw = await new Promise<string>((resolve) => {
+            let data = "";
+            req.on("data", (chunk) => {
+              data += chunk;
+            });
+            req.on("end", () => resolve(data));
+          });
+
+          const body = raw ? JSON.parse(raw) : {};
+          const {
+            transactionId,
+            amount,
+            bookingId,
+            studentName = "Student",
+            studentEmail = "student@example.com",
+            studentPhone = "01700000000",
+            teacherName = "Instructor",
+            subject = "Academic Tutoring",
+          } = body;
+
+          if (!transactionId || !amount) {
+            res.statusCode = 400;
+            res.setHeader("Content-Type", "application/json");
+            res.end(JSON.stringify({ success: false, reason: "Missing transactionId or amount" }));
+            return;
+          }
+
+          const storeId = process.env.SSLCOMMERZ_STORE_ID;
+          const storePassword = process.env.SSLCOMMERZ_STORE_PASSWORD;
+          const isSandbox = process.env.SSLCOMMERZ_SANDBOX_MODE !== "false";
+          const isLiveConfigured = Boolean(
+            storeId &&
+              storePassword &&
+              !storeId.includes("placeholder") &&
+              !storePassword.includes("placeholder") &&
+              storeId.trim().length > 3 &&
+              storePassword.trim().length > 3
+          );
+
+          const host = req.headers.host || "localhost:3000";
+          const protocol = req.headers["x-forwarded-proto"] || "http";
+          const origin = `${protocol}://${host}`;
+
+          if (isLiveConfigured) {
+            const sessionUrl =
+              process.env.SSLCOMMERZ_SESSION_URL ||
+              (isSandbox
+                ? "https://sandbox.sslcommerz.com/gwprocess/v4/api.php"
+                : "https://securepay.sslcommerz.com/gwprocess/v4/api.php");
+
+            const postData = new URLSearchParams({
+              store_id: storeId!,
+              store_passwd: storePassword!,
+              total_amount: String(amount),
+              currency: "BDT",
+              tran_id: transactionId,
+              success_url: `${origin}/api/sslcommerz/callback?status=success&tran_id=${encodeURIComponent(transactionId)}`,
+              fail_url: `${origin}/api/sslcommerz/callback?status=fail&tran_id=${encodeURIComponent(transactionId)}`,
+              cancel_url: `${origin}/api/sslcommerz/callback?status=cancel&tran_id=${encodeURIComponent(transactionId)}`,
+              ipn_url: `${origin}/api/sslcommerz/ipn`,
+              cus_name: studentName,
+              cus_email: studentEmail,
+              cus_phone: studentPhone,
+              cus_add1: "Dhaka, Bangladesh",
+              cus_city: "Dhaka",
+              cus_country: "Bangladesh",
+              shipping_method: "NO",
+              product_name: `Virtual Tutor - ${subject} (${teacherName})`,
+              product_category: "Education",
+              product_profile: "general",
+              value_a: bookingId || "",
+            });
+
+            try {
+              const gatewayResponse = await fetch(sessionUrl, {
+                method: "POST",
+                headers: {
+                  "Content-Type": "application/x-www-form-urlencoded",
+                },
+                body: postData.toString(),
+              });
+
+              const gatewayJson = (await gatewayResponse.json()) as any;
+
+              if (gatewayJson.status === "SUCCESS" && gatewayJson.GatewayPageURL) {
+                res.setHeader("Content-Type", "application/json");
+                res.end(
+                  JSON.stringify({
+                    success: true,
+                    mode: "gateway",
+                    redirectUrl: gatewayJson.GatewayPageURL,
+                    sessionKey: gatewayJson.sessionkey,
+                    transactionId,
+                  })
+                );
+                return;
+              } else {
+                console.warn("[SSLCOMMERZ Init Warning] Gateway rejected session:", gatewayJson);
+              }
+            } catch (gwErr) {
+              console.warn("[SSLCOMMERZ Gateway Error] Falling back to checkout view:", gwErr);
+            }
+          }
+
+          // Fallback / Sandbox Interactive Checkout Flow
+          res.setHeader("Content-Type", "application/json");
+          res.end(
+            JSON.stringify({
+              success: true,
+              mode: "sandbox",
+              redirectUrl: `/checkout/${transactionId}`,
+              transactionId,
+              configured: isLiveConfigured,
+            })
+          );
+        } catch (err: any) {
+          res.statusCode = 500;
+          res.setHeader("Content-Type", "application/json");
+          res.end(JSON.stringify({ success: false, error: err?.message }));
+        }
+      });
+
+      // Gateway Callback Redirect Handler
+      server.middlewares.use("/api/sslcommerz/callback", async (req, res) => {
+        try {
+          const url = new URL(req.url || "", `http://${req.headers.host || "localhost:3000"}`);
+          let status = url.searchParams.get("status") || "pending";
+          let tranId = url.searchParams.get("tran_id") || "";
+          let valId = url.searchParams.get("val_id") || "";
+
+          // In case SSLCOMMERZ POSTs to callback
+          if (req.method === "POST") {
+            try {
+              const raw = await new Promise<string>((resolve) => {
+                let data = "";
+                req.on("data", (chunk) => {
+                  data += chunk;
+                });
+                req.on("end", () => resolve(data));
+              });
+
+              const postParams = new URLSearchParams(raw);
+              if (postParams.get("tran_id")) tranId = postParams.get("tran_id")!;
+              if (postParams.get("val_id")) valId = postParams.get("val_id")!;
+              if (postParams.get("status")) {
+                const s = postParams.get("status")!.toUpperCase();
+                status = s === "VALID" || s === "VALIDATED" ? "success" : s === "FAILED" ? "fail" : "cancel";
+              }
+            } catch (parseErr) {
+              console.warn("Failed to parse POST body in callback:", parseErr);
+            }
+          }
+
+          res.writeHead(302, {
+            Location: `/checkout/${tranId}?gateway_status=${status}&val_id=${valId}`,
+          });
+          res.end();
+        } catch (err: any) {
+          res.writeHead(302, { Location: `/dashboard` });
+          res.end();
+        }
+      });
+
+      // Gateway Validation Server-to-Server Proxy
+      server.middlewares.use("/api/sslcommerz/validate", async (req, res) => {
+        try {
+          const url = new URL(req.url || "", `http://${req.headers.host || "localhost:3000"}`);
+          const valId = url.searchParams.get("val_id");
+          const storeId = process.env.SSLCOMMERZ_STORE_ID;
+          const storePassword = process.env.SSLCOMMERZ_STORE_PASSWORD;
+          const isSandbox = process.env.SSLCOMMERZ_SANDBOX_MODE !== "false";
+
+          if (!valId || !storeId || !storePassword) {
+            res.setHeader("Content-Type", "application/json");
+            res.end(JSON.stringify({ status: "SANDBOX_SIMULATED", val_id: valId || "TEST_VAL_ID" }));
+            return;
+          }
+
+          const validationBaseUrl =
+            process.env.SSLCOMMERZ_VALIDATION_URL ||
+            (isSandbox
+              ? "https://sandbox.sslcommerz.com/validator/api/validationserverAPI.php"
+              : "https://securepay.sslcommerz.com/validator/api/validationserverAPI.php");
+
+          const valUrl = `${validationBaseUrl}?val_id=${encodeURIComponent(valId)}&store_id=${encodeURIComponent(storeId)}&store_passwd=${encodeURIComponent(storePassword)}&v=1&format=json`;
+
+          const valRes = await fetch(valUrl);
+          const valJson = await valRes.json();
+
+          res.setHeader("Content-Type", "application/json");
+          res.end(JSON.stringify(valJson));
+        } catch (err: any) {
+          res.setHeader("Content-Type", "application/json");
+          res.end(JSON.stringify({ status: "FAILED", error: err?.message }));
+        }
+      });
+    },
+  };
+}
+
 // https://vite.dev/config/
 export default defineConfig({
-  plugins: [react(), tailwindcss(), livekitApiPlugin()],
+  plugins: [react(), tailwindcss(), livekitApiPlugin(), sslcommerzApiPlugin()],
   resolve: {
     alias: {
       "@": path.resolve(__dirname, "./src"),
