@@ -147,16 +147,61 @@ export default function StudentsPage() {
         subjects: u.subjects && u.subjects.length > 0 ? u.subjects : ["Mathematics", "Science"],
         preferredSchedule: "Flexible Evenings",
         learningGoal: "Master core concepts and excel in upcoming board exams",
+        learningGoals: ["Master core concepts and excel in upcoming board exams"],
         avatarUrl: u.avatarUrl || u.image,
         isVerified: true,
         verificationStatus: "verified",
         languages: ["English", "Bangla"],
+        preferredLanguages: ["English", "Bangla"],
         completedLessonsCount: 0,
         isDiscoverable: true,
         accountStatus: "active",
         _creationTime: u.createdAt || Date.now(),
       }));
   }, [localStudents]);
+
+  const normalizeStudent = (s: any) => {
+    if (!s) return null;
+    const subjects = Array.isArray(s.subjects) && s.subjects.length > 0
+      ? s.subjects
+      : (s.subject ? [s.subject] : ["Mathematics", "Science"]);
+
+    let learningGoals: string[] = [];
+    if (Array.isArray(s.learningGoals) && s.learningGoals.length > 0) {
+      learningGoals = s.learningGoals;
+    } else if (typeof s.learningGoal === "string" && s.learningGoal.trim()) {
+      learningGoals = [s.learningGoal.trim()];
+    } else if (typeof s.learningGoals === "string" && s.learningGoals.trim()) {
+      learningGoals = [s.learningGoals.trim()];
+    } else {
+      learningGoals = ["Master course syllabus and excel in examinations."];
+    }
+
+    const preferredLanguages = Array.isArray(s.preferredLanguages) && s.preferredLanguages.length > 0
+      ? s.preferredLanguages
+      : Array.isArray(s.languages) && s.languages.length > 0
+      ? s.languages
+      : ["English", "Bangla"];
+
+    return {
+      ...s,
+      _id: s._id || s.userId,
+      userId: s.userId || s._id,
+      name: s.name || "Student Learner",
+      classLevel: s.classLevel || s.grade || "Grade 10 / High School",
+      curriculum: s.curriculum || "Cambridge",
+      institution: s.institution || "Scholar Academy",
+      subjects,
+      learningGoals,
+      learningGoal: learningGoals[0] || "Master course syllabus and excel in examinations.",
+      preferredLanguages,
+      languages: preferredLanguages,
+      preferredSchedule: s.preferredSchedule || "Flexible Schedule",
+      preferredLearningMode: s.preferredLearningMode || "1-on-1 Interactive",
+      weeklyHours: s.weeklyHours || 4,
+      verificationStatus: s.verificationStatus || (s.isVerified ? "verified" : "verified"),
+    };
+  };
 
   const rawCombinedStudents = useMemo(() => {
     const map = new Map<string, any>();
@@ -165,7 +210,10 @@ export default function StudentsPage() {
     if (students && Array.isArray(students)) {
       for (const s of students) {
         const id = s.userId || s._id;
-        if (id) map.set(id, s);
+        if (id) {
+          const norm = normalizeStudent(s);
+          if (norm) map.set(id, norm);
+        }
       }
     }
 
@@ -173,18 +221,20 @@ export default function StudentsPage() {
     for (const ls of localStudents) {
       const id = ls.userId || ls._id;
       if (id && !map.has(id)) {
-        map.set(id, ls);
+        const norm = normalizeStudent(ls);
+        if (norm) map.set(id, norm);
       }
     }
 
     // 3. Registered student accounts
     for (const rs of registeredStudents) {
       if (!map.has(rs.userId)) {
-        map.set(rs.userId, rs);
+        const norm = normalizeStudent(rs);
+        if (norm) map.set(rs.userId, norm);
       }
     }
 
-    return Array.from(map.values()).filter((s) => s.accountStatus !== "suspended");
+    return Array.from(map.values()).filter((s) => s && s.accountStatus !== "suspended");
   }, [students, localStudents, registeredStudents]);
 
   // Combined and filtered student list
@@ -628,7 +678,7 @@ export default function StudentsPage() {
                     Subjects Needed
                   </h4>
                   <div className="flex flex-wrap gap-1.5">
-                    {activeStudent.subjects.map((sub: string) => (
+                    {(activeStudent.subjects || []).map((sub: string) => (
                       <span
                         key={sub}
                         className="px-2.5 py-1 bg-teal-50 text-teal-800 font-semibold rounded-lg border border-teal-200/60"
@@ -646,7 +696,11 @@ export default function StudentsPage() {
                     Academic Goals & Requirements
                   </h4>
                   <ul className="space-y-1.5">
-                    {activeStudent.learningGoals.map((goal: string, idx: number) => (
+                    {(
+                      (Array.isArray(activeStudent.learningGoals) && activeStudent.learningGoals.length > 0)
+                        ? activeStudent.learningGoals
+                        : [activeStudent.learningGoal || "Master course syllabus and excel in examinations."]
+                    ).map((goal: string, idx: number) => (
                       <li key={idx} className="flex items-start gap-2 bg-stone-50 p-2.5 rounded-xl border border-stone-100">
                         <CheckCircle2 className="w-3.5 h-3.5 text-teal-600 mt-0.5 shrink-0" />
                         <span className="leading-relaxed">{goal}</span>
@@ -659,21 +713,21 @@ export default function StudentsPage() {
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 bg-stone-50 p-4 rounded-xl border border-stone-100">
                   <div>
                     <span className="text-slate-400 block mb-0.5">Preferred Schedule</span>
-                    <span className="font-semibold text-slate-900">{activeStudent.preferredSchedule}</span>
+                    <span className="font-semibold text-slate-900">{activeStudent.preferredSchedule || "Flexible Schedule"}</span>
                   </div>
                   <div>
                     <span className="text-slate-400 block mb-0.5">Learning Mode</span>
-                    <span className="font-semibold text-slate-900">{activeStudent.preferredLearningMode}</span>
+                    <span className="font-semibold text-slate-900">{activeStudent.preferredLearningMode || "1-on-1 Interactive"}</span>
                   </div>
                   <div>
                     <span className="text-slate-400 block mb-0.5">Languages</span>
                     <span className="font-semibold text-slate-900">
-                      {activeStudent.preferredLanguages.join(", ")}
+                      {(activeStudent.preferredLanguages || activeStudent.languages || ["English", "Bangla"]).join(", ")}
                     </span>
                   </div>
                   <div>
                     <span className="text-slate-400 block mb-0.5">Weekly Commitment</span>
-                    <span className="font-semibold text-slate-900">{activeStudent.weeklyHours} hours / week</span>
+                    <span className="font-semibold text-slate-900">{activeStudent.weeklyHours || 4} hours / week</span>
                   </div>
                 </div>
 
@@ -766,7 +820,7 @@ export default function StudentsPage() {
                     className="w-full px-3 py-2 bg-stone-50 border border-stone-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-teal-500/20"
                     required
                   >
-                    {inviteTarget.subjects.map((sub: string) => (
+                    {(inviteTarget.subjects || []).map((sub: string) => (
                       <option key={sub} value={sub}>
                         {sub}
                       </option>
@@ -892,7 +946,7 @@ function StudentCard({
             Target Subjects
           </span>
           <div className="flex flex-wrap gap-1.5">
-            {student.subjects.slice(0, 3).map((sub: string) => (
+            {(student.subjects || []).slice(0, 3).map((sub: string) => (
               <span
                 key={sub}
                 className="px-3 py-1 bg-[#F5F4EF] text-[#111111] text-xs font-semibold rounded-full border border-[#E5E4DE]"
@@ -900,9 +954,9 @@ function StudentCard({
                 {sub}
               </span>
             ))}
-            {student.subjects.length > 3 && (
+            {(student.subjects || []).length > 3 && (
               <span className="px-2.5 py-1 text-[#111111]/50 bg-white text-xs font-medium rounded-full border border-[#E5E4DE]">
-                +{student.subjects.length - 3} more
+                +{(student.subjects || []).length - 3} more
               </span>
             )}
           </div>
@@ -912,7 +966,7 @@ function StudentCard({
         <div className="mt-4 text-xs text-[#111111]/80 leading-relaxed bg-[#F5F4EF] p-3 rounded-2xl border border-[#E5E4DE]">
           <p className="line-clamp-2">
             <span className="font-bold text-[#111111]">Goal: </span>
-            {student.learningGoals[0] || "Master course syllabus and excel in examinations."}
+            {student.learningGoals?.[0] || student.learningGoal || "Master course syllabus and excel in examinations."}
           </p>
         </div>
 
@@ -920,12 +974,12 @@ function StudentCard({
         <div className="mt-4 flex items-center gap-2 text-[11px] text-[#111111]/60 flex-wrap">
           <span className="inline-flex items-center gap-1">
             <Clock className="w-3 h-3 text-[#F26522]" />
-            {student.preferredSchedule}
+            {student.preferredSchedule || "Flexible Schedule"}
           </span>
           <span className="text-[#111111]/30">·</span>
           <span className="inline-flex items-center gap-1">
             <Globe2 className="w-3 h-3 text-[#111111]/40" />
-            {student.preferredLanguages.join(", ")}
+            {(student.preferredLanguages || student.languages || ["English", "Bangla"]).join(", ")}
           </span>
         </div>
       </div>

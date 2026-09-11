@@ -84,8 +84,30 @@ export default function Dashboard() {
   // Merge cloud lessons and local simulated bookings
   const upcomingLessons = useMemo(() => {
     const combined = [...(cloudLessons || []), ...localLessons];
+    for (const p of studentPayments) {
+      if (p.status === "paid" && p.bookingId) {
+        const alreadyExists = combined.some(
+          (l) => l._id === p.bookingId || l.bookingId === p.bookingId
+        );
+        if (!alreadyExists) {
+          combined.push({
+            _id: p.bookingId,
+            title: `${p.subject} with ${p.teacherName}`,
+            subject: p.subject,
+            teacherId: p.teacherId,
+            teacherName: p.teacherName,
+            studentId: p.studentId,
+            studentName: p.studentName,
+            scheduledAt: p.createdAt + 86400000,
+            durationMinutes: p.durationMinutes || 60,
+            status: "scheduled",
+            meetingCode: `vtp-${p.bookingId.replace(/[^a-zA-Z0-9]/g, "")}`,
+          });
+        }
+      }
+    }
     return combined.sort((a, b) => (a.scheduledAt || 0) - (b.scheduledAt || 0));
-  }, [cloudLessons, localLessons]);
+  }, [cloudLessons, localLessons, studentPayments]);
 
   const nextLesson = upcomingLessons[0] || null;
   const pendingAssignments = assignments ?? [];
@@ -393,11 +415,11 @@ export default function Dashboard() {
                     <span>Tuition Invoices & Payment Receipts</span>
                   </h3>
                   <p className="text-xs text-[#111111]/60 mt-0.5">
-                    Official SSLCOMMERZ receipts for your private tutoring bookings
+                    Official payment receipts for your private tutoring bookings
                   </p>
                 </div>
                 <span className="text-[10px] font-bold text-teal-800 bg-teal-50 px-2.5 py-1 rounded-full border border-teal-200">
-                  SSLCOMMERZ Verified
+                  Verified Payment
                 </span>
               </div>
 

@@ -210,6 +210,7 @@ root.render(
                   <Route path="/auth" element={<AuthPage redirectAfterAuth="/dashboard" />} />
                   <Route path="/classroom" element={<RequireAuth><ClassroomPage /></RequireAuth>} />
                   <Route path="/classroom/:lessonId" element={<RequireAuth><ClassroomPage /></RequireAuth>} />
+                  <Route path="/checkout" element={<RequireAuth><CheckoutPage /></RequireAuth>} />
                   <Route path="/checkout/:transactionId" element={<RequireAuth><CheckoutPage /></RequireAuth>} />
                   <Route path="/dashboard" element={<RequireAuth><AppShell><Dashboard /></AppShell></RequireAuth>} />
                   <Route path="/teachers" element={<AppShell><TeachersPage /></AppShell>} />

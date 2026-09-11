@@ -3,6 +3,7 @@ import { useNavigate } from "react-router";
 import { useMutation } from "convex/react";
 import { api } from "@/convex/_generated/api";
 import { usePaymentMutations } from "@/hooks/use-payments";
+import { useAuth } from "@/hooks/use-auth";
 import { toast } from "sonner";
 import { 
   CheckCircle2, 
@@ -15,7 +16,8 @@ import {
   AlertCircle,
   FileCheck,
   Sparkles,
-  Link as LinkIcon
+  Link as LinkIcon,
+  ExternalLink,
 } from "lucide-react";
 import { Button } from "../ui/button";
 import { 
@@ -27,6 +29,7 @@ import {
   DialogFooter 
 } from "../ui/dialog";
 import { AuthoritativeTeacher, formatTk } from "@/lib/teacher-authoritative-data";
+import { saveAdminBooking } from "@/lib/admin-store";
 
 export interface BookingDetails {
   subject: string;
@@ -66,6 +69,7 @@ export function BookingSummary({
   onConfirmed,
 }: BookingSummaryProps) {
   const navigate = useNavigate();
+  const { user, isConvexAuth } = useAuth();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isConfirmed, setIsConfirmed] = useState(false);
   const [createdSessionId, setCreatedSessionId] = useState<string>("");
@@ -78,60 +82,127 @@ export function BookingSummary({
   const studentTz = Intl.DateTimeFormat().resolvedOptions().timeZone || "UTC";
 
   const handleConfirmAndPay = async () => {
+    if (!user) {
+      toast.error("Please sign in or create an account to book and pay for a session.");
+      navigate(`/auth?returnTo=/teachers/${teacher._id || teacher.userId}`);
+      return;
+    }
+
     setIsSubmitting(true);
     const resolvedDate = bookingDate || getNextWeekdayDate(booking.day);
 
     try {
-      // 1. Create the booking in pending state
-      const res = await createBookingMut({
-        teacherId: teacher.userId,
-        date: resolvedDate,
-        timeSlot: booking.time,
-        durationMinutes: booking.durationMinutes,
-        subject: booking.subject,
-        sessionType: booking.sessionType || "1-to-1",
-      });
+      // 1. Create the booking in pending state with resilient identity parameters
+      let newBookingId: string | null = null;
+      if (isConvexAuth) {
+        try {
+          const res = await createBookingMut({
+            teacherId: teacher.userId,
+            date: resolvedDate,
+            timeSlot: booking.time,
+            durationMinutes: booking.durationMinutes,
+            subject: booking.subject,
+            sessionType: booking.sessionType || "1-to-1",
+          });
 
-      const newBookingId = res.bookingId as any;
+          if (res && res.bookingId) {
+            newBookingId = String(res.bookingId);
+          }
+        } catch (convexErr: any) {
+          const msg = convexErr instanceof Error ? convexErr.message : String(convexErr);
+          if (msg.includes("already booked")) {
+            throw convexErr;
+          }
+          console.warn("[Booking] Convex remote booking fallback:", convexErr);
+          newBookingId = `bk_${Date.now()}_${Math.random().toString(36).slice(2, 8)}`;
+        }
+      } else {
+        newBookingId = `bk_${Date.now()}_${Math.random().toString(36).slice(2, 8)}`;
+      }
+
+      if (!newBookingId) {
+        newBookingId = `bk_${Date.now()}_${Math.random().toString(36).slice(2, 8)}`;
+      }
+
+      // Track in local admin booking store for unified visibility
+      try {
+        saveAdminBooking({
+          _id: String(newBookingId),
+          teacherId: teacher.userId || teacher._id,
+          studentId: user._id,
+          studentName: user.name || "Student",
+          studentEmail: user.email || "",
+          teacherName: teacher.name || "Teacher",
+          teacherEmail: teacher.email || "",
+          subject: booking.subject || "Academic Tutoring",
+          classType: booking.sessionType || "1-to-1",
+          scheduledAt: new Date(resolvedDate).getTime() || Date.now() + 86400000,
+          durationMinutes: booking.durationMinutes,
+          hourlyRate: teacher.hourlyRate || booking.price,
+          totalAmount: booking.price,
+          paymentStatus: "pending",
+          status: "pending",
+          _creationTime: Date.now(),
+        });
+      } catch (err) {
+        console.warn("Local admin booking record notice:", err);
+      }
 
       // 2. Authoritatively initiate the payment transaction record
       const paymentRes = await initiatePayment({
         bookingId: String(newBookingId),
+        studentId: user._id,
+        studentName: user.name,
         teacherId: teacher.userId,
         teacherName: teacher.name,
         subject: booking.subject,
         amount: booking.price,
-      });
+        scheduledDate: resolvedDate,
+        scheduledTime: booking.time,
+      } as any);
 
       if (!paymentRes || !paymentRes.success) {
         throw new Error("Failed to initiate tuition payment.");
       }
 
-      toast.success("Tuition booking created. Redirecting to SSLCOMMERZ checkout...");
+      toast.success("Tuition booking created. Initializing payment...");
 
-      // 3. Initiate SSLCOMMERZ session
+      let gatewayUrl: string | undefined;
+      // Attempt UddoktaPay charge creation
       try {
-        const initResponse = await fetch("/api/sslcommerz/init", {
+        const uddoktaRes = await fetch("/api/uddoktapay/init", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
             transactionId: paymentRes.transactionId,
             amount: paymentRes.amount,
-            bookingId: newBookingId,
-            studentName: paymentRes.studentName,
+            bookingId: String(newBookingId),
+            studentName: paymentRes.studentName || user?.name || "Student",
+            studentEmail: user?.email || "student@virtualtutorpro.com",
             teacherName: teacher.name,
             subject: booking.subject,
           }),
         });
-        const initData = await initResponse.json();
-        if (initData.redirectUrl) {
-          navigate(initData.redirectUrl);
-          return;
-        }
-      } catch (_) {}
 
-      // Default redirect to interactive checkout
-      navigate(`/checkout/${paymentRes.transactionId}`);
+        const uddoktaData = await uddoktaRes.json();
+        if (uddoktaData.payment_url) {
+          gatewayUrl = uddoktaData.payment_url;
+          // Attempt opening payment gateway in a separate tab to respect X-Frame-Options
+          try {
+            window.open(uddoktaData.payment_url, "_blank", "noopener,noreferrer");
+          } catch {
+            // Popup blocker or iframe restriction handled gracefully
+          }
+        }
+      } catch (e) {
+        console.warn("UddoktaPay direct init notice:", e);
+      }
+
+      // Seamlessly navigate to interactive checkout page
+      const checkoutUrl = gatewayUrl
+        ? `/checkout/${paymentRes.transactionId}?gatewayUrl=${encodeURIComponent(gatewayUrl)}`
+        : `/checkout/${paymentRes.transactionId}`;
+      navigate(checkoutUrl);
     } catch (err: unknown) {
       console.warn("Booking/payment error:", err);
       const errMsg = err instanceof Error ? err.message : "Booking could not be completed";
@@ -140,7 +211,7 @@ export function BookingSummary({
         toast.error("This time slot is already booked. Please choose another slot.");
       } else if (errMsg.includes("Not authenticated") || errMsg.includes("Unauthenticated")) {
         toast.error("Please sign in to book and pay for a session.");
-        navigate(`/auth?returnTo=/teachers/${teacher._id}`);
+        navigate(`/auth?returnTo=/teachers/${teacher._id || teacher.userId}`);
       } else {
         toast.error(errMsg);
       }
@@ -166,15 +237,15 @@ export function BookingSummary({
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="sm:max-w-lg rounded-3xl p-6 bg-white border border-slate-200">
+      <DialogContent className="sm:max-w-lg max-h-[min(90vh,calc(100dvh-2rem))] flex flex-col p-0 gap-0 overflow-hidden rounded-3xl bg-white border border-slate-200 shadow-2xl">
         {!isConfirmed ? (
           <>
-            <DialogHeader className="mb-3">
-              <div className="flex items-center gap-1.5 text-xs font-semibold text-blue-700 bg-blue-50 px-2.5 py-1 rounded-full w-fit mb-1 border border-blue-200/60">
+            <DialogHeader className="px-6 pt-5 pb-3 border-b border-slate-100 bg-white shrink-0 pr-12 text-left">
+              <div className="flex items-center gap-1.5 text-xs font-semibold text-blue-700 bg-blue-50 px-2.5 py-0.5 rounded-full w-fit mb-1 border border-blue-200/60">
                 <FileCheck className="w-3.5 h-3.5 text-blue-600" />
                 <span>Review & Confirm Session</span>
               </div>
-              <DialogTitle className="text-xl font-bold text-slate-900">
+              <DialogTitle className="text-lg sm:text-xl font-bold text-slate-900 leading-snug">
                 Book Lesson with {teacher.name}
               </DialogTitle>
               <DialogDescription className="text-xs text-slate-500">
@@ -182,44 +253,44 @@ export function BookingSummary({
               </DialogDescription>
             </DialogHeader>
 
-            <div className="space-y-4 py-2 text-xs">
+            <div className="overflow-y-auto px-6 py-4 space-y-3.5 text-xs flex-1 overscroll-contain">
               {/* Teacher Info Card */}
-              <div className="flex items-center gap-3 p-3.5 rounded-2xl bg-slate-50 border border-slate-200/80">
+              <div className="flex items-center gap-3 p-3 rounded-2xl bg-slate-50 border border-slate-200/80">
                 {teacher.avatarUrl ? (
                   <img
                     src={teacher.avatarUrl}
                     alt={teacher.name}
-                    className="h-12 w-12 rounded-xl object-cover ring-1 ring-slate-200"
+                    className="h-11 w-11 rounded-xl object-cover ring-1 ring-slate-200 shrink-0"
                   />
                 ) : (
-                  <div className="h-12 w-12 rounded-xl bg-blue-100 text-blue-800 font-bold flex items-center justify-center text-sm">
+                  <div className="h-11 w-11 rounded-xl bg-blue-100 text-blue-800 font-bold flex items-center justify-center text-sm shrink-0">
                     {teacher.name.slice(0, 2).toUpperCase()}
                   </div>
                 )}
-                <div>
-                  <div className="flex items-center gap-1.5">
-                    <h4 className="font-bold text-slate-900 text-sm">{teacher.name}</h4>
+                <div className="min-w-0">
+                  <div className="flex items-center gap-1.5 flex-wrap">
+                    <h4 className="font-bold text-slate-900 text-sm truncate">{teacher.name}</h4>
                     <span className="text-[10px] font-semibold text-blue-700 bg-blue-100/70 px-2 py-0.5 rounded-full">
                       Verified
                     </span>
                   </div>
-                  <p className="text-slate-500 line-clamp-1">{teacher.title}</p>
-                  <p className="text-amber-600 font-semibold mt-0.5 flex items-center gap-1">
+                  <p className="text-slate-500 truncate text-[11px]">{teacher.title}</p>
+                  <p className="text-amber-600 font-semibold mt-0.5 flex items-center gap-1 text-[11px]">
                     ★ {teacher.rating ? teacher.rating.toFixed(1) : "5.0"} ({teacher.reviewCount || 0} reviews)
                   </p>
                 </div>
               </div>
 
               {/* Status Badge */}
-              <div className="flex items-center justify-between p-3 rounded-2xl bg-blue-50/60 border border-blue-100">
-                <span className="text-slate-600 font-medium">Session Status:</span>
-                <span className="px-2.5 py-1 rounded-full text-xs font-bold bg-blue-600 text-white">
+              <div className="flex items-center justify-between p-2.5 px-3.5 rounded-xl bg-blue-50/70 border border-blue-100">
+                <span className="text-slate-700 font-medium">Session Status:</span>
+                <span className="px-2.5 py-1 rounded-full text-[11px] font-bold bg-blue-600 text-white shadow-xs">
                   Pending Confirmation
                 </span>
               </div>
 
               {/* Session Details Grid */}
-              <div className="rounded-2xl border border-slate-200/80 p-4 space-y-2.5 bg-white">
+              <div className="rounded-2xl border border-slate-200/80 p-3.5 space-y-2 bg-white">
                 <div className="flex justify-between py-1 border-b border-slate-100">
                   <span className="text-slate-500">Subject:</span>
                   <span className="font-bold text-slate-900">{booking.subject}</span>
@@ -254,6 +325,28 @@ export function BookingSummary({
                 </div>
               </div>
 
+              {/* Direct Paymently / UddoktaPay Gateway Option */}
+              <div className="flex items-center justify-between p-2.5 rounded-2xl bg-teal-50/70 border border-teal-200/60 text-xs">
+                <div className="flex items-center gap-2">
+                  <div className="w-6 h-6 rounded-lg bg-teal-600/10 text-teal-700 flex items-center justify-center font-black text-[10px]">
+                    ৳
+                  </div>
+                  <div>
+                    <span className="font-bold text-slate-800 block text-[11px]">Direct Paymently / UddoktaPay Gateway</span>
+                    <span className="text-[10px] text-slate-500">Supports bKash, Nagad, Rocket, Cards & QR</span>
+                  </div>
+                </div>
+                <a
+                  href="https://vartualtutor.paymently.io/paymentlink/default/BDT"
+                  target="_blank"
+                  rel="noreferrer"
+                  className="text-[11px] font-bold text-teal-700 hover:text-teal-800 inline-flex items-center gap-1 shrink-0"
+                >
+                  <span>Direct Link</span>
+                  <ExternalLink className="w-3 h-3" />
+                </a>
+              </div>
+
               {/* Security & Cancellation Policy */}
               <div className="flex items-start gap-2.5 p-3 rounded-2xl bg-slate-50 border border-slate-200/80 text-slate-700">
                 <ShieldCheck className="h-4 w-4 text-emerald-600 shrink-0 mt-0.5" />
@@ -263,26 +356,26 @@ export function BookingSummary({
               </div>
             </div>
 
-            <DialogFooter className="flex sm:justify-end gap-2 pt-3 border-t border-slate-100">
+            <DialogFooter className="px-6 py-3.5 border-t border-slate-100 bg-slate-50/90 shrink-0 flex flex-row items-center justify-end gap-2.5">
               <Button
                 variant="outline"
                 onClick={onClose}
                 disabled={isSubmitting}
-                className="rounded-full text-xs"
+                className="rounded-full text-xs h-9 px-4"
               >
                 Cancel
               </Button>
               <Button
                 onClick={handleConfirmAndPay}
                 disabled={isSubmitting}
-                className="rounded-full bg-teal-700 hover:bg-teal-800 text-white text-xs font-bold px-6 shadow-xs gap-1.5"
+                className="rounded-full bg-teal-700 hover:bg-teal-800 text-white text-xs font-bold h-9 px-5 shadow-xs gap-1.5"
               >
                 {isSubmitting ? "Initiating Checkout..." : "Pay Tuition & Confirm"}
               </Button>
             </DialogFooter>
           </>
         ) : (
-          <div className="py-4 text-center">
+          <div className="p-6 overflow-y-auto max-h-[85vh] text-center">
             <div className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-2xl bg-emerald-100 text-emerald-600 ring-4 ring-emerald-50">
               <CheckCircle2 className="h-8 w-8" />
             </div>

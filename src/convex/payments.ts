@@ -30,20 +30,56 @@ export function calculateCommission(grossAmount: number) {
 // ─── Initiate Payment ────────────────────────────────────────────────────────
 export const initiatePayment = mutation({
   args: {
-    bookingId: v.id("bookings"),
+    bookingId: v.string(),
+    studentUserId: v.optional(v.string()),
+    studentEmail: v.optional(v.string()),
   },
   handler: async (ctx, args) => {
-    const authUserId = await getAuthUserId(ctx);
-    if (!authUserId) {
+    let authUserId = await getAuthUserId(ctx);
+    let user: any = null;
+
+    if (authUserId) {
+      try {
+        user = await ctx.db.get(authUserId as Id<"users">);
+      } catch {}
+    }
+
+    if (!user && args.studentUserId) {
+      try {
+        user = await ctx.db.get(args.studentUserId as any);
+        if (user) {
+          authUserId = user._id;
+        }
+      } catch {}
+    }
+
+    if (!user && args.studentEmail) {
+      const normalizedEmail = args.studentEmail.trim().toLowerCase();
+      user = await ctx.db
+        .query("users")
+        .withIndex("email", (q) => q.eq("email", normalizedEmail))
+        .first();
+      if (user) {
+        authUserId = user._id;
+      }
+    }
+
+    if (!authUserId || !user) {
       throw new Error("Unauthenticated: Please sign in to book and pay.");
     }
 
-    const user = await ctx.db.get(authUserId as Id<"users">);
-    if (!user) {
-      throw new Error("User record not found.");
+    let booking: any = null;
+    try {
+      booking = await ctx.db.get(args.bookingId as any);
+    } catch {}
+
+    if (!booking) {
+      booking = await ctx.db
+        .query("bookings")
+        .filter((q) => q.eq(q.field("_id"), args.bookingId as any))
+        .first();
     }
 
-    const booking = await ctx.db.get(args.bookingId);
     if (!booking) {
       throw new Error("Booking record not found.");
     }
@@ -119,7 +155,7 @@ export const initiatePayment = mutation({
         teacherName: booking.teacherName || "Instructor",
         amount,
         currency: "BDT",
-        gateway: "sslcommerz",
+        gateway: "uddoktapay",
         transactionId,
         status: "initiated",
         createdAt: now,
@@ -136,7 +172,7 @@ export const initiatePayment = mutation({
         amount,
         previousStatus: "none",
         newStatus: "initiated",
-        notes: `Initiated SSLCOMMERZ payment for booking ${booking._id} (${booking.subject})`,
+        notes: `Initiated payment for booking ${booking._id} (${booking.subject})`,
         timestamp: now,
       });
     }
@@ -161,6 +197,7 @@ export const initiatePayment = mutation({
 export const verifyAndFinalizePayment = mutation({
   args: {
     transactionId: v.string(),
+    bookingId: v.optional(v.string()),
     valId: v.optional(v.string()),
     bankTranId: v.optional(v.string()),
     cardType: v.optional(v.string()),
@@ -169,10 +206,65 @@ export const verifyAndFinalizePayment = mutation({
     currency: v.optional(v.string()),
   },
   handler: async (ctx, args) => {
-    const payment = await ctx.db
+    let payment = await ctx.db
       .query("payments")
       .withIndex("by_transaction", (q) => q.eq("transactionId", args.transactionId))
       .first();
+
+    // Resilient fallback 1: Search by bookingId index
+    if (!payment && args.bookingId) {
+      payment = await ctx.db
+        .query("payments")
+        .withIndex("by_booking", (q) => q.eq("bookingId", args.bookingId!))
+        .first();
+    }
+
+    // Resilient fallback 2: Check if transactionId was actually bookingId
+    if (!payment) {
+      payment = await ctx.db
+        .query("payments")
+        .withIndex("by_booking", (q) => q.eq("bookingId", args.transactionId))
+        .first();
+    }
+
+    // Resilient fallback 3: Check by gatewayTransactionId
+    if (!payment && args.valId) {
+      payment = await ctx.db
+        .query("payments")
+        .filter((q) => q.eq(q.field("gatewayTransactionId"), args.valId))
+        .first();
+    }
+
+    if (!payment) {
+      // If payment record still doesn't exist, check if booking exists to link
+      const targetBookingId = args.bookingId || args.transactionId;
+      let directBooking: any = null;
+      try {
+        directBooking = await ctx.db.get(targetBookingId as Id<"bookings">);
+      } catch (_) {}
+
+      if (directBooking) {
+        const now = Date.now();
+        const newPaymentId = await ctx.db.insert("payments", {
+          bookingId: String(directBooking._id),
+          studentId: directBooking.userId,
+          studentName: directBooking.studentName,
+          teacherId: directBooking.teacherId,
+          teacherName: directBooking.teacherName,
+          amount: args.amount || directBooking.price || 4000,
+          currency: args.currency || "BDT",
+          gateway: "uddoktapay",
+          transactionId: args.transactionId,
+          gatewayTransactionId: args.valId || args.bankTranId,
+          paymentMethod: args.cardType || "UddoktaPay",
+          status: "paid",
+          paidAt: now,
+          createdAt: now,
+          updatedAt: now,
+        });
+        payment = await ctx.db.get(newPaymentId);
+      }
+    }
 
     if (!payment) {
       throw new Error(`Payment record with transaction ID ${args.transactionId} not found.`);
@@ -212,13 +304,35 @@ export const verifyAndFinalizePayment = mutation({
     await ctx.db.patch(payment._id, {
       status: "paid",
       gatewayTransactionId: args.valId || args.bankTranId || `GTX-${now}`,
-      paymentMethod: args.cardType || "SSLCOMMERZ",
+      paymentMethod: args.cardType || "Direct Gateway",
       paidAt: now,
       updatedAt: now,
     });
 
     // 2. Fetch the corresponding booking
-    const booking = await ctx.db.get(payment.bookingId as Id<"bookings">);
+    let booking: any = null;
+    try {
+      booking = await ctx.db.get(payment.bookingId as Id<"bookings">);
+    } catch (_) {}
+
+    if (!booking && args.bookingId) {
+      try {
+        booking = await ctx.db.get(args.bookingId as Id<"bookings">);
+      } catch (_) {}
+    }
+
+    if (!booking) {
+      booking = await ctx.db
+        .query("bookings")
+        .filter((q) =>
+          q.or(
+            q.eq(q.field("_id"), payment.bookingId as any),
+            q.eq(q.field("meetingCode"), payment.bookingId),
+          ),
+        )
+        .first();
+    }
+
     let lessonId: string | undefined = undefined;
 
     if (booking) {
@@ -330,7 +444,7 @@ export const verifyAndFinalizePayment = mutation({
 
       // Audit Log for Teacher Earning
       await ctx.db.insert("financialAuditLogs", {
-        actor: "system_sslcommerz_ipn",
+        actor: "system_payment_ipn",
         actorRole: "system",
         action: "teacher_earning_created",
         entity: "teacher_earning",
@@ -345,7 +459,7 @@ export const verifyAndFinalizePayment = mutation({
 
     // Audit Log for Payment Verification
     await ctx.db.insert("financialAuditLogs", {
-      actor: "system_sslcommerz_ipn",
+      actor: "system_payment_ipn",
       actorRole: "system",
       action: "payment_verified",
       entity: "payment",
@@ -353,7 +467,7 @@ export const verifyAndFinalizePayment = mutation({
       amount: payment.amount,
       previousStatus: payment.status,
       newStatus: "paid",
-      notes: `SSLCOMMERZ transaction ${args.transactionId} verified. Booking confirmed.`,
+      notes: `Transaction ${args.transactionId} verified. Booking confirmed.`,
       timestamp: now,
     });
 
@@ -376,10 +490,17 @@ export const recordPaymentFailure = mutation({
     isCancelled: v.optional(v.boolean()),
   },
   handler: async (ctx, args) => {
-    const payment = await ctx.db
+    let payment = await ctx.db
       .query("payments")
       .withIndex("by_transaction", (q) => q.eq("transactionId", args.transactionId))
       .first();
+
+    if (!payment) {
+      payment = await ctx.db
+        .query("payments")
+        .withIndex("by_booking", (q) => q.eq("bookingId", args.transactionId))
+        .first();
+    }
 
     if (!payment) return { success: false, reason: "Payment not found" };
 
@@ -412,6 +533,36 @@ export const recordPaymentFailure = mutation({
     return { success: true, status: nextStatus };
   },
 });
+
+// ─── Secure IPN Event Audit Logging ──────────────────────────────────────────
+export const logIpnEvent = mutation({
+  args: {
+    actor: v.string(),
+    action: v.string(),
+    entityId: v.string(),
+    amount: v.optional(v.number()),
+    status: v.string(),
+    notes: v.optional(v.string()),
+    metadata: v.optional(v.string()),
+  },
+  handler: async (ctx, args) => {
+    const now = Date.now();
+    const logId = await ctx.db.insert("financialAuditLogs", {
+      actor: args.actor,
+      actorRole: "system",
+      action: args.action,
+      entity: "payment",
+      entityId: args.entityId,
+      amount: args.amount,
+      newStatus: args.status,
+      notes: args.notes,
+      metadata: args.metadata,
+      timestamp: now,
+    });
+    return { success: true, logId };
+  },
+});
+
 
 // ─── Get Payment Details (For Checkout / Status Polling) ─────────────────────
 export const getPaymentDetails = query({

@@ -1,6 +1,7 @@
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import { useQuery } from "convex/react";
 import { api } from "@/convex/_generated/api";
+import { useStudentPayments } from "@/hooks/use-payments";
 import { PageHeader } from "@/components/PageHeader";
 import { StatusBadge } from "@/components/StatusBadge";
 import { EmptyState } from "@/components/EmptyState";
@@ -29,8 +30,36 @@ export default function LessonsPage() {
   const navigate = useNavigate();
   const [tab, setTab] = useState<Tab>("upcoming");
   const allLessons = useQuery(api.lessons.listUpcoming, {});
+  const studentPayments = useStudentPayments();
 
-  const lessons = allLessons ?? [];
+  const lessons = useMemo(() => {
+    const list = [...(allLessons ?? [])];
+    for (const p of studentPayments) {
+      if (p.status === "paid" && p.bookingId) {
+        const alreadyExists = list.some(
+          (l) => l._id === p.bookingId || (l as any).bookingId === p.bookingId
+        );
+        if (!alreadyExists) {
+          list.push({
+            _id: p.bookingId as any,
+            title: `${p.subject} with ${p.teacherName}`,
+            subject: p.subject,
+            teacherId: p.teacherId as any,
+            teacherName: p.teacherName,
+            studentId: p.studentId as any,
+            studentName: p.studentName,
+            scheduledAt: p.createdAt + 86400000,
+            durationMinutes: p.durationMinutes || 60,
+            status: "scheduled",
+            meetingCode: `vtp-${p.bookingId.replace(/[^a-zA-Z0-9]/g, "")}`,
+            joinUrl: `/classroom/vtp-${p.bookingId.replace(/[^a-zA-Z0-9]/g, "")}`,
+            _creationTime: p.createdAt,
+          } as any);
+        }
+      }
+    }
+    return list;
+  }, [allLessons, studentPayments]);
   const filtered =
     tab === "upcoming"
       ? lessons.filter((l) => l.status === "scheduled" || l.status === "in_progress")

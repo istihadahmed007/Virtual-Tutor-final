@@ -1,7 +1,7 @@
 import { useState, useMemo, useEffect } from "react";
 import { useQuery, useMutation } from "convex/react";
 import { api } from "@/convex/_generated/api";
-import { getAllTeacherApplications, TEACHER_STORE_EVENT, LEGACY_FAKE_IDS } from "@/lib/teacher-store";
+import { getAllTeacherApplications, TEACHER_STORE_EVENT, LEGACY_FAKE_IDS, DEFAULT_REGISTERED_TEACHERS } from "@/lib/teacher-store";
 import { getRegisteredUsers } from "@/lib/auth-store";
 import { 
   normalizeTeacherData, 
@@ -168,6 +168,14 @@ export default function TeachersPage() {
       }
     }
 
+    // 4. Default registered verified faculty (e.g. Dr. Farzana Yasmin - Organic Chemistry)
+    for (const def of DEFAULT_REGISTERED_TEACHERS) {
+      if (!uniqueMap.has(def.userId) && (!def._id || !uniqueMap.has(def._id))) {
+        const normalized = normalizeTeacherData(def);
+        uniqueMap.set(normalized.userId, normalized);
+      }
+    }
+
     // Deduplicate by userId to ensure clean array
     const result: AuthoritativeTeacher[] = [];
     const seen = new Set<string>();
@@ -196,6 +204,18 @@ export default function TeachersPage() {
           t.bio.toLowerCase().includes(q) ||
           t.subjects.some((s) => s.toLowerCase().includes(q)) ||
           t.expertise.some((e) => e.toLowerCase().includes(q))
+        );
+      });
+    }
+
+    // 2. Subject Filter
+    if (filters.subject && filters.subject !== "All Subjects") {
+      const sub = filters.subject.toLowerCase();
+      list = list.filter((t) => {
+        return (
+          t.subjects.some((s) => s.toLowerCase().includes(sub) || sub.includes(s.toLowerCase())) ||
+          t.title.toLowerCase().includes(sub) ||
+          t.expertise.some((e) => e.toLowerCase().includes(sub))
         );
       });
     }

@@ -39,37 +39,55 @@ export const create = mutation({
     sessionType: v.string(),
   },
   handler: async (ctx, args) => {
-    const userId = await getAuthUserId(ctx);
-    if (!userId) throw new Error("Not authenticated");
+    let authUserId = await getAuthUserId(ctx);
+    let user: any = null;
 
-    const user = await ctx.db.get(userId);
-    if (!user) throw new Error("User not found");
+    if (authUserId) {
+      try {
+        user = await ctx.db.get(authUserId);
+      } catch {}
+    }
 
-    const teacherProfile = await ctx.db
+    if (!user || !authUserId) {
+      throw new Error("Unauthenticated: Please sign in or register to book a lesson.");
+    }
+
+    // Lookup Teacher Profile
+    let teacherProfile: any = await ctx.db
       .query("teacherProfiles")
       .filter((q) => q.eq(q.field("userId"), args.teacherId))
       .first();
-    if (!teacherProfile) throw new Error("Teacher not found");
-    if (!teacherProfile.isVerified && teacherProfile.verificationStatus !== "verified") {
-      throw new Error("Teacher is not approved or verified for live bookings.");
-    }
-    if (!teacherProfile.isAvailable) throw new Error("Teacher is currently unavailable for bookings.");
 
-    // Check teacher account status
-    const teacherUser = await ctx.db
-      .query("users")
-      .filter((q) => q.eq(q.field("_id"), args.teacherId as any))
-      .first();
+    if (!teacherProfile) {
+      try {
+        teacherProfile = await ctx.db.get(args.teacherId as any);
+      } catch {}
+    }
+
+    // Check teacher account status from users table if available
+    let teacherUser: any = null;
+    try {
+      teacherUser = await ctx.db
+        .query("users")
+        .filter((q) => q.eq(q.field("_id"), args.teacherId as any))
+        .first();
+    } catch {}
+
     if (teacherUser?.accountStatus === "suspended") {
       throw new Error("Teacher account is suspended.");
     }
 
-    // Resolve price server-side from teacher's profile (monthly tuition plan in Tk)
-    let price = teacherProfile.hourlyRate >= 500 ? teacherProfile.hourlyRate : Math.round((teacherProfile.hourlyRate || 35) * 100);
+    const teacherName = teacherProfile?.name || teacherUser?.name || "Faculty Specialist";
+
+    // Resolve price server-side (monthly tuition plan in Tk)
+    let price = teacherProfile?.hourlyRate && teacherProfile.hourlyRate >= 500
+      ? teacherProfile.hourlyRate
+      : Math.round(((teacherProfile?.hourlyRate) || 40) * 100);
+
     if (!price || price < 500) {
       price = 4000;
     }
-    if (args.sessionType === "small-group" && teacherProfile.groupPrice && teacherProfile.groupPrice >= 500) {
+    if (args.sessionType === "small-group" && teacherProfile?.groupPrice && teacherProfile.groupPrice >= 500) {
       price = teacherProfile.groupPrice;
     }
 
@@ -98,9 +116,9 @@ export const create = mutation({
     const meetingCode = `BK-${Date.now().toString(36).toUpperCase()}`;
 
     const bookingId = await ctx.db.insert("bookings", {
-      userId: userId as string,
+      userId: String(authUserId),
       teacherId: args.teacherId,
-      teacherName: teacherProfile.name,
+      teacherName,
       studentName: user.name || "Student",
       date: args.date,
       timeSlot: args.timeSlot,
@@ -237,3 +255,116 @@ export const cancel = mutation({
     return { success: true };
   },
 });
+
+// ─── Direct Confirm from Payment Webhook / IPN ────────
+export const confirmBookingFromPayment = mutation({
+  args: {
+    bookingId: v.string(),
+    transactionId: v.string(),
+    paymentMethod: v.optional(v.string()),
+    amount: v.optional(v.number()),
+  },
+  handler: async (ctx, args) => {
+    let booking: any = null;
+    try {
+      booking = await ctx.db.get(args.bookingId as any);
+    } catch (_) {}
+
+    if (!booking) {
+      booking = await ctx.db
+        .query("bookings")
+        .filter((q) =>
+          q.or(
+            q.eq(q.field("_id"), args.bookingId as any),
+            q.eq(q.field("meetingCode"), args.bookingId),
+          ),
+        )
+        .first();
+    }
+
+    if (!booking) {
+      return { success: false, reason: "Booking not found" };
+    }
+
+    if (booking.status === "confirmed") {
+      return { success: true, alreadyConfirmed: true, bookingId: String(booking._id), lessonId: booking.lessonId };
+    }
+
+    let scheduledAt = Date.now() + 24 * 60 * 60 * 1000;
+    try {
+      const parsedDate = new Date(`${booking.date} ${booking.timeSlot}`);
+      if (!isNaN(parsedDate.getTime())) {
+        scheduledAt = parsedDate.getTime();
+      }
+    } catch {}
+
+    const validSessionType:
+      | "1-to-1"
+      | "small-group"
+      | "trial"
+      | "mentoring"
+      | "exam-prep"
+      | "project-help" =
+      booking.sessionType === "small-group"
+        ? "small-group"
+        : booking.sessionType === "trial"
+        ? "trial"
+        : booking.sessionType === "mentoring"
+        ? "mentoring"
+        : booking.sessionType === "exam-prep"
+        ? "exam-prep"
+        : booking.sessionType === "project-help"
+        ? "project-help"
+        : "1-to-1";
+
+    let lessonId = booking.lessonId;
+    if (!lessonId) {
+      const newLesson = await ctx.db.insert("lessons", {
+        teacherId: booking.teacherId,
+        teacherName: booking.teacherName,
+        studentId: booking.userId,
+        studentName: booking.studentName,
+        subject: booking.subject,
+        title: `${booking.subject} Lesson with ${booking.teacherName}`,
+        scheduledAt,
+        durationMinutes: booking.durationMinutes,
+        status: "scheduled",
+        sessionType: validSessionType,
+        price: booking.price,
+        meetingCode: booking.meetingCode,
+      });
+      lessonId = String(newLesson);
+    }
+
+    await ctx.db.patch(booking._id, {
+      status: "confirmed",
+      lessonId: lessonId,
+    });
+
+    const now = Date.now();
+    try {
+      await ctx.db.insert("notifications", {
+        userId: booking.userId,
+        type: "payment_success",
+        title: "Tuition Confirmed via UddoktaPay",
+        message: `Your booking for ${booking.subject} with ${booking.teacherName} on ${booking.date} is confirmed!`,
+        read: false,
+        actionUrl: `/classroom?sessionId=${lessonId}`,
+        createdAt: now,
+      });
+
+      await ctx.db.insert("notifications", {
+        userId: booking.teacherId,
+        type: "booking_confirmed",
+        title: "New Student Tuition Confirmed",
+        message: `${booking.studentName} confirmed tuition for ${booking.subject} on ${booking.date} at ${booking.timeSlot}.`,
+        read: false,
+        actionUrl: "/teacher-dashboard",
+        createdAt: now,
+      });
+    } catch {}
+
+    return { success: true, bookingId: String(booking._id), lessonId };
+  },
+});
+

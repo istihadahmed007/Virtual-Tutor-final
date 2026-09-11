@@ -938,7 +938,7 @@ const schema = defineSchema(
       .index("by_created", ["createdAt"])
       .index("by_email", ["email"]),
 
-    // ─── Financial: Payments (SSLCOMMERZ) ─────────────────
+    // ─── Financial: Payments ──────────────────────────────
     payments: defineTable({
       bookingId: v.string(),
       studentId: v.string(),
@@ -947,7 +947,7 @@ const schema = defineSchema(
       teacherName: v.optional(v.string()),
       amount: v.number(),
       currency: v.string(), // "BDT"
-      gateway: v.string(), // "sslcommerz"
+      gateway: v.string(), // "direct" | "gateway"
       transactionId: v.string(), // Virtual Tutor internal Tran ID (e.g. VT-TXN-...)
       gatewayTransactionId: v.optional(v.string()), // val_id or bank_tran_id
       paymentMethod: v.optional(v.string()), // e.g. "BKASH-BKash", "NAGAD-Nagad", "VISA-CityBank"

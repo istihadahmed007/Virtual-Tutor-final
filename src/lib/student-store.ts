@@ -12,6 +12,8 @@ export interface StudentProfileData {
   subjects: string[];
   preferredSchedule: string;
   learningGoal: string;
+  learningGoals?: string[];
+  preferredLanguages?: string[];
   avatarUrl?: string;
   isVerified: boolean;
   verificationStatus: "verified" | "pending" | "not_started";
@@ -139,31 +141,54 @@ const SEED_STUDENTS: StudentProfileData[] = [
   },
 ];
 
+function normalizeStudentProfile(p: any): StudentProfileData {
+  const goal = p.learningGoal || "Master course syllabus and excel in examinations.";
+  const goals = Array.isArray(p.learningGoals) && p.learningGoals.length > 0
+    ? p.learningGoals
+    : [goal];
+  const langs = Array.isArray(p.preferredLanguages) && p.preferredLanguages.length > 0
+    ? p.preferredLanguages
+    : Array.isArray(p.languages) && p.languages.length > 0
+    ? p.languages
+    : ["English", "Bangla"];
+
+  return {
+    ...p,
+    subjects: Array.isArray(p.subjects) ? p.subjects : ["Mathematics", "Science"],
+    learningGoal: goal,
+    learningGoals: goals,
+    languages: langs,
+    preferredLanguages: langs,
+    preferredSchedule: p.preferredSchedule || "Flexible Schedule",
+    verificationStatus: p.verificationStatus || "verified",
+  };
+}
+
 export function getAllStudentProfiles(): StudentProfileData[] {
-  if (typeof window === "undefined") return SEED_STUDENTS;
+  if (typeof window === "undefined") return SEED_STUDENTS.map(normalizeStudentProfile);
   try {
     const raw = localStorage.getItem(STORAGE_STUDENTS_KEY);
     if (!raw) {
       localStorage.setItem(STORAGE_STUDENTS_KEY, JSON.stringify(SEED_STUDENTS));
-      return SEED_STUDENTS;
+      return SEED_STUDENTS.map(normalizeStudentProfile);
     }
     const parsed = JSON.parse(raw);
     if (Array.isArray(parsed) && parsed.length > 0) {
       // Ensure seed students are also available if not already in store
       const map = new Map<string, StudentProfileData>();
       for (const s of SEED_STUDENTS) {
-        map.set(s.userId, s);
+        map.set(s.userId, normalizeStudentProfile(s));
       }
       for (const p of parsed) {
         if (p && (p.userId || p._id)) {
-          map.set(p.userId || p._id, p);
+          map.set(p.userId || p._id, normalizeStudentProfile(p));
         }
       }
       return Array.from(map.values());
     }
-    return SEED_STUDENTS;
+    return SEED_STUDENTS.map(normalizeStudentProfile);
   } catch {
-    return SEED_STUDENTS;
+    return SEED_STUDENTS.map(normalizeStudentProfile);
   }
 }
 

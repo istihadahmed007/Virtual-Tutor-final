@@ -458,6 +458,23 @@ export function resolveAdminReport(reportId: string, resolutionNote?: string): b
   }
 }
 
+export function saveAdminBooking(booking: AdminBookingRecord): void {
+  if (typeof window === "undefined") return;
+  try {
+    const bookings = getAdminBookings();
+    const idx = bookings.findIndex((b) => b._id === booking._id);
+    if (idx >= 0) {
+      bookings[idx] = { ...bookings[idx], ...booking };
+    } else {
+      bookings.unshift(booking);
+    }
+    localStorage.setItem(STORAGE_BOOKINGS_KEY, JSON.stringify(bookings));
+    notifyAdminStoreChange();
+  } catch (err) {
+    console.error("Failed to save admin booking:", err);
+  }
+}
+
 export function getAdminAuditLogs(): AdminAuditLogRecord[] {
   if (typeof window === "undefined") return INITIAL_LOGS;
   try {

@@ -41,6 +41,19 @@ interface TeacherFiltersProps {
   className?: string;
 }
 
+export const SUBJECT_OPTIONS = [
+  "All Subjects",
+  "Organic Chemistry",
+  "Chemistry",
+  "Advanced Chemistry & Organic Synthesis",
+  "Mathematics",
+  "Higher Mathematics",
+  "Physics Mechanics",
+  "Biology",
+  "ICT & Programming",
+  "English Literature",
+];
+
 export const CURRICULUM_OPTIONS = [
   "All Curriculums",
   "Cambridge",
@@ -101,6 +114,7 @@ export function TeacherFilters({
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
 
   const activeFilterCount = [
+    filters.subject !== "All Subjects",
     filters.curriculum !== "All Curriculums",
     filters.gradeLevel !== "All Levels",
     filters.language !== "All Languages",
@@ -180,21 +194,21 @@ export function TeacherFilters({
       {/* Quick Filter Badges Bar */}
       <div className="flex flex-wrap items-center justify-between gap-2 text-xs">
         <div className="flex flex-wrap items-center gap-2">
-          {/* Quick Curriculum Chips */}
-          {["All Curriculums", "Cambridge", "Edexcel", "AP", "IB"].map((cur) => {
-            const isSelected = filters.curriculum === cur;
+          {/* Quick Subject & Curriculum Chips */}
+          {["All Subjects", "Organic Chemistry", "Chemistry", "Mathematics"].map((sub) => {
+            const isSelected = filters.subject === sub;
             return (
               <button
-                key={cur}
+                key={sub}
                 type="button"
-                onClick={() => handleUpdate("curriculum", cur)}
+                onClick={() => handleUpdate("subject", sub)}
                 className={`px-3.5 py-1.5 rounded-full font-medium transition-all ${
                   isSelected
                     ? "bg-[#111111] text-white shadow-xs"
                     : "bg-white border border-[#E5E4DE] text-[#111111]/70 hover:border-[#111111]/40"
                 }`}
               >
-                {cur}
+                {sub}
               </button>
             );
           })}
@@ -238,11 +252,27 @@ export function TeacherFilters({
               Filter Teachers
             </SheetTitle>
             <SheetDescription className="text-xs text-slate-500">
-              Narrow down educators by curriculum, academic level, language, price, and availability.
+              Narrow down educators by subject, curriculum, academic level, language, price, and availability.
             </SheetDescription>
           </SheetHeader>
 
           <div className="space-y-5 py-2">
+            {/* Subject */}
+            <div>
+              <label className="text-xs font-bold uppercase tracking-wider text-slate-700 mb-2 block">
+                Academic Subject
+              </label>
+              <select
+                value={filters.subject}
+                onChange={(e) => handleUpdate("subject", e.target.value)}
+                className="w-full h-10 px-3 text-xs rounded-xl border border-slate-200 bg-white"
+              >
+                {SUBJECT_OPTIONS.map((s) => (
+                  <option key={s} value={s}>{s}</option>
+                ))}
+              </select>
+            </div>
+
             {/* Curriculum */}
             <div>
               <label className="text-xs font-bold uppercase tracking-wider text-slate-700 mb-2 block">
