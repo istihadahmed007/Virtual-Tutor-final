@@ -400,7 +400,7 @@ export default function AdminTeacherApplications() {
                           <div className="flex flex-wrap items-center gap-2 pt-1 text-[11px] text-slate-500">
                             <span>Email: <strong className="text-slate-700">{app.userEmail || app.email || "N/A"}</strong></span>
                             <span>·</span>
-                            <span>Tuition: <strong className="text-slate-700">৳{((app.hourlyRate || 35) >= 500 ? app.hourlyRate : (app.hourlyRate || 35) * 100).toLocaleString()}/mo</strong></span>
+                            <span>Tuition: <strong className="text-slate-700">৳{((app.monthlyTuition && app.monthlyTuition > 0) ? app.monthlyTuition : ((app.hourlyRate || 35) >= 500 ? app.hourlyRate : (app.hourlyRate || 35) * 100)).toLocaleString()}/mo</strong></span>
                             <span>·</span>
                             <span>NID: <strong className="font-mono text-slate-700">{app.nidNumber || "Pending"}</strong></span>
                             <span>·</span>

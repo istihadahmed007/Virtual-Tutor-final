@@ -16,8 +16,10 @@ export interface AuthUser {
   timezone?: string;
   phone?: string;
   hourlyRate?: number;
+  monthlyTuition?: number;
   yearsExperience?: number;
   rating?: number;
+  reviewCount?: number;
   accountStatus?: "active" | "suspended" | "pending_verification" | "pending";
   isEmailVerified?: boolean;
   createdAt?: number;

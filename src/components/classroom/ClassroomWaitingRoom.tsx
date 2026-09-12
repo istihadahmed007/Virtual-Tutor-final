@@ -133,7 +133,7 @@ export function ClassroomWaitingRoom({
             </div>
             <div className="flex justify-between">
               <span className="text-slate-500">Instructor:</span>
-              <span className="text-slate-300">{lesson.teacherName || "Dr. Sarah Chen"}</span>
+              <span className="text-slate-300">{lesson.teacherName || "Assigned Instructor"}</span>
             </div>
           </div>
 
@@ -175,7 +175,7 @@ export function ClassroomWaitingRoom({
               {lesson.title || `${lesson.subject} Lesson`}
             </h2>
             <p className="text-xs text-slate-500">
-              Instructor: {lesson.teacherName || "Dr. Sarah Chen"} · {lesson.durationMinutes} minutes
+              Instructor: {lesson.teacherName || "Assigned Instructor"} · {lesson.durationMinutes} minutes
             </p>
           </div>
 
@@ -300,9 +300,9 @@ export function ClassroomWaitingRoom({
               {lesson.title || `${lesson.subject} Session`}
             </h1>
             <p className="text-sm text-slate-400 mt-1">
-              Instructor: <span className="text-slate-200 font-semibold">{lesson.teacherName || "Dr. Sarah Chen"}</span>
+              Instructor: <span className="text-slate-200 font-semibold">{lesson.teacherName || "Assigned Instructor"}</span>
               {" · "}
-              Student: <span className="text-slate-200 font-semibold">{lesson.studentName || "Alex Rivera"}</span>
+              Student: <span className="text-slate-200 font-semibold">{lesson.studentName || "Enrolled Student"}</span>
             </p>
           </div>
 

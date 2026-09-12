@@ -58,7 +58,7 @@ const DEFAULT_CONFIGS: Record<DashboardEmptyStateType, {
     previewCard: {
       tag: "Preview: Active Lesson View",
       title: "AP Calculus BC · Derivatives & Optimization",
-      sub: "With Dr. Sarah Jenkins · Live Interactive Whiteboard",
+      sub: "With your verified instructor · Live Interactive Whiteboard",
       meta: "45 mins · 1-on-1 Private Session",
     },
   },

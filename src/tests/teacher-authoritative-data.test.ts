@@ -57,6 +57,19 @@ describe("Authoritative Teacher Data Normalization", () => {
     expect(formatTk(normalized.monthlyTuition)).toBe("৳3,500");
   });
 
+  it("properly handles tuition entered directly in BDT (e.g. 3000) without multiplying by 100", () => {
+    const bdtTeacher = {
+      userId: "usr_tonmoy",
+      name: "Tonmoy",
+      subjects: ["General Studies"],
+      hourlyRate: 3000,
+    };
+
+    const normalized = normalizeTeacherData(bdtTeacher);
+    expect(normalized.monthlyTuition).toBe(3000);
+    expect(formatTk(normalized.monthlyTuition)).toBe("৳3,000");
+  });
+
   it("ensures seed teachers array contains no fabricated profiles", () => {
     expect(AUTHORITATIVE_SEED_TEACHERS).toHaveLength(0);
   });

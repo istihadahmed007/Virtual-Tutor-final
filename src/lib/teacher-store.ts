@@ -1,6 +1,5 @@
 // Teacher Application & Profile Store with persistent local and cloud fallback
 import { AuthUser, getActiveSession, updateActiveSessionRole } from "./auth-store";
-import { AUTHORITATIVE_SEED_TEACHERS, AuthoritativeTeacher } from "./teacher-authoritative-data";
 
 export interface EducationEntry {
   degree: string;
@@ -91,171 +90,8 @@ export function calculateTeacherCompletion(data: Partial<TeacherApplicationData>
   return Math.min(100, Math.round(score));
 }
 
-export const DEFAULT_REGISTERED_TEACHERS: TeacherApplicationData[] = [
-  {
-    _id: "tch_farzana",
-    userId: "tch_farzana",
-    name: "Dr. Farzana Yasmin",
-    email: "dr.farzana.yasmin@virtualtutorpro.com",
-    userEmail: "dr.farzana.yasmin@virtualtutorpro.com",
-    title: "Senior Faculty in Organic Chemistry & Synthesis",
-    bio: "Ph.D. in Organic Chemistry with over 10 years of expertise specializing in organic synthesis, reaction mechanisms, and stereochemistry. Guiding Cambridge, Edexcel, and HSC students to top percentile grades.",
-    avatarUrl: "https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=400&auto=format&fit=crop&q=80",
-    country: "Bangladesh",
-    timezone: "Asia/Dhaka",
-    hourlyRate: 35,
-    price30min: 20,
-    price60min: 35,
-    groupPrice: 25,
-    trialPrice: 15,
-    subjects: ["Organic Chemistry", "Chemistry", "Advanced Chemistry & Organic Synthesis", "Biochemistry"],
-    classLevels: ["Grade 11 / AS-Level", "Grade 12 / A-Level / HSC", "College / Undergraduate"],
-    expertise: ["Organic Chemistry", "Reaction Mechanisms", "Organic Synthesis", "Stereochemistry", "Spectroscopy", "Cambridge A-Level", "Edexcel"],
-    languages: ["English", "Bangla"],
-    yearsExperience: 10,
-    currentPosition: "Senior Lecturer, Department of Chemistry",
-    previousExperience: "10+ years coaching O/A-Level & HSC candidates in advanced chemical sciences.",
-    education: [
-      { degree: "Ph.D. in Organic Chemistry", institution: "University of Dhaka", passingYear: 2018 },
-      { degree: "M.Sc. in Applied Chemistry", institution: "University of Dhaka", passingYear: 2014 },
-    ],
-    onlineTeachingExperience: "Over 6 years of virtual whiteboard and 3D molecular modeling classrooms.",
-    preferredPlatforms: ["Virtual Tutor Pro Classroom", "Interactive Digital Whiteboard"],
-    onlineTools: ["ChemDraw", "Interactive 3D Molecular Viewer", "Digital Stylus"],
-    preferredClassDuration: "60 mins",
-    classTypes: ["1-on-1 Private Lessons", "Group Problem Solving"],
-    verificationStatus: "verified",
-    isVerified: true,
-    isAvailable: true,
-    userAccountStatus: "active",
-    profileCompletionScore: 100,
-    profileCompletionPct: 100,
-    rating: 5.0,
-    reviewCount: 18,
-    totalStudents: 24,
-    totalHours: 320,
-  },
-  {
-    _id: "tch_rahim",
-    userId: "tch_rahim",
-    name: "Prof. Md. Abdur Rahim",
-    email: "prof.rahim@virtualtutorpro.com",
-    userEmail: "prof.rahim@virtualtutorpro.com",
-    title: "Distinguished Professor of Mathematics & Coordinate Geometry",
-    bio: "Ex-faculty with 15+ years of pedagogical excellence in Pure Mathematics, Coordinate Geometry, Differential Equations, and Cambridge A-Level Mathematics.",
-    avatarUrl: "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=400&auto=format&fit=crop&q=80",
-    country: "Bangladesh",
-    timezone: "Asia/Dhaka",
-    hourlyRate: 40,
-    price30min: 25,
-    price60min: 40,
-    groupPrice: 30,
-    trialPrice: 15,
-    subjects: ["Mathematics", "Higher Mathematics", "Calculus", "Coordinate Geometry"],
-    classLevels: ["Grade 9 / Secondary", "Grade 10 / O-Level / SSC", "Grade 11 / AS-Level", "Grade 12 / A-Level / HSC"],
-    expertise: ["Pure Mathematics", "Coordinate Geometry", "Integration & Differentiation", "Cambridge A-Level", "Edexcel"],
-    languages: ["English", "Bangla"],
-    yearsExperience: 15,
-    currentPosition: "Senior Mathematics Specialist",
-    education: [
-      { degree: "M.Phil. in Applied Mathematics", institution: "BUET", passingYear: 2011 },
-      { degree: "B.Sc. in Mathematics", institution: "University of Dhaka", passingYear: 2007 },
-    ],
-    onlineTeachingExperience: "7 years interactive digital coaching.",
-    preferredPlatforms: ["Virtual Tutor Pro Classroom"],
-    onlineTools: ["GeoGebra", "Digital Graphing Canvas"],
-    preferredClassDuration: "60 mins",
-    classTypes: ["1-on-1 Private Lessons"],
-    verificationStatus: "verified",
-    isVerified: true,
-    isAvailable: true,
-    userAccountStatus: "active",
-    profileCompletionScore: 100,
-    profileCompletionPct: 100,
-    rating: 4.95,
-    reviewCount: 32,
-    totalStudents: 45,
-    totalHours: 580,
-  },
-  {
-    _id: "teacher_prof_farhan",
-    userId: "teacher_prof_farhan",
-    name: "Dr. Farhan Ahmed",
-    email: "dr.farhan@virtualtutorpro.com",
-    userEmail: "dr.farhan@virtualtutorpro.com",
-    title: "Physics Specialist & Quantum Mechanics Researcher",
-    bio: "Specializing in Newtonian mechanics, electromagnetism, and modern physics for Cambridge and IB diploma students.",
-    avatarUrl: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=400&auto=format&fit=crop&q=80",
-    country: "Bangladesh",
-    timezone: "Asia/Dhaka",
-    hourlyRate: 40,
-    price30min: 25,
-    price60min: 40,
-    groupPrice: 30,
-    trialPrice: 20,
-    subjects: ["Physics Mechanics", "Physics", "AP Physics C", "Quantum Physics"],
-    classLevels: ["Grade 11 / AS-Level", "Grade 12 / A-Level / HSC", "AP / IB Diploma Level"],
-    expertise: ["Mechanics", "Electromagnetism", "Optics", "Nuclear Physics"],
-    languages: ["English", "Bangla"],
-    yearsExperience: 8,
-    education: [
-      { degree: "Ph.D. in Physics", institution: "BUET", passingYear: 2019 },
-    ],
-    preferredPlatforms: ["Virtual Tutor Pro Classroom"],
-    onlineTools: ["PhET Interactive Simulations"],
-    preferredClassDuration: "60 mins",
-    classTypes: ["1-on-1 Private Lessons"],
-    verificationStatus: "verified",
-    isVerified: true,
-    isAvailable: true,
-    userAccountStatus: "active",
-    profileCompletionScore: 100,
-    profileCompletionPct: 100,
-    rating: 5.0,
-    reviewCount: 12,
-    totalStudents: 15,
-    totalHours: 210,
-  },
-  {
-    _id: "usr_new_educator_99",
-    userId: "usr_new_educator_99",
-    name: "Sarah Jenkins",
-    email: "sarah.jenkins@virtualtutorpro.com",
-    userEmail: "sarah.jenkins@virtualtutorpro.com",
-    title: "Molecular Biology & Physiology Specialist",
-    bio: "Experienced molecular biologist and Cambridge biology tutor focusing on genetics, cell biology, and biochemistry.",
-    avatarUrl: "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=400&auto=format&fit=crop&q=80",
-    country: "Bangladesh",
-    timezone: "Asia/Dhaka",
-    hourlyRate: 35,
-    price30min: 20,
-    price60min: 35,
-    groupPrice: 25,
-    trialPrice: 15,
-    subjects: ["Biology", "Human Physiology", "Genetics", "Biochemistry"],
-    classLevels: ["Grade 10 / O-Level / SSC", "Grade 11 / AS-Level", "Grade 12 / A-Level / HSC"],
-    expertise: ["Genetics", "Cell Biology", "Ecology", "Medical Preparation"],
-    languages: ["English"],
-    yearsExperience: 6,
-    education: [
-      { degree: "M.Sc. in Biotechnology", institution: "BRAC University", passingYear: 2020 },
-    ],
-    preferredPlatforms: ["Virtual Tutor Pro Classroom"],
-    onlineTools: ["BioRender", "Digital Whiteboard"],
-    preferredClassDuration: "60 mins",
-    classTypes: ["1-on-1 Private Lessons"],
-    verificationStatus: "verified",
-    isVerified: true,
-    isAvailable: true,
-    userAccountStatus: "active",
-    profileCompletionScore: 100,
-    profileCompletionPct: 100,
-    rating: 4.9,
-    reviewCount: 14,
-    totalStudents: 19,
-    totalHours: 180,
-  },
-];
+// Real database & application store only. Strictly zero hardcoded, simulated, or fake demo teachers.
+export const DEFAULT_REGISTERED_TEACHERS: TeacherApplicationData[] = [];
 
 export const LEGACY_FAKE_IDS = new Set([
   "demo_teacher_01",
@@ -266,15 +102,25 @@ export const LEGACY_FAKE_IDS = new Set([
   "teacher_prof_david",
   "teacher_prof_amira",
   "teacher_prof_marcus_thorne",
+  "tch_farzana",
+  "tch_rahim",
+  "teacher_prof_farhan",
+  "tch_sarah",
+  "usr_new_educator_99",
+  "dr.farzana.yasmin@virtualtutorpro.com",
+  "prof.rahim@virtualtutorpro.com",
+  "dr.farhan@virtualtutorpro.com",
+  "sarah.jenkins@virtualtutorpro.com",
+  "sarah.jenkins@liveclass.edu",
+  "elena.rostova@liveclass.edu",
 ]);
 
 export function getAllTeacherApplications(): TeacherApplicationData[] {
-  if (typeof window === "undefined") return DEFAULT_REGISTERED_TEACHERS;
+  if (typeof window === "undefined") return [];
   try {
     const raw = localStorage.getItem(STORAGE_TEACHER_APPS_KEY);
     if (!raw) {
-      localStorage.setItem(STORAGE_TEACHER_APPS_KEY, JSON.stringify(DEFAULT_REGISTERED_TEACHERS));
-      return DEFAULT_REGISTERED_TEACHERS;
+      return [];
     }
     const parsed = JSON.parse(raw);
     if (Array.isArray(parsed)) {
@@ -282,28 +128,23 @@ export function getAllTeacherApplications(): TeacherApplicationData[] {
       const realOnly = parsed.filter(
         (item) =>
           item &&
+          item.userId &&
           !LEGACY_FAKE_IDS.has(item.userId) &&
           !LEGACY_FAKE_IDS.has(item._id) &&
-          !LEGACY_FAKE_IDS.has(item.email)
+          !LEGACY_FAKE_IDS.has(item.email) &&
+          !LEGACY_FAKE_IDS.has(item.userEmail)
       );
 
-      // Merge DEFAULT_REGISTERED_TEACHERS to ensure vital verified faculty (like Organic Chemistry) are present
-      const map = new Map<string, TeacherApplicationData>();
-      for (const def of DEFAULT_REGISTERED_TEACHERS) {
-        map.set(def.userId, def);
+      // Sanitize the persistent localStorage if any fake records were detected
+      if (realOnly.length !== parsed.length) {
+        localStorage.setItem(STORAGE_TEACHER_APPS_KEY, JSON.stringify(realOnly));
       }
-      for (const item of realOnly) {
-        if (item.userId) {
-          const existing = map.get(item.userId);
-          map.set(item.userId, existing ? { ...existing, ...item } : item);
-        }
-      }
-      const combined = Array.from(map.values());
-      return combined;
+
+      return realOnly;
     }
-    return DEFAULT_REGISTERED_TEACHERS;
+    return [];
   } catch {
-    return DEFAULT_REGISTERED_TEACHERS;
+    return [];
   }
 }
 

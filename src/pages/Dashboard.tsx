@@ -4,6 +4,7 @@ import { api } from "@/convex/_generated/api";
 import { useStudentPayments } from "@/hooks/use-payments";
 import { useAuth } from "@/hooks/use-auth";
 import { useNavigate } from "react-router";
+import { LEGACY_FAKE_IDS } from "@/lib/teacher-store";
 import {
   StatBlock,
   SectionLabel,
@@ -53,17 +54,22 @@ export default function Dashboard() {
 
   useEffect(() => {
     try {
-      const storedLessons = localStorage.getItem("vtp_mock_student_lessons");
+      const storedLessons =
+        localStorage.getItem("vtp_student_lessons") ||
+        localStorage.getItem("vtp_mock_student_lessons");
       if (storedLessons) {
         const parsed = JSON.parse(storedLessons);
         if (Array.isArray(parsed)) {
           const realLessons = parsed.filter(
             (l) =>
               l &&
+              !LEGACY_FAKE_IDS.has(l.teacherId) &&
               l.teacherId !== "demo_teacher_01" &&
               l.studentId !== "demo_student_01"
           );
           setLocalLessons(realLessons);
+          localStorage.setItem("vtp_student_lessons", JSON.stringify(realLessons));
+          localStorage.removeItem("vtp_mock_student_lessons");
         }
       }
       setHasViewedTeachers(

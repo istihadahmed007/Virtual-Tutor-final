@@ -224,7 +224,9 @@ export default function AdminDashboard() {
                     </div>
 
                     <div className="text-right shrink-0">
-                      <span className="text-xs font-bold text-[#111111] font-display">৳{((app.hourlyRate || 35) >= 500 ? app.hourlyRate : (app.hourlyRate || 35) * 100).toLocaleString()}/mo</span>
+                      <span className="text-xs font-bold text-[#111111] font-display">
+                        ৳{((app.monthlyTuition && app.monthlyTuition > 0) ? app.monthlyTuition : ((app.hourlyRate || 35) >= 500 ? app.hourlyRate : (app.hourlyRate || 35) * 100)).toLocaleString()}/mo
+                      </span>
                       <p className="text-[11px] text-[#111111]/40">
                         {app.nidSubmittedAt ? new Date(app.nidSubmittedAt).toLocaleDateString() : "Recent"}
                       </p>

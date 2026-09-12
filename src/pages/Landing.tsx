@@ -12,6 +12,8 @@ import { useNavigate, Link } from "react-router";
 import { useAuth } from "@/hooks/use-auth";
 import { useQuery } from "convex/react";
 import { api } from "@/convex/_generated/api";
+import { getAllTeacherApplications, LEGACY_FAKE_IDS, TEACHER_STORE_EVENT } from "@/lib/teacher-store";
+import { normalizeTeacherData, AuthoritativeTeacher } from "@/lib/teacher-authoritative-data";
 import { BrandLogo } from "@/components/BrandLogo";
 import { CinematicHeroBackground } from "@/components/CinematicHeroBackground";
 import { FloatingParticles } from "@/components/FloatingParticles";
@@ -20,9 +22,7 @@ import {
   SectionHeader,
   PrimaryButton,
   SecondaryButton,
-  PillButton,
   StatBlock,
-  FloatingBadge,
   TutorCard,
 } from "@/components/redesign";
 import {
@@ -177,7 +177,40 @@ export default function Landing() {
 
   // Query verified teachers
   const teachersQuery = useQuery(api.teachers.list);
-  const teachers = teachersQuery ?? [];
+  const [localTeacherApps, setLocalTeacherApps] = useState(() => getAllTeacherApplications());
+
+  useEffect(() => {
+    const handleStoreChange = () => {
+      setLocalTeacherApps(getAllTeacherApplications());
+    };
+    window.addEventListener(TEACHER_STORE_EVENT, handleStoreChange);
+    return () => window.removeEventListener(TEACHER_STORE_EVENT, handleStoreChange);
+  }, []);
+
+  const teachers: AuthoritativeTeacher[] = useMemo(() => {
+    const map = new Map<string, AuthoritativeTeacher>();
+    if (teachersQuery && Array.isArray(teachersQuery)) {
+      for (const t of teachersQuery) {
+        if (!t || LEGACY_FAKE_IDS.has(t._id) || LEGACY_FAKE_IDS.has(t.userId) || LEGACY_FAKE_IDS.has(t.email)) {
+          continue;
+        }
+        const normalized = normalizeTeacherData(t);
+        const key = normalized.userId || normalized._id;
+        if (key) map.set(key, normalized);
+      }
+    }
+    for (const app of localTeacherApps) {
+      if (!app || LEGACY_FAKE_IDS.has(app._id) || LEGACY_FAKE_IDS.has(app.userId) || LEGACY_FAKE_IDS.has(app.email)) {
+        continue;
+      }
+      const normalized = normalizeTeacherData(app);
+      const key = normalized.userId || normalized._id;
+      if (key && !map.has(key)) {
+        map.set(key, normalized);
+      }
+    }
+    return Array.from(map.values());
+  }, [teachersQuery, localTeacherApps]);
 
   const subjectPills = [
     "All",
@@ -771,7 +804,7 @@ export default function Landing() {
                             className="inline-flex items-center gap-1.5 bg-[#F26522] text-white px-2 py-0.5 rounded-full text-[10px] font-sans font-semibold shadow-xs"
                           >
                             <PenTool className="w-2.5 h-2.5" />
-                            <span>Dr. Rafiqul Islam</span>
+                            <span>Verified Educator</span>
                           </motion.div>
                           <span className="text-white/40">Drawing step 4...</span>
                         </div>
@@ -838,7 +871,7 @@ export default function Landing() {
                             <span className="w-2 h-2 rounded-full bg-emerald-400" />
                           </div>
                           <div className="text-center font-medium text-xs text-white/80">
-                            Dr. Rafiqul Islam (Faculty)
+                            Verified Educator (Faculty)
                           </div>
                           <div className="flex items-center justify-between text-[10px] text-white/40">
                             <span>Mic Active</span>
@@ -852,7 +885,7 @@ export default function Landing() {
                             <span className="w-2 h-2 rounded-full bg-emerald-400" />
                           </div>
                           <div className="text-center font-medium text-xs text-white/80">
-                            Sadia Rahman (A-Level)
+                            Enrolled Student (Learner)
                           </div>
                           <div className="flex items-center justify-between text-[10px] text-white/40">
                             <span>Camera On</span>
@@ -909,14 +942,14 @@ export default function Landing() {
                 {/* Bottom Classroom Join Button */}
                 <div className="mt-5 pt-3 border-t border-white/10 flex items-center justify-between">
                   <div className="flex items-center gap-2 text-xs text-white/70">
-                    <span className="text-[#F26522] font-semibold">Next Demo Session:</span>
+                    <span className="text-[#F26522] font-semibold">Interactive Classroom:</span>
                     <span>AP Calculus BC with Live Whiteboard</span>
                   </div>
                   <PrimaryButton
                     size="sm"
                     onClick={() => navigate("/classroom/demo")}
                   >
-                    Enter Live Demo Room
+                    Enter Live Classroom
                   </PrimaryButton>
                 </div>
               </div>
@@ -1009,30 +1042,51 @@ export default function Landing() {
               }}
               className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
             >
-              {filteredTeachers.map((tutor) => (
-                <motion.div
-                  key={tutor._id}
-                  variants={{
-                    hidden: { opacity: 0, y: 20 },
-                    visible: { opacity: 1, y: 0 },
-                  }}
-                >
-                  <TutorCard
-                    tutor={tutor as any}
-                    theme="dark"
-                    onBook={() => navigate(`/teachers/${tutor._id}`)}
-                  />
-                </motion.div>
-              ))}
+              {filteredTeachers.map((tutor, index) => {
+                const tutorKey = tutor.userId || tutor._id || `tutor-${index}`;
+                return (
+                  <motion.div
+                    key={tutorKey}
+                    variants={{
+                      hidden: { opacity: 0, y: 20 },
+                      visible: { opacity: 1, y: 0 },
+                    }}
+                  >
+                    <TutorCard
+                      tutor={tutor as any}
+                      theme="dark"
+                      onBook={() => navigate(`/teachers/${tutorKey}`)}
+                    />
+                  </motion.div>
+                );
+              })}
             </motion.div>
+          ) : teachers.length === 0 ? (
+            <div className="text-center py-16 bg-[#0B0B0B]/75 backdrop-blur-xl rounded-3xl border border-white/10 p-8 text-white">
+              <GraduationCap className="w-12 h-12 text-[#F26522] mx-auto mb-4" />
+              <h3 className="text-lg font-semibold text-white">
+                No tutors available yet
+              </h3>
+              <p className="text-sm text-white/70 mt-1 max-w-md mx-auto">
+                New verified tutors will appear here once they register and complete their profile.
+              </p>
+              <div className="mt-6">
+                <PrimaryButton
+                  size="sm"
+                  onClick={() => navigate("/teacher-application")}
+                >
+                  Become a Tutor
+                </PrimaryButton>
+              </div>
+            </div>
           ) : (
             <div className="text-center py-16 bg-[#0B0B0B]/75 backdrop-blur-xl rounded-3xl border border-white/10 p-8 text-white">
               <GraduationCap className="w-12 h-12 text-[#F26522] mx-auto mb-4" />
               <h3 className="text-lg font-semibold text-white">
-                No Tutors Found For This Subject
+                No tutors match your search criteria
               </h3>
               <p className="text-sm text-white/70 mt-1 max-w-md mx-auto">
-                Explore our full tutor directory or submit an inquiry with your exact syllabus needs.
+                Try adjusting your subject filters or search terms to find available educators.
               </p>
               <div className="mt-6">
                 <PrimaryButton
@@ -1040,10 +1094,9 @@ export default function Landing() {
                   onClick={() => {
                     setSelectedSubject("All");
                     setSearchQuery("");
-                    navigate("/teachers");
                   }}
                 >
-                  View All Educators
+                  Reset Search
                 </PrimaryButton>
               </div>
             </div>
@@ -1230,7 +1283,7 @@ export default function Landing() {
                   size="md"
                   onClick={() => navigate("/classroom/demo")}
                 >
-                  Test Demo Classroom
+                  Preview Interactive Classroom
                 </PrimaryButton>
               </div>
             </motion.div>
@@ -1284,7 +1337,7 @@ export default function Landing() {
                 </motion.div>
 
                 <div className="flex items-center justify-between pt-4 border-t border-white/10 text-xs text-white/60 relative z-10">
-                  <span>Tutor cursor: Dr. Rafiqul Islam</span>
+                  <span>Tutor Cursor: Verified Educator</span>
                   <span className="text-[#F26522]">Live Sync Active</span>
                 </div>
               </div>

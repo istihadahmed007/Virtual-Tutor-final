@@ -1,7 +1,7 @@
 import { useState, useMemo, useEffect } from "react";
 import { useQuery, useMutation } from "convex/react";
 import { api } from "@/convex/_generated/api";
-import { getAllTeacherApplications, TEACHER_STORE_EVENT, LEGACY_FAKE_IDS, DEFAULT_REGISTERED_TEACHERS } from "@/lib/teacher-store";
+import { getAllTeacherApplications, TEACHER_STORE_EVENT, LEGACY_FAKE_IDS } from "@/lib/teacher-store";
 import { getRegisteredUsers } from "@/lib/auth-store";
 import { 
   normalizeTeacherData, 
@@ -100,7 +100,12 @@ export default function TeachersPage() {
         country: "Bangladesh",
         timezone: Intl.DateTimeFormat().resolvedOptions().timeZone || "Asia/Dhaka",
         hourlyRate: u.hourlyRate || 35,
-        monthlyTuition: 4500,
+        monthlyTuition:
+          (typeof u.monthlyTuition === "number" && u.monthlyTuition > 0)
+            ? u.monthlyTuition
+            : (typeof u.hourlyRate === "number" && u.hourlyRate > 0)
+              ? (u.hourlyRate >= 500 ? u.hourlyRate : Math.round(u.hourlyRate * 100))
+              : 4000,
         subjects: u.subjects && u.subjects.length > 0 ? u.subjects : ["General Studies"],
         classLevels: ["All Levels"],
         expertise: u.subjects || ["Tutoring"],
@@ -109,8 +114,8 @@ export default function TeachersPage() {
         isVerified: u.isEmailVerified ?? false,
         verificationStatus: u.isEmailVerified ? "verified" : "under_review",
         isAvailable: true,
-        rating: u.rating || 5.0,
-        reviewCount: 0,
+        rating: u.rating || 0,
+        reviewCount: u.reviewCount || 0,
         totalStudents: 0,
         totalHours: 0,
       }));
@@ -164,14 +169,6 @@ export default function TeachersPage() {
     for (const r of registeredTeacherUsers) {
       const normalized = normalizeTeacherData(r);
       if (normalized.userId && !uniqueMap.has(normalized.userId)) {
-        uniqueMap.set(normalized.userId, normalized);
-      }
-    }
-
-    // 4. Default registered verified faculty (e.g. Dr. Farzana Yasmin - Organic Chemistry)
-    for (const def of DEFAULT_REGISTERED_TEACHERS) {
-      if (!uniqueMap.has(def.userId) && (!def._id || !uniqueMap.has(def._id))) {
-        const normalized = normalizeTeacherData(def);
         uniqueMap.set(normalized.userId, normalized);
       }
     }
@@ -402,11 +399,19 @@ export default function TeachersPage() {
         </div>
 
         {/* Teachers Grid or Empty State */}
-        {filteredTeachers.length === 0 ? (
+        {allAuthoritativeTeachers.length === 0 ? (
           <EmptyState
             icon={Users}
-            title="No verified educators match your filters"
-            description="Try adjusting your subject keywords, price range, or language preferences to view more qualified tutors."
+            title="No tutors available yet"
+            description="New verified tutors will appear here once they register and complete their profile."
+            actionLabel="Become a Tutor"
+            onAction={() => navigate("/teacher-application")}
+          />
+        ) : filteredTeachers.length === 0 ? (
+          <EmptyState
+            icon={Users}
+            title="No tutors match your search criteria"
+            description="Try adjusting your subject keywords, price range, or language preferences."
             actionLabel="Reset Filters"
             onAction={handleResetFilters}
           />

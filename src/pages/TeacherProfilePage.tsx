@@ -5,8 +5,7 @@ import { getAllTeacherApplications, LEGACY_FAKE_IDS, TEACHER_STORE_EVENT } from 
 import { getRegisteredUsers } from "@/lib/auth-store";
 import { 
   normalizeTeacherData, 
-  AuthoritativeTeacher, 
-  AUTHORITATIVE_SEED_TEACHERS 
+  AuthoritativeTeacher 
 } from "@/lib/teacher-authoritative-data";
 import { createOrGetLocalConversation } from "@/lib/messages-store";
 import { Button } from "@/components/ui/button";
@@ -95,12 +94,6 @@ export default function TeacherProfilePage() {
     );
   }, [id, isFakeId, registeredUsersList]);
 
-  const seedTeacher = isFakeId
-    ? null
-    : AUTHORITATIVE_SEED_TEACHERS.find(
-        (t) => t.userId === id || t._id === id
-      );
-
   // Authoritatively normalized teacher data
   const rawTeacher = useMemo(() => {
     if (isFakeId) return null;
@@ -119,7 +112,12 @@ export default function TeacherProfilePage() {
             country: "Bangladesh",
             timezone: Intl.DateTimeFormat().resolvedOptions().timeZone || "Asia/Dhaka",
             hourlyRate: registeredTeacher.hourlyRate || 35,
-            monthlyTuition: 4500,
+            monthlyTuition:
+              (typeof registeredTeacher.monthlyTuition === "number" && registeredTeacher.monthlyTuition > 0)
+                ? registeredTeacher.monthlyTuition
+                : (typeof registeredTeacher.hourlyRate === "number" && registeredTeacher.hourlyRate > 0)
+                  ? (registeredTeacher.hourlyRate >= 500 ? registeredTeacher.hourlyRate : Math.round(registeredTeacher.hourlyRate * 100))
+                  : 4000,
             subjects: registeredTeacher.subjects?.length ? registeredTeacher.subjects : ["General Studies"],
             classLevels: ["All Levels"],
             expertise: registeredTeacher.subjects || ["Tutoring"],
@@ -127,15 +125,14 @@ export default function TeacherProfilePage() {
             yearsExperience: registeredTeacher.yearsExperience || 2,
             isVerified: registeredTeacher.isEmailVerified ?? false,
             isAvailable: true,
-            rating: registeredTeacher.rating || 5.0,
-            reviewCount: 0,
+            rating: registeredTeacher.rating || 0,
+            reviewCount: registeredTeacher.reviewCount || 0,
             totalStudents: 0,
             totalHours: 0,
           }
-        : null) ||
-      seedTeacher
+        : null)
     );
-  }, [convexTeacher, localTeacher, registeredTeacher, seedTeacher, isFakeId]);
+  }, [convexTeacher, localTeacher, registeredTeacher, isFakeId]);
   const teacher: AuthoritativeTeacher | null = useMemo(() => {
     if (!rawTeacher) return null;
     return normalizeTeacherData(rawTeacher);

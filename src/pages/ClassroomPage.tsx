@@ -319,10 +319,12 @@ export default function ClassroomPage() {
     }
   });
 
-  // Check local storage for mock/scheduled lessons matching this sessionId
+  // Check local storage for scheduled lessons matching this sessionId
   const activeLesson: LessonData = useMemo(() => {
     try {
-      const raw = localStorage.getItem("vtp_mock_student_lessons");
+      const raw =
+        localStorage.getItem("vtp_student_lessons") ||
+        localStorage.getItem("vtp_mock_student_lessons");
       const list: LessonData[] = raw ? JSON.parse(raw) : [];
       const found = list.find((l) => l._id === sessionId || l.meetingCode === sessionId);
       if (found) return found;

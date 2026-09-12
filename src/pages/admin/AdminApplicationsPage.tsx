@@ -194,7 +194,9 @@ export default function AdminApplicationsPage() {
                   <div className="flex items-center gap-3 text-xs shrink-0">
                     <div className="bg-[#F5F4EF] px-3.5 py-2 rounded-2xl border border-[#E5E4DE]">
                       <span className="text-[10px] text-[#111111]/40 block font-medium">Monthly Tuition</span>
-                      <strong className="text-[#111111] font-display">৳{((app.hourlyRate || 0) >= 500 ? app.hourlyRate : (app.hourlyRate || 35) * 100).toLocaleString()}/mo</strong>
+                      <strong className="text-[#111111] font-display">
+                        ৳{((app.monthlyTuition && app.monthlyTuition > 0) ? app.monthlyTuition : ((app.hourlyRate || 0) >= 500 ? app.hourlyRate : (app.hourlyRate || 35) * 100)).toLocaleString()}/mo
+                      </strong>
                     </div>
                     <div className="bg-[#F5F4EF] px-3.5 py-2 rounded-2xl border border-[#E5E4DE]">
                       <span className="text-[10px] text-[#111111]/40 block font-medium">Completion</span>

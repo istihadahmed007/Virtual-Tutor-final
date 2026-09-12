@@ -35,6 +35,7 @@ export interface ConfirmApplicationModalProps {
     title?: string;
     subjects?: string[];
     hourlyRate?: number;
+    monthlyTuition?: number;
     nidNumber?: string;
     nidFrontUrl?: string;
     verificationStatus?: string;
@@ -154,10 +155,15 @@ export function ConfirmApplicationModal({
                   <span className="truncate">{applicant.email}</span>
                 </div>
               )}
-              {applicant.hourlyRate && applicant.hourlyRate > 0 && (
+              {((applicant.monthlyTuition && applicant.monthlyTuition > 0) || (applicant.hourlyRate && applicant.hourlyRate > 0)) && (
                 <div className="flex items-center gap-1.5 text-slate-600">
                   <span className="font-bold text-emerald-700 text-xs">৳</span>
-                  <span>৳{(applicant.hourlyRate >= 500 ? applicant.hourlyRate : applicant.hourlyRate * 100).toLocaleString()}/mo tuition</span>
+                  <span>
+                    ৳{((applicant.monthlyTuition && applicant.monthlyTuition > 0)
+                      ? applicant.monthlyTuition
+                      : (applicant.hourlyRate! >= 500 ? applicant.hourlyRate! : applicant.hourlyRate! * 100)
+                    ).toLocaleString()}/mo tuition
+                  </span>
                 </div>
               )}
               {applicant.nidNumber && (

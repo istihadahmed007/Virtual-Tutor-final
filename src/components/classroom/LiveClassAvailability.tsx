@@ -218,8 +218,8 @@ export function LiveClassAvailability({
             </h3>
             <p className="text-xs text-slate-500 mt-0.5">
               {isTeacher
-                ? `Student: ${lesson.studentName || "Alex Rivera"}`
-                : `Instructor: ${lesson.teacherName || "Dr. Sarah Chen"}`}
+                ? `Student: ${lesson.studentName || "Enrolled Student"}`
+                : `Instructor: ${lesson.teacherName || "Assigned Instructor"}`}
               {" · "}
               {lesson.durationMinutes || 60} minutes
             </p>

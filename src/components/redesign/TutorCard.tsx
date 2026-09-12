@@ -1,5 +1,5 @@
 import React from "react";
-import { Star, ShieldCheck, ArrowRight, Video } from "lucide-react";
+import { Star, ShieldCheck, ArrowRight } from "lucide-react";
 import { useNavigate } from "react-router";
 import { motion } from "framer-motion";
 
@@ -10,10 +10,12 @@ export interface TutorData {
   image?: string;
   subjects?: string[];
   hourlyRate?: number;
+  monthlyTuition?: number;
   rating?: number;
   reviewCount?: number;
   bio?: string;
   isVerified?: boolean;
+  verificationStatus?: string;
   totalHoursTaught?: number;
   isOnline?: boolean;
 }
@@ -34,15 +36,38 @@ export const TutorCard: React.FC<TutorCardProps> = ({
   const navigate = useNavigate();
   const isDark = theme === "dark";
 
+  const tutorTargetId = tutor._id || (tutor as any).userId || "";
+
   const handleCardClick = () => {
-    navigate(`/teachers/${tutor._id}`);
+    navigate(`/teachers/${tutorTargetId}`);
   };
 
   const displayName = tutor.name || "Verified Educator";
-  const displaySubjects = tutor.subjects?.length ? tutor.subjects.slice(0, 3) : ["Mathematics", "Science"];
-  const displayRate = tutor.hourlyRate ? `৳${tutor.hourlyRate * 100 || tutor.hourlyRate}` : "৳1,500";
-  const displayRating = tutor.rating ? tutor.rating.toFixed(1) : "4.9";
-  const displayReviews = tutor.reviewCount ?? 28;
+  const displaySubjects = tutor.subjects?.length ? tutor.subjects.slice(0, 3) : ["General Studies"];
+  
+  // Resolve authoritative monthly tuition in Bangladeshi Taka (৳):
+  // 1. If monthlyTuition is provided (>0), use it.
+  // 2. If hourlyRate >= 500, it is already in BDT (e.g. ৳3,000). Never multiply by 100.
+  // 3. If hourlyRate > 0 but < 500, convert legacy USD rates (e.g. 35 -> ৳3,500).
+  // 4. Fallback to ৳3,500.
+  const resolvedTuition =
+    typeof tutor.monthlyTuition === "number" && tutor.monthlyTuition > 0
+      ? tutor.monthlyTuition
+      : typeof tutor.hourlyRate === "number" && tutor.hourlyRate > 0
+        ? (tutor.hourlyRate >= 500 ? tutor.hourlyRate : Math.round(tutor.hourlyRate * 100))
+        : 3500;
+
+  const displayRate = `৳${resolvedTuition.toLocaleString()}`;
+
+  const isVerified = Boolean(
+    tutor.isVerified || tutor.verificationStatus === "verified"
+  );
+
+  const hasRating = typeof tutor.rating === "number" && tutor.rating > 0;
+  const displayRating = hasRating
+    ? tutor.rating!.toFixed(1)
+    : (tutor.reviewCount && tutor.reviewCount > 0 ? "5.0" : "New");
+  const displayReviews = tutor.reviewCount ?? 0;
 
   return (
     <motion.div
@@ -92,7 +117,7 @@ export const TutorCard: React.FC<TutorCardProps> = ({
                 >
                   {displayName}
                 </h3>
-                {tutor.isVerified !== false && (
+                {isVerified && (
                   <ShieldCheck className="w-4 h-4 text-[#F26522] shrink-0" />
                 )}
               </div>
@@ -101,7 +126,7 @@ export const TutorCard: React.FC<TutorCardProps> = ({
                   isDark ? "text-white/60" : "text-[#111111]/60"
                 }`}
               >
-                Verified Instructor
+                {isVerified ? "Verified Instructor" : "Faculty Specialist"}
               </p>
             </div>
           </div>
@@ -121,13 +146,15 @@ export const TutorCard: React.FC<TutorCardProps> = ({
             >
               {displayRating}
             </span>
-            <span
-              className={`text-[10px] ${
-                isDark ? "text-white/50" : "text-[#111111]/50"
-              }`}
-            >
-              ({displayReviews})
-            </span>
+            {displayReviews > 0 && (
+              <span
+                className={`text-[10px] ${
+                  isDark ? "text-white/50" : "text-[#111111]/50"
+                }`}
+              >
+                ({displayReviews})
+              </span>
+            )}
           </div>
         </div>
 
@@ -167,7 +194,7 @@ export const TutorCard: React.FC<TutorCardProps> = ({
       >
         <div>
           <span
-            className={`text-base sm:text-lg font-bold ${
+            className={`text-base sm:text-lg font-bold font-display ${
               isDark ? "text-white" : "text-[#111111]"
             }`}
           >
@@ -179,15 +206,15 @@ export const TutorCard: React.FC<TutorCardProps> = ({
             }`}
           >
             {" "}
-            / hour
+            / month
           </span>
         </div>
 
         <button
           onClick={(e) => {
             e.stopPropagation();
-            if (onBook) onBook(tutor._id);
-            else navigate(`/teachers/${tutor._id}`);
+            if (onBook) onBook(tutorTargetId);
+            else navigate(`/teachers/${tutorTargetId}`);
           }}
           className={`inline-flex items-center gap-1.5 text-xs font-semibold group-hover:text-[#F26522] transition-colors ${
             isDark ? "text-white/90" : "text-[#111111]"

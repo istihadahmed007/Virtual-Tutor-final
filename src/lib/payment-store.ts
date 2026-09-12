@@ -107,160 +107,34 @@ const STORAGE_KEYS = {
   AUDIT_LOGS: "vtp_financial_audit_logs",
 };
 
-// Initial realistic seed records for demonstration & immediate testability
+// Purely database & transaction driven - strictly zero hardcoded demo payment records
+const FAKE_TEACHER_IDS = new Set([
+  "tch_rahim",
+  "tch_farzana",
+  "demo_teacher_01",
+  "demo_teacher_02",
+  "teacher_prof_sarah",
+  "teacher_prof_marcus",
+  "teacher_prof_elena",
+  "teacher_prof_farhan",
+  "tch_sarah",
+  "usr_new_educator_99",
+]);
+
 function getInitialPayments(): PaymentRecord[] {
-  const now = Date.now();
-  const dayMs = 86400000;
-  return [
-    {
-      _id: "pay_sample_1",
-      bookingId: "bk_sample_1",
-      studentId: "std_01",
-      studentName: "Tahmid Hasan",
-      teacherId: "tch_rahim",
-      teacherName: "Prof. Md. Abdur Rahim",
-      subject: "Higher Mathematics & Calculus",
-      sessionType: "1-to-1",
-      durationMinutes: 60,
-      amount: 4000,
-      platformFee: 600,
-      teacherAmount: 3400,
-      currency: "BDT",
-      gateway: "direct",
-      transactionId: "VT-TXN-2026-0901-8842",
-      gatewayTransactionId: "GW-892174",
-      bankTransactionId: "EFT-889102",
-      cardType: "bkash-bKash",
-      cardBrand: "bKash",
-      status: "paid",
-      valId: "VAL_889210",
-      verifiedAt: now - 3 * dayMs,
-      createdAt: now - 3 * dayMs,
-      updatedAt: now - 3 * dayMs,
-    },
-    {
-      _id: "pay_sample_2",
-      bookingId: "bk_sample_2",
-      studentId: "std_02",
-      studentName: "Anika Tabassum",
-      teacherId: "tch_farzana",
-      teacherName: "Dr. Farzana Yasmin",
-      subject: "Advanced Chemistry & Organic Synthesis",
-      sessionType: "1-to-1",
-      durationMinutes: 60,
-      amount: 3500,
-      platformFee: 525,
-      teacherAmount: 2975,
-      currency: "BDT",
-      gateway: "direct",
-      transactionId: "VT-TXN-2026-0903-7721",
-      gatewayTransactionId: "GW-661209",
-      bankTransactionId: "DBBL-129084",
-      cardType: "VISA-Dutch Bangla Bank",
-      cardBrand: "VISA",
-      status: "paid",
-      valId: "VAL_551029",
-      verifiedAt: now - 1 * dayMs,
-      createdAt: now - 1 * dayMs,
-      updatedAt: now - 1 * dayMs,
-    },
-  ];
+  return [];
 }
 
 function getInitialEarnings(): TeacherEarningRecord[] {
-  const now = Date.now();
-  const dayMs = 86400000;
-  return [
-    {
-      _id: "earn_sample_1",
-      teacherId: "tch_rahim",
-      teacherName: "Prof. Md. Abdur Rahim",
-      paymentId: "pay_sample_1",
-      bookingId: "bk_sample_1",
-      studentId: "std_01",
-      studentName: "Tahmid Hasan",
-      grossAmount: 4000,
-      platformFee: 600,
-      teacherAmount: 3400,
-      status: "payable",
-      earnedAt: now - 3 * dayMs,
-    },
-    {
-      _id: "earn_sample_2",
-      teacherId: "tch_farzana",
-      teacherName: "Dr. Farzana Yasmin",
-      paymentId: "pay_sample_2",
-      bookingId: "bk_sample_2",
-      studentId: "std_02",
-      studentName: "Anika Tabassum",
-      grossAmount: 3500,
-      platformFee: 525,
-      teacherAmount: 2975,
-      status: "payable",
-      earnedAt: now - 1 * dayMs,
-    },
-  ];
+  return [];
 }
 
 function getInitialPayouts(): TeacherPayoutRecord[] {
-  const d = new Date();
-  const prevMonthStart = new Date(d.getFullYear(), d.getMonth() - 1, 1).getTime();
-  const prevMonthEnd = new Date(d.getFullYear(), d.getMonth(), 0, 23, 59, 59, 999).getTime();
-
-  return [
-    {
-      _id: "po_sample_1",
-      teacherId: "tch_rahim",
-      teacherName: "Prof. Md. Abdur Rahim",
-      settlementPeriodStart: prevMonthStart,
-      settlementPeriodEnd: prevMonthEnd,
-      grossEarnings: 12000,
-      platformCommission: 1800,
-      teacherPayable: 10200,
-      earningsCount: 3,
-      payoutMethod: "bank",
-      payoutReference: "BEFTN-2026-9921",
-      status: "paid",
-      notes: "Previous month-end settlement disbursed via City Bank Bangladesh",
-      approvedAt: prevMonthEnd + 86400000,
-      disbursedAt: prevMonthEnd + 172800000,
-      createdAt: prevMonthEnd,
-      updatedAt: prevMonthEnd + 172800000,
-    },
-  ];
+  return [];
 }
 
 function getInitialAuditLogs(): FinancialAuditLogRecord[] {
-  const now = Date.now();
-  const dayMs = 86400000;
-  return [
-    {
-      _id: "log_init_1",
-      actor: "system_treasury",
-      actorRole: "system",
-      action: "payment_finalized",
-      entity: "payment",
-      entityId: "pay_sample_1",
-      amount: 4000,
-      previousStatus: "initiated",
-      newStatus: "paid",
-      notes: "Verified via secure payment gateway for Tahmid Hasan",
-      timestamp: now - 3 * dayMs,
-    },
-    {
-      _id: "log_init_2",
-      actor: "system_treasury",
-      actorRole: "system",
-      action: "payment_finalized",
-      entity: "payment",
-      entityId: "pay_sample_2",
-      amount: 3500,
-      previousStatus: "initiated",
-      newStatus: "paid",
-      notes: "Verified via secure payment gateway for Anika Tabassum",
-      timestamp: now - 1 * dayMs,
-    },
-  ];
+  return [];
 }
 
 function notifyStoreChange() {
@@ -276,13 +150,21 @@ export function getStoredPayments(): PaymentRecord[] {
   try {
     const raw = localStorage.getItem(STORAGE_KEYS.PAYMENTS);
     if (!raw) {
-      const initial = getInitialPayments();
-      localStorage.setItem(STORAGE_KEYS.PAYMENTS, JSON.stringify(initial));
-      return initial;
+      return [];
     }
-    return JSON.parse(raw);
+    const parsed = JSON.parse(raw);
+    if (Array.isArray(parsed)) {
+      const realOnly = parsed.filter(
+        (p) => p && !FAKE_TEACHER_IDS.has(p.teacherId) && !p._id?.startsWith("pay_sample_")
+      );
+      if (realOnly.length !== parsed.length) {
+        localStorage.setItem(STORAGE_KEYS.PAYMENTS, JSON.stringify(realOnly));
+      }
+      return realOnly;
+    }
+    return [];
   } catch (_) {
-    return getInitialPayments();
+    return [];
   }
 }
 
@@ -297,13 +179,21 @@ export function getStoredEarnings(): TeacherEarningRecord[] {
   try {
     const raw = localStorage.getItem(STORAGE_KEYS.EARNINGS);
     if (!raw) {
-      const initial = getInitialEarnings();
-      localStorage.setItem(STORAGE_KEYS.EARNINGS, JSON.stringify(initial));
-      return initial;
+      return [];
     }
-    return JSON.parse(raw);
+    const parsed = JSON.parse(raw);
+    if (Array.isArray(parsed)) {
+      const realOnly = parsed.filter(
+        (e) => e && !FAKE_TEACHER_IDS.has(e.teacherId) && !e._id?.startsWith("earn_sample_")
+      );
+      if (realOnly.length !== parsed.length) {
+        localStorage.setItem(STORAGE_KEYS.EARNINGS, JSON.stringify(realOnly));
+      }
+      return realOnly;
+    }
+    return [];
   } catch (_) {
-    return getInitialEarnings();
+    return [];
   }
 }
 
@@ -318,13 +208,21 @@ export function getStoredPayouts(): TeacherPayoutRecord[] {
   try {
     const raw = localStorage.getItem(STORAGE_KEYS.PAYOUTS);
     if (!raw) {
-      const initial = getInitialPayouts();
-      localStorage.setItem(STORAGE_KEYS.PAYOUTS, JSON.stringify(initial));
-      return initial;
+      return [];
     }
-    return JSON.parse(raw);
+    const parsed = JSON.parse(raw);
+    if (Array.isArray(parsed)) {
+      const realOnly = parsed.filter(
+        (po) => po && !FAKE_TEACHER_IDS.has(po.teacherId) && !po._id?.startsWith("po_sample_")
+      );
+      if (realOnly.length !== parsed.length) {
+        localStorage.setItem(STORAGE_KEYS.PAYOUTS, JSON.stringify(realOnly));
+      }
+      return realOnly;
+    }
+    return [];
   } catch (_) {
-    return getInitialPayouts();
+    return [];
   }
 }
 

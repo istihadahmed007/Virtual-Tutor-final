@@ -586,7 +586,7 @@ export function useAuth() {
         success: false,
         providerNotice: false,
         error:
-          "Email verification code delivery is currently unavailable. Please sign in using your password or select a Quick Demo account.",
+          "Email verification code delivery is currently unavailable. Please sign in using your password.",
       };
     },
     [],
