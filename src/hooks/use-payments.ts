@@ -2,11 +2,19 @@ import { useState, useEffect, useMemo, useCallback } from "react";
 import { useAuth } from "@/hooks/use-auth";
 import {
   PaymentRecord,
+  OrderRecord,
   TeacherEarningRecord,
   TeacherPayoutRecord,
   FinancialAuditLogRecord,
   PAYMENT_STORE_EVENT,
   getStoredPayments,
+  getStoredOrders,
+  getStoredOrderById,
+  saveStoredOrders,
+  createOrderRecordLocal,
+  verifyOrderServerSideLocal,
+  adminVerifyOrderLocal,
+  adminRefundOrderLocal,
   getStoredEarnings,
   getStoredPayouts,
   getStoredAuditLogs,
@@ -194,6 +202,70 @@ export function usePaymentDetails(transactionId?: string) {
   return payment;
 }
 
+// ── Hook: Order Details (1-Page Modern Checkout) ──────────────────────────────
+export function useOrderDetails(orderId?: string) {
+  const getLocal = useCallback(() => {
+    if (orderId && orderId.trim().length > 0) {
+      const found = getStoredOrderById(orderId.trim());
+      if (found) return found;
+      return null;
+    }
+    const orders = getStoredOrders();
+    if (orders.length > 0) return orders[0];
+    return null;
+  }, [orderId]);
+
+  const [localOrder, setLocalOrder] = useState<OrderRecord | null>(getLocal);
+
+  useEffect(() => {
+    setLocalOrder(getLocal());
+    const handleUpdate = () => setLocalOrder(getLocal());
+    window.addEventListener(PAYMENT_STORE_EVENT, handleUpdate);
+    window.addEventListener("storage", handleUpdate);
+    return () => {
+      window.removeEventListener(PAYMENT_STORE_EVENT, handleUpdate);
+      window.removeEventListener("storage", handleUpdate);
+    };
+  }, [orderId, getLocal]);
+
+  return localOrder;
+}
+
+// ── Hook: Admin Orders Management Hook ───────────────────────────────────────
+export function useAdminOrders(statusFilter?: string, searchTerm?: string) {
+  const [localOrders, setLocalOrders] = useState<OrderRecord[]>(getStoredOrders);
+
+  useEffect(() => {
+    const handleUpdate = () => setLocalOrders(getStoredOrders());
+    window.addEventListener(PAYMENT_STORE_EVENT, handleUpdate);
+    window.addEventListener("storage", handleUpdate);
+    return () => {
+      window.removeEventListener(PAYMENT_STORE_EVENT, handleUpdate);
+      window.removeEventListener("storage", handleUpdate);
+    };
+  }, []);
+
+  return useMemo(() => {
+    let filtered = [...localOrders];
+    if (statusFilter && statusFilter !== "all") {
+      const sf = statusFilter.toUpperCase();
+      filtered = filtered.filter((o) => o.payment_status === sf);
+    }
+    if (searchTerm && searchTerm.trim()) {
+      const term = searchTerm.trim().toLowerCase();
+      filtered = filtered.filter(
+        (o) =>
+          o.order_id.toLowerCase().includes(term) ||
+          o.student_name.toLowerCase().includes(term) ||
+          o.teacher_name.toLowerCase().includes(term) ||
+          o.course_name.toLowerCase().includes(term) ||
+          o.subject.toLowerCase().includes(term)
+      );
+    }
+    return filtered;
+  }, [localOrders, statusFilter, searchTerm]);
+}
+
 // ── Hook: Financial Treasury Summary ──────────────────────────────────────────
 export function useFinancialSummary() {
   const [summary, setSummary] = useState(computeFinancialSummary);
@@ -293,6 +365,73 @@ export function useFinancialAuditLogs(limit: number = 100) {
 export function usePaymentMutations() {
   const { user } = useAuth();
 
+  const createOrder = useCallback(
+    async (params: {
+      orderId?: string;
+      teacherId: string;
+      teacherName: string;
+      teacherPhoto?: string;
+      courseId?: string;
+      courseName?: string;
+      subject?: string;
+      numberOfClasses?: number;
+      amount: number;
+      paymentGateway?: string;
+      studentPhone?: string;
+      studentEmail?: string;
+      studentName?: string;
+    }) => {
+      return createOrderRecordLocal({
+        ...params,
+        studentId: user?._id || "student_guest",
+        studentName: params.studentName || user?.name || "Student",
+        studentEmail: params.studentEmail || user?.email || "student@vartualtutor.com",
+        studentPhone: params.studentPhone || user?.phone,
+      });
+    },
+    [user]
+  );
+
+  const verifyPaymentOrder = useCallback(
+    async (params: {
+      orderId: string;
+      gatewayInvoiceId?: string;
+      paymentGateway?: string;
+      gatewayStatus: string;
+      paidAmount?: number;
+      bankTranId?: string;
+      serverSignature?: string;
+    }) => {
+      const localRes = verifyOrderServerSideLocal(params.orderId, {
+        status: params.gatewayStatus,
+        paidAmount: params.paidAmount,
+        gatewayTransactionId: params.bankTranId,
+        paymentMethod: params.paymentGateway,
+      });
+
+      return {
+        success: localRes.success,
+        order: localRes.order,
+        message: localRes.message || (localRes.success ? "Payment verified successfully" : undefined),
+      };
+    },
+    []
+  );
+
+  const adminVerifyOrder = useCallback(
+    async (orderId: string, notes?: string) => {
+      return adminVerifyOrderLocal(orderId, notes);
+    },
+    []
+  );
+
+  const adminRefundOrder = useCallback(
+    async (orderId: string, reason: string) => {
+      return adminRefundOrderLocal(orderId, reason);
+    },
+    []
+  );
+
   const initiatePayment = useCallback(
     async (params: {
       bookingId: string;
@@ -368,6 +507,10 @@ export function usePaymentMutations() {
   );
 
   return {
+    createOrder,
+    verifyPaymentOrder,
+    adminVerifyOrder,
+    adminRefundOrder,
     initiatePayment,
     verifyAndFinalizePayment,
     recordPaymentFailure,

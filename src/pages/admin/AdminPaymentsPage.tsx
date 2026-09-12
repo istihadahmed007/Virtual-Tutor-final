@@ -7,6 +7,7 @@ import {
   useSettlementPreview,
   usePaymentMutations,
 } from "@/hooks/use-payments";
+import { triggerDummyUddoktaPayment, type DummyPaymentTriggerResult } from "@/lib/uddoktapay-test";
 import { Id } from "@/convex/_generated/dataModel";
 import {
   CreditCard,
@@ -24,6 +25,8 @@ import {
   Copy,
   Check,
   ExternalLink,
+  Play,
+  Terminal,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
@@ -41,6 +44,30 @@ export default function AdminPaymentsPage() {
   const [statusFilter, setStatusFilter] = useState<string>("all");
   const [searchTerm, setSearchTerm] = useState<string>("");
   const [copiedPaymentLink, setCopiedPaymentLink] = useState(false);
+  const [isTestingGateway, setIsTestingGateway] = useState(false);
+  const [dummyTestResult, setDummyTestResult] = useState<DummyPaymentTriggerResult | null>(null);
+
+  const handleRunDummyPaymentTest = async () => {
+    setIsTestingGateway(true);
+    setDummyTestResult(null);
+    try {
+      const result = await triggerDummyUddoktaPayment({
+        studentName: "Test Student (Verification Run)",
+        subject: "Physics - Mechanics Masterclass",
+        amount: 1500,
+      });
+      setDummyTestResult(result);
+      if (result.success) {
+        toast.success("UddoktaPay initiation verified! Live checkout URL generated.");
+      } else {
+        toast.error(result.error || "Gateway initiation returned an error.");
+      }
+    } catch (err: any) {
+      toast.error(err?.message || "Failed to trigger dummy payment.");
+    } finally {
+      setIsTestingGateway(false);
+    }
+  };
 
   // Queries
   const summary = useFinancialSummary();
@@ -68,7 +95,14 @@ export default function AdminPaymentsPage() {
     adminCreateMonthlySettlement: createSettlementMut,
     adminUpdatePayoutStatus: updatePayoutStatusMut,
     adminProcessRefund: processRefundMut,
+    adminVerifyOrder,
+    adminRefundOrder,
   } = usePaymentMutations();
+
+  // Details Modal State
+  const [detailsModalOpen, setDetailsModalOpen] = useState(false);
+  const [selectedPaymentForDetails, setSelectedPaymentForDetails] = useState<any>(null);
+  const [isVerifyingPending, setIsVerifyingPending] = useState(false);
 
   // Refund Modal State
   const [refundModalOpen, setRefundModalOpen] = useState(false);
@@ -96,11 +130,19 @@ export default function AdminPaymentsPage() {
 
     setIsRefunding(true);
     try {
-      await processRefundMut({
-        paymentId: selectedPaymentForRefund._id as Id<"payments">,
-        reason: refundReason,
-      });
-      toast.success(`Payment ${selectedPaymentForRefund.transactionId} refunded successfully.`);
+      if (selectedPaymentForRefund._id) {
+        await processRefundMut({
+          paymentId: selectedPaymentForRefund._id as Id<"payments">,
+          reason: refundReason,
+        });
+      }
+      if (selectedPaymentForRefund.transactionId || selectedPaymentForRefund.order_id) {
+        await adminRefundOrder(
+          selectedPaymentForRefund.order_id || selectedPaymentForRefund.transactionId,
+          refundReason
+        );
+      }
+      toast.success(`Payment ${selectedPaymentForRefund.transactionId || selectedPaymentForRefund.order_id} refunded successfully.`);
       setRefundModalOpen(false);
       setSelectedPaymentForRefund(null);
       setRefundReason("");
@@ -108,6 +150,19 @@ export default function AdminPaymentsPage() {
       toast.error(err?.message || "Failed to process refund");
     } finally {
       setIsRefunding(false);
+    }
+  };
+
+  const handleVerifyPending = async (tx: any) => {
+    setIsVerifyingPending(true);
+    try {
+      const orderId = tx.order_id || tx.transactionId;
+      await adminVerifyOrder(orderId, "Admin manual verification");
+      toast.success(`Payment & Order ${orderId} verified successfully. Enrollment activated.`);
+    } catch (err: any) {
+      toast.error(err?.message || "Failed to verify pending payment");
+    } finally {
+      setIsVerifyingPending(false);
     }
   };
 
@@ -470,6 +525,116 @@ export default function AdminPaymentsPage() {
                   <span className="w-2 h-2 rounded-full bg-emerald-500"></span>
                   <span>Webhook listener & verification route: <code>/api/uddoktapay/verify</code></span>
                 </div>
+
+                {/* End-to-End Dummy Payment Verification Trigger */}
+                <div className="mt-4 pt-4 border-t border-stone-200">
+                  <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 bg-stone-50 p-3.5 rounded-2xl border border-stone-200">
+                    <div>
+                      <div className="flex items-center gap-1.5">
+                        <Terminal className="w-4 h-4 text-teal-700" />
+                        <h4 className="text-xs font-bold text-slate-900">End-to-End Gateway Trigger Test</h4>
+                      </div>
+                      <p className="text-[11px] text-slate-500 mt-0.5">
+                        Calls <code>/api/uddoktapay/init</code> with mock order data to verify routing, API secret handshake, and checkout URL generation.
+                      </p>
+                    </div>
+
+                    <Button
+                      id="btn-run-dummy-payment-test"
+                      type="button"
+                      disabled={isTestingGateway}
+                      onClick={handleRunDummyPaymentTest}
+                      className="shrink-0 bg-teal-800 hover:bg-teal-900 text-white rounded-xl text-xs font-bold gap-1.5 h-9 px-4 cursor-pointer shadow-xs"
+                    >
+                      {isTestingGateway ? (
+                        <>
+                          <Loader2 className="w-3.5 h-3.5 animate-spin" />
+                          <span>Triggering...</span>
+                        </>
+                      ) : (
+                        <>
+                          <Play className="w-3.5 h-3.5 fill-current" />
+                          <span>Run Dummy Payment Test</span>
+                        </>
+                      )}
+                    </Button>
+                  </div>
+
+                  {/* Test Result Display */}
+                  {dummyTestResult && (
+                    <div className={`mt-3 p-3.5 rounded-2xl border text-xs space-y-2.5 transition-all ${
+                      dummyTestResult.success
+                        ? "bg-emerald-50/70 border-emerald-300 text-emerald-950"
+                        : "bg-rose-50 border-rose-200 text-rose-950"
+                    }`}>
+                      <div className="flex items-center justify-between flex-wrap gap-2">
+                        <div className="flex items-center gap-1.5">
+                          {dummyTestResult.success ? (
+                            <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0" />
+                          ) : (
+                            <RotateCcw className="w-4 h-4 text-rose-600 shrink-0" />
+                          )}
+                          <span className="font-bold">
+                            {dummyTestResult.success
+                              ? "Routing Logic & Initiation Verified (HTTP 200 OK)"
+                              : `Gateway Test Failed (HTTP ${dummyTestResult.statusCode || "ERR"})`}
+                          </span>
+                        </div>
+                        <span className="text-[10px] font-mono text-slate-500">
+                          {new Date(dummyTestResult.executedAt).toLocaleTimeString()}
+                        </span>
+                      </div>
+
+                      <div className="grid grid-cols-1 sm:grid-cols-3 gap-2 text-[11px] font-mono bg-white/80 p-2.5 rounded-xl border border-stone-200">
+                        <div>
+                          <span className="text-slate-400 block text-[9px] font-sans uppercase">Transaction ID</span>
+                          <span className="font-bold truncate block">{dummyTestResult.transactionId}</span>
+                        </div>
+                        <div>
+                          <span className="text-slate-400 block text-[9px] font-sans uppercase">Invoice ID</span>
+                          <span className="font-bold truncate block">{dummyTestResult.invoiceId || "N/A"}</span>
+                        </div>
+                        <div>
+                          <span className="text-slate-400 block text-[9px] font-sans uppercase">Amount & Student</span>
+                          <span className="font-bold truncate block">৳{dummyTestResult.mockData.amount} · {dummyTestResult.mockData.studentName}</span>
+                        </div>
+                      </div>
+
+                      {dummyTestResult.paymentUrl && (
+                        <div className="flex items-center gap-2 pt-1">
+                          <a
+                            href={dummyTestResult.paymentUrl}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-teal-700 hover:bg-teal-800 text-white font-bold text-[11px] transition-colors"
+                          >
+                            <span>Open Generated Paymently Link</span>
+                            <ExternalLink className="w-3 h-3" />
+                          </a>
+                          <button
+                            type="button"
+                            onClick={() => {
+                              if (dummyTestResult.paymentUrl) {
+                                navigator.clipboard.writeText(dummyTestResult.paymentUrl);
+                                toast.success("Copied gateway URL to clipboard!");
+                              }
+                            }}
+                            className="inline-flex items-center gap-1 px-2.5 py-1.5 rounded-xl border border-stone-200 bg-white hover:bg-stone-50 text-slate-700 font-semibold text-[11px] cursor-pointer"
+                          >
+                            <Copy className="w-3 h-3" />
+                            <span>Copy URL</span>
+                          </button>
+                        </div>
+                      )}
+
+                      {dummyTestResult.error && (
+                        <p className="text-[11px] text-rose-700 font-medium pt-1">
+                          Error detail: {dummyTestResult.error}
+                        </p>
+                      )}
+                    </div>
+                  )}
+                </div>
               </div>
             </div>
           </div>
@@ -578,7 +743,28 @@ export default function AdminPaymentsPage() {
                         <td className="py-3 px-4 text-slate-500 whitespace-nowrap">
                           {new Date(tx.createdAt).toLocaleDateString()}
                         </td>
-                        <td className="py-3 px-4 text-right whitespace-nowrap">
+                        <td className="py-3 px-4 text-right whitespace-nowrap space-x-1.5">
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            onClick={() => {
+                              setSelectedPaymentForDetails(tx);
+                              setDetailsModalOpen(true);
+                            }}
+                            className="h-7 text-[11px] rounded-full text-slate-600 hover:text-slate-900"
+                          >
+                            Details
+                          </Button>
+                          {(tx.status === "pending" || tx.status === "initiated") && (
+                            <Button
+                              size="sm"
+                              disabled={isVerifyingPending}
+                              onClick={() => handleVerifyPending(tx)}
+                              className="h-7 text-[11px] rounded-full bg-emerald-700 hover:bg-emerald-800 text-white font-bold"
+                            >
+                              Verify Pending
+                            </Button>
+                          )}
                           {isPaid && (
                             <Button
                               variant="outline"
@@ -983,6 +1169,94 @@ export default function AdminPaymentsPage() {
               className="rounded-full bg-teal-700 hover:bg-teal-800 text-white text-xs font-bold"
             >
               {isUpdatingPayout ? "Saving..." : "Save Payout Update"}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* ─── MODAL: PAYMENT / ORDER DETAILS ─────────────────────────────────── */}
+      <Dialog open={detailsModalOpen} onOpenChange={setDetailsModalOpen}>
+        <DialogContent className="max-w-md rounded-3xl p-6">
+          <DialogHeader>
+            <DialogTitle className="text-base font-bold text-slate-900">
+              Payment & Order Record
+            </DialogTitle>
+            <DialogDescription className="text-xs text-slate-500">
+              Authoritative transaction audit and verification details
+            </DialogDescription>
+          </DialogHeader>
+
+          {selectedPaymentForDetails && (
+            <div className="space-y-4 text-xs py-2">
+              <div className="bg-stone-50 rounded-2xl p-4 border border-stone-200/80 space-y-2">
+                <div className="flex justify-between">
+                  <span className="text-slate-500">Transaction / Order ID:</span>
+                  <span className="font-mono font-bold text-slate-900">
+                    {selectedPaymentForDetails.transactionId || selectedPaymentForDetails.order_id}
+                  </span>
+                </div>
+                <div className="flex justify-between">
+                  <span className="text-slate-500">Student:</span>
+                  <span className="font-semibold text-slate-900">
+                    {selectedPaymentForDetails.studentName || selectedPaymentForDetails.student_name || "Student"}
+                  </span>
+                </div>
+                <div className="flex justify-between">
+                  <span className="text-slate-500">Teacher / Educator:</span>
+                  <span className="font-semibold text-slate-900">
+                    {selectedPaymentForDetails.teacherName || selectedPaymentForDetails.teacher_name || "Teacher"}
+                  </span>
+                </div>
+                <div className="flex justify-between">
+                  <span className="text-slate-500">Subject / Course:</span>
+                  <span className="font-semibold text-slate-900">
+                    {selectedPaymentForDetails.subject || selectedPaymentForDetails.course_name || "Academic Tuition"}
+                  </span>
+                </div>
+                <div className="flex justify-between">
+                  <span className="text-slate-500">Gateway / Method:</span>
+                  <span className="font-semibold text-slate-900 uppercase">
+                    {selectedPaymentForDetails.paymentGateway || selectedPaymentForDetails.payment_gateway || "bKash / UddoktaPay"}
+                  </span>
+                </div>
+                <div className="flex justify-between">
+                  <span className="text-slate-500">Status:</span>
+                  <span className="font-bold text-teal-800 uppercase">
+                    {selectedPaymentForDetails.status || selectedPaymentForDetails.payment_status}
+                  </span>
+                </div>
+              </div>
+
+              <div className="grid grid-cols-3 gap-2">
+                <div className="p-2.5 rounded-xl bg-stone-50 border border-stone-200 text-center">
+                  <span className="text-[10px] text-slate-400 block font-medium">Gross Amount</span>
+                  <span className="font-bold text-slate-900">
+                    ৳{(selectedPaymentForDetails.amount || 0).toLocaleString()}
+                  </span>
+                </div>
+                <div className="p-2.5 rounded-xl bg-stone-50 border border-stone-200 text-center">
+                  <span className="text-[10px] text-teal-600 block font-medium">15% Fee</span>
+                  <span className="font-bold text-teal-700">
+                    ৳{(selectedPaymentForDetails.platformFee || Math.round((selectedPaymentForDetails.amount || 0) * 0.15)).toLocaleString()}
+                  </span>
+                </div>
+                <div className="p-2.5 rounded-xl bg-stone-50 border border-stone-200 text-center">
+                  <span className="text-[10px] text-blue-600 block font-medium">85% Educator</span>
+                  <span className="font-bold text-blue-700">
+                    ৳{(selectedPaymentForDetails.teacherAmount || Math.round((selectedPaymentForDetails.amount || 0) * 0.85)).toLocaleString()}
+                  </span>
+                </div>
+              </div>
+            </div>
+          )}
+
+          <DialogFooter className="flex justify-end">
+            <Button
+              variant="outline"
+              onClick={() => setDetailsModalOpen(false)}
+              className="rounded-full text-xs"
+            >
+              Close
             </Button>
           </DialogFooter>
         </DialogContent>

@@ -54,9 +54,7 @@ export default function Dashboard() {
 
   useEffect(() => {
     try {
-      const storedLessons =
-        localStorage.getItem("vtp_student_lessons") ||
-        localStorage.getItem("vtp_mock_student_lessons");
+      const storedLessons = localStorage.getItem("vtp_student_lessons");
       if (storedLessons) {
         const parsed = JSON.parse(storedLessons);
         if (Array.isArray(parsed)) {
@@ -69,7 +67,6 @@ export default function Dashboard() {
           );
           setLocalLessons(realLessons);
           localStorage.setItem("vtp_student_lessons", JSON.stringify(realLessons));
-          localStorage.removeItem("vtp_mock_student_lessons");
         }
       }
       setHasViewedTeachers(

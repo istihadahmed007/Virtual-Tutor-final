@@ -941,16 +941,42 @@ const schema = defineSchema(
     // ─── Financial: Payments ──────────────────────────────
     payments: defineTable({
       bookingId: v.string(),
+      orderId: v.optional(v.string()),
       studentId: v.string(),
       studentName: v.optional(v.string()),
+      studentPhone: v.optional(v.string()),
+      studentEmail: v.optional(v.string()),
       teacherId: v.string(),
       teacherName: v.optional(v.string()),
+      teacherPhoto: v.optional(v.string()),
+      courseId: v.optional(v.string()),
+      courseName: v.optional(v.string()),
+      subject: v.optional(v.string()),
+      numberOfClasses: v.optional(v.number()),
       amount: v.number(),
       currency: v.string(), // "BDT"
-      gateway: v.string(), // "direct" | "gateway"
+      gateway: v.string(), // "direct" | "gateway" | "uddoktapay"
+      paymentGateway: v.optional(v.string()), // "bKash" | "Nagad" | "Rocket" | "Cards"
+      gatewayInvoiceId: v.optional(v.string()),
       transactionId: v.string(), // Virtual Tutor internal Tran ID (e.g. VT-TXN-...)
       gatewayTransactionId: v.optional(v.string()), // val_id or bank_tran_id
       paymentMethod: v.optional(v.string()), // e.g. "BKASH-BKash", "NAGAD-Nagad", "VISA-CityBank"
+      paymentStatus: v.optional(
+        v.union(
+          v.literal("PENDING"),
+          v.literal("PAID"),
+          v.literal("FAILED"),
+          v.literal("CANCELLED"),
+          v.literal("REFUNDED"),
+        ),
+      ),
+      enrollmentStatus: v.optional(
+        v.union(
+          v.literal("PENDING"),
+          v.literal("ACTIVE"),
+          v.literal("CANCELLED"),
+        ),
+      ),
       status: v.union(
         v.literal("initiated"),
         v.literal("pending"),
@@ -973,6 +999,50 @@ const schema = defineSchema(
       .index("by_teacher", ["teacherId"])
       .index("by_transaction", ["transactionId"])
       .index("by_status", ["status"])
+      .index("by_created", ["createdAt"]),
+
+    // ─── Financial: Orders & Bangladesh Course Enrollments ──
+    orders: defineTable({
+      orderId: v.string(),
+      studentId: v.string(),
+      studentName: v.string(),
+      studentEmail: v.string(),
+      studentPhone: v.optional(v.string()),
+      teacherId: v.string(),
+      teacherName: v.string(),
+      teacherPhoto: v.optional(v.string()),
+      courseId: v.string(),
+      courseName: v.string(),
+      subject: v.string(),
+      numberOfClasses: v.number(),
+      amount: v.number(),
+      currency: v.string(), // "BDT"
+      paymentGateway: v.string(), // "bKash" | "Nagad" | "Rocket" | "Cards / Internet Banking"
+      gatewayInvoiceId: v.optional(v.string()),
+      gatewayPaymentUrl: v.optional(v.string()),
+      paymentStatus: v.union(
+        v.literal("PENDING"),
+        v.literal("PAID"),
+        v.literal("FAILED"),
+        v.literal("CANCELLED"),
+        v.literal("REFUNDED"),
+      ),
+      enrollmentStatus: v.union(
+        v.literal("PENDING"),
+        v.literal("ACTIVE"),
+        v.literal("CANCELLED"),
+      ),
+      bookingId: v.optional(v.string()),
+      lessonId: v.optional(v.string()),
+      paidAt: v.optional(v.number()),
+      createdAt: v.number(),
+      updatedAt: v.number(),
+    })
+      .index("by_order_id", ["orderId"])
+      .index("by_student", ["studentId"])
+      .index("by_teacher", ["teacherId"])
+      .index("by_payment_status", ["paymentStatus"])
+      .index("by_enrollment_status", ["enrollmentStatus"])
       .index("by_created", ["createdAt"]),
 
     // ─── Financial: Teacher Earnings (Commission Engine) ───

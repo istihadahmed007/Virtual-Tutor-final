@@ -77,7 +77,7 @@ export function BookingSummary({
   const [bookingDate, setBookingDate] = useState<string>(() => getNextWeekdayDate(booking.day));
 
   const createBookingMut = useMutation(api.bookings.create);
-  const { initiatePayment } = usePaymentMutations();
+  const { createOrder, initiatePayment } = usePaymentMutations();
 
   const studentTz = Intl.DateTimeFormat().resolvedOptions().timeZone || "UTC";
 
@@ -148,7 +148,20 @@ export function BookingSummary({
         console.warn("Local admin booking record notice:", err);
       }
 
-      // 2. Authoritatively initiate the payment transaction record
+      // 2. Authoritatively create the order & payment record
+      const orderRes = await createOrder({
+        teacherId: teacher.userId || teacher._id,
+        teacherName: teacher.name,
+        teacherPhoto: teacher.avatarUrl || (teacher as any).profileImage,
+        courseName: `${booking.subject} Academic Class (${booking.sessionType || "1-to-1"})`,
+        subject: booking.subject,
+        numberOfClasses: 1,
+        amount: booking.price,
+        studentName: user.name,
+        studentEmail: user.email,
+        studentPhone: user.phone,
+      });
+
       const paymentRes = await initiatePayment({
         bookingId: String(newBookingId),
         studentId: user._id,
@@ -161,24 +174,25 @@ export function BookingSummary({
         scheduledTime: booking.time,
       } as any);
 
-      if (!paymentRes || !paymentRes.success) {
+      if (!orderRes && (!paymentRes || !paymentRes.success)) {
         throw new Error("Failed to initiate tuition payment.");
       }
 
-      toast.success("Tuition booking created. Initializing payment...");
+      toast.success("Order created. Initializing checkout...");
 
       let gatewayUrl: string | undefined;
+      const targetOrderId = orderRes?.order_id || paymentRes.transactionId;
       // Attempt UddoktaPay charge creation
       try {
         const uddoktaRes = await fetch("/api/uddoktapay/init", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
-            transactionId: paymentRes.transactionId,
-            amount: paymentRes.amount,
+            transactionId: targetOrderId,
+            amount: booking.price,
             bookingId: String(newBookingId),
-            studentName: paymentRes.studentName || user?.name || "Student",
-            studentEmail: user?.email || "student@virtualtutorpro.com",
+            studentName: user?.name || "Student",
+            studentEmail: user?.email || "student@vartualtutor.com",
             teacherName: teacher.name,
             subject: booking.subject,
           }),
@@ -187,21 +201,15 @@ export function BookingSummary({
         const uddoktaData = await uddoktaRes.json();
         if (uddoktaData.payment_url) {
           gatewayUrl = uddoktaData.payment_url;
-          // Attempt opening payment gateway in a separate tab to respect X-Frame-Options
-          try {
-            window.open(uddoktaData.payment_url, "_blank", "noopener,noreferrer");
-          } catch {
-            // Popup blocker or iframe restriction handled gracefully
-          }
         }
       } catch (e) {
         console.warn("UddoktaPay direct init notice:", e);
       }
 
-      // Seamlessly navigate to interactive checkout page
+      // Seamlessly navigate to interactive 1-page checkout
       const checkoutUrl = gatewayUrl
-        ? `/checkout/${paymentRes.transactionId}?gatewayUrl=${encodeURIComponent(gatewayUrl)}`
-        : `/checkout/${paymentRes.transactionId}`;
+        ? `/checkout/${targetOrderId}?gatewayUrl=${encodeURIComponent(gatewayUrl)}`
+        : `/checkout/${targetOrderId}`;
       navigate(checkoutUrl);
     } catch (err: unknown) {
       console.warn("Booking/payment error:", err);

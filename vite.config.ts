@@ -241,6 +241,34 @@ function uddoktapayApiPlugin(): Plugin {
   return {
     name: "uddoktapay-api-plugin",
     configureServer(server) {
+      // Intercept POST redirects from UddoktaPay to /checkout/:id and forward as 303 GET
+      server.middlewares.use(async (req, res, next) => {
+        if (req.url && req.url.startsWith("/checkout") && req.method === "POST") {
+          let raw = "";
+          req.on("data", (chunk) => {
+            raw += chunk;
+          });
+          req.on("end", () => {
+            let invoiceId = "";
+            try {
+              const body = JSON.parse(raw);
+              invoiceId = body.invoice_id || body.invoiceId || "";
+            } catch {
+              const params = new URLSearchParams(raw);
+              invoiceId = params.get("invoice_id") || params.get("invoiceId") || "";
+            }
+            const cleanUrl = req.url || "/checkout";
+            const target = invoiceId
+              ? `${cleanUrl}${cleanUrl.includes("?") ? "&" : "?"}invoice_id=${encodeURIComponent(invoiceId)}`
+              : cleanUrl;
+            res.writeHead(303, { Location: target });
+            res.end();
+          });
+          return;
+        }
+        next();
+      });
+
       // 1. Gateway Configuration Status
       server.middlewares.use("/api/uddoktapay/config", (req, res) => {
         const apiKey = process.env.UDDOKTAPAY_API_KEY?.trim();
@@ -288,22 +316,24 @@ function uddoktapayApiPlugin(): Plugin {
           const baseUrl = rawBaseUrl.replace(/\/+$/, "").replace(/\/api$/, "");
 
           // Resolve site origin for redirects
-          const origin = (req.headers.origin as string) || (req.headers.referer ? new URL(req.headers.referer as string).origin : "http://localhost:3000");
+          const rawOrigin = (body.origin as string) || (req.headers.origin as string) || (req.headers.referer ? new URL(req.headers.referer as string).origin : "http://localhost:3000");
+          const origin = rawOrigin.replace(/\/+$/, "");
 
           if (apiKey) {
             try {
               const uddoktaPayload = {
                 full_name: studentName || "Virtual Tutor Student",
-                email: studentEmail || "student@virtualtutorpro.com",
+                email: studentEmail || "student@vartualtutor.com",
                 amount: String(amount),
                 metadata: {
                   bookingId: String(bookingId || ""),
                   transactionId: String(transactionId || ""),
+                  orderId: String(transactionId || ""),
                   teacherName: String(teacherName || ""),
                   subject: String(subject || ""),
                 },
-                redirect_url: `${origin}/checkout/${transactionId}?gateway_status=success`,
-                cancel_url: `${origin}/checkout/${transactionId}?gateway_status=cancel`,
+                redirect_url: `${origin}/checkout/${transactionId}`,
+                cancel_url: `${origin}/checkout/${transactionId}?status=cancel`,
                 webhook_url: `${origin}/api/uddoktapay/ipn`,
                 return_type: "GET",
               };
@@ -321,6 +351,12 @@ function uddoktapayApiPlugin(): Plugin {
               const uddoktaData = (await uddoktaRes.json()) as any;
 
               if (uddoktaData && uddoktaData.payment_url) {
+                let invoiceId = uddoktaData.invoice_id;
+                if (!invoiceId && uddoktaData.payment_url) {
+                  const parts = uddoktaData.payment_url.split("/");
+                  invoiceId = parts[parts.length - 1] || null;
+                }
+
                 res.setHeader("Content-Type", "application/json");
                 res.end(
                   JSON.stringify({
@@ -328,29 +364,45 @@ function uddoktapayApiPlugin(): Plugin {
                     configured: true,
                     payment_url: uddoktaData.payment_url,
                     redirectUrl: uddoktaData.payment_url,
-                    invoice_id: uddoktaData.invoice_id || null,
+                    invoice_id: invoiceId,
                   })
                 );
                 return;
               }
 
-              console.warn("[UddoktaPay Init Warning] Gateway rejected charge creation:", uddoktaData);
-            } catch (apiErr) {
+              console.warn("[UddoktaPay Init Warning] Gateway response:", uddoktaData);
+              res.statusCode = 400;
+              res.setHeader("Content-Type", "application/json");
+              res.end(
+                JSON.stringify({
+                  status: false,
+                  configured: true,
+                  error: uddoktaData?.message || "Payment initiation declined by UddoktaPay",
+                })
+              );
+              return;
+            } catch (apiErr: any) {
               console.warn("[UddoktaPay Gateway Error] Failed to reach UddoktaPay host:", apiErr);
+              res.statusCode = 502;
+              res.setHeader("Content-Type", "application/json");
+              res.end(
+                JSON.stringify({
+                  status: false,
+                  error: `Could not reach UddoktaPay host: ${apiErr?.message || "Network Error"}`,
+                })
+              );
+              return;
             }
           }
 
-          // Fallback if API key not set or during local preview
+          // In case API key is missing
+          res.statusCode = 500;
           res.setHeader("Content-Type", "application/json");
           res.end(
             JSON.stringify({
-              status: true,
-              configured: Boolean(apiKey),
-              payment_url: null,
-              redirectUrl: `/checkout/${transactionId}?gateway=uddoktapay&simulated=true`,
-              message: apiKey
-                ? "UddoktaPay charge generated; proceeding to checkout."
-                : "UddoktaPay integration active. Set UDDOKTAPAY_API_KEY in environment for live hosted gateway.",
+              status: false,
+              configured: false,
+              error: "UddoktaPay API key is not configured in the server environment.",
             })
           );
         } catch (err: any) {
@@ -394,21 +446,27 @@ function uddoktapayApiPlugin(): Plugin {
               res.setHeader("Content-Type", "application/json");
               res.end(JSON.stringify(verifyData));
               return;
-            } catch (vErr) {
+            } catch (vErr: any) {
               console.warn("[UddoktaPay Verify Error]", vErr);
+              res.statusCode = 502;
+              res.setHeader("Content-Type", "application/json");
+              res.end(
+                JSON.stringify({
+                  status: "ERROR",
+                  error: `Could not reach UddoktaPay server: ${vErr?.message || "Network Error"}`,
+                })
+              );
+              return;
             }
           }
 
-          // Fallback verification for demo/sandbox simulation
+          // If no API key or no invoice ID was supplied
+          res.statusCode = 400;
           res.setHeader("Content-Type", "application/json");
           res.end(
             JSON.stringify({
-              status: "COMPLETED",
-              invoice_id: invoiceId || `INV-${Date.now()}`,
-              payment_method: "UddoktaPay Direct",
-              transaction_id: `UDD-${Date.now().toString(36).toUpperCase()}`,
-              amount: body.amount || "1500",
-              date: new Date().toISOString(),
+              status: "ERROR",
+              error: "Missing invoice ID or UddoktaPay server credentials.",
             })
           );
         } catch (err: any) {

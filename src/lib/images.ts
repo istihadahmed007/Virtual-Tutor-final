@@ -46,7 +46,7 @@ export const SUBJECT_IMAGES: Record<string, string> = {
   Biology: unsplash("photo-1530026405186-ed1f139313f8", 500),
   Programming: unsplash("photo-1461749280684-dccba630e2f6", 500),
   "IELTS": unsplash("photo-1434030216411-0b793f4b4173", 500),
-  "Business": unsplash("photo-1507003211169-0a1dd7228f2d", 500),
+  "Business": unsplash("photo-1486406146926-c627a92ad1ab", 500),
   Design: unsplash("photo-1558655146-9f40138edfeb", 500),
   "Data Analytics": unsplash("photo-1551288049-bebda4e38f71", 500),
   Accounting: unsplash("photo-1554224155-6726b3ff858f", 500),

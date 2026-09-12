@@ -1172,3 +1172,613 @@ export const adminProcessRefund = mutation({
     return { success: true };
   },
 });
+
+// ─── 1-Page Modern Checkout: Secure Order Creation ───────────────────────────
+export const createOrder = mutation({
+  args: {
+    teacherId: v.string(),
+    courseId: v.optional(v.string()),
+    courseName: v.optional(v.string()),
+    subject: v.optional(v.string()),
+    numberOfClasses: v.optional(v.number()),
+    amount: v.optional(v.number()),
+    paymentGateway: v.optional(v.string()), // "bKash" | "Nagad" | "Rocket" | "Cards / Internet Banking"
+    studentPhone: v.optional(v.string()),
+    studentEmail: v.optional(v.string()),
+    studentName: v.optional(v.string()),
+  },
+  handler: async (ctx, args) => {
+    let authUserId = await getAuthUserId(ctx);
+    let user: any = null;
+
+    if (authUserId) {
+      try {
+        user = await ctx.db.get(authUserId as Id<"users">);
+      } catch {}
+    }
+
+    if (!user && args.studentEmail) {
+      const normalizedEmail = args.studentEmail.trim().toLowerCase();
+      user = await ctx.db
+        .query("users")
+        .withIndex("email", (q) => q.eq("email", normalizedEmail))
+        .first();
+      if (user) {
+        authUserId = user._id;
+      }
+    }
+
+    // Fetch Teacher Profile for authoritative verification
+    let teacherProfile: any = null;
+    try {
+      teacherProfile = await ctx.db
+        .query("teacherProfiles")
+        .withIndex("by_user", (q) => q.eq("userId", args.teacherId))
+        .first();
+    } catch {}
+
+    if (!teacherProfile) {
+      try {
+        teacherProfile = await ctx.db.get(args.teacherId as any);
+      } catch {}
+    }
+
+    const teacherName = teacherProfile?.name || "Verified Virtual Tutor Instructor";
+    const teacherPhoto = teacherProfile?.avatarUrl || undefined;
+    const resolvedSubject = args.subject || teacherProfile?.subjects?.[0] || "Academic Tutoring";
+    const resolvedCourseName =
+      args.courseName || `${resolvedSubject} Monthly Tuition Package`;
+    const resolvedClasses = args.numberOfClasses || 12;
+
+    // Authoritative pricing: resolve from teacher hourly/monthly rate
+    let resolvedAmount = 3000;
+    if (teacherProfile?.hourlyRate && teacherProfile.hourlyRate >= 500) {
+      resolvedAmount = Math.round(teacherProfile.hourlyRate);
+    } else if (args.amount && args.amount >= 500) {
+      resolvedAmount = Math.round(args.amount);
+    }
+
+    const now = Date.now();
+    const orderId = `VT-ORD-${now.toString().slice(-6)}-${Math.random().toString(36).substring(2, 6).toUpperCase()}`;
+    const gateway = args.paymentGateway || "bKash";
+    const gatewayInvoiceId = `INV-${orderId}`;
+
+    const studentId = authUserId ? String(authUserId) : "student_guest";
+    const studentName = args.studentName || user?.name || "Student";
+    const studentEmail = args.studentEmail || user?.email || "student@vartualtutor.com";
+    const studentPhone = args.studentPhone || user?.phone || "";
+
+    // 1. Create order record in orders table
+    const orderDocId = await ctx.db.insert("orders", {
+      orderId,
+      studentId,
+      studentName,
+      studentEmail,
+      studentPhone: studentPhone || undefined,
+      teacherId: args.teacherId,
+      teacherName,
+      teacherPhoto,
+      courseId: args.courseId || `crs_${args.teacherId}`,
+      courseName: resolvedCourseName,
+      subject: resolvedSubject,
+      numberOfClasses: resolvedClasses,
+      amount: resolvedAmount,
+      currency: "BDT",
+      paymentGateway: gateway,
+      gatewayInvoiceId,
+      paymentStatus: "PENDING",
+      enrollmentStatus: "PENDING",
+      createdAt: now,
+      updatedAt: now,
+    });
+
+    // 2. Also create linked payment record for full backward compatibility
+    const paymentDocId = await ctx.db.insert("payments", {
+      orderId,
+      bookingId: orderId,
+      studentId,
+      studentName,
+      studentPhone: studentPhone || undefined,
+      studentEmail,
+      teacherId: args.teacherId,
+      teacherName,
+      teacherPhoto,
+      courseId: args.courseId || `crs_${args.teacherId}`,
+      courseName: resolvedCourseName,
+      subject: resolvedSubject,
+      numberOfClasses: resolvedClasses,
+      amount: resolvedAmount,
+      currency: "BDT",
+      gateway: gateway.toLowerCase().includes("bkash")
+        ? "bkash"
+        : gateway.toLowerCase().includes("nagad")
+        ? "nagad"
+        : gateway.toLowerCase().includes("rocket")
+        ? "rocket"
+        : "card",
+      paymentGateway: gateway,
+      gatewayInvoiceId,
+      transactionId: orderId,
+      status: "pending",
+      paymentStatus: "PENDING",
+      enrollmentStatus: "PENDING",
+      createdAt: now,
+      updatedAt: now,
+    });
+
+    // Audit Log
+    await ctx.db.insert("financialAuditLogs", {
+      actor: studentId,
+      actorRole: "student",
+      action: "order_created",
+      entity: "order",
+      entityId: String(orderDocId),
+      amount: resolvedAmount,
+      previousStatus: "none",
+      newStatus: "PENDING",
+      notes: `Order created for ${resolvedCourseName} with ${teacherName} (${gateway})`,
+      timestamp: now,
+    });
+
+    return {
+      success: true,
+      orderId,
+      paymentId: paymentDocId,
+      amount: resolvedAmount,
+      currency: "BDT",
+      gatewayInvoiceId,
+      courseName: resolvedCourseName,
+      teacherName,
+      teacherPhoto,
+      subject: resolvedSubject,
+      numberOfClasses: resolvedClasses,
+      studentName,
+      studentEmail,
+      studentPhone,
+    };
+  },
+});
+
+// ─── Authoritative Server-Side Payment Verification & Enrollment Activation ───
+export const verifyPaymentOrder = mutation({
+  args: {
+    orderId: v.string(),
+    gatewayInvoiceId: v.optional(v.string()),
+    paymentGateway: v.optional(v.string()),
+    gatewayStatus: v.string(), // Server-side validated status (e.g. "PAID" | "COMPLETED" | "SUCCESS")
+    paidAmount: v.optional(v.number()),
+    serverSignature: v.optional(v.string()),
+    bankTranId: v.optional(v.string()),
+  },
+  handler: async (ctx, args) => {
+    // 1. Authoritative Lookup
+    let order = await ctx.db
+      .query("orders")
+      .withIndex("by_order_id", (q) => q.eq("orderId", args.orderId))
+      .first();
+
+    if (!order) {
+      // Fallback: check payments table by transactionId
+      const paymentFallback = await ctx.db
+        .query("payments")
+        .withIndex("by_transaction", (q) => q.eq("transactionId", args.orderId))
+        .first();
+
+      if (paymentFallback) {
+        order = {
+          _id: paymentFallback._id as any,
+          orderId: paymentFallback.orderId || paymentFallback.transactionId,
+          studentId: paymentFallback.studentId,
+          studentName: paymentFallback.studentName || "Student",
+          studentEmail: paymentFallback.studentEmail || "student@vartualtutor.com",
+          studentPhone: paymentFallback.studentPhone,
+          teacherId: paymentFallback.teacherId,
+          teacherName: paymentFallback.teacherName || "Instructor",
+          teacherPhoto: paymentFallback.teacherPhoto,
+          courseId: paymentFallback.courseId || "crs_default",
+          courseName: paymentFallback.courseName || "Academic Tutoring Course",
+          subject: paymentFallback.subject || "Tuition",
+          numberOfClasses: paymentFallback.numberOfClasses || 12,
+          amount: paymentFallback.amount,
+          currency: paymentFallback.currency || "BDT",
+          paymentGateway: args.paymentGateway || paymentFallback.paymentGateway || "bKash",
+          gatewayInvoiceId: paymentFallback.gatewayInvoiceId,
+          paymentStatus: (paymentFallback.paymentStatus || "PENDING") as any,
+          enrollmentStatus: (paymentFallback.enrollmentStatus || "PENDING") as any,
+          createdAt: paymentFallback.createdAt,
+          updatedAt: paymentFallback.updatedAt,
+        } as any;
+      }
+    }
+
+    if (!order) {
+      throw new Error(`Order ${args.orderId} not found.`);
+    }
+
+    // Idempotency: If already PAID and ACTIVE, return success
+    if (order.paymentStatus === "PAID" && order.enrollmentStatus === "ACTIVE") {
+      return {
+        success: true,
+        alreadyVerified: true,
+        orderId: order.orderId,
+        paymentStatus: "PAID",
+        enrollmentStatus: "ACTIVE",
+        message: "Payment already verified and enrollment active.",
+      };
+    }
+
+    // 2. Strict Server-Side Validation: Never mark paid without successful status check
+    const normalizedStatus = args.gatewayStatus.toUpperCase();
+    const isSuccess =
+      normalizedStatus === "PAID" ||
+      normalizedStatus === "COMPLETED" ||
+      normalizedStatus === "VALID" ||
+      normalizedStatus === "SUCCESS";
+
+    const now = Date.now();
+
+    if (!isSuccess) {
+      // Mark as FAILED / CANCELLED and do NOT activate enrollment
+      const failedStatus = normalizedStatus === "CANCELLED" ? "CANCELLED" : "FAILED";
+      if (order._id) {
+        try {
+          await ctx.db.patch(order._id, {
+            paymentStatus: failedStatus,
+            enrollmentStatus: "CANCELLED",
+            updatedAt: now,
+          });
+        } catch {}
+      }
+
+      // Update linked payment record
+      const linkedPayment = await ctx.db
+        .query("payments")
+        .withIndex("by_transaction", (q) => q.eq("transactionId", args.orderId))
+        .first();
+
+      if (linkedPayment) {
+        await ctx.db.patch(linkedPayment._id, {
+          status: "failed",
+          paymentStatus: failedStatus,
+          enrollmentStatus: "CANCELLED",
+          updatedAt: now,
+        });
+      }
+
+      return {
+        success: false,
+        orderId: order.orderId,
+        paymentStatus: failedStatus,
+        enrollmentStatus: "CANCELLED",
+        message: "Payment was not completed by the gateway.",
+      };
+    }
+
+    // Authoritative Amount Verification
+    if (args.paidAmount !== undefined && Math.abs(args.paidAmount - order.amount) > 1) {
+      throw new Error(
+        `Security verification failed: Charged amount (৳${args.paidAmount}) does not match order amount (৳${order.amount}).`
+      );
+    }
+
+    // 3. Create or Activate Lesson & Booking in the Virtual Tutor system
+    const scheduledAt = now + 24 * 60 * 60 * 1000;
+    const meetingCode = `VT-${Math.random().toString(36).substring(2, 8).toUpperCase()}`;
+
+    let lessonId: string | undefined = order.lessonId;
+    let bookingId: string | undefined = order.bookingId;
+
+    if (!lessonId) {
+      const lessonDoc = await ctx.db.insert("lessons", {
+        teacherId: order.teacherId,
+        teacherName: order.teacherName,
+        studentId: order.studentId,
+        studentName: order.studentName,
+        subject: order.subject,
+        title: `${order.courseName} - Live Classroom`,
+        scheduledAt,
+        durationMinutes: 60,
+        status: "scheduled",
+        sessionType: "1-to-1",
+        price: order.amount,
+        meetingCode,
+      });
+      lessonId = String(lessonDoc);
+    }
+
+    if (!bookingId) {
+      const bookingDoc = await ctx.db.insert("bookings", {
+        userId: order.studentId,
+        teacherId: order.teacherId,
+        teacherName: order.teacherName,
+        studentName: order.studentName,
+        lessonId,
+        date: new Date(scheduledAt).toISOString().split("T")[0],
+        timeSlot: "10:00 AM - 11:00 AM",
+        durationMinutes: 60,
+        subject: order.subject,
+        sessionType: "1-to-1",
+        price: order.amount,
+        status: "confirmed",
+        meetingCode,
+        createdAt: now,
+      });
+      bookingId = String(bookingDoc);
+    }
+
+    // 4. Update order to PAID and enrollment to ACTIVE
+    try {
+      await ctx.db.patch(order._id, {
+        paymentStatus: "PAID",
+        enrollmentStatus: "ACTIVE",
+        paidAt: now,
+        lessonId,
+        bookingId,
+        updatedAt: now,
+      });
+    } catch {}
+
+    // Update linked payments record
+    const linkedPayment = await ctx.db
+      .query("payments")
+      .withIndex("by_transaction", (q) => q.eq("transactionId", args.orderId))
+      .first();
+
+    if (linkedPayment) {
+      await ctx.db.patch(linkedPayment._id, {
+        status: "paid",
+        paymentStatus: "PAID",
+        enrollmentStatus: "ACTIVE",
+        paidAt: now,
+        bookingId: bookingId || linkedPayment.bookingId,
+        gatewayTransactionId: args.bankTranId || `GTX-${now}`,
+        updatedAt: now,
+      });
+    }
+
+    // 5. Credit Educator Earnings (85% Educator, 15% Platform Commission)
+    const { platformFee, teacherAmount } = calculateCommission(order.amount);
+    const existingEarning = await ctx.db
+      .query("teacherEarnings")
+      .withIndex("by_booking", (q) => q.eq("bookingId", bookingId || order.orderId))
+      .first();
+
+    if (!existingEarning) {
+      await ctx.db.insert("teacherEarnings", {
+        teacherId: order.teacherId,
+        teacherName: order.teacherName,
+        paymentId: linkedPayment ? String(linkedPayment._id) : String(order._id),
+        bookingId: bookingId || order.orderId,
+        studentId: order.studentId,
+        studentName: order.studentName,
+        grossAmount: order.amount,
+        platformFee,
+        teacherAmount,
+        status: "payable",
+        earnedAt: now,
+        createdAt: now,
+        updatedAt: now,
+      });
+    }
+
+    // 6. Send In-App Notifications
+    try {
+      await ctx.db.insert("notifications", {
+        userId: order.studentId,
+        type: "payment_success",
+        title: "Payment Successful ✓ Class Activated!",
+        message: `Your payment of ৳${order.amount.toLocaleString()} for ${order.courseName} with ${order.teacherName} has been verified. Your class enrollment is now ACTIVE.`,
+        read: false,
+        actionUrl: `/classroom?sessionId=${lessonId}`,
+        createdAt: now,
+      });
+
+      await ctx.db.insert("notifications", {
+        userId: order.teacherId,
+        type: "booking_confirmed",
+        title: "New Student Enrolled & Paid",
+        message: `${order.studentName} enrolled in ${order.courseName} (৳${order.amount.toLocaleString()} BDT). Net payable: ৳${teacherAmount.toLocaleString()} BDT.`,
+        read: false,
+        actionUrl: "/teacher-dashboard",
+        createdAt: now,
+      });
+    } catch {}
+
+    // Audit Log
+    await ctx.db.insert("financialAuditLogs", {
+      actor: "server_gateway_verifier",
+      actorRole: "system",
+      action: "order_payment_verified",
+      entity: "order",
+      entityId: String(order._id),
+      amount: order.amount,
+      previousStatus: "PENDING",
+      newStatus: "PAID",
+      notes: `Order ${order.orderId} verified via ${order.paymentGateway}. Enrollment status ACTIVE.`,
+      timestamp: now,
+    });
+
+    return {
+      success: true,
+      orderId: order.orderId,
+      paymentStatus: "PAID",
+      enrollmentStatus: "ACTIVE",
+      amount: order.amount,
+      teacherName: order.teacherName,
+      courseName: order.courseName,
+      lessonId,
+      bookingId,
+      paidAt: now,
+    };
+  },
+});
+
+// ─── Query: Get Order by ID ──────────────────────────────────────────────────
+export const getOrder = query({
+  args: {
+    orderId: v.string(),
+  },
+  handler: async (ctx, args) => {
+    let order = await ctx.db
+      .query("orders")
+      .withIndex("by_order_id", (q) => q.eq("orderId", args.orderId))
+      .first();
+
+    if (!order) {
+      const payment = await ctx.db
+        .query("payments")
+        .withIndex("by_transaction", (q) => q.eq("transactionId", args.orderId))
+        .first();
+
+      if (payment) {
+        return {
+          _id: payment._id,
+          orderId: payment.orderId || payment.transactionId,
+          studentId: payment.studentId,
+          studentName: payment.studentName || "Student",
+          studentEmail: payment.studentEmail || "student@vartualtutor.com",
+          studentPhone: payment.studentPhone || "",
+          teacherId: payment.teacherId,
+          teacherName: payment.teacherName || "Instructor",
+          teacherPhoto: payment.teacherPhoto,
+          courseId: payment.courseId || "crs_default",
+          courseName: payment.courseName || "Academic Course",
+          subject: payment.subject || "Tutoring",
+          numberOfClasses: payment.numberOfClasses || 12,
+          amount: payment.amount,
+          currency: payment.currency || "BDT",
+          paymentGateway: payment.paymentGateway || payment.gateway || "bKash",
+          gatewayInvoiceId: payment.gatewayInvoiceId,
+          paymentStatus: (payment.paymentStatus || (payment.status === "paid" ? "PAID" : "PENDING")) as any,
+          enrollmentStatus: (payment.enrollmentStatus || (payment.status === "paid" ? "ACTIVE" : "PENDING")) as any,
+          paidAt: payment.paidAt,
+          createdAt: payment.createdAt,
+          updatedAt: payment.updatedAt,
+        };
+      }
+    }
+
+    return order;
+  },
+});
+
+// ─── Query: List Admin Orders with Details ────────────────────────────────────
+export const listAdminOrders = query({
+  args: {
+    statusFilter: v.optional(v.string()),
+    searchTerm: v.optional(v.string()),
+  },
+  handler: async (ctx, args) => {
+    let orders = await ctx.db.query("orders").order("desc").take(200);
+
+    if (orders.length === 0) {
+      // Synthesize from payments if orders table is new
+      const payments = await ctx.db.query("payments").order("desc").take(200);
+      orders = payments.map((p) => ({
+        _id: p._id as any,
+        orderId: p.orderId || p.transactionId,
+        studentId: p.studentId,
+        studentName: p.studentName || "Student",
+        studentEmail: p.studentEmail || "student@vartualtutor.com",
+        studentPhone: p.studentPhone,
+        teacherId: p.teacherId,
+        teacherName: p.teacherName || "Instructor",
+        teacherPhoto: p.teacherPhoto,
+        courseId: p.courseId || "crs_default",
+        courseName: p.courseName || (p.subject ? `${p.subject} Class Package` : "Academic Course"),
+        subject: p.subject || "Tutoring",
+        numberOfClasses: p.numberOfClasses || 12,
+        amount: p.amount,
+        currency: p.currency || "BDT",
+        paymentGateway: p.paymentGateway || p.gateway || "bKash",
+        gatewayInvoiceId: p.gatewayInvoiceId,
+        paymentStatus: (p.paymentStatus || (p.status === "paid" ? "PAID" : p.status === "failed" ? "FAILED" : p.status === "refunded" ? "REFUNDED" : "PENDING")) as any,
+        enrollmentStatus: (p.enrollmentStatus || (p.status === "paid" ? "ACTIVE" : "PENDING")) as any,
+        paidAt: p.paidAt,
+        createdAt: p.createdAt,
+        updatedAt: p.updatedAt,
+      })) as any[];
+    }
+
+    if (args.statusFilter && args.statusFilter !== "all") {
+      const sf = args.statusFilter.toUpperCase();
+      orders = orders.filter((o) => o.paymentStatus === sf);
+    }
+
+    if (args.searchTerm && args.searchTerm.trim()) {
+      const term = args.searchTerm.trim().toLowerCase();
+      orders = orders.filter(
+        (o) =>
+          o.orderId.toLowerCase().includes(term) ||
+          o.studentName.toLowerCase().includes(term) ||
+          o.teacherName.toLowerCase().includes(term) ||
+          o.courseName.toLowerCase().includes(term) ||
+          o.subject.toLowerCase().includes(term)
+      );
+    }
+
+    return orders;
+  },
+});
+
+// ─── Admin Action: Authoritatively Verify Pending Payment ────────────────────
+export const adminVerifyPendingPayment = mutation({
+  args: {
+    orderId: v.string(),
+    notes: v.optional(v.string()),
+  },
+  handler: async (ctx, args) => {
+    const auth = await requireSuperAdmin(ctx);
+    const now = Date.now();
+
+    const order = await ctx.db
+      .query("orders")
+      .withIndex("by_order_id", (q) => q.eq("orderId", args.orderId))
+      .first();
+
+    if (!order) {
+      throw new Error(`Order ${args.orderId} not found`);
+    }
+
+    // Activate order and enrollment
+    await ctx.db.patch(order._id, {
+      paymentStatus: "PAID",
+      enrollmentStatus: "ACTIVE",
+      paidAt: now,
+      updatedAt: now,
+    });
+
+    // Update linked payments
+    const payment = await ctx.db
+      .query("payments")
+      .withIndex("by_transaction", (q) => q.eq("transactionId", args.orderId))
+      .first();
+
+    if (payment) {
+      await ctx.db.patch(payment._id, {
+        status: "paid",
+        paymentStatus: "PAID",
+        enrollmentStatus: "ACTIVE",
+        paidAt: now,
+        updatedAt: now,
+      });
+    }
+
+    // Audit log
+    await ctx.db.insert("financialAuditLogs", {
+      actor: String(auth.user?._id || auth.userId),
+      actorRole: "admin",
+      action: "admin_manual_payment_verified",
+      entity: "order",
+      entityId: String(order._id),
+      amount: order.amount,
+      previousStatus: order.paymentStatus,
+      newStatus: "PAID",
+      notes: args.notes || `Admin verified order ${order.orderId}`,
+      timestamp: now,
+    });
+
+    return { success: true, orderId: order.orderId, paymentStatus: "PAID", enrollmentStatus: "ACTIVE" };
+  },
+});
+
