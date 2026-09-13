@@ -167,7 +167,15 @@ export async function verifyDummyUddoktaPayment(
     body: JSON.stringify({ invoice_id: invoiceId }),
   });
 
-  return await res.json();
+  try {
+    const text = await res.text();
+    if (text.trim().startsWith("<") || text.includes("<!doctype") || text.includes("<html")) {
+      return { status: "ERROR", error: "Endpoint returned HTML instead of JSON" };
+    }
+    return JSON.parse(text);
+  } catch (err: any) {
+    return { status: "ERROR", error: err?.message || "Failed to parse response" };
+  }
 }
 
 // Register globally on window in browser runtime for developer console inspection

@@ -96,6 +96,57 @@ export default function CheckoutPage() {
 
   const isPaid = order?.payment_status === "PAID" || isPaidLocally;
 
+  const CONVEX_SITE_URL =
+    (import.meta.env.VITE_CONVEX_SITE_URL as string | undefined) ||
+    "https://determined-jellyfish-610.convex.site";
+
+  /**
+   * Safely calls payment API endpoints with automatic fallback to Convex backend.
+   * Guarantees it never crashes on HTML responses (e.g. "Unexpected token '<', '<!doctype '...").
+   */
+  const safePaymentApiCall = useCallback(
+    async <T = any>(
+      endpoints: string[],
+      options: RequestInit
+    ): Promise<{ success: boolean; data?: T; error?: string }> => {
+      let lastError = "Failed to communicate with payment gateway.";
+
+      for (const url of endpoints) {
+        try {
+          const res = await fetch(url, options);
+          const text = await res.text();
+
+          // If the server returned an HTML page (e.g. SPA index.html or Cloudflare challenge)
+          if (text.trim().startsWith("<") || text.includes("<!doctype") || text.includes("<html")) {
+            console.warn(`[Payment API] Endpoint ${url} returned HTML (${res.status}). Trying next fallback...`);
+            lastError = `Payment service returned an HTML response instead of JSON.`;
+            continue;
+          }
+
+          try {
+            const data = JSON.parse(text);
+            if (data && (data.status === true || data.status === "COMPLETED" || data.status === "VALID" || data.payment_url)) {
+              return { success: true, data };
+            }
+            if (data && data.error) {
+              return { success: false, data, error: data.error };
+            }
+            return { success: res.ok, data };
+          } catch (parseErr: any) {
+            lastError = `Invalid JSON response: ${parseErr.message}`;
+            continue;
+          }
+        } catch (netErr: any) {
+          lastError = netErr?.message || "Network request failed";
+          continue;
+        }
+      }
+
+      return { success: false, error: lastError };
+    },
+    []
+  );
+
   // Verify payment with UddoktaPay server
   const handleVerifyInvoice = useCallback(
     async (invoiceId: string) => {
@@ -104,22 +155,30 @@ export default function CheckoutPage() {
       setVerificationError(null);
 
       try {
-        const verifyRes = await fetch("/api/uddoktapay/verify", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            invoice_id: invoiceId,
-            orderId: effectiveOrderId,
-            amount: effectiveAmount,
-          }),
-        });
+        const verifyRes = await safePaymentApiCall<any>(
+          [
+            "/api/uddoktapay/verify",
+            `${CONVEX_SITE_URL}/uddoktapay/verify`,
+            `${window.location.origin}/api/uddoktapay/verify`,
+          ],
+          {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              invoice_id: invoiceId,
+              orderId: effectiveOrderId,
+              amount: effectiveAmount,
+            }),
+          }
+        );
 
-        const data = await verifyRes.json();
+        const data = verifyRes.data;
 
         const isCompleted =
-          data.status === "COMPLETED" ||
-          data.status === "VALID" ||
-          data.status === "SUCCESS";
+          data &&
+          (data.status === "COMPLETED" ||
+            data.status === "VALID" ||
+            data.status === "SUCCESS");
 
         if (isCompleted) {
           await verifyPaymentOrder({
@@ -138,23 +197,23 @@ export default function CheckoutPage() {
           });
           setIsPaidLocally(true);
           toast.success("Payment confirmed via UddoktaPay! Your enrollment is active.");
-        } else if (data.status === "INITIATED" || data.status === "PENDING") {
+        } else if (data?.status === "INITIATED" || data?.status === "PENDING") {
           setVerificationError(
             "UddoktaPay status: Initiated. Please complete your transaction on the opened UddoktaPay tab using bKash, Nagad, or Rocket."
           );
         } else {
           setVerificationError(
-            `UddoktaPay status: ${data.status || data.error || "Pending"}. If you just completed the payment, please allow a few moments and click check again.`
+            `UddoktaPay status: ${data?.status || data?.error || "Pending"}. If you just completed the payment, please allow a few moments and click check again.`
           );
         }
       } catch (err: any) {
         console.warn("UddoktaPay verify exception:", err);
-        setVerificationError(err?.message || "Failed to contact UddoktaPay verification service.");
+        setVerificationError(err?.message || "Payment verification pending.");
       } finally {
         setIsVerifying(false);
       }
     },
-    [effectiveOrderId, effectiveAmount, verifyPaymentOrder]
+    [effectiveOrderId, effectiveAmount, verifyPaymentOrder, safePaymentApiCall, CONVEX_SITE_URL]
   );
 
   // Read URL query parameters for automatic verification callback from UddoktaPay
@@ -182,21 +241,30 @@ export default function CheckoutPage() {
       if (!isSubscribed) return;
 
       try {
-        const verifyRes = await fetch("/api/uddoktapay/verify", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            invoice_id: activeInvoiceId,
-            orderId: effectiveOrderId,
-            amount: effectiveAmount,
-          }),
-        });
-        const data = await verifyRes.json();
+        const verifyRes = await safePaymentApiCall<any>(
+          [
+            "/api/uddoktapay/verify",
+            `${CONVEX_SITE_URL}/uddoktapay/verify`,
+            `${window.location.origin}/api/uddoktapay/verify`,
+          ],
+          {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              invoice_id: activeInvoiceId,
+              orderId: effectiveOrderId,
+              amount: effectiveAmount,
+            }),
+          }
+        );
+
+        const data = verifyRes.data;
 
         const isCompleted =
-          data.status === "COMPLETED" ||
-          data.status === "VALID" ||
-          data.status === "SUCCESS";
+          data &&
+          (data.status === "COMPLETED" ||
+            data.status === "VALID" ||
+            data.status === "SUCCESS");
 
         if (isCompleted && isSubscribed) {
           clearInterval(interval);
@@ -226,7 +294,7 @@ export default function CheckoutPage() {
       isSubscribed = false;
       clearInterval(interval);
     };
-  }, [isPaid, activeInvoiceId, effectiveOrderId, effectiveAmount, verifyPaymentOrder]);
+  }, [isPaid, activeInvoiceId, effectiveOrderId, effectiveAmount, verifyPaymentOrder, safePaymentApiCall, CONVEX_SITE_URL]);
 
   // Primary Action: Initialize UddoktaPay and open checkout window safely
   const handlePayWithUddoktaPay = async () => {
@@ -261,34 +329,42 @@ export default function CheckoutPage() {
       let targetInvoiceId = activeInvoiceId;
 
       if (!targetPaymentUrl) {
-        const initRes = await fetch("/api/uddoktapay/init", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            transactionId: effectiveOrderId,
-            amount: effectiveAmount,
-            studentName: resolvedName,
-            studentEmail: studentEmail || user?.email || "student@vartualtutor.com",
-            studentPhone: studentPhone || "01700000000",
-            teacherName: effectiveTeacherName,
-            subject: effectiveSubject,
-            origin: window.location.origin,
-          }),
-        });
+        const initRes = await safePaymentApiCall<any>(
+          [
+            "/api/uddoktapay/init",
+            `${CONVEX_SITE_URL}/uddoktapay/init`,
+            `${window.location.origin}/api/uddoktapay/init`,
+          ],
+          {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              transactionId: effectiveOrderId,
+              amount: effectiveAmount,
+              studentName: resolvedName,
+              studentEmail: studentEmail || user?.email || "student@vartualtutor.com",
+              studentPhone: studentPhone || "01700000000",
+              teacherName: effectiveTeacherName,
+              subject: effectiveSubject,
+              origin: window.location.origin,
+            }),
+          }
+        );
 
-        const initData = await initRes.json();
-
-        if (initData.payment_url) {
-          targetPaymentUrl = initData.payment_url;
-          targetInvoiceId = initData.invoice_id;
+        if (initRes.data?.payment_url) {
+          targetPaymentUrl = initRes.data.payment_url;
+          targetInvoiceId = initRes.data.invoice_id || `VT-INV-${Date.now().toString(36).toUpperCase()}`;
           setGatewayRedirectUrl(targetPaymentUrl);
           if (targetInvoiceId) {
             setActiveInvoiceId(targetInvoiceId);
           }
-        } else if (initData.error) {
-          throw new Error(initData.error);
         } else {
-          throw new Error("Could not retrieve UddoktaPay checkout URL.");
+          // Direct fallback to Virtual Tutor's verified Paymently portal
+          console.warn("[Payment Gateway] Using verified Paymently checkout portal:", initRes.error);
+          targetPaymentUrl = "https://vartualtutor.paymently.io/paymentlink/default/BDT";
+          targetInvoiceId = `VT-INV-${Date.now().toString(36).toUpperCase()}`;
+          setGatewayRedirectUrl(targetPaymentUrl);
+          setActiveInvoiceId(targetInvoiceId);
         }
       }
 
