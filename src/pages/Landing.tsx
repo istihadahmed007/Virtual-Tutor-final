@@ -24,6 +24,7 @@ import {
   TutorCard,
   Floating3DObjects,
   HeroSearchPanel,
+  CinematicBackgroundAnimation,
 } from "@/components/redesign";
 import {
   ShieldCheck,
@@ -486,19 +487,13 @@ export default function Landing() {
 
       {/* ─── 2. HERO SECTION ─── */}
       <section className="relative pt-6 pb-20 sm:pt-12 sm:pb-28 overflow-hidden">
-        {/* Plane 0: Atmospheric Educational Photography with Gentle Parallax */}
+        {/* Plane 0: Cinematic Motion Background Animation with Parallax */}
         <motion.div
           style={{ y: heroBgY }}
           className="absolute inset-0 w-full h-[120%] -top-[10%] pointer-events-none z-0 overflow-hidden"
           aria-hidden="true"
         >
-          <img
-            src="https://images.unsplash.com/photo-1523240795612-9a054b0db644?auto=format&fit=crop&q=80&w=1800"
-            alt=""
-            className="w-full h-full object-cover opacity-[0.09] mix-blend-luminosity scale-105"
-          />
-          <div className="absolute inset-0 bg-gradient-to-b from-[#F8FAFC]/85 via-[#F8FAFC]/95 to-[#F8FAFC]" />
-          <div className="absolute inset-0 bg-radial from-transparent via-[#F8FAFC]/60 to-[#F8FAFC]" />
+          <CinematicBackgroundAnimation variant="hero" opacity={0.24} />
         </motion.div>
 
         <AmbientAtmosphere />
@@ -1001,19 +996,10 @@ export default function Landing() {
 
       {/* ─── 7. LIVE CLASSROOM SHOWCASE ─── */}
       <section className="py-20 sm:py-28 bg-[#0B0F19] text-white relative overflow-hidden">
-        {/* Atmospheric remote digital studio & educator photography */}
-        <div className="absolute inset-0 pointer-events-none z-0 overflow-hidden" aria-hidden="true">
-          <img
-            src="https://images.unsplash.com/photo-1577495508048-b635879837f1?auto=format&fit=crop&q=80&w=1800"
-            alt=""
-            loading="lazy"
-            className="w-full h-full object-cover opacity-[0.14] mix-blend-luminosity scale-105"
-          />
-          <div className="absolute inset-0 bg-gradient-to-r from-[#0B0F19] via-[#0B0F19]/90 to-[#0B0F19]/95" />
-          <div className="absolute inset-0 bg-gradient-to-b from-[#0B0F19] via-transparent to-[#0B0F19]" />
-          <div className="absolute -top-40 right-1/4 w-[32rem] h-[32rem] bg-gradient-to-br from-[#6D5DFB]/15 to-transparent rounded-full blur-3xl" />
-          <div className="absolute -bottom-40 left-10 w-[28rem] h-[28rem] bg-gradient-to-tr from-[#14B8A6]/10 to-transparent rounded-full blur-3xl" />
-        </div>
+        {/* Plane 0: Atmospheric Studio Cinematic Video Animation */}
+        <CinematicBackgroundAnimation variant="studio" opacity={0.36} />
+        <div className="absolute -top-40 right-1/4 w-[32rem] h-[32rem] bg-gradient-to-br from-[#6D5DFB]/15 to-transparent rounded-full blur-3xl pointer-events-none" />
+        <div className="absolute -bottom-40 left-10 w-[28rem] h-[28rem] bg-gradient-to-tr from-[#14B8A6]/10 to-transparent rounded-full blur-3xl pointer-events-none" />
 
         <div className="max-w-[1440px] mx-auto px-4 sm:px-8 relative z-10">
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
