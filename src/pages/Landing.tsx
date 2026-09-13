@@ -25,7 +25,12 @@ import {
   Floating3DObjects,
   HeroSearchPanel,
   CinematicBackgroundAnimation,
+  GlobalScrollProgress,
+  MouseSpotlight,
+  CursorEnhancement,
+  FloatingNavPill,
 } from "@/components/redesign";
+import { useNumberCounter } from "@/hooks/use-number-counter";
 import {
   ShieldCheck,
   Video,
@@ -168,6 +173,26 @@ function LiveWaveform() {
         />
       ))}
     </div>
+  );
+}
+
+// Animated Counter Helper for authoritative numbers
+function AnimatedStatCounter({
+  value,
+  prefix = "",
+  suffix = "",
+}: {
+  value: number;
+  prefix?: string;
+  suffix?: string;
+}) {
+  const { value: currentVal, ref } = useNumberCounter(value, { duration: 1200 });
+  return (
+    <span ref={ref as any}>
+      {prefix}
+      {currentVal.toLocaleString()}
+      {suffix}
+    </span>
   );
 }
 
@@ -328,73 +353,19 @@ export default function Landing() {
             />
           </div>
 
-          {/* Desktop Navigation Links */}
-          <nav className={`hidden md:flex items-center gap-1.5 px-4 py-1.5 rounded-full border backdrop-blur-md text-xs font-semibold shadow-xs transition-colors ${
-            heroTheme === "dark" && !isScrolled
-              ? "border-white/15 bg-white/10 text-slate-200"
-              : "border-slate-200/80 bg-white/80 text-slate-700"
-          }`}>
-            <Link
-              to="/teachers"
-              className={`px-3.5 py-1.5 rounded-full transition-colors ${
-                heroTheme === "dark" && !isScrolled
-                  ? "hover:text-white hover:bg-white/10"
-                  : "hover:text-[#312E81] hover:bg-slate-100"
-              }`}
-            >
-              Find Tutors
-            </Link>
-            <a
-              href="#how-it-works"
-              className={`px-3.5 py-1.5 rounded-full transition-colors ${
-                heroTheme === "dark" && !isScrolled
-                  ? "hover:text-white hover:bg-white/10"
-                  : "hover:text-[#312E81] hover:bg-slate-100"
-              }`}
-            >
-              How It Works
-            </a>
-            <a
-              href="#subjects"
-              className={`px-3.5 py-1.5 rounded-full transition-colors ${
-                heroTheme === "dark" && !isScrolled
-                  ? "hover:text-white hover:bg-white/10"
-                  : "hover:text-[#312E81] hover:bg-slate-100"
-              }`}
-            >
-              Subjects
-            </a>
-            <Link
-              to="/teacher-application"
-              className={`px-3.5 py-1.5 rounded-full transition-colors ${
-                heroTheme === "dark" && !isScrolled
-                  ? "hover:text-white hover:bg-white/10"
-                  : "hover:text-[#312E81] hover:bg-slate-100"
-              }`}
-            >
-              Become a Tutor
-            </Link>
-            <Link
-              to="/community"
-              className={`px-3.5 py-1.5 rounded-full transition-colors ${
-                heroTheme === "dark" && !isScrolled
-                  ? "hover:text-white hover:bg-white/10"
-                  : "hover:text-[#312E81] hover:bg-slate-100"
-              }`}
-            >
-              Community
-            </Link>
-            <a
-              href="#faq"
-              className={`px-3.5 py-1.5 rounded-full transition-colors ${
-                heroTheme === "dark" && !isScrolled
-                  ? "hover:text-white hover:bg-white/10"
-                  : "hover:text-[#312E81] hover:bg-slate-100"
-              }`}
-            >
-              FAQ
-            </a>
-          </nav>
+          {/* Desktop Navigation Links with Liquid Surface Pill */}
+          <FloatingNavPill
+            items={[
+              { label: "Find Tutors", href: "/teachers" },
+              { label: "How It Works", href: "#how-it-works", isExternalOrHash: true },
+              { label: "Subjects", href: "#subjects", isExternalOrHash: true },
+              { label: "Become a Tutor", href: "/teacher-application" },
+              { label: "Community", href: "/community" },
+              { label: "FAQ", href: "#faq", isExternalOrHash: true },
+            ]}
+            isDark={heroTheme === "dark"}
+            isScrolled={isScrolled}
+          />
 
           {/* Desktop Actions */}
           <div className="hidden md:flex items-center gap-3">
@@ -583,20 +554,31 @@ export default function Landing() {
                 </span>
               </div>
 
-              {/* Main Headline */}
+              {/* Main Headline with Blur-to-Sharp Choreography */}
               <motion.div variants={itemVariants}>
                 <h1 className={`text-4xl sm:text-6xl xl:text-[4.25rem] font-bold tracking-tight leading-[1.08] transition-colors ${
                   heroTheme === "dark" ? "text-white" : "text-[#0F172A]"
                 }`}>
-                  Learn better.
-                  <br />
-                  <span className={
-                    heroTheme === "dark"
-                      ? "bg-gradient-to-r from-white via-[#C7D2FE] to-[#2DD4BF] bg-clip-text text-transparent"
-                      : "bg-gradient-to-r from-[#312E81] via-[#6D5DFB] to-[#14B8A6] bg-clip-text text-transparent"
-                  }>
+                  <motion.span
+                    initial={shouldReduceMotion ? {} : { opacity: 0, y: 25 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1], delay: 0.15 }}
+                    className="block"
+                  >
+                    Learn better.
+                  </motion.span>
+                  <motion.span
+                    initial={shouldReduceMotion ? {} : { opacity: 0.1, filter: "blur(6px)", y: 15 }}
+                    animate={{ opacity: 1, filter: "blur(0px)", y: 0 }}
+                    transition={{ duration: 0.85, ease: [0.16, 1, 0.3, 1], delay: 0.35 }}
+                    className={`block ${
+                      heroTheme === "dark"
+                        ? "bg-gradient-to-r from-white via-[#C7D2FE] to-[#2DD4BF] bg-clip-text text-transparent"
+                        : "bg-gradient-to-r from-[#312E81] via-[#6D5DFB] to-[#14B8A6] bg-clip-text text-transparent"
+                    }`}
+                  >
                     With the right teacher.
-                  </span>
+                  </motion.span>
                 </h1>
               </motion.div>
 
@@ -643,7 +625,9 @@ export default function Landing() {
                 }`}
               >
                 <div>
-                  <p className={`text-2xl font-black ${heroTheme === "dark" ? "text-white" : "text-[#312E81]"}`}>100%</p>
+                  <p className={`text-2xl font-black ${heroTheme === "dark" ? "text-white" : "text-[#312E81]"}`}>
+                    <AnimatedStatCounter value={100} suffix="%" />
+                  </p>
                   <p className={`text-xs font-medium mt-0.5 ${heroTheme === "dark" ? "text-slate-400" : "text-slate-500"}`}>Verified Teachers</p>
                 </div>
                 <div>
@@ -923,6 +907,11 @@ export default function Landing() {
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8 relative">
+            {/* Connecting progression line on desktop */}
+            <div className="hidden md:block absolute top-1/2 left-[15%] right-[15%] h-[2px] -translate-y-14 z-0 pointer-events-none" aria-hidden="true">
+              <div className="w-full h-full bg-gradient-to-r from-[#6D5DFB]/25 via-[#14B8A6]/30 to-[#6D5DFB]/25 rounded-full" />
+            </div>
+
             {[
               {
                 step: "01",
@@ -943,21 +932,26 @@ export default function Landing() {
                 icon: Video,
               },
             ].map((st, idx) => (
-              <div
+              <motion.div
                 key={idx}
-                className="p-8 rounded-3xl bg-slate-50 border border-slate-200/90 hover:border-[#6D5DFB]/40 hover:shadow-[0_12px_32px_rgba(49,46,129,0.06)] transition-all shadow-2xs relative flex flex-col justify-between"
+                whileHover={shouldReduceMotion ? {} : { y: -6 }}
+                transition={{ duration: 0.25, ease: "easeOut" }}
+                data-interactive="true"
+                className="group p-8 rounded-3xl bg-slate-50 border border-slate-200/90 hover:border-[#6D5DFB]/45 hover:shadow-[0_16px_36px_rgba(49,46,129,0.08)] transition-all shadow-2xs relative flex flex-col justify-between overflow-hidden z-10"
               >
                 <div>
                   <div className="flex items-center justify-between mb-6">
-                    <span className="text-3xl font-black text-[#6D5DFB] font-mono">{st.step}</span>
-                    <div className="w-10 h-10 rounded-2xl bg-white border border-slate-200 flex items-center justify-center text-[#312E81] shadow-2xs">
+                    <span className="text-3xl font-black text-[#6D5DFB] font-mono transition-transform duration-300 group-hover:scale-105 group-hover:drop-shadow-[0_0_8px_rgba(109,93,251,0.35)]">
+                      {st.step}
+                    </span>
+                    <div className="w-10 h-10 rounded-2xl bg-white border border-slate-200 flex items-center justify-center text-[#312E81] shadow-2xs transition-transform duration-300 group-hover:rotate-6">
                       <st.icon className="w-5 h-5" />
                     </div>
                   </div>
-                  <h3 className="text-lg font-bold text-[#0F172A]">{st.title}</h3>
+                  <h3 className="text-lg font-bold text-[#0F172A] group-hover:text-[#312E81] transition-colors">{st.title}</h3>
                   <p className="text-xs text-slate-600 leading-relaxed mt-2">{st.desc}</p>
                 </div>
-              </div>
+              </motion.div>
             ))}
           </div>
         </div>
@@ -1513,7 +1507,15 @@ export default function Landing() {
             className="w-full h-full object-cover opacity-[0.12] mix-blend-luminosity scale-105"
           />
           <div className="absolute inset-0 bg-gradient-to-b from-[#312E81]/85 via-[#1E1B4B]/95 to-[#312E81]/90" />
-          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[40rem] h-[25rem] bg-gradient-to-r from-[#6D5DFB]/20 via-[#14B8A6]/15 to-transparent rounded-full blur-3xl" />
+          <motion.div
+            animate={shouldReduceMotion ? {} : {
+              scale: [1, 1.15, 1],
+              opacity: [0.3, 0.55, 0.3],
+            }}
+            transition={{ duration: 10, repeat: Infinity, ease: "easeInOut" }}
+            className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[42rem] h-[26rem] bg-gradient-to-r from-[#6D5DFB]/25 via-[#14B8A6]/20 to-[#6D5DFB]/15 rounded-full blur-3xl pointer-events-none"
+            aria-hidden="true"
+          />
         </div>
 
         <div className="max-w-3xl mx-auto px-4 sm:px-6 relative z-10 space-y-6">

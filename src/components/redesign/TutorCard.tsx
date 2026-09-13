@@ -1,7 +1,7 @@
-import React from "react";
+import React, { useState } from "react";
 import { Star, ShieldCheck, ArrowRight } from "lucide-react";
 import { useNavigate } from "react-router";
-import { motion } from "framer-motion";
+import { motion, useReducedMotion } from "framer-motion";
 
 export interface TutorData {
   _id: string;
@@ -35,6 +35,9 @@ export const TutorCard: React.FC<TutorCardProps> = ({
 }) => {
   const navigate = useNavigate();
   const isDark = theme === "dark";
+  const shouldReduceMotion = useReducedMotion();
+
+  const [mousePos, setMousePos] = useState<{ x: number; y: number } | null>(null);
 
   const tutorTargetId = tutor._id || (tutor as any).userId || "";
 
@@ -42,14 +45,23 @@ export const TutorCard: React.FC<TutorCardProps> = ({
     navigate(`/teachers/${tutorTargetId}`);
   };
 
+  const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
+    if (shouldReduceMotion) return;
+    const rect = e.currentTarget.getBoundingClientRect();
+    setMousePos({
+      x: e.clientX - rect.left,
+      y: e.clientY - rect.top,
+    });
+  };
+
+  const handleMouseLeave = () => {
+    setMousePos(null);
+  };
+
   const displayName = tutor.name || "Verified Educator";
   const displaySubjects = tutor.subjects?.length ? tutor.subjects.slice(0, 3) : ["General Studies"];
   
   // Resolve authoritative monthly tuition in Bangladeshi Taka (৳):
-  // 1. If monthlyTuition is provided (>0), use it.
-  // 2. If hourlyRate >= 500, it is already in BDT (e.g. ৳3,000). Never multiply by 100.
-  // 3. If hourlyRate > 0 but < 500, convert legacy USD rates (e.g. 35 -> ৳3,500).
-  // 4. Fallback to ৳3,500.
   const resolvedTuition =
     typeof tutor.monthlyTuition === "number" && tutor.monthlyTuition > 0
       ? tutor.monthlyTuition
@@ -71,21 +83,37 @@ export const TutorCard: React.FC<TutorCardProps> = ({
 
   return (
     <motion.div
-      whileHover={{ y: -4 }}
-      transition={{ duration: 0.2, ease: "easeOut" }}
+      whileHover={shouldReduceMotion ? {} : { y: -6 }}
+      transition={{ duration: 0.24, ease: "easeOut" }}
       onClick={handleCardClick}
-      className={`group rounded-2xl border p-5 sm:p-6 transition-all duration-300 cursor-pointer flex flex-col justify-between ${
+      onMouseMove={handleMouseMove}
+      onMouseLeave={handleMouseLeave}
+      data-interactive="true"
+      className={`group relative rounded-2xl border p-5 sm:p-6 transition-all duration-300 cursor-pointer flex flex-col justify-between overflow-hidden ${
         isDark
-          ? "bg-[#0D0D0D]/85 backdrop-blur-md border-white/10 hover:border-[#6D5DFB]/50 hover:shadow-[0_8px_32px_rgba(109,93,251,0.15)] text-white"
-          : "bg-white border-[#E2E8F0] hover:border-[#6D5DFB]/40 hover:shadow-[0_12px_32px_rgba(49,46,129,0.07)]"
+          ? "bg-[#0D0D0D]/85 backdrop-blur-md border-white/10 hover:border-[#6D5DFB]/50 hover:shadow-[0_16px_36px_rgba(109,93,251,0.2)] text-white"
+          : "bg-white border-[#E2E8F0] hover:border-[#6D5DFB]/40 hover:shadow-[0_16px_36px_rgba(49,46,129,0.09)]"
       } ${className}`}
     >
-      <div>
+      {/* Local Spotlight Follower */}
+      {mousePos && !shouldReduceMotion && (
+        <div
+          className="pointer-events-none absolute -inset-px rounded-2xl opacity-100 transition-opacity duration-200 z-0"
+          style={{
+            background: `radial-gradient(320px circle at ${mousePos.x}px ${mousePos.y}px, ${
+              isDark ? "rgba(109, 93, 251, 0.16)" : "rgba(109, 93, 251, 0.08)"
+            }, transparent 70%)`,
+          }}
+          aria-hidden="true"
+        />
+      )}
+
+      <div className="relative z-10">
         {/* Top bar: Avatar, Name, Verified, and Rating */}
         <div className="flex items-start justify-between gap-3">
           <div className="flex items-center gap-3">
             <div
-              className={`relative w-12 h-12 rounded-full overflow-hidden border shrink-0 flex items-center justify-center font-bold text-sm ${
+              className={`relative w-12 h-12 rounded-full overflow-hidden border shrink-0 flex items-center justify-center font-bold text-sm transition-transform duration-500 ${
                 isDark
                   ? "bg-white/10 border-white/15 text-white"
                   : "bg-[#F8FAFC] border-[#E2E8F0] text-[#312E81]"
@@ -95,14 +123,14 @@ export const TutorCard: React.FC<TutorCardProps> = ({
                 <img
                   src={tutor.avatarUrl || tutor.image}
                   alt={displayName}
-                  className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+                  className="w-full h-full object-cover transition-transform duration-600 ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:scale-110"
                   referrerPolicy="no-referrer"
                 />
               ) : (
                 displayName.slice(0, 2).toUpperCase()
               )}
               {tutor.isOnline && (
-                <span className="absolute bottom-0 right-0 w-3 h-3 rounded-full bg-[#14B8A6] border-2 border-white" />
+                <span className="absolute bottom-0 right-0 w-3 h-3 rounded-full bg-[#14B8A6] border-2 border-white ring-2 ring-[#14B8A6]/20 animate-pulse" />
               )}
             </div>
 
@@ -118,7 +146,14 @@ export const TutorCard: React.FC<TutorCardProps> = ({
                   {displayName}
                 </h3>
                 {isVerified && (
-                  <ShieldCheck className="w-4 h-4 text-[#14B8A6] shrink-0" />
+                  <motion.div
+                    whileHover={{ scale: 1.2, rotate: 8 }}
+                    transition={{ duration: 0.18 }}
+                    className="relative shrink-0 flex items-center justify-center"
+                    title="Verified Instructor"
+                  >
+                    <ShieldCheck className="w-4 h-4 text-[#14B8A6] shrink-0 drop-shadow-[0_0_6px_rgba(20,184,166,0.4)]" />
+                  </motion.div>
                 )}
               </div>
               <p
@@ -132,7 +167,7 @@ export const TutorCard: React.FC<TutorCardProps> = ({
           </div>
 
           <div
-            className={`flex items-center gap-1 px-2.5 py-1 rounded-full border ${
+            className={`flex items-center gap-1 px-2.5 py-1 rounded-full border transition-all duration-300 group-hover:border-[#F59E0B]/30 ${
               isDark
                 ? "bg-white/5 border-white/10"
                 : "bg-[#F8FAFC] border-[#E2E8F0]"
@@ -174,7 +209,7 @@ export const TutorCard: React.FC<TutorCardProps> = ({
           {displaySubjects.map((sub, i) => (
             <span
               key={i}
-              className={`text-[11px] font-medium px-2.5 py-0.5 rounded-full border ${
+              className={`text-[11px] font-medium px-2.5 py-0.5 rounded-full border transition-all duration-200 group-hover:border-[#6D5DFB]/30 ${
                 isDark
                   ? "bg-white/5 text-white/80 border-white/10"
                   : "bg-[#F8FAFC] text-[#312E81] border-[#E2E8F0]"
@@ -188,7 +223,7 @@ export const TutorCard: React.FC<TutorCardProps> = ({
 
       {/* Bottom Footer: Rate & Action */}
       <div
-        className={`mt-5 pt-4 border-t flex items-center justify-between ${
+        className={`relative z-10 mt-5 pt-4 border-t flex items-center justify-between ${
           isDark ? "border-white/10" : "border-[#E2E8F0]"
         }`}
       >
@@ -221,7 +256,7 @@ export const TutorCard: React.FC<TutorCardProps> = ({
           }`}
         >
           <span>View Profile</span>
-          <ArrowRight className="w-3.5 h-3.5 transition-transform group-hover:translate-x-1" />
+          <ArrowRight className="w-3.5 h-3.5 transition-transform duration-300 group-hover:translate-x-1.5" />
         </button>
       </div>
     </motion.div>

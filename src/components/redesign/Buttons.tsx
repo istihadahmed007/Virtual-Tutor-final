@@ -1,6 +1,6 @@
-import React from "react";
+import React, { useRef, useState, useEffect } from "react";
 import { ArrowRight, LucideIcon } from "lucide-react";
-import { motion } from "framer-motion";
+import { motion, useMotionValue, useSpring, useReducedMotion } from "framer-motion";
 
 interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
   children: React.ReactNode;
@@ -9,6 +9,7 @@ interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
   size?: "sm" | "md" | "lg";
   className?: string;
   variant?: "primary" | "secondary" | "violet" | "teal" | "white" | "ghost" | "dark" | "orange";
+  magnetic?: boolean;
 }
 
 export const PillButton: React.FC<ButtonProps> = ({
@@ -18,9 +19,50 @@ export const PillButton: React.FC<ButtonProps> = ({
   size = "md",
   className = "",
   variant = "primary",
+  magnetic = true,
   ...props
 }) => {
   const hasTrailingIcon = Boolean(showArrow || Icon);
+  const buttonRef = useRef<HTMLButtonElement | null>(null);
+  const [isHovered, setIsHovered] = useState(false);
+  const [isDesktop, setIsDesktop] = useState(false);
+  const shouldReduceMotion = useReducedMotion();
+
+  // Magnetic spring values
+  const rawX = useMotionValue(0);
+  const rawY = useMotionValue(0);
+  const springConfig = { damping: 15, stiffness: 150, mass: 0.1 };
+  const magneticX = useSpring(rawX, springConfig);
+  const magneticY = useSpring(rawY, springConfig);
+
+  useEffect(() => {
+    const mql = window.matchMedia("(pointer: fine) and (min-width: 1024px)");
+    setIsDesktop(mql.matches);
+    const handler = (e: MediaQueryListEvent) => setIsDesktop(e.matches);
+    mql.addEventListener("change", handler);
+    return () => mql.removeEventListener("change", handler);
+  }, []);
+
+  const handleMouseMove = (e: React.MouseEvent<HTMLButtonElement>) => {
+    if (!magnetic || !isDesktop || shouldReduceMotion || !buttonRef.current) return;
+    const rect = buttonRef.current.getBoundingClientRect();
+    const centerX = rect.left + rect.width / 2;
+    const centerY = rect.top + rect.height / 2;
+    const distX = e.clientX - centerX;
+    const distY = e.clientY - centerY;
+    // Cap magnetic movement to 5px max
+    const maxPull = 5;
+    const clampedX = Math.max(-maxPull, Math.min(maxPull, distX * 0.18));
+    const clampedY = Math.max(-maxPull, Math.min(maxPull, distY * 0.18));
+    rawX.set(clampedX);
+    rawY.set(clampedY);
+  };
+
+  const handleMouseLeave = () => {
+    setIsHovered(false);
+    rawX.set(0);
+    rawY.set(0);
+  };
 
   const sizeClasses = {
     sm: hasTrailingIcon ? "text-xs pl-3.5 pr-2 py-1.5 gap-2 h-9" : "text-xs px-3.5 py-1.5 gap-2 h-9",
@@ -41,10 +83,10 @@ export const PillButton: React.FC<ButtonProps> = ({
   };
 
   const variantStyles = {
-    primary: "bg-[#312E81] hover:bg-[#6D5DFB] text-white shadow-sm hover:shadow-[0_8px_20px_rgba(109,93,251,0.25)] transition-all",
+    primary: "bg-[#312E81] hover:bg-[#6D5DFB] text-white shadow-sm hover:shadow-[0_8px_24px_rgba(109,93,251,0.28)] transition-all",
     secondary: "bg-white hover:bg-[#F8FAFC] text-[#312E81] border border-[#E2E8F0] hover:border-[#6D5DFB]/40 shadow-2xs hover:shadow-xs",
-    violet: "bg-[#6D5DFB] hover:bg-[#5B4BE8] text-white shadow-sm hover:shadow-[0_8px_20px_rgba(109,93,251,0.3)]",
-    teal: "bg-[#14B8A6] hover:bg-[#0D9488] text-white shadow-sm hover:shadow-[0_8px_20px_rgba(20,184,166,0.25)]",
+    violet: "bg-[#6D5DFB] hover:bg-[#5B4BE8] text-white shadow-sm hover:shadow-[0_8px_24px_rgba(109,93,251,0.32)]",
+    teal: "bg-[#14B8A6] hover:bg-[#0D9488] text-white shadow-sm hover:shadow-[0_8px_24px_rgba(20,184,166,0.28)]",
     white: "bg-white hover:bg-[#F8FAFC] text-[#0F172A] border border-[#E2E8F0] shadow-xs",
     ghost: "bg-transparent hover:bg-[#312E81]/5 text-[#312E81] hover:text-[#6D5DFB]",
     dark: "bg-[#0F172A] hover:bg-[#1E293B] text-white",
@@ -66,14 +108,38 @@ export const PillButton: React.FC<ButtonProps> = ({
 
   return (
     <motion.button
-      whileTap={{ scale: 0.97 }}
-      whileHover={{ y: -2, scale: 1.015 }}
+      ref={buttonRef}
+      style={{
+        x: magnetic && isDesktop && !shouldReduceMotion ? magneticX : 0,
+        y: magnetic && isDesktop && !shouldReduceMotion ? magneticY : 0,
+      }}
+      whileTap={{ scale: 0.98 }}
+      whileHover={{ y: -2 }}
       transition={{ duration: 0.18, ease: "easeOut" }}
-      className={`group relative inline-flex items-center ${defaultJustify} font-semibold rounded-full select-none cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-300 ${variantStyles[variant] || variantStyles.primary} ${sizeClasses[size]} ${className}`}
+      onMouseMove={handleMouseMove}
+      onMouseEnter={() => setIsHovered(true)}
+      onMouseLeave={handleMouseLeave}
+      data-interactive="true"
+      className={`group relative inline-flex items-center ${defaultJustify} font-semibold rounded-full select-none cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-300 overflow-hidden ${variantStyles[variant] || variantStyles.primary} ${sizeClasses[size]} ${className}`}
       {...(props as any)}
     >
+      {/* Specular Light Sweep on Hover */}
+      {!shouldReduceMotion && (
+        <motion.div
+          animate={{
+            x: isHovered ? ["-140%", "140%"] : "-140%",
+          }}
+          transition={{
+            duration: 0.75,
+            ease: "easeInOut",
+          }}
+          className="absolute inset-y-0 w-1/2 bg-gradient-to-r from-transparent via-white/20 to-transparent skew-x-12 pointer-events-none z-0"
+          aria-hidden="true"
+        />
+      )}
+
       {/* Hover Text Roll Effect */}
-      <span className="relative overflow-hidden h-[18px] sm:h-[20px] flex flex-col justify-start">
+      <span className="relative z-10 overflow-hidden h-[18px] sm:h-[20px] flex flex-col justify-start">
         <span className="block transform transition-transform duration-500 ease-[cubic-bezier(0.25,0.1,0.25,1)] group-hover:-translate-y-full whitespace-nowrap">
           {children}
         </span>
@@ -85,7 +151,7 @@ export const PillButton: React.FC<ButtonProps> = ({
       {/* Rotating Arrow / Icon Circle */}
       {(showArrow || Icon) && (
         <span
-          className={`shrink-0 rounded-full flex items-center justify-center transition-all duration-500 ease-[cubic-bezier(0.25,0.1,0.25,1)] group-hover:rotate-[-45deg] ${circleStyles[variant] || circleStyles.primary} ${arrowCircleSizes[size]}`}
+          className={`relative z-10 shrink-0 rounded-full flex items-center justify-center transition-all duration-500 ease-[cubic-bezier(0.25,0.1,0.25,1)] group-hover:rotate-[-45deg] ${circleStyles[variant] || circleStyles.primary} ${arrowCircleSizes[size]}`}
         >
           {Icon ? (
             <Icon className={arrowIconSizes[size]} />
