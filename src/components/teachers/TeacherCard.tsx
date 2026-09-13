@@ -190,26 +190,36 @@ export function TeacherCard({
           </span>
         </div>
 
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-1.5 sm:gap-2">
           {/* Direct Message Button */}
           <Button
             variant="outline"
             size="sm"
             onClick={() => onMessageClick ? onMessageClick(teacher) : navigate(`/messages?to=${teacher.userId}`)}
             aria-label={`Send message to ${teacher.name}`}
-            className="h-9 w-9 p-0 rounded-full border-[#E5E4DE] text-[#111111] hover:text-[#F26522] hover:border-[#111111]/40"
+            className="h-8 w-8 sm:h-9 sm:w-9 p-0 rounded-full border-[#E5E4DE] text-[#111111] hover:text-[#F26522] hover:border-[#111111]/40"
           >
-            <MessageSquare className="h-4 w-4" />
+            <MessageSquare className="h-3.5 w-3.5" />
           </Button>
 
-          {/* Primary Action: Explicitly "View availability" */}
+          {/* Secondary Action: Book Lesson */}
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => navigate(`/teachers/${teacher.userId}#booking`)}
+            className="h-8 sm:h-9 px-3 sm:px-3.5 rounded-full border-[#E5E4DE] hover:border-[#111111] text-[#111111] text-xs font-semibold cursor-pointer"
+          >
+            Book Lesson
+          </Button>
+
+          {/* Primary Action: View Profile */}
           <Button
             size="sm"
-            onClick={handleViewAvailability}
-            className="h-9 px-4 rounded-full bg-[#111111] hover:bg-[#F26522] text-white text-xs font-semibold shadow-xs inline-flex items-center gap-1.5 transition-all active:scale-[0.98]"
+            onClick={() => navigate(`/teachers/${teacher.userId}`)}
+            className="h-8 sm:h-9 px-3.5 sm:px-4 rounded-full bg-[#111111] hover:bg-[#F26522] text-white text-xs font-semibold shadow-xs inline-flex items-center gap-1.5 transition-all active:scale-[0.98] cursor-pointer"
           >
-            <span>View availability</span>
-            <ArrowRight className="h-3.5 w-3.5" />
+            <span>View Profile</span>
+            <ArrowRight className="h-3 w-3" />
           </Button>
         </div>
       </div>

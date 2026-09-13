@@ -30,10 +30,10 @@ import {
 
 const publicLinks = [
   { label: "Find Tutors", path: "/teachers" },
-  { label: "Become a Tutor", path: "/teacher-application" },
   { label: "How It Works", path: "/#how-it-works" },
-  { label: "FAQ", path: "/faq" },
-  { label: "Contact", path: "/contact" },
+  { label: "Become a Tutor", path: "/teacher-application" },
+  { label: "FAQ", path: "/#faq" },
+  { label: "Contact", path: "/#contact" },
 ];
 
 const studentLinks = [
@@ -41,14 +41,14 @@ const studentLinks = [
   { label: "Find Tutors", path: "/teachers", icon: Users },
   { label: "Lessons", path: "/lessons", icon: Video },
   { label: "Calendar", path: "/calendar", icon: Calendar },
+  { label: "Assignments", path: "/assignments", icon: FileText },
   { label: "Messages", path: "/messages", icon: MessageCircle },
   { label: "AI Assistant", path: "/ai-assistant", icon: Sparkles },
 ];
 
 const teacherLinks = [
   { label: "Dashboard", path: "/teacher-dashboard", icon: LayoutDashboard },
-  { label: "Find Students", path: "/students", icon: Users },
-  { label: "Teachers", path: "/teachers", icon: GraduationCap },
+  { label: "Students", path: "/students", icon: Users },
   { label: "Calendar", path: "/calendar", icon: Calendar },
   { label: "Messages", path: "/messages", icon: MessageCircle },
   { label: "Application", path: "/teacher-application", icon: FileText },
@@ -71,6 +71,15 @@ export function Navigation() {
   const [notificationsOpen, setNotificationsOpen] = useState(false);
   const [contactOpen, setContactOpen] = useState(false);
   const [currentTime, setCurrentTime] = useState("");
+  const [isScrolled, setIsScrolled] = useState(false);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      setIsScrolled(window.scrollY > 20);
+    };
+    window.addEventListener("scroll", handleScroll, { passive: true });
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
 
   const unreadCount = useQuery(api.notifications.getUnreadCount);
   const notifications = useQuery(api.notifications.listByUser);
@@ -140,8 +149,14 @@ export function Navigation() {
   return (
     <>
       {/* Floating Centered Pill Navbar */}
-      <header className="sticky top-3 sm:top-4 z-50 px-3 sm:px-6 max-w-[1440px] mx-auto pointer-events-none transition-all duration-300">
-        <div className="pointer-events-auto bg-white/95 backdrop-blur-md rounded-full border border-[#E5E4DE] shadow-[0_4px_24px_rgba(0,0,0,0.03)] px-3 sm:px-4 py-2 flex items-center justify-between">
+      <header className={`sticky z-50 px-3 sm:px-6 max-w-[1440px] mx-auto pointer-events-none transition-all duration-300 ${
+        isScrolled ? "top-2 sm:top-2.5" : "top-3 sm:top-4"
+      }`}>
+        <div className={`pointer-events-auto bg-white/95 backdrop-blur-md rounded-full border border-[#E5E4DE] transition-all duration-300 flex items-center justify-between ${
+          isScrolled
+            ? "px-3 sm:px-4 py-1.5 shadow-[0_4px_24px_rgba(0,0,0,0.06)]"
+            : "px-3 sm:px-5 py-2 sm:py-2.5 shadow-[0_4px_20px_rgba(0,0,0,0.03)]"
+        }`}>
           {/* LEFT: Logo & Brand */}
           <div className="flex items-center gap-3 sm:gap-6">
             <button
@@ -417,16 +432,16 @@ export function Navigation() {
               <div className="flex items-center gap-2">
                 <button
                   onClick={() => navigate("/auth")}
-                  className="text-xs font-medium text-[#111111]/80 hover:text-[#111111] px-3 py-2 rounded-full hover:bg-[#F5F4EF] transition-colors cursor-pointer"
+                  className="text-xs font-semibold text-[#111111]/80 hover:text-[#111111] px-3.5 py-2 rounded-full hover:bg-[#F5F4EF] transition-colors cursor-pointer"
                 >
-                  Sign in
+                  Log In
                 </button>
                 <PrimaryButton
                   size="sm"
-                  onClick={() => navigate("/auth")}
+                  onClick={() => navigate("/auth?mode=register")}
                   className="shrink-0"
                 >
-                  Get started
+                  Start Learning
                 </PrimaryButton>
               </div>
             )}

@@ -31,6 +31,7 @@ import {
   ChevronRight,
   Clock,
   CreditCard,
+  Video,
 } from "lucide-react";
 
 export default function Dashboard() {
@@ -150,21 +151,28 @@ export default function Dashboard() {
     return progress?.totalHoursLearned ?? (isNewStudent ? 0 : 2.5);
   }, [progress, isNewStudent]);
 
+  const greeting = useMemo(() => {
+    const hour = new Date().getHours();
+    if (hour < 12) return "Good morning";
+    if (hour < 18) return "Good afternoon";
+    return "Good evening";
+  }, []);
+
   return (
     <main className="min-h-screen bg-[#F5F4EF] text-[#111111] pb-24 pt-6 sm:pt-8">
       <div className="max-w-[1440px] mx-auto px-4 sm:px-8">
         {/* Editorial Top Heading */}
-        <div className="flex flex-col sm:flex-row sm:items-end justify-between mb-8 sm:mb-10 gap-4">
+        <div className="flex flex-col sm:flex-row sm:items-end justify-between mb-6 gap-4">
           <div>
-            <SectionLabel number="01" text="Learning Workspace" className="mb-3" />
-            <h1 className="text-2xl sm:text-4xl font-medium tracking-[-0.03em] text-[#111111]">
-              Welcome back{user?.name ? `, ${user.name}` : ""}
+            <SectionLabel number="01" text="Student Workspace" className="mb-2.5" />
+            <h1 className="text-2xl sm:text-4xl font-bold tracking-[-0.03em] text-[#111111] font-display">
+              {greeting}{user?.name ? `, ${user.name}` : ""}
             </h1>
             <p className="text-xs sm:text-sm text-[#111111]/70 mt-1 font-normal">
-              Your personalized schedule, upcoming live classrooms, and progress.
+              Here's what needs your attention today.
             </p>
           </div>
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-2.5">
             <PillButton
               variant="white"
               size="sm"
@@ -177,9 +185,36 @@ export default function Dashboard() {
               size="sm"
               onClick={() => navigate("/ai-assistant")}
             >
-              Ask AI Assistant
+              AI Assistant
             </PrimaryButton>
           </div>
+        </div>
+
+        {/* Compact Workspace Navigation Bar */}
+        <div className="mb-8 flex items-center gap-2 overflow-x-auto pb-2 scrollbar-none">
+          {[
+            { label: "Find Tutor", path: "/teachers", icon: Users },
+            { label: "My Lessons", path: "/lessons", icon: Video },
+            { label: "Calendar", path: "/calendar", icon: Calendar },
+            { label: "Assignments", path: "/assignments", icon: BookOpen, badge: pendingAssignments.length || undefined },
+            { label: "Messages", path: "/messages", icon: MessageCircle },
+            { label: "Progress", path: "/progress", icon: TrendingUp },
+            { label: "AI Assistant", path: "/ai-assistant", icon: Sparkles },
+          ].map((item) => (
+            <button
+              key={item.path}
+              onClick={() => navigate(item.path)}
+              className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white border border-[#E5E4DE] text-xs font-semibold text-[#111111] hover:border-[#111111] hover:shadow-xs transition-all shrink-0 cursor-pointer"
+            >
+              <item.icon className="w-3.5 h-3.5 text-[#F26522]" />
+              <span>{item.label}</span>
+              {typeof item.badge === "number" && item.badge > 0 && (
+                <span className="w-4 h-4 rounded-full bg-[#F26522] text-white text-[10px] font-bold flex items-center justify-center">
+                  {item.badge}
+                </span>
+              )}
+            </button>
+          ))}
         </div>
 
         {/* Profile Completion Alert Banner if incomplete */}
@@ -414,14 +449,14 @@ export default function Dashboard() {
               <div className="flex items-center justify-between mb-6 pb-4 border-b border-[#E5E4DE]">
                 <div>
                   <h3 className="text-base sm:text-lg font-semibold text-[#111111] flex items-center gap-2">
-                    <CreditCard className="w-4 h-4 text-teal-700" />
+                    <CreditCard className="w-4 h-4 text-[#F26522]" />
                     <span>Tuition Invoices & Payment Receipts</span>
                   </h3>
                   <p className="text-xs text-[#111111]/60 mt-0.5">
                     Official payment receipts for your private tutoring bookings
                   </p>
                 </div>
-                <span className="text-[10px] font-bold text-teal-800 bg-teal-50 px-2.5 py-1 rounded-full border border-teal-200">
+                <span className="text-[10px] font-bold text-emerald-800 bg-emerald-50 px-2.5 py-1 rounded-full border border-emerald-200">
                   Verified Payment
                 </span>
               </div>

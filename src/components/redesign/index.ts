@@ -5,3 +5,6 @@ export { FloatingBadge } from "./FloatingBadge";
 export { SectionHeader } from "./SectionHeader";
 export { TutorCard } from "./TutorCard";
 export { LessonCard } from "./LessonCard";
+export { PageHeader } from "../PageHeader";
+export { StatusBadge } from "../StatusBadge";
+export { EmptyState } from "../EmptyState";

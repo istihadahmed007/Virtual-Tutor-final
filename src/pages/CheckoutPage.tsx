@@ -318,33 +318,33 @@ export default function CheckoutPage() {
   // ─────────────────────────────────────────────────────────────────────────────
   if (isPaid) {
     return (
-      <div className="min-h-screen bg-[#FDFBF7] py-8 px-4 sm:px-6 lg:px-8">
+      <div className="min-h-screen bg-[#F8F7F4] py-12 px-4 sm:px-6 lg:px-8">
         <div className="max-w-xl mx-auto">
-          <div className="bg-white rounded-3xl border border-stone-200 shadow-sm p-6 sm:p-8 text-center space-y-6">
+          <div className="bg-white rounded-3xl border border-[#E5E4DE] shadow-sm p-6 sm:p-10 text-center space-y-6">
             {/* Green Verified Icon */}
             <div className="mx-auto w-16 h-16 rounded-full bg-emerald-50 border-2 border-emerald-500 flex items-center justify-center text-emerald-600 shadow-xs">
-              <CheckCircle2 className="w-9 h-9" />
+              <CheckCircle2 className="w-8 h-8" />
             </div>
 
             <div className="space-y-2">
-              <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-emerald-100 text-emerald-800">
+              <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-emerald-50 text-emerald-700 border border-emerald-200">
                 <Sparkles className="w-3.5 h-3.5" />
                 Verified via UddoktaPay
               </span>
-              <h1 className="text-2xl sm:text-3xl font-black text-slate-900 tracking-tight">
+              <h1 className="text-2xl sm:text-3xl font-black text-[#111111] tracking-tight">
                 Payment Successful!
               </h1>
-              <p className="text-xs sm:text-sm text-slate-600 max-w-md mx-auto">
+              <p className="text-xs sm:text-sm text-[#111111]/70 max-w-md mx-auto leading-relaxed">
                 Congratulations! You are officially enrolled in your live tuition course. Class access credentials and receipt details have been sent to{" "}
-                <strong className="text-slate-800">
+                <strong className="text-[#111111]">
                   {order?.student_email || studentEmail || user?.email || "your registered email"}
                 </strong>.
               </p>
             </div>
 
             {/* Enrolled Details Card */}
-            <div className="bg-stone-50 rounded-2xl p-4 sm:p-5 border border-stone-200/80 text-left space-y-3.5 text-xs">
-              <div className="flex items-center gap-3 pb-3 border-b border-stone-200">
+            <div className="bg-[#FAF9F5] rounded-2xl p-5 border border-[#E5E4DE] text-left space-y-3.5 text-xs">
+              <div className="flex items-center gap-3 pb-3 border-b border-[#E5E4DE]">
                 <ProfileAvatar
                   name={effectiveTeacherName}
                   image={sanitizedTeacherPhoto}
@@ -355,8 +355,8 @@ export default function CheckoutPage() {
                   className="shrink-0"
                 />
                 <div className="min-w-0 flex-1">
-                  <h3 className="font-bold text-slate-900 text-sm truncate">{effectiveTeacherName}</h3>
-                  <p className="text-slate-500 text-xs truncate">
+                  <h3 className="font-bold text-[#111111] text-sm truncate">{effectiveTeacherName}</h3>
+                  <p className="text-[#111111]/60 text-xs truncate">
                     {effectiveSubject} · {effectiveCourseName}
                   </p>
                 </div>
@@ -364,24 +364,24 @@ export default function CheckoutPage() {
 
               <div className="grid grid-cols-2 gap-3 pt-1">
                 <div>
-                  <span className="text-slate-400 block text-[11px]">Order ID</span>
-                  <span className="font-mono font-bold text-slate-800">
+                  <span className="text-[#111111]/50 block text-[11px]">Order ID</span>
+                  <span className="font-mono font-bold text-[#111111]">
                     {order?.order_id || effectiveOrderId}
                   </span>
                 </div>
                 <div>
-                  <span className="text-slate-400 block text-[11px]">UddoktaPay Invoice</span>
-                  <span className="font-mono font-bold text-slate-800 truncate block">
+                  <span className="text-[#111111]/50 block text-[11px]">UddoktaPay Invoice</span>
+                  <span className="font-mono font-bold text-[#111111] truncate block">
                     {verifiedInvoiceData?.invoiceId || activeInvoiceId || order?.gateway_invoice_id || "UDD-PAID"}
                   </span>
                 </div>
                 <div>
-                  <span className="text-slate-400 block text-[11px]">Amount Paid</span>
-                  <span className="font-black text-teal-700 text-sm">৳{effectiveAmount.toLocaleString()} BDT</span>
+                  <span className="text-[#111111]/50 block text-[11px]">Amount Paid</span>
+                  <span className="font-black text-[#111111] text-sm">৳{effectiveAmount.toLocaleString()} BDT</span>
                 </div>
                 <div>
-                  <span className="text-slate-400 block text-[11px]">Payment Method</span>
-                  <span className="font-semibold text-slate-800">
+                  <span className="text-[#111111]/50 block text-[11px]">Payment Method</span>
+                  <span className="font-semibold text-[#111111]">
                     {verifiedInvoiceData?.method ? `UddoktaPay (${verifiedInvoiceData.method})` : "UddoktaPay"}
                   </span>
                 </div>
@@ -390,36 +390,36 @@ export default function CheckoutPage() {
 
             {/* Primary Action: Go to My Classes */}
             <div className="pt-2 space-y-3">
-              <Button
+              <button
                 id="btn-go-to-my-classes"
                 onClick={() => navigate("/lessons")}
-                className="w-full h-12 rounded-2xl bg-teal-700 hover:bg-teal-800 text-white font-bold text-sm shadow-md transition-all active:scale-[0.99] flex items-center justify-center gap-2 cursor-pointer"
+                className="w-full h-12 rounded-full bg-[#111111] hover:bg-[#222222] text-white font-bold text-sm shadow-md transition-all active:scale-[0.99] flex items-center justify-center gap-2 cursor-pointer"
               >
                 <span>Go to My Classes</span>
                 <ChevronRight className="w-4 h-4" />
-              </Button>
+              </button>
 
               <div className="flex items-center justify-center gap-4 text-xs">
                 <button
                   type="button"
                   onClick={() => window.print()}
-                  className="text-slate-600 hover:text-slate-900 inline-flex items-center gap-1.5 font-medium py-1 px-2 cursor-pointer"
+                  className="text-[#111111]/70 hover:text-[#111111] inline-flex items-center gap-1.5 font-medium py-1 px-2 cursor-pointer"
                 >
                   <Printer className="w-3.5 h-3.5" />
                   <span>Print Receipt</span>
                 </button>
-                <span className="text-slate-300">·</span>
+                <span className="text-[#E5E4DE]">·</span>
                 <button
                   type="button"
                   onClick={() => navigate("/dashboard")}
-                  className="text-slate-600 hover:text-slate-900 font-medium py-1 px-2 cursor-pointer"
+                  className="text-[#111111]/70 hover:text-[#111111] font-medium py-1 px-2 cursor-pointer"
                 >
                   Return to Dashboard
                 </button>
               </div>
             </div>
 
-            <div className="text-[11px] text-slate-400 pt-2 border-t border-stone-100 flex items-center justify-center gap-1">
+            <div className="text-[11px] text-[#111111]/50 pt-2 border-t border-[#E5E4DE] flex items-center justify-center gap-1">
               <ShieldCheck className="w-3.5 h-3.5 text-emerald-600" />
               <span>Processed securely via UddoktaPay Bangladesh Tuition Escrow</span>
             </div>
@@ -433,32 +433,32 @@ export default function CheckoutPage() {
   // CHECKOUT PAGE: 100% Dedicated UddoktaPay Gateway
   // ─────────────────────────────────────────────────────────────────────────────
   return (
-    <div className="min-h-screen bg-[#FDFBF7] py-6 sm:py-10 px-4 sm:px-6 lg:px-8">
+    <div className="min-h-screen bg-[#F8F7F4] py-6 sm:py-10 px-4 sm:px-6 lg:px-8">
       <div className="max-w-xl mx-auto space-y-5">
         {/* Top Navigation Header */}
         <div className="flex items-center justify-between pb-1">
           <button
             type="button"
             onClick={() => navigate(-1)}
-            className="inline-flex items-center gap-1 text-xs font-semibold text-slate-600 hover:text-slate-900 py-1 px-2 -ml-2 rounded-lg transition-colors cursor-pointer"
+            className="inline-flex items-center gap-1 text-xs font-semibold text-[#111111]/70 hover:text-[#111111] py-1 px-2 -ml-2 rounded-lg transition-colors cursor-pointer"
           >
             <ArrowLeft className="w-4 h-4" />
             <span>Back</span>
           </button>
 
-          <div className="inline-flex items-center gap-1.5 text-xs text-slate-500 font-medium">
-            <Lock className="w-3.5 h-3.5 text-teal-700" />
+          <div className="inline-flex items-center gap-1.5 text-xs text-[#111111]/60 font-medium">
+            <Lock className="w-3.5 h-3.5 text-[#F26522]" />
             <span>UddoktaPay Official Gateway</span>
           </div>
         </div>
 
         {/* Verification in Progress Alert */}
         {isVerifying && (
-          <div className="bg-teal-50 border border-teal-200 rounded-2xl p-4 flex items-center gap-3 text-teal-900 text-xs animate-pulse">
-            <Loader2 className="w-5 h-5 text-teal-700 animate-spin shrink-0" />
+          <div className="bg-[#FAF9F5] border border-[#F26522]/40 rounded-2xl p-4 flex items-center gap-3 text-[#111111] text-xs animate-pulse">
+            <Loader2 className="w-5 h-5 text-[#F26522] animate-spin shrink-0" />
             <div>
-              <p className="font-bold text-teal-900">Verifying payment with UddoktaPay...</p>
-              <p className="text-teal-700 mt-0.5">Please wait while we confirm your transaction with the payment gateway.</p>
+              <p className="font-bold text-[#111111]">Verifying payment with UddoktaPay...</p>
+              <p className="text-[#111111]/70 mt-0.5">Please wait while we confirm your transaction with the payment gateway.</p>
             </div>
           </div>
         )}
@@ -486,7 +486,7 @@ export default function CheckoutPage() {
         )}
 
         {/* 1. Review Class & Educator Card */}
-        <div className="bg-white rounded-3xl border border-stone-200 p-5 sm:p-6 shadow-xs space-y-4">
+        <div className="bg-white rounded-3xl border border-[#E5E4DE] p-5 sm:p-6 shadow-xs space-y-4">
           <div className="flex items-start gap-4">
             <ProfileAvatar
               name={effectiveTeacherName}
@@ -499,90 +499,90 @@ export default function CheckoutPage() {
             />
             <div className="min-w-0 flex-1">
               <div className="flex items-center gap-1.5 flex-wrap">
-                <span className="inline-block px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-teal-50 text-teal-800 border border-teal-200">
+                <span className="inline-block px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-[#FAF9F5] text-[#111111] border border-[#E5E4DE]">
                   {effectiveSubject}
                 </span>
-                <span className="inline-flex items-center gap-0.5 text-[10px] font-semibold text-amber-700 bg-amber-50 px-2 py-0.5 rounded-full border border-amber-200">
+                <span className="inline-flex items-center gap-0.5 text-[10px] font-semibold text-amber-800 bg-amber-50 px-2 py-0.5 rounded-full border border-amber-200">
                   <Award className="w-3 h-3 text-amber-600" />
                   Verified Educator
                 </span>
               </div>
-              <h2 className="text-base sm:text-lg font-bold text-slate-900 mt-1 truncate">
+              <h2 className="text-base sm:text-lg font-bold text-[#111111] mt-1 truncate">
                 {effectiveTeacherName}
               </h2>
-              <p className="text-xs text-slate-600 line-clamp-1 font-medium mt-0.5">
+              <p className="text-xs text-[#111111]/70 line-clamp-1 font-medium mt-0.5">
                 {effectiveCourseName}
               </p>
             </div>
           </div>
 
-          <div className="grid grid-cols-2 gap-2 pt-3 border-t border-stone-100 text-xs">
-            <div className="bg-stone-50 rounded-xl p-2.5 border border-stone-200/70">
-              <span className="text-slate-400 block text-[10px] font-medium">Total Classes</span>
-              <span className="font-bold text-slate-800 text-xs sm:text-sm">{effectiveClassesCount} Live Sessions</span>
+          <div className="grid grid-cols-2 gap-2 pt-3 border-t border-[#E5E4DE] text-xs">
+            <div className="bg-[#FAF9F5] rounded-xl p-2.5 border border-[#E5E4DE]">
+              <span className="text-[#111111]/50 block text-[10px] font-medium">Total Classes</span>
+              <span className="font-bold text-[#111111] text-xs sm:text-sm">{effectiveClassesCount} Live Sessions</span>
             </div>
-            <div className="bg-stone-50 rounded-xl p-2.5 border border-stone-200/70">
-              <span className="text-slate-400 block text-[10px] font-medium">Tuition Amount</span>
-              <span className="font-bold text-slate-800 text-xs sm:text-sm">৳{effectiveAmount.toLocaleString()} BDT</span>
+            <div className="bg-[#FAF9F5] rounded-xl p-2.5 border border-[#E5E4DE]">
+              <span className="text-[#111111]/50 block text-[10px] font-medium">Tuition Amount</span>
+              <span className="font-bold text-[#111111] text-xs sm:text-sm">৳{effectiveAmount.toLocaleString()} BDT</span>
             </div>
           </div>
         </div>
 
         {/* 2. Student Information Form */}
-        <div className="bg-white rounded-3xl border border-stone-200 p-5 sm:p-6 shadow-xs space-y-3.5">
-          <h3 className="text-xs font-bold text-slate-900 uppercase tracking-wider">
+        <div className="bg-white rounded-3xl border border-[#E5E4DE] p-5 sm:p-6 shadow-xs space-y-3.5">
+          <h3 className="text-xs font-bold text-[#111111] uppercase tracking-wider">
             Student Information
           </h3>
 
           <div className="space-y-3">
             <div>
-              <label htmlFor="student-name-input" className="block text-xs font-semibold text-slate-700 mb-1">
+              <label htmlFor="student-name-input" className="block text-xs font-semibold text-[#111111] mb-1">
                 Student Full Name *
               </label>
               <div className="relative">
-                <User className="w-4 h-4 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2" />
+                <User className="w-4 h-4 text-[#111111]/40 absolute left-3 top-1/2 -translate-y-1/2" />
                 <input
                   id="student-name-input"
                   type="text"
                   value={studentName}
                   onChange={(e) => setStudentName(e.target.value)}
                   placeholder="Enter student full name"
-                  className="w-full pl-9 pr-3 py-2.5 rounded-xl border border-stone-200 text-xs sm:text-sm text-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-teal-700/20 focus:border-teal-700 transition-colors"
+                  className="w-full pl-9 pr-3 py-2.5 rounded-xl border border-[#E5E4DE] text-xs sm:text-sm text-[#111111] placeholder:text-[#111111]/40 focus:outline-none focus:ring-2 focus:ring-[#F26522]/20 focus:border-[#F26522] transition-colors"
                 />
               </div>
             </div>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
               <div>
-                <label htmlFor="student-phone-input" className="block text-xs font-semibold text-slate-700 mb-1">
+                <label htmlFor="student-phone-input" className="block text-xs font-semibold text-[#111111] mb-1">
                   Mobile Number (bKash / Nagad)
                 </label>
                 <div className="relative">
-                  <Phone className="w-4 h-4 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2" />
+                  <Phone className="w-4 h-4 text-[#111111]/40 absolute left-3 top-1/2 -translate-y-1/2" />
                   <input
                     id="student-phone-input"
                     type="tel"
                     value={studentPhone}
                     onChange={(e) => setStudentPhone(e.target.value)}
                     placeholder="01XXXXXXXXX"
-                    className="w-full pl-9 pr-3 py-2.5 rounded-xl border border-stone-200 text-xs sm:text-sm text-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-teal-700/20 focus:border-teal-700 transition-colors"
+                    className="w-full pl-9 pr-3 py-2.5 rounded-xl border border-[#E5E4DE] text-xs sm:text-sm text-[#111111] placeholder:text-[#111111]/40 focus:outline-none focus:ring-2 focus:ring-[#F26522]/20 focus:border-[#F26522] transition-colors"
                   />
                 </div>
               </div>
 
               <div>
-                <label htmlFor="student-email-input" className="block text-xs font-semibold text-slate-700 mb-1">
+                <label htmlFor="student-email-input" className="block text-xs font-semibold text-[#111111] mb-1">
                   Receipt Email Address
                 </label>
                 <div className="relative">
-                  <Mail className="w-4 h-4 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2" />
+                  <Mail className="w-4 h-4 text-[#111111]/40 absolute left-3 top-1/2 -translate-y-1/2" />
                   <input
                     id="student-email-input"
                     type="email"
                     value={studentEmail}
                     onChange={(e) => setStudentEmail(e.target.value)}
                     placeholder="student@example.com"
-                    className="w-full pl-9 pr-3 py-2.5 rounded-xl border border-stone-200 text-xs sm:text-sm text-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-teal-700/20 focus:border-teal-700 transition-colors"
+                    className="w-full pl-9 pr-3 py-2.5 rounded-xl border border-[#E5E4DE] text-xs sm:text-sm text-[#111111] placeholder:text-[#111111]/40 focus:outline-none focus:ring-2 focus:ring-[#F26522]/20 focus:border-[#F26522] transition-colors"
                   />
                 </div>
               </div>
@@ -591,22 +591,22 @@ export default function CheckoutPage() {
         </div>
 
         {/* 3. Official Payment Gateway Card */}
-        <div className="bg-white rounded-3xl border border-stone-200 p-5 sm:p-6 shadow-xs space-y-3.5">
+        <div className="bg-white rounded-3xl border border-[#E5E4DE] p-5 sm:p-6 shadow-xs space-y-3.5">
           <div className="flex items-center justify-between">
-            <h3 className="text-xs font-bold text-slate-900 uppercase tracking-wider">
+            <h3 className="text-xs font-bold text-[#111111] uppercase tracking-wider">
               Payment Gateway
             </h3>
-            <span className="inline-flex items-center gap-1 text-[11px] font-bold text-teal-800 bg-teal-50 px-2 py-0.5 rounded-md border border-teal-200">
-              <ShieldCheck className="w-3.5 h-3.5 text-teal-600" />
+            <span className="inline-flex items-center gap-1 text-[11px] font-bold text-[#111111] bg-[#FAF9F5] px-2.5 py-0.5 rounded-full border border-[#E5E4DE]">
+              <ShieldCheck className="w-3.5 h-3.5 text-emerald-600" />
               UddoktaPay Official Gateway
             </span>
           </div>
 
-          <div className="p-4 rounded-2xl border-2 border-teal-700/80 bg-stone-50/70 space-y-3">
+          <div className="p-4 rounded-2xl border-2 border-[#111111] bg-[#FAF9F5] space-y-3">
             <div className="flex items-center justify-between">
               <div>
-                <h4 className="text-sm font-black text-slate-900">UddoktaPay Automated Checkout</h4>
-                <p className="text-[11px] text-slate-500 mt-0.5">
+                <h4 className="text-sm font-bold text-[#111111]">UddoktaPay Automated Checkout</h4>
+                <p className="text-[11px] text-[#111111]/60 mt-0.5">
                   Official hosted checkout portal with instant verification
                 </p>
               </div>
@@ -614,33 +614,33 @@ export default function CheckoutPage() {
             </div>
 
             {/* Supported Channels in UddoktaPay */}
-            <div className="pt-2 border-t border-stone-200/80">
-              <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider block mb-2">
+            <div className="pt-2 border-t border-[#E5E4DE]">
+              <span className="text-[10px] font-bold text-[#111111]/50 uppercase tracking-wider block mb-2">
                 Available channels on UddoktaPay portal:
               </span>
               <div className="flex flex-wrap gap-1.5">
-                <span className="px-2.5 py-1 rounded-lg text-xs font-black bg-[#D12053] text-white shadow-2xs">
+                <span className="px-2.5 py-1 rounded-lg text-xs font-bold bg-[#D12053] text-white shadow-2xs">
                   bKash
                 </span>
-                <span className="px-2.5 py-1 rounded-lg text-xs font-black bg-[#F7941D] text-white shadow-2xs">
+                <span className="px-2.5 py-1 rounded-lg text-xs font-bold bg-[#F7941D] text-white shadow-2xs">
                   Nagad
                 </span>
-                <span className="px-2.5 py-1 rounded-lg text-xs font-black bg-[#8C3494] text-white shadow-2xs">
+                <span className="px-2.5 py-1 rounded-lg text-xs font-bold bg-[#8C3494] text-white shadow-2xs">
                   Rocket
                 </span>
-                <span className="px-2.5 py-1 rounded-lg text-xs font-black bg-[#2E3192] text-white shadow-2xs">
+                <span className="px-2.5 py-1 rounded-lg text-xs font-bold bg-[#2E3192] text-white shadow-2xs">
                   Upay
                 </span>
-                <span className="px-2.5 py-1 rounded-lg text-xs font-semibold bg-slate-800 text-white shadow-2xs">
-                  Visa / Mastercard / Nexus
+                <span className="px-2.5 py-1 rounded-lg text-xs font-semibold bg-[#111111] text-white shadow-2xs">
+                  Cards
                 </span>
-                <span className="px-2.5 py-1 rounded-lg text-xs font-semibold bg-stone-200 text-slate-700">
+                <span className="px-2.5 py-1 rounded-lg text-xs font-semibold bg-white border border-[#E5E4DE] text-[#111111]">
                   Internet Banking
                 </span>
               </div>
             </div>
 
-            <p className="text-[11px] text-slate-500 pt-1">
+            <p className="text-[11px] text-[#111111]/60 pt-1">
               Selecting payment will launch UddoktaPay's secure checkout window where you can complete your payment via bKash, Nagad, or Rocket.
             </p>
           </div>
@@ -648,38 +648,38 @@ export default function CheckoutPage() {
 
         {/* 4. Active UddoktaPay Session & Waiting Panel */}
         {gatewayRedirectUrl && (
-          <div className="bg-teal-50/90 border-2 border-teal-600 rounded-3xl p-5 sm:p-6 shadow-sm space-y-4">
-            <div className="flex items-center justify-between pb-2 border-b border-teal-200">
+          <div className="bg-[#FAF9F5] border-2 border-[#F26522] rounded-3xl p-5 sm:p-6 shadow-sm space-y-4">
+            <div className="flex items-center justify-between pb-2 border-b border-[#E5E4DE]">
               <div className="flex items-center gap-2">
-                <div className="w-2.5 h-2.5 rounded-full bg-teal-600 animate-ping" />
-                <h4 className="text-xs font-bold uppercase tracking-wider text-teal-900">
+                <div className="w-2.5 h-2.5 rounded-full bg-[#F26522] animate-ping" />
+                <h4 className="text-xs font-bold uppercase tracking-wider text-[#111111]">
                   UddoktaPay Payment Portal Active
                 </h4>
               </div>
-              <span className="text-[11px] font-mono font-bold text-teal-800 bg-white/80 px-2 py-0.5 rounded-md border border-teal-300">
+              <span className="text-[11px] font-mono font-bold text-[#111111] bg-white px-2 py-0.5 rounded-md border border-[#E5E4DE]">
                 {activeInvoiceId || "Invoice Ready"}
               </span>
             </div>
 
-            <p className="text-xs text-teal-900 leading-relaxed">
+            <p className="text-xs text-[#111111]/80 leading-relaxed">
               Your official UddoktaPay checkout is open in a new tab. If the window did not open automatically, click the button below to complete your payment:
             </p>
 
-            {/* Direct Link to Payment Gateway (Opens in new tab so X-Frame-Options is never violated) */}
+            {/* Direct Link to Payment Gateway */}
             <a
               id="btn-open-uddoktapay-link"
               href={gatewayRedirectUrl}
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-flex items-center justify-center gap-2 w-full h-12 rounded-2xl bg-teal-800 hover:bg-teal-900 text-white font-bold text-xs sm:text-sm shadow-md transition-all active:scale-[0.99]"
+              className="inline-flex items-center justify-center gap-2 w-full h-12 rounded-full bg-[#111111] hover:bg-[#222222] text-white font-bold text-xs sm:text-sm shadow-md transition-all active:scale-[0.99]"
             >
               <span>Open UddoktaPay Checkout (bKash / Nagad / Rocket)</span>
               <ExternalLink className="w-4 h-4" />
             </a>
 
-            <div className="pt-2 border-t border-teal-200 flex items-center justify-between flex-wrap gap-2 text-xs">
-              <div className="flex items-center gap-2 text-teal-800">
-                <Loader2 className="w-4 h-4 text-teal-700 animate-spin shrink-0" />
+            <div className="pt-2 border-t border-[#E5E4DE] flex items-center justify-between flex-wrap gap-2 text-xs">
+              <div className="flex items-center gap-2 text-[#111111]/70">
+                <Loader2 className="w-4 h-4 text-[#F26522] animate-spin shrink-0" />
                 <span className="text-[11px]">Auto-checking status every 3 seconds...</span>
               </div>
 
@@ -690,7 +690,7 @@ export default function CheckoutPage() {
                   variant="outline"
                   disabled={isVerifying}
                   onClick={() => handleVerifyInvoice(activeInvoiceId)}
-                  className="h-8 text-xs border-teal-300 text-teal-900 bg-white hover:bg-teal-100 flex items-center gap-1.5 cursor-pointer"
+                  className="h-8 text-xs border-[#E5E4DE] text-[#111111] bg-white hover:bg-[#FAF9F5] flex items-center gap-1.5 cursor-pointer rounded-full"
                 >
                   <RefreshCw className={`w-3.5 h-3.5 ${isVerifying ? "animate-spin" : ""}`} />
                   <span>Check Status Now</span>
@@ -701,37 +701,37 @@ export default function CheckoutPage() {
         )}
 
         {/* 5. Total Amount & Primary Action CTA */}
-        <div className="bg-white rounded-3xl border border-stone-200 p-5 sm:p-6 shadow-xs space-y-4">
+        <div className="bg-white rounded-3xl border border-[#E5E4DE] p-5 sm:p-6 shadow-xs space-y-4">
           <div className="space-y-2 text-xs">
-            <div className="flex justify-between text-slate-600">
+            <div className="flex justify-between text-[#111111]/70">
               <span>Tuition Fee ({effectiveClassesCount} Live Classes):</span>
-              <span className="font-semibold text-slate-800">৳{effectiveAmount.toLocaleString()} BDT</span>
+              <span className="font-semibold text-[#111111]">৳{effectiveAmount.toLocaleString()} BDT</span>
             </div>
-            <div className="flex justify-between text-slate-500 text-[11px]">
+            <div className="flex justify-between text-[#111111]/50 text-[11px]">
               <span>UddoktaPay Gateway Fee:</span>
-              <span className="text-emerald-700 font-bold">FREE (৳0)</span>
+              <span className="text-emerald-600 font-bold">FREE (৳0)</span>
             </div>
-            <div className="pt-3 border-t border-stone-200 flex items-center justify-between">
+            <div className="pt-3 border-t border-[#E5E4DE] flex items-center justify-between">
               <div>
-                <span className="text-xs font-bold text-slate-900 block">Total Amount</span>
-                <span className="text-[10px] text-slate-400">All gateway fees and taxes included</span>
+                <span className="text-xs font-bold text-[#111111] block">Total Amount</span>
+                <span className="text-[10px] text-[#111111]/40">All gateway fees and taxes included</span>
               </div>
               <div className="text-right">
-                <span className="text-2xl font-black text-teal-700 tracking-tight">
+                <span className="text-2xl font-black text-[#111111] tracking-tight">
                   ৳{effectiveAmount.toLocaleString()}
                 </span>
-                <span className="text-xs font-bold text-slate-500 ml-1">BDT</span>
+                <span className="text-xs font-bold text-[#111111]/60 ml-1">BDT</span>
               </div>
             </div>
           </div>
 
-          {/* Primary CTA: "Pay ৳[amount] with UddoktaPay" */}
-          <Button
+          {/* Primary CTA */}
+          <button
             id="btn-pay-primary-cta"
             type="button"
             disabled={isProcessing || isVerifying}
             onClick={handlePayWithUddoktaPay}
-            className="w-full h-13 rounded-2xl bg-teal-700 hover:bg-teal-800 text-white font-black text-base shadow-md transition-all active:scale-[0.99] flex items-center justify-center gap-2 cursor-pointer"
+            className="w-full h-12 rounded-full bg-[#111111] hover:bg-[#222222] text-white font-bold text-sm shadow-md transition-all active:scale-[0.99] flex items-center justify-center gap-2 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
           >
             {isProcessing ? (
               <>
@@ -745,18 +745,18 @@ export default function CheckoutPage() {
               </>
             ) : gatewayRedirectUrl ? (
               <>
-                <ExternalLink className="w-4 h-4 text-teal-200" />
+                <ExternalLink className="w-4 h-4 text-[#F26522]" />
                 <span>Re-Open UddoktaPay Portal (৳{effectiveAmount.toLocaleString()})</span>
               </>
             ) : (
               <>
-                <Lock className="w-4 h-4 text-teal-200" />
+                <Lock className="w-4 h-4 text-[#F26522]" />
                 <span>Pay ৳{effectiveAmount.toLocaleString()} with UddoktaPay ↗</span>
               </>
             )}
-          </Button>
+          </button>
 
-          <p className="text-[11px] text-center text-slate-400 flex items-center justify-center gap-1">
+          <p className="text-[11px] text-center text-[#111111]/40 flex items-center justify-center gap-1">
             <ShieldCheck className="w-3.5 h-3.5 text-emerald-600" />
             <span>Automated payment with bKash, Nagad, Rocket, Upay & Cards via UddoktaPay.</span>
           </p>

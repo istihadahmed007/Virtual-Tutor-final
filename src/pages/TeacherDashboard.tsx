@@ -82,7 +82,7 @@ export default function TeacherDashboard() {
               Manage your live classes, schedule, student discovery, and teaching requests.
             </p>
           </div>
-          <div className="flex items-center gap-3">
+          <div className="flex flex-wrap items-center gap-2.5 sm:gap-3">
             <button
               onClick={handleToggleAvailability}
               className={`inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full border text-xs font-semibold transition-all cursor-pointer ${
@@ -108,9 +108,9 @@ export default function TeacherDashboard() {
             </PillButton>
             <PrimaryButton
               size="sm"
-              onClick={() => navigate("/students")}
+              onClick={() => navigate("/classroom")}
             >
-              Find Students ({studentList.length})
+              Start Classroom
             </PrimaryButton>
           </div>
         </div>
@@ -202,26 +202,26 @@ export default function TeacherDashboard() {
 
         {/* Pending Bookings Alert */}
         {needsAttention && (
-          <div className="bg-white rounded-3xl border border-blue-200 p-6 sm:p-8 mb-8 shadow-xs">
-            <h3 className="text-base font-bold text-slate-900 flex items-center gap-2 mb-4">
-              <AlertCircle className="w-4 h-4 text-blue-600" />
+          <div className="bg-white rounded-3xl border border-[#F26522]/30 p-6 sm:p-8 mb-8 shadow-xs">
+            <h3 className="text-base font-bold text-[#111111] flex items-center gap-2 mb-4">
+              <AlertCircle className="w-4 h-4 text-[#F26522]" />
               <span>Booking requests awaiting your response</span>
             </h3>
             <div className="space-y-3">
               {pendingBookings.slice(0, 3).map((booking) => (
                 <div
                   key={booking._id}
-                  className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 p-4 bg-slate-50 rounded-2xl border border-slate-200"
+                  className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 p-4 bg-[#FAF9F5] rounded-2xl border border-[#E5E4DE]"
                 >
                   <div className="flex items-center gap-3">
-                    <div className="w-9 h-9 rounded-full bg-blue-600 text-white flex items-center justify-center font-bold text-xs shrink-0">
+                    <div className="w-9 h-9 rounded-full bg-[#111111] text-white flex items-center justify-center font-bold text-xs shrink-0">
                       {booking.studentName.charAt(0)}
                     </div>
                     <div>
-                      <p className="text-sm font-bold text-slate-900">
+                      <p className="text-sm font-bold text-[#111111]">
                         {booking.studentName}
                       </p>
-                      <p className="text-xs text-slate-600">
+                      <p className="text-xs text-[#111111]/60">
                         {booking.subject} · {booking.date} · {booking.timeSlot}
                       </p>
                     </div>
@@ -229,7 +229,7 @@ export default function TeacherDashboard() {
                   <div className="flex items-center gap-2 self-end sm:self-center">
                     <button
                       onClick={() => navigate("/lessons")}
-                      className="px-4 py-2 rounded-full bg-blue-600 hover:bg-blue-700 text-white text-xs font-bold transition-all shadow-xs"
+                      className="px-4 py-2 rounded-full bg-[#111111] hover:bg-[#222222] text-white text-xs font-bold transition-all shadow-xs cursor-pointer"
                     >
                       Accept Booking
                     </button>
@@ -245,82 +245,82 @@ export default function TeacherDashboard() {
           {/* Left Column: Upcoming Sessions & Student Requests */}
           <div className="lg:col-span-2 space-y-8">
             {/* Educator Earnings & Month-End Settlement Card */}
-            <div className="bg-white rounded-3xl border border-stone-200 p-6 sm:p-8 shadow-xs">
-              <div className="flex flex-col sm:flex-row sm:items-center justify-between pb-4 border-b border-stone-100 gap-2 mb-6">
+            <div className="bg-white rounded-3xl border border-[#E5E4DE] p-6 sm:p-8 shadow-xs">
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between pb-4 border-b border-[#E5E4DE] gap-2 mb-6">
                 <div>
-                  <h3 className="text-base sm:text-lg font-bold text-slate-900 flex items-center gap-2">
-                    <Wallet className="w-5 h-5 text-teal-700" />
+                  <h3 className="text-base sm:text-lg font-bold text-[#111111] flex items-center gap-2">
+                    <Wallet className="w-5 h-5 text-[#F26522]" />
                     <span>Tuition Earnings & Monthly Settlement (85% Allocation)</span>
                   </h3>
-                  <p className="text-xs text-slate-500 mt-0.5">
+                  <p className="text-xs text-[#111111]/60 mt-0.5">
                     Student tuition fees collected up front; your 85% share accumulates for month-end disbursement.
                   </p>
                 </div>
-                <span className="text-[11px] font-bold text-teal-800 bg-teal-50 border border-teal-200 px-3 py-1 rounded-full w-fit">
+                <span className="text-[11px] font-bold text-[#111111] bg-[#FAF9F5] border border-[#E5E4DE] px-3 py-1 rounded-full w-fit">
                   Month-End Payout Model
                 </span>
               </div>
 
               {/* 3 Metric Cards */}
               <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-6">
-                <div className="bg-stone-50 rounded-2xl p-4 border border-stone-200/80">
-                  <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400">
+                <div className="bg-[#FAF9F5] rounded-2xl p-4 border border-[#E5E4DE]">
+                  <span className="text-[10px] font-bold uppercase tracking-wider text-[#111111]/50">
                     This Month (85% Net)
                   </span>
                   <div className="flex items-baseline gap-1 mt-1">
-                    <span className="text-xl font-black text-slate-900">
+                    <span className="text-xl font-black text-[#111111]">
                       ৳{(earningsData?.currentMonthEarnings ?? 0).toLocaleString()}
                     </span>
-                    <span className="text-[10px] text-slate-400 font-bold">BDT</span>
+                    <span className="text-[10px] text-[#111111]/50 font-bold">BDT</span>
                   </div>
-                  <p className="text-[10px] text-slate-500 mt-1">Accumulating for payout</p>
+                  <p className="text-[10px] text-[#111111]/60 mt-1">Accumulating for payout</p>
                 </div>
 
-                <div className="bg-teal-50/50 rounded-2xl p-4 border border-teal-200/80">
-                  <span className="text-[10px] font-bold uppercase tracking-wider text-teal-700">
+                <div className="bg-[#111111] rounded-2xl p-4 border border-[#111111] text-white">
+                  <span className="text-[10px] font-bold uppercase tracking-wider text-white/60">
                     Payable Month-End Settlement
                   </span>
                   <div className="flex items-baseline gap-1 mt-1">
-                    <span className="text-xl font-black text-teal-800">
+                    <span className="text-xl font-black text-white">
                       ৳{(earningsData?.pendingPayout ?? 0).toLocaleString()}
                     </span>
-                    <span className="text-[10px] text-teal-600 font-bold">BDT</span>
+                    <span className="text-[10px] text-[#F26522] font-bold">BDT</span>
                   </div>
-                  <p className="text-[10px] text-teal-600 mt-1">Scheduled for end of month</p>
+                  <p className="text-[10px] text-white/70 mt-1">Scheduled for end of month</p>
                 </div>
 
-                <div className="bg-stone-50 rounded-2xl p-4 border border-stone-200/80">
-                  <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400">
+                <div className="bg-[#FAF9F5] rounded-2xl p-4 border border-[#E5E4DE]">
+                  <span className="text-[10px] font-bold uppercase tracking-wider text-[#111111]/50">
                     Lifetime Received
                   </span>
                   <div className="flex items-baseline gap-1 mt-1">
-                    <span className="text-xl font-black text-slate-900">
+                    <span className="text-xl font-black text-[#111111]">
                       ৳{(earningsData?.lifetimeEarnings ?? 0).toLocaleString()}
                     </span>
-                    <span className="text-[10px] text-slate-400 font-bold">BDT</span>
+                    <span className="text-[10px] text-[#111111]/50 font-bold">BDT</span>
                   </div>
-                  <p className="text-[10px] text-slate-500 mt-1">Total earned on Virtual Tutor</p>
+                  <p className="text-[10px] text-[#111111]/60 mt-1">Total earned on Virtual Tutor</p>
                 </div>
               </div>
 
               {/* Recent Lesson Earnings Breakdown */}
-              <div className="border border-stone-200 rounded-2xl overflow-hidden">
-                <div className="p-3 bg-stone-50 border-b border-stone-200 text-xs font-bold text-slate-700 flex justify-between items-center">
+              <div className="border border-[#E5E4DE] rounded-2xl overflow-hidden">
+                <div className="p-3 bg-[#FAF9F5] border-b border-[#E5E4DE] text-xs font-bold text-[#111111] flex justify-between items-center">
                   <span>Recent Lesson Earnings (85% Split)</span>
-                  <span className="text-[10px] font-normal text-slate-500">
+                  <span className="text-[10px] font-normal text-[#111111]/60">
                     Virtual Tutor retains 15% platform commission
                   </span>
                 </div>
 
                 {(!earningsData || earningsData.earningsList.length === 0) ? (
-                  <div className="p-6 text-center text-slate-400 text-xs">
+                  <div className="p-6 text-center text-[#111111]/50 text-xs">
                     No tuition earnings recorded yet. When students book and pay for your classes, your 85% earnings will accumulate here.
                   </div>
                 ) : (
                   <div className="overflow-x-auto">
                     <table className="w-full text-left text-xs">
                       <thead>
-                        <tr className="border-b border-stone-100 text-[10px] font-bold text-slate-400 uppercase bg-white">
+                        <tr className="border-b border-[#E5E4DE] text-[10px] font-bold text-[#111111]/50 uppercase bg-white">
                           <th className="py-2.5 px-4">Student</th>
                           <th className="py-2.5 px-4">Gross Tuition</th>
                           <th className="py-2.5 px-4">Platform Fee (15%)</th>
@@ -329,19 +329,19 @@ export default function TeacherDashboard() {
                           <th className="py-2.5 px-4">Date</th>
                         </tr>
                       </thead>
-                      <tbody className="divide-y divide-stone-100">
+                      <tbody className="divide-y divide-[#E5E4DE]">
                         {earningsData.earningsList.slice(0, 5).map((e) => (
-                          <tr key={e._id} className="hover:bg-stone-50/60">
-                            <td className="py-2.5 px-4 font-bold text-slate-900">
+                          <tr key={e._id} className="hover:bg-[#FAF9F5]">
+                            <td className="py-2.5 px-4 font-bold text-[#111111]">
                               {e.studentName || "Student"}
                             </td>
-                            <td className="py-2.5 px-4 text-slate-600">
+                            <td className="py-2.5 px-4 text-[#111111]/70">
                               ৳{e.grossAmount.toLocaleString()}
                             </td>
-                            <td className="py-2.5 px-4 text-slate-500 text-[11px]">
+                            <td className="py-2.5 px-4 text-[#111111]/50 text-[11px]">
                               ৳{e.platformFee.toLocaleString()}
                             </td>
-                            <td className="py-2.5 px-4 font-bold text-teal-700">
+                            <td className="py-2.5 px-4 font-bold text-[#111111]">
                               ৳{e.teacherAmount.toLocaleString()}
                             </td>
                             <td className="py-2.5 px-4">
@@ -350,14 +350,14 @@ export default function TeacherDashboard() {
                                   e.status === "paid"
                                     ? "bg-emerald-100 text-emerald-800"
                                     : e.status === "processing"
-                                    ? "bg-blue-100 text-blue-800"
-                                    : "bg-amber-100 text-amber-800"
+                                    ? "bg-amber-100 text-amber-800"
+                                    : "bg-[#FAF9F5] border border-[#E5E4DE] text-[#111111]"
                                 }`}
                               >
                                 {e.status === "payable" ? "Accruing" : e.status.toUpperCase()}
                               </span>
                             </td>
-                            <td className="py-2.5 px-4 text-slate-400 text-[11px]">
+                            <td className="py-2.5 px-4 text-[#111111]/50 text-[11px]">
                               {new Date(e.earnedAt).toLocaleDateString()}
                             </td>
                           </tr>
@@ -370,21 +370,21 @@ export default function TeacherDashboard() {
             </div>
 
             {/* Upcoming Sessions Card */}
-            <div className="bg-white rounded-3xl border border-slate-200 p-6 sm:p-8">
-              <div className="flex items-center justify-between mb-6 pb-4 border-b border-slate-200">
+            <div className="bg-white rounded-3xl border border-[#E5E4DE] p-6 sm:p-8">
+              <div className="flex items-center justify-between mb-6 pb-4 border-b border-[#E5E4DE]">
                 <div>
-                  <h3 className="text-base sm:text-lg font-bold text-slate-900 flex items-center gap-2">
-                    <Calendar className="w-4 h-4 text-blue-600" />
+                  <h3 className="text-base sm:text-lg font-bold text-[#111111] flex items-center gap-2">
+                    <Calendar className="w-4 h-4 text-[#F26522]" />
                     <span>Upcoming Live Sessions</span>
                   </h3>
-                  <p className="text-xs text-slate-500 mt-0.5">
+                  <p className="text-xs text-[#111111]/60 mt-0.5">
                     Launch live classrooms or review student attendees
                   </p>
                 </div>
                 {upcomingSessions.length > 0 && (
                   <button
                     onClick={() => navigate("/calendar")}
-                    className="text-xs font-semibold text-slate-700 hover:text-blue-600 transition-colors cursor-pointer"
+                    className="text-xs font-semibold text-[#111111] hover:text-[#F26522] transition-colors cursor-pointer"
                   >
                     View calendar →
                   </button>

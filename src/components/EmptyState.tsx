@@ -50,7 +50,7 @@ export function EmptyState({
             if (onAction) onAction();
             else if (actionPath) navigate(actionPath);
           }}
-          className="mt-6 bg-teal-600 hover:bg-teal-700 text-white"
+          className="mt-6 rounded-full bg-[#111111] hover:bg-[#F26522] text-white px-5 py-2.5 text-xs font-semibold shadow-xs transition-all cursor-pointer"
         >
           {actionLabel}
         </Button>

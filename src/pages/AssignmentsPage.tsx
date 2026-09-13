@@ -235,8 +235,8 @@ export default function AssignmentsPage() {
                       )}
 
                       {/* Due date and Actions */}
-                      <div className="flex items-center justify-between gap-3 mt-4 pt-3 border-t border-stone-100">
-                        <span className="text-xs text-slate-400">
+                      <div className="flex items-center justify-between gap-3 mt-4 pt-3 border-t border-[#E5E4DE]">
+                        <span className="text-xs text-[#111111]/50">
                           {a.status === "graded"
                             ? `Graded on ${dueDate.toLocaleDateString()}`
                             : isOverdue
@@ -252,28 +252,28 @@ export default function AssignmentsPage() {
 
                         {/* Student Action */}
                         {!isTeacher && (a.status === "assigned" || a.status === "in_progress") && (
-                          <Button
-                            size="sm"
+                          <button
                             onClick={() => setSubmittingAssignment(a)}
-                            className="bg-teal-600 hover:bg-teal-700 text-white text-xs gap-1.5"
+                            className="px-4 py-2 rounded-full bg-[#111111] hover:bg-[#222222] text-white text-xs font-semibold flex items-center gap-1.5 transition-all shadow-xs cursor-pointer"
                           >
-                            <Upload className="w-3.5 h-3.5" /> Submit Work
-                          </Button>
+                            <Upload className="w-3.5 h-3.5 text-[#F26522]" />
+                            <span>Submit Work</span>
+                          </button>
                         )}
 
                         {/* Teacher Action */}
                         {isTeacher && a.status === "submitted" && (
-                          <Button
-                            size="sm"
+                          <button
                             onClick={() => {
                               setGradingAssignment(a);
                               setGradeInput("A");
                               setFeedbackInput("");
                             }}
-                            className="bg-teal-600 hover:bg-teal-700 text-white text-xs gap-1.5"
+                            className="px-4 py-2 rounded-full bg-[#111111] hover:bg-[#222222] text-white text-xs font-semibold flex items-center gap-1.5 transition-all shadow-xs cursor-pointer"
                           >
-                            <Award className="w-3.5 h-3.5" /> Grade Submission
-                          </Button>
+                            <Award className="w-3.5 h-3.5 text-[#F26522]" />
+                            <span>Grade Submission</span>
+                          </button>
                         )}
                       </div>
                     </div>
@@ -287,19 +287,19 @@ export default function AssignmentsPage() {
 
       {/* Submit Assignment Modal */}
       {submittingAssignment && (
-        <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-          <div className="bg-white rounded-2xl max-w-md w-full p-6 shadow-2xl relative">
+        <div className="fixed inset-0 bg-black/60 backdrop-blur-xs z-50 flex items-center justify-center p-4">
+          <div className="bg-white rounded-3xl max-w-md w-full p-6 sm:p-8 shadow-2xl relative border border-[#E5E4DE]">
             <button
               onClick={() => setSubmittingAssignment(null)}
-              className="absolute top-4 right-4 text-slate-400 hover:text-slate-600"
+              className="absolute top-5 right-5 text-[#111111]/50 hover:text-[#111111] cursor-pointer"
             >
               <X className="w-5 h-5" />
             </button>
-            <h3 className="text-lg font-bold text-slate-900 mb-2">Submit Assignment</h3>
-            <p className="text-xs text-slate-500 mb-4">{submittingAssignment.title}</p>
+            <h3 className="text-lg font-bold text-[#111111] font-display mb-1">Submit Assignment</h3>
+            <p className="text-xs text-[#111111]/60 mb-5">{submittingAssignment.title}</p>
             <div className="space-y-4">
               <div>
-                <label className="text-xs font-semibold text-slate-600 block mb-1.5">
+                <label className="text-xs font-semibold text-[#111111] block mb-1.5">
                   Your Answer / Submission Notes / Link
                 </label>
                 <textarea
@@ -307,16 +307,16 @@ export default function AssignmentsPage() {
                   value={submissionNotes}
                   onChange={(e) => setSubmissionNotes(e.target.value)}
                   placeholder="Paste your solution, link to Google Docs / GitHub / PDF, or notes here..."
-                  className="w-full px-3.5 py-2.5 bg-stone-50 border border-stone-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-teal-500/20 focus:border-teal-400"
+                  className="w-full px-3.5 py-2.5 bg-[#FAF9F5] border border-[#E5E4DE] rounded-2xl text-xs sm:text-sm text-[#111111] placeholder:text-[#111111]/40 focus:outline-none focus:ring-2 focus:ring-[#F26522]/20 focus:border-[#F26522]"
                 />
               </div>
-              <Button
+              <button
                 onClick={handleSubmit}
                 disabled={isSubmitting || !submissionNotes.trim()}
-                className="w-full bg-teal-600 hover:bg-teal-700 text-white"
+                className="w-full h-11 rounded-full bg-[#111111] hover:bg-[#222222] text-white text-xs font-bold transition-all shadow-md cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 {isSubmitting ? "Submitting..." : "Confirm & Submit"}
-              </Button>
+              </button>
             </div>
           </div>
         </div>
@@ -324,23 +324,23 @@ export default function AssignmentsPage() {
 
       {/* Grade Assignment Modal */}
       {gradingAssignment && (
-        <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-          <div className="bg-white rounded-2xl max-w-md w-full p-6 shadow-2xl relative">
+        <div className="fixed inset-0 bg-black/60 backdrop-blur-xs z-50 flex items-center justify-center p-4">
+          <div className="bg-white rounded-3xl max-w-md w-full p-6 sm:p-8 shadow-2xl relative border border-[#E5E4DE]">
             <button
               onClick={() => setGradingAssignment(null)}
-              className="absolute top-4 right-4 text-slate-400 hover:text-slate-600"
+              className="absolute top-5 right-5 text-[#111111]/50 hover:text-[#111111] cursor-pointer"
             >
               <X className="w-5 h-5" />
             </button>
-            <h3 className="text-lg font-bold text-slate-900 mb-2">Grade Assignment</h3>
-            <p className="text-xs text-slate-500 mb-4">Student: {gradingAssignment.studentName}</p>
+            <h3 className="text-lg font-bold text-[#111111] font-display mb-1">Grade Assignment</h3>
+            <p className="text-xs text-[#111111]/60 mb-5">Student: {gradingAssignment.studentName}</p>
             <div className="space-y-4">
               <div>
-                <label className="text-xs font-semibold text-slate-600 block mb-1.5">Grade</label>
+                <label className="text-xs font-semibold text-[#111111] block mb-1.5">Grade</label>
                 <select
                   value={gradeInput}
                   onChange={(e) => setGradeInput(e.target.value)}
-                  className="w-full px-3.5 py-2.5 bg-stone-50 border border-stone-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-teal-500/20 focus:border-teal-400"
+                  className="w-full px-3.5 py-2.5 bg-[#FAF9F5] border border-[#E5E4DE] rounded-2xl text-xs sm:text-sm text-[#111111] focus:outline-none focus:ring-2 focus:ring-[#F26522]/20 focus:border-[#F26522]"
                 >
                   <option value="A+">A+ (Outstanding)</option>
                   <option value="A">A (Excellent)</option>
@@ -352,7 +352,7 @@ export default function AssignmentsPage() {
                 </select>
               </div>
               <div>
-                <label className="text-xs font-semibold text-slate-600 block mb-1.5">
+                <label className="text-xs font-semibold text-[#111111] block mb-1.5">
                   Feedback & Comments
                 </label>
                 <textarea
@@ -360,16 +360,16 @@ export default function AssignmentsPage() {
                   value={feedbackInput}
                   onChange={(e) => setFeedbackInput(e.target.value)}
                   placeholder="Great comprehension! For problem 4, review the formula..."
-                  className="w-full px-3.5 py-2.5 bg-stone-50 border border-stone-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-teal-500/20 focus:border-teal-400"
+                  className="w-full px-3.5 py-2.5 bg-[#FAF9F5] border border-[#E5E4DE] rounded-2xl text-xs sm:text-sm text-[#111111] placeholder:text-[#111111]/40 focus:outline-none focus:ring-2 focus:ring-[#F26522]/20 focus:border-[#F26522]"
                 />
               </div>
-              <Button
+              <button
                 onClick={handleGrade}
                 disabled={isGrading}
-                className="w-full bg-teal-600 hover:bg-teal-700 text-white"
+                className="w-full h-11 rounded-full bg-[#111111] hover:bg-[#222222] text-white text-xs font-bold transition-all shadow-md cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 {isGrading ? "Saving..." : "Submit Grade & Feedback"}
-              </Button>
+              </button>
             </div>
           </div>
         </div>
