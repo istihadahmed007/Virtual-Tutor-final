@@ -11,6 +11,15 @@
 AddType video/mp4 .mp4
 AddType video/webm .webm
 
+# Explicitly disable caching for index.html so users always get the newest release immediately
+<FilesMatch "^(index\.html)?$">
+  <IfModule mod_headers.c>
+    Header set Cache-Control "no-store, no-cache, must-revalidate, max-age=0"
+    Header set Pragma "no-cache"
+    Header set Expires "0"
+  </IfModule>
+</FilesMatch>
+
 # CORS headers for module scripts and video assets
 <IfModule mod_headers.c>
   <FilesMatch "\.(js|mjs|css|woff2?|ttf|eot|svg|png|jpg|jpeg|gif|webp|ico|mp4|webm)$">
