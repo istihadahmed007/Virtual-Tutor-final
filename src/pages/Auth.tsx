@@ -570,15 +570,26 @@ export default function Auth({ redirectAfterAuth }: AuthProps = {}) {
   };
 
   return (
-    <div className="min-h-screen bg-[#F8FAFC] flex flex-col justify-center py-12 px-4 sm:px-6 lg:px-8">
+    <div className="min-h-screen bg-[#F8FAFC] flex flex-col justify-center py-12 px-4 sm:px-6 lg:px-8 relative overflow-hidden selection:bg-[#6D5DFB]/15 selection:text-[#312E81]">
+      {/* Plane 0: Atmospheric study texture & ambient soft lighting */}
+      <div className="absolute inset-0 pointer-events-none z-0 overflow-hidden" aria-hidden="true">
+        <img
+          src="https://images.unsplash.com/photo-1497633762265-9d179a990aa6?auto=format&fit=crop&q=80&w=1800"
+          alt=""
+          className="w-full h-full object-cover opacity-[0.04] mix-blend-luminosity scale-105"
+        />
+        <div className="absolute inset-0 bg-gradient-to-b from-[#F8FAFC]/80 via-[#F8FAFC]/95 to-[#F8FAFC]" />
+        <div className="absolute top-1/4 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[36rem] h-[36rem] bg-gradient-to-tr from-[#6D5DFB]/10 via-[#14B8A6]/8 to-transparent rounded-full blur-3xl" />
+      </div>
+
       {/* Brand Header */}
-      <div className="sm:mx-auto sm:w-full sm:max-w-md text-center mb-6">
+      <div className="sm:mx-auto sm:w-full sm:max-w-md text-center mb-6 relative z-10">
         <div className="inline-flex items-center justify-center mb-2 cursor-pointer hover:opacity-90 transition-opacity" onClick={() => navigate("/")}>
           <BrandLogo variant="horizontal" size="lg" showSubtext />
         </div>
       </div>
 
-      <div className="sm:mx-auto sm:w-full sm:max-w-md">
+      <div className="sm:mx-auto sm:w-full sm:max-w-md relative z-10">
         <Card className="border-slate-200 shadow-[0_8px_32px_rgba(49,46,129,0.06)] bg-white rounded-3xl overflow-hidden">
           {/* Notification Messages */}
           {error && (

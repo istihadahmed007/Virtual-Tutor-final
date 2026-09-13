@@ -5,6 +5,7 @@ import {
   useMotionValue,
   useSpring,
   useTransform,
+  useScroll,
   useReducedMotion,
   type Variants,
 } from "framer-motion";
@@ -256,6 +257,8 @@ export default function Landing() {
 
   // Motion physics configuration
   const shouldReduceMotion = useReducedMotion();
+  const { scrollY } = useScroll();
+  const heroBgY = useTransform(scrollY, [0, 800], shouldReduceMotion ? [0, 0] : [0, 75]);
   const heroMouseX = useMotionValue(0);
   const heroMouseY = useMotionValue(0);
 
@@ -483,6 +486,21 @@ export default function Landing() {
 
       {/* ─── 2. HERO SECTION ─── */}
       <section className="relative pt-6 pb-20 sm:pt-12 sm:pb-28 overflow-hidden">
+        {/* Plane 0: Atmospheric Educational Photography with Gentle Parallax */}
+        <motion.div
+          style={{ y: heroBgY }}
+          className="absolute inset-0 w-full h-[120%] -top-[10%] pointer-events-none z-0 overflow-hidden"
+          aria-hidden="true"
+        >
+          <img
+            src="https://images.unsplash.com/photo-1523240795612-9a054b0db644?auto=format&fit=crop&q=80&w=1800"
+            alt=""
+            className="w-full h-full object-cover opacity-[0.09] mix-blend-luminosity scale-105"
+          />
+          <div className="absolute inset-0 bg-gradient-to-b from-[#F8FAFC]/85 via-[#F8FAFC]/95 to-[#F8FAFC]" />
+          <div className="absolute inset-0 bg-radial from-transparent via-[#F8FAFC]/60 to-[#F8FAFC]" />
+        </motion.div>
+
         <AmbientAtmosphere />
         <Floating3DObjects />
 
@@ -798,8 +816,19 @@ export default function Landing() {
       </section>
 
       {/* ─── 5. HOW IT WORKS SECTION ─── */}
-      <section id="how-it-works" className="py-20 sm:py-28 bg-white border-y border-slate-200/80">
-        <div className="max-w-[1440px] mx-auto px-4 sm:px-8">
+      <section id="how-it-works" className="py-20 sm:py-28 bg-white border-y border-slate-200/80 relative overflow-hidden">
+        {/* Atmospheric architectural study texture */}
+        <div className="absolute inset-0 pointer-events-none z-0 overflow-hidden" aria-hidden="true">
+          <img
+            src="https://images.unsplash.com/photo-1497633762265-9d179a990aa6?auto=format&fit=crop&q=80&w=1800"
+            alt=""
+            loading="lazy"
+            className="w-full h-full object-cover opacity-[0.04] mix-blend-luminosity"
+          />
+          <div className="absolute inset-0 bg-gradient-to-b from-white via-white/95 to-white" />
+        </div>
+
+        <div className="max-w-[1440px] mx-auto px-4 sm:px-8 relative z-10">
           <div className="text-center max-w-2xl mx-auto mb-16">
             <SectionLabel label="02" text="SIMPLE THREE-STEP PROCESS" className="justify-center" />
             <h2 className="text-3xl sm:text-4xl font-bold tracking-tight text-[#0F172A] mt-2">
@@ -852,8 +881,13 @@ export default function Landing() {
       </section>
 
       {/* ─── 6. POPULAR SUBJECTS SECTION (8 VISUAL TILES) ─── */}
-      <section id="subjects" className="py-20 sm:py-28">
-        <div className="max-w-[1440px] mx-auto px-4 sm:px-8">
+      <section id="subjects" className="py-20 sm:py-28 relative overflow-hidden">
+        {/* Subtle geometric STEM coordinate & blueprint grid pattern */}
+        <div
+          className="absolute inset-0 pointer-events-none opacity-[0.035] bg-[linear-gradient(to_right,#312E81_1px,transparent_1px),linear-gradient(to_bottom,#312E81_1px,transparent_1px)] bg-[size:48px_48px] [mask-image:radial-gradient(ellipse_60%_50%_at_50%_50%,#000_70%,transparent_100%)] z-0"
+          aria-hidden="true"
+        />
+        <div className="max-w-[1440px] mx-auto px-4 sm:px-8 relative z-10">
           <div className="flex flex-col md:flex-row md:items-end justify-between mb-12 gap-4">
             <div>
               <SectionLabel label="03" text="EXPLORE SUBJECTS" />
@@ -968,6 +1002,20 @@ export default function Landing() {
 
       {/* ─── 7. LIVE CLASSROOM SHOWCASE ─── */}
       <section className="py-20 sm:py-28 bg-[#0B0F19] text-white relative overflow-hidden">
+        {/* Atmospheric remote digital studio & educator photography */}
+        <div className="absolute inset-0 pointer-events-none z-0 overflow-hidden" aria-hidden="true">
+          <img
+            src="https://images.unsplash.com/photo-1577495508048-b635879837f1?auto=format&fit=crop&q=80&w=1800"
+            alt=""
+            loading="lazy"
+            className="w-full h-full object-cover opacity-[0.14] mix-blend-luminosity scale-105"
+          />
+          <div className="absolute inset-0 bg-gradient-to-r from-[#0B0F19] via-[#0B0F19]/90 to-[#0B0F19]/95" />
+          <div className="absolute inset-0 bg-gradient-to-b from-[#0B0F19] via-transparent to-[#0B0F19]" />
+          <div className="absolute -top-40 right-1/4 w-[32rem] h-[32rem] bg-gradient-to-br from-[#6D5DFB]/15 to-transparent rounded-full blur-3xl" />
+          <div className="absolute -bottom-40 left-10 w-[28rem] h-[28rem] bg-gradient-to-tr from-[#14B8A6]/10 to-transparent rounded-full blur-3xl" />
+        </div>
+
         <div className="max-w-[1440px] mx-auto px-4 sm:px-8 relative z-10">
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
             <div className="lg:col-span-5 space-y-6">
@@ -1163,7 +1211,18 @@ export default function Landing() {
       {/* ─── 10. FOR TEACHERS SECTION ─── */}
       <section className="py-20 sm:py-28">
         <div className="max-w-[1440px] mx-auto px-4 sm:px-8">
-          <div className="bg-gradient-to-r from-[#312E81] to-[#1E1B4B] rounded-3xl p-8 sm:p-14 text-white shadow-xl relative overflow-hidden">
+          <div className="bg-gradient-to-r from-[#312E81] via-[#282568] to-[#1E1B4B] rounded-3xl p-8 sm:p-14 text-white shadow-xl relative overflow-hidden">
+            {/* Atmospheric educator desk & university stationery background */}
+            <div className="absolute inset-0 pointer-events-none z-0 overflow-hidden" aria-hidden="true">
+              <img
+                src="https://images.unsplash.com/photo-1531482615713-2afd69097998?auto=format&fit=crop&q=80&w=1800"
+                alt=""
+                loading="lazy"
+                className="w-full h-full object-cover opacity-[0.12] mix-blend-overlay scale-105"
+              />
+              <div className="absolute inset-0 bg-gradient-to-r from-[#312E81]/85 via-[#282568]/80 to-[#1E1B4B]/90" />
+            </div>
+
             <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center relative z-10">
               <div className="lg:col-span-8 space-y-4">
                 <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-white/10 text-xs font-bold uppercase tracking-wider text-[#14B8A6]">
@@ -1371,6 +1430,18 @@ export default function Landing() {
 
       {/* ─── 13. FINAL CTA SECTION ─── */}
       <section className="py-20 sm:py-28 bg-gradient-to-r from-[#312E81] via-[#1E1B4B] to-[#312E81] text-white text-center relative overflow-hidden">
+        {/* Architectural university library hall background */}
+        <div className="absolute inset-0 pointer-events-none z-0 overflow-hidden" aria-hidden="true">
+          <img
+            src="https://images.unsplash.com/photo-1521587760476-6c12a4b040da?auto=format&fit=crop&q=80&w=1800"
+            alt=""
+            loading="lazy"
+            className="w-full h-full object-cover opacity-[0.12] mix-blend-luminosity scale-105"
+          />
+          <div className="absolute inset-0 bg-gradient-to-b from-[#312E81]/85 via-[#1E1B4B]/95 to-[#312E81]/90" />
+          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[40rem] h-[25rem] bg-gradient-to-r from-[#6D5DFB]/20 via-[#14B8A6]/15 to-transparent rounded-full blur-3xl" />
+        </div>
+
         <div className="max-w-3xl mx-auto px-4 sm:px-6 relative z-10 space-y-6">
           <h2 className="text-3xl sm:text-5xl font-bold tracking-tight text-white">
             Your next great lesson starts here.

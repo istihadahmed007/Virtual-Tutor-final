@@ -69,16 +69,43 @@ export const Floating3DObjects: React.FC<{ className?: string }> = ({ className 
         transition={{ duration: 7.5, repeat: Infinity, ease: "easeInOut", delay: 0.5 }}
         className="absolute bottom-[20%] right-[12%] hidden sm:block"
       >
-        <div className="px-4 py-2 rounded-2xl bg-white/70 border border-slate-200/80 shadow-[0_16px_36px_rgba(49,46,129,0.08)] backdrop-blur-md flex items-center gap-2 font-mono text-xs font-bold text-[#312E81]">
+        <div className="px-4 py-2 rounded-2xl bg-white/75 border border-slate-200/80 shadow-[0_16px_36px_rgba(49,46,129,0.08)] backdrop-blur-md flex items-center gap-2 font-mono text-xs font-bold text-[#312E81]">
           <span className="text-[#6D5DFB] text-base">∫</span>
           <span>f(x) dx = F(x) + C</span>
           <span className="w-2 h-2 rounded-full bg-[#14B8A6] animate-pulse" />
         </div>
       </motion.div>
 
-      {/* 4. Ambient Indigo & Violet Radial Glow Orbs */}
+      {/* 4. Glassmorphic Digital Stylus / Drawing Tablet Spec (Bottom Left) */}
+      <motion.div
+        animate={{
+          y: [8, -12, 8],
+          rotate: [-12, -4, -12],
+          rotateZ: [2, -6, 2],
+        }}
+        transition={{ duration: 8.5, repeat: Infinity, ease: "easeInOut", delay: 1.5 }}
+        style={{ perspective: 1000 }}
+        className="absolute bottom-[10%] left-[8%] hidden xl:block"
+      >
+        <div className="relative w-32 h-14 rounded-2xl bg-gradient-to-br from-white/80 via-white/50 to-[#6D5DFB]/10 p-2.5 shadow-[0_20px_40px_rgba(109,93,251,0.1)] border border-white/80 backdrop-blur-md flex items-center gap-2.5">
+          {/* Stylus Tip */}
+          <div className="w-1.5 h-8 rounded-full bg-gradient-to-b from-[#312E81] via-[#6D5DFB] to-[#14B8A6] shadow-2xs rotate-45 shrink-0" />
+          <div className="flex-1 space-y-1">
+            <div className="flex items-center justify-between text-[8px] font-mono text-slate-500">
+              <span>LATENCY</span>
+              <span className="text-[#14B8A6] font-bold">12ms</span>
+            </div>
+            <div className="w-full h-1 bg-slate-200/80 rounded-full overflow-hidden">
+              <div className="w-3/4 h-full bg-gradient-to-r from-[#6D5DFB] to-[#14B8A6] rounded-full" />
+            </div>
+          </div>
+        </div>
+      </motion.div>
+
+      {/* 5. Ambient Indigo & Violet Radial Glow Orbs */}
       <div className="absolute -top-32 right-1/4 w-96 h-96 bg-gradient-to-br from-[#6D5DFB]/15 to-[#312E81]/10 rounded-full blur-3xl -z-10 pointer-events-none" />
       <div className="absolute top-1/3 -left-32 w-80 h-80 bg-gradient-to-tr from-[#14B8A6]/15 to-[#6D5DFB]/10 rounded-full blur-3xl -z-10 pointer-events-none" />
+      <div className="absolute -bottom-24 right-1/3 w-72 h-72 bg-gradient-to-tl from-[#6D5DFB]/10 to-[#312E81]/5 rounded-full blur-3xl -z-10 pointer-events-none" />
     </div>
   );
 };

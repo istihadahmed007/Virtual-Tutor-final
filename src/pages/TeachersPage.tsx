@@ -349,8 +349,19 @@ export default function TeachersPage() {
       />
       
       {/* Header Section */}
-      <div className="border-b border-slate-200 bg-white/90 backdrop-blur-md">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      <div className="border-b border-slate-200 bg-white/95 backdrop-blur-md relative overflow-hidden">
+        {/* Atmospheric collegiate seminar & library background */}
+        <div className="absolute inset-0 pointer-events-none z-0 overflow-hidden" aria-hidden="true">
+          <img
+            src="https://images.unsplash.com/photo-1524178232363-1fb2b075b655?auto=format&fit=crop&q=80&w=1800"
+            alt=""
+            loading="lazy"
+            className="w-full h-full object-cover opacity-[0.05] mix-blend-luminosity scale-105"
+          />
+          <div className="absolute inset-0 bg-gradient-to-r from-white via-white/95 to-slate-50/90" />
+        </div>
+
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 relative z-10">
           <div className="flex flex-col lg:flex-row lg:items-end justify-between gap-6">
             <div>
               <SectionLabel number="01" text="Verified Faculty Directory" />

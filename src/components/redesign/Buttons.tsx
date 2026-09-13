@@ -63,8 +63,8 @@ export const PillButton: React.FC<ButtonProps> = ({
   return (
     <motion.button
       whileTap={{ scale: 0.97 }}
-      whileHover={{ scale: 1.01 }}
-      transition={{ duration: 0.15 }}
+      whileHover={{ y: -2, scale: 1.015 }}
+      transition={{ duration: 0.18, ease: "easeOut" }}
       className={`group relative inline-flex items-center justify-between font-semibold rounded-full select-none cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-300 ${variantStyles[variant] || variantStyles.primary} ${sizeClasses[size]} ${className}`}
       {...(props as any)}
     >
