@@ -183,9 +183,9 @@ export function ApplicationActionModal({
 
   return (
     <Dialog open={isOpen} onOpenChange={(open) => !open && handleClose()}>
-      <DialogContent className="sm:max-w-lg bg-white border border-stone-200 shadow-xl rounded-2xl p-0 overflow-hidden">
+      <DialogContent className="sm:max-w-lg max-h-[min(92vh,calc(100dvh-2rem))] bg-white border border-stone-200 shadow-2xl rounded-2xl p-0 flex flex-col overflow-hidden">
         {/* Header */}
-        <div className={`bg-gradient-to-r ${config.bannerBg} p-6 text-white`}>
+        <div className={`bg-gradient-to-r ${config.bannerBg} p-6 text-white shrink-0`}>
           <div className="flex items-center gap-3.5">
             <div className="w-12 h-12 rounded-2xl bg-white/15 backdrop-blur-md border border-white/25 flex items-center justify-center text-white shrink-0 shadow-inner">
               <Icon className="w-6 h-6" />
@@ -201,7 +201,7 @@ export function ApplicationActionModal({
           </div>
         </div>
 
-        <div className="p-6 space-y-4">
+        <div className="p-6 space-y-4 overflow-y-auto flex-1">
           {errorMessage && (
             <div className="p-3.5 rounded-xl bg-red-50 border border-red-200 text-red-700 text-xs flex items-start gap-2.5">
               <AlertCircle className="w-4 h-4 shrink-0 mt-0.5 text-red-600" />
@@ -233,7 +233,7 @@ export function ApplicationActionModal({
           </div>
         </div>
 
-        <DialogFooter className="px-6 py-4 bg-stone-50 border-t border-stone-200 flex flex-col-reverse sm:flex-row gap-2 sm:justify-end">
+        <DialogFooter className="px-6 py-4 bg-stone-50 border-t border-stone-200 flex flex-col-reverse sm:flex-row gap-2 sm:justify-end shrink-0">
           <Button
             type="button"
             variant="outline"
