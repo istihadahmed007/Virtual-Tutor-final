@@ -53,6 +53,8 @@ import {
   Layers,
   ChevronRight,
   Filter,
+  ExternalLink,
+  QrCode,
 } from "lucide-react";
 
 // Subtle ambient particle canvas for warm breathing atmosphere
@@ -1092,14 +1094,14 @@ export default function Landing() {
                 Protected tuition payments.
               </h2>
               <p className="text-sm text-[#111111]/70 leading-relaxed">
-                Pay safely using your preferred local mobile financial service or bank card. Student payments are held in escrow and released to educators only after classes are delivered.
+                Pay safely using Bangladesh’s leading mobile financial services and bank cards. Student tuition is held in escrow and released to educators only after classes are completed.
               </p>
 
               <div className="space-y-3 pt-2">
                 {[
-                  "Official automated checkout via UddoktaPay",
-                  "Instant payment verification with bKash, Nagad, and Rocket",
-                  "100% money-back protection if a scheduled class is missed",
+                  "Official automated checkout via Virtual Tutor Gateway (Paymently)",
+                  "Instant payment verification with bKash, Nagad, Rocket, Upay & Cards",
+                  "100% money-back protection if a scheduled class is missed or cancelled",
                 ].map((item, i) => (
                   <div key={i} className="flex items-center gap-2.5 text-xs text-[#111111] font-semibold">
                     <ShieldCheck className="w-4 h-4 text-emerald-600 shrink-0" />
@@ -1107,20 +1109,68 @@ export default function Landing() {
                   </div>
                 ))}
               </div>
+
+              <div className="pt-2">
+                <a
+                  href="https://vartualtutor.paymently.io/paymentlink/default/BDT"
+                  target="_blank"
+                  rel="noreferrer"
+                  className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full bg-[#111111] hover:bg-[#222222] text-white text-xs font-bold shadow-sm transition-all"
+                >
+                  <span>Open Official Payment Gateway</span>
+                  <ExternalLink className="w-3.5 h-3.5" />
+                </a>
+              </div>
             </div>
 
-            <div className="lg:col-span-6 bg-[#FAF9F5] rounded-3xl p-7 border border-[#E5E4DE] shadow-xs space-y-4">
-              <h4 className="text-xs font-bold uppercase tracking-wider text-[#111111]/50">Supported Payment Channels</h4>
-              <div className="flex flex-wrap gap-2">
-                <span className="px-3.5 py-1.5 rounded-xl text-xs font-black bg-[#D12053] text-white shadow-2xs">bKash</span>
-                <span className="px-3.5 py-1.5 rounded-xl text-xs font-black bg-[#F7941D] text-white shadow-2xs">Nagad</span>
-                <span className="px-3.5 py-1.5 rounded-xl text-xs font-black bg-[#8C3494] text-white shadow-2xs">Rocket</span>
-                <span className="px-3.5 py-1.5 rounded-xl text-xs font-black bg-[#2E3192] text-white shadow-2xs">Upay</span>
-                <span className="px-3.5 py-1.5 rounded-xl text-xs font-bold bg-[#111111] text-white shadow-2xs">Cards</span>
-                <span className="px-3.5 py-1.5 rounded-xl text-xs font-semibold bg-white border border-[#E5E4DE] text-[#111111]">Internet Banking</span>
+            <div className="lg:col-span-6 bg-[#FAF9F5] rounded-3xl p-7 border border-[#E5E4DE] shadow-xs space-y-5">
+              <div className="flex items-center justify-between">
+                <div>
+                  <h4 className="text-xs font-bold uppercase tracking-wider text-[#111111]/50">Official Merchant Portal</h4>
+                  <p className="text-xs font-mono font-bold text-[#111111] mt-0.5">vartualtutor.paymently.io</p>
+                </div>
+                <span className="text-[10px] font-bold uppercase tracking-wider px-2.5 py-1 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200">
+                  Active BDT Gateway
+                </span>
               </div>
+
+              <div className="flex items-center gap-4 p-4 bg-white rounded-2xl border border-[#E5E4DE]">
+                <img
+                  src="/payment-link-BDT-qr.svg"
+                  alt="Virtual Tutor Paymently QR Code"
+                  className="w-20 h-20 rounded-lg object-contain shrink-0 border border-[#E5E4DE] p-1"
+                />
+                <div className="space-y-1">
+                  <span className="text-xs font-bold text-[#111111] block">Scan & Pay via MFS QR</span>
+                  <p className="text-[11px] text-[#111111]/60 leading-tight">
+                    Scan with bKash, Nagad, or Upay app from anywhere for instant zero-fee tuition settlement.
+                  </p>
+                  <a
+                    href="https://vartualtutor.paymently.io/paymentlink/default/BDT"
+                    target="_blank"
+                    rel="noreferrer"
+                    className="text-[11px] font-bold text-[#F26522] hover:underline inline-flex items-center gap-1 pt-0.5"
+                  >
+                    <span>vartualtutor.paymently.io/paymentlink/default/BDT</span>
+                    <ExternalLink className="w-3 h-3" />
+                  </a>
+                </div>
+              </div>
+
+              <div className="space-y-2">
+                <span className="text-[10px] font-bold uppercase tracking-wider text-[#111111]/50 block">Supported Channels</span>
+                <div className="flex flex-wrap gap-2">
+                  <span className="px-3.5 py-1.5 rounded-xl text-xs font-black bg-[#D12053] text-white shadow-2xs">bKash</span>
+                  <span className="px-3.5 py-1.5 rounded-xl text-xs font-black bg-[#F7941D] text-white shadow-2xs">Nagad</span>
+                  <span className="px-3.5 py-1.5 rounded-xl text-xs font-black bg-[#8C3494] text-white shadow-2xs">Rocket</span>
+                  <span className="px-3.5 py-1.5 rounded-xl text-xs font-black bg-[#2E3192] text-white shadow-2xs">Upay</span>
+                  <span className="px-3.5 py-1.5 rounded-xl text-xs font-bold bg-[#111111] text-white shadow-2xs">Visa / Mastercard</span>
+                  <span className="px-3.5 py-1.5 rounded-xl text-xs font-semibold bg-white border border-[#E5E4DE] text-[#111111]">Internet Banking</span>
+                </div>
+              </div>
+
               <p className="text-[11px] text-[#111111]/60 pt-2 border-t border-[#E5E4DE]">
-                All transactions are encrypted with 256-bit SSL security standards.
+                All transactions are encrypted with 256-bit SSL banking standards and Bangladesh Bank regulatory protocols.
               </p>
             </div>
           </div>

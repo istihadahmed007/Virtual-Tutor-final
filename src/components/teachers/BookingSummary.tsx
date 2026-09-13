@@ -333,15 +333,15 @@ export function BookingSummary({
                 </div>
               </div>
 
-              {/* Direct Paymently / UddoktaPay Gateway Option */}
+              {/* Direct Paymently Gateway Option */}
               <div className="flex items-center justify-between p-2.5 rounded-2xl bg-[#F5F4EF] border border-[#E5E4DE] text-xs">
                 <div className="flex items-center gap-2">
                   <div className="w-6 h-6 rounded-lg bg-[#111111] text-white flex items-center justify-center font-bold text-[10px]">
                     ৳
                   </div>
                   <div>
-                    <span className="font-bold text-[#111111] block text-[11px]">Direct Paymently / UddoktaPay Gateway</span>
-                    <span className="text-[10px] text-[#111111]/50">Supports bKash, Nagad, Rocket, Cards & QR</span>
+                    <span className="font-bold text-[#111111] block text-[11px]">Virtual Tutor Secure Gateway (Paymently)</span>
+                    <span className="text-[10px] text-[#111111]/50">bKash, Nagad, Rocket, Upay, Cards & QR</span>
                   </div>
                 </div>
                 <a
@@ -350,7 +350,7 @@ export function BookingSummary({
                   rel="noreferrer"
                   className="text-[11px] font-bold text-[#F26522] hover:text-[#d45318] inline-flex items-center gap-1 shrink-0"
                 >
-                  <span>Direct Link</span>
+                  <span>Pay via Gateway</span>
                   <ExternalLink className="w-3 h-3" />
                 </a>
               </div>
