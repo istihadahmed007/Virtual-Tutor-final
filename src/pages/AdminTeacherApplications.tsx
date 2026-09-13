@@ -720,7 +720,7 @@ export default function AdminTeacherApplications() {
                         </p>
                         <div className="grid grid-cols-2 sm:grid-cols-3 gap-2 pt-2 border-t border-stone-200/60 text-[11px] text-slate-500">
                           <div>Country: <strong className="text-slate-800">{profile?.country || "N/A"}</strong></div>
-                          <div>Monthly Tuition: <strong className="text-slate-800">৳{((profile?.hourlyRate || 35) >= 500 ? profile?.hourlyRate : (profile?.hourlyRate || 35) * 100).toLocaleString()}/mo</strong></div>
+                          <div>Monthly Tuition: <strong className="text-slate-800">৳{(((profile?.hourlyRate || 35) >= 500 ? (profile?.hourlyRate || 500) : (profile?.hourlyRate || 35) * 100) || 0).toLocaleString()}/mo</strong></div>
                           <div>Experience: <strong className="text-slate-800">{profile?.yearsExperience || 0} Years</strong></div>
                         </div>
                       </div>

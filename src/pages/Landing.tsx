@@ -546,8 +546,7 @@ export default function Landing() {
                   size="lg"
                   className="shadow-[0_8px_25px_rgba(49,46,129,0.2)]"
                 >
-                  <span>Find a Tutor</span>
-                  <ArrowRight className="w-4 h-4 text-[#14B8A6]" />
+                  Find a Tutor
                 </PrimaryButton>
                 <SecondaryButton
                   onClick={() => navigate("/teacher-application")}

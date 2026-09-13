@@ -214,33 +214,7 @@ export function ClassroomWhiteboard({
     [canDraw, currentPageIndex, activePage?.title, onSavePage],
   );
 
-  // Canvas size adjustment with ResizeObserver
-  useEffect(() => {
-    const updateCanvasSize = () => {
-      const canvas = canvasRef.current;
-      const container = containerRef.current;
-      if (!canvas || !container) return;
-
-      const rect = container.getBoundingClientRect();
-      const dpr = window.devicePixelRatio || 1;
-      canvas.width = rect.width * dpr;
-      canvas.height = rect.height * dpr;
-      canvas.style.width = `${rect.width}px`;
-      canvas.style.height = `${rect.height}px`;
-
-      const ctx = canvas.getContext("2d");
-      if (ctx) {
-        ctx.scale(dpr * scale, dpr * scale);
-        renderCanvas();
-      }
-    };
-
-    updateCanvasSize();
-    window.addEventListener("resize", updateCanvasSize);
-    return () => window.removeEventListener("resize", updateCanvasSize);
-  }, [scale, elements, currentElement, gridMode, laserPoint]);
-
-  // Master Render Loop
+  // Master Render Loop (declared before effects that invoke it)
   const renderCanvas = useCallback(() => {
     const canvas = canvasRef.current;
     if (!canvas) return;
@@ -370,12 +344,12 @@ export function ClassroomWhiteboard({
           ctx.beginPath();
           ctx.moveTo(to.x, to.y);
           ctx.lineTo(to.x - headlen * Math.cos(angle - Math.PI / 6), to.y - headlen * Math.sin(angle - Math.PI / 6));
+          ctx.moveTo(to.x, to.y);
           ctx.lineTo(to.x - headlen * Math.cos(angle + Math.PI / 6), to.y - headlen * Math.sin(angle + Math.PI / 6));
-          ctx.closePath();
-          ctx.fill();
+          ctx.stroke();
         }
       } else if (el.type === "rectangle") {
-        if (el.x !== undefined && el.y !== undefined && el.width && el.height) {
+        if (el.x !== undefined && el.y !== undefined && el.width !== undefined && el.height !== undefined) {
           ctx.strokeRect(el.x, el.y, el.width, el.height);
         }
       } else if (el.type === "circle") {
@@ -389,20 +363,19 @@ export function ClassroomWhiteboard({
           ctx.stroke();
         }
       } else if (el.type === "triangle") {
-        if (el.x !== undefined && el.y !== undefined && el.width && el.height) {
+        if (el.points && el.points.length >= 3) {
           ctx.beginPath();
-          ctx.moveTo(el.x + el.width / 2, el.y);
-          ctx.lineTo(el.x + el.width, el.y + el.height);
-          ctx.lineTo(el.x, el.y + el.height);
+          ctx.moveTo(el.points[0].x, el.points[0].y);
+          ctx.lineTo(el.points[1].x, el.points[1].y);
+          ctx.lineTo(el.points[2].x, el.points[2].y);
           ctx.closePath();
           ctx.stroke();
         }
       } else if (el.type === "sticky") {
         if (el.x !== undefined && el.y !== undefined && el.width && el.height) {
-          ctx.fillStyle = el.backgroundColor || "#FEF08A";
-          ctx.strokeStyle = "#FACC15";
-          ctx.lineWidth = 1;
+          ctx.fillStyle = "#FEF08A";
           ctx.fillRect(el.x, el.y, el.width, el.height);
+          ctx.strokeStyle = "#FDE047";
           ctx.strokeRect(el.x, el.y, el.width, el.height);
 
           if (el.text) {
@@ -476,6 +449,32 @@ export function ClassroomWhiteboard({
       ctx.restore();
     }
   }, [gridMode, elements, currentElement, remoteCurrentElement, laserPoint, remoteLaserPoint, scale]);
+
+  // Canvas size adjustment with ResizeObserver
+  useEffect(() => {
+    const updateCanvasSize = () => {
+      const canvas = canvasRef.current;
+      const container = containerRef.current;
+      if (!canvas || !container) return;
+
+      const rect = container.getBoundingClientRect();
+      const dpr = window.devicePixelRatio || 1;
+      canvas.width = rect.width * dpr;
+      canvas.height = rect.height * dpr;
+      canvas.style.width = `${rect.width}px`;
+      canvas.style.height = `${rect.height}px`;
+
+      const ctx = canvas.getContext("2d");
+      if (ctx) {
+        ctx.scale(dpr * scale, dpr * scale);
+        renderCanvas();
+      }
+    };
+
+    updateCanvasSize();
+    window.addEventListener("resize", updateCanvasSize);
+    return () => window.removeEventListener("resize", updateCanvasSize);
+  }, [scale, elements, currentElement, gridMode, laserPoint, renderCanvas]);
 
   useEffect(() => {
     renderCanvas();

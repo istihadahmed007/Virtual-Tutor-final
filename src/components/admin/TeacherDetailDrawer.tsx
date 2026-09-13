@@ -235,10 +235,10 @@ export function TeacherDetailDrawer({
                 <div className="bg-stone-50 p-3 rounded-xl border border-stone-200">
                   <p className="text-[11px] text-slate-500">Monthly Tuition</p>
                   <p className="text-sm font-bold text-slate-900 mt-0.5">
-                    ৳{((profile?.monthlyTuition && profile.monthlyTuition > 0)
+                    ৳{(((profile?.monthlyTuition && profile.monthlyTuition > 0)
                       ? profile.monthlyTuition
-                      : ((profile?.hourlyRate || 0) >= 500 ? profile?.hourlyRate : (profile?.hourlyRate || 35) * 100)
-                    ).toLocaleString()}/mo
+                      : ((profile?.hourlyRate || 0) >= 500 ? (profile?.hourlyRate || 0) : (profile?.hourlyRate || 35) * 100)
+                    ) || 0).toLocaleString()}/mo
                   </p>
                 </div>
                 <div className="bg-stone-50 p-3 rounded-xl border border-stone-200">

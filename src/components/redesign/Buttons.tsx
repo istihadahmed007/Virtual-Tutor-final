@@ -20,10 +20,12 @@ export const PillButton: React.FC<ButtonProps> = ({
   variant = "primary",
   ...props
 }) => {
+  const hasTrailingIcon = Boolean(showArrow || Icon);
+
   const sizeClasses = {
-    sm: "text-xs pl-3.5 pr-2 py-1.5 gap-2 h-9",
-    md: "text-xs sm:text-[13px] pl-4 sm:pl-5 pr-2 py-2 gap-2.5 h-11",
-    lg: "text-sm sm:text-[15px] pl-5 sm:pl-6 pr-2.5 py-2.5 gap-3 h-13",
+    sm: hasTrailingIcon ? "text-xs pl-3.5 pr-2 py-1.5 gap-2 h-9" : "text-xs px-3.5 py-1.5 gap-2 h-9",
+    md: hasTrailingIcon ? "text-xs sm:text-[13px] pl-4 sm:pl-5 pr-2 py-2 gap-2.5 h-11" : "text-xs sm:text-[13px] px-4 sm:px-5 py-2 gap-2.5 h-11",
+    lg: hasTrailingIcon ? "text-sm sm:text-[15px] pl-5 sm:pl-6 pr-2.5 py-2.5 gap-3 h-13" : "text-sm sm:text-[15px] px-5 sm:px-6 py-2.5 gap-3 h-13",
   };
 
   const arrowCircleSizes = {
@@ -60,12 +62,14 @@ export const PillButton: React.FC<ButtonProps> = ({
     orange: "bg-white/15 text-white",
   };
 
+  const defaultJustify = hasTrailingIcon ? "justify-between" : "justify-center";
+
   return (
     <motion.button
       whileTap={{ scale: 0.97 }}
       whileHover={{ y: -2, scale: 1.015 }}
       transition={{ duration: 0.18, ease: "easeOut" }}
-      className={`group relative inline-flex items-center justify-between font-semibold rounded-full select-none cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-300 ${variantStyles[variant] || variantStyles.primary} ${sizeClasses[size]} ${className}`}
+      className={`group relative inline-flex items-center ${defaultJustify} font-semibold rounded-full select-none cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-300 ${variantStyles[variant] || variantStyles.primary} ${sizeClasses[size]} ${className}`}
       {...(props as any)}
     >
       {/* Hover Text Roll Effect */}

@@ -250,6 +250,10 @@ export function useAdminUsers(options?: {
   const convex = useConvex();
   const [users, setUsers] = useState<AdminUserRecord[]>(getAdminUsers);
 
+  const roleFilter = options?.roleFilter;
+  const statusFilter = options?.statusFilter;
+  const searchQuery = options?.searchQuery;
+
   useEffect(() => {
     const update = () => setUsers(getAdminUsers());
     window.addEventListener(ADMIN_STORE_EVENT, update);
@@ -257,9 +261,9 @@ export function useAdminUsers(options?: {
     let isMounted = true;
     convex
       .query(api.admin.listUsers, {
-        role: options?.roleFilter !== "all" ? options?.roleFilter : undefined,
-        status: options?.statusFilter !== "all" ? options?.statusFilter : undefined,
-        searchQuery: options?.searchQuery?.trim() || undefined,
+        role: roleFilter !== "all" ? roleFilter : undefined,
+        status: statusFilter !== "all" ? statusFilter : undefined,
+        searchQuery: searchQuery?.trim() || undefined,
       })
       .then((res) => {
         if (isMounted && Array.isArray(res) && res.length > 0) {
@@ -272,22 +276,22 @@ export function useAdminUsers(options?: {
       isMounted = false;
       window.removeEventListener(ADMIN_STORE_EVENT, update);
     };
-  }, [convex, options?.roleFilter, options?.statusFilter, options?.searchQuery]);
+  }, [convex, roleFilter, statusFilter, searchQuery]);
 
   return useMemo(() => {
     let list = [...users];
-    if (options?.roleFilter && options.roleFilter !== "all") {
-      list = list.filter((u) => u.role === options.roleFilter);
+    if (roleFilter && roleFilter !== "all") {
+      list = list.filter((u) => u.role === roleFilter);
     }
-    if (options?.statusFilter && options.statusFilter !== "all") {
-      list = list.filter((u) => u.accountStatus === options.statusFilter);
+    if (statusFilter && statusFilter !== "all") {
+      list = list.filter((u) => u.accountStatus === statusFilter);
     }
-    if (options?.searchQuery && options.searchQuery.trim()) {
-      const q = options.searchQuery.toLowerCase().trim();
+    if (searchQuery && searchQuery.trim()) {
+      const q = searchQuery.toLowerCase().trim();
       list = list.filter((u) => u.name?.toLowerCase().includes(q) || u.email?.toLowerCase().includes(q));
     }
     return list;
-  }, [users, options?.roleFilter, options?.statusFilter, options?.searchQuery]);
+  }, [users, roleFilter, statusFilter, searchQuery]);
 }
 
 export function useAdminTeachers(options?: {
@@ -331,6 +335,9 @@ export function useAdminBookings(options?: {
   const convex = useConvex();
   const [bookings, setBookings] = useState<AdminBookingRecord[]>(getAdminBookings);
 
+  const status = options?.status;
+  const searchQuery = options?.searchQuery;
+
   useEffect(() => {
     const update = () => setBookings(getAdminBookings());
     window.addEventListener(ADMIN_STORE_EVENT, update);
@@ -338,8 +345,8 @@ export function useAdminBookings(options?: {
     let isMounted = true;
     convex
       .query(api.admin.listBookings, {
-        status: options?.status !== "all" ? options?.status : undefined,
-        searchQuery: options?.searchQuery?.trim() || undefined,
+        status: status !== "all" ? status : undefined,
+        searchQuery: searchQuery?.trim() || undefined,
       })
       .then((res) => {
         if (isMounted && Array.isArray(res) && res.length > 0) {
@@ -352,15 +359,15 @@ export function useAdminBookings(options?: {
       isMounted = false;
       window.removeEventListener(ADMIN_STORE_EVENT, update);
     };
-  }, [convex, options?.status, options?.searchQuery]);
+  }, [convex, status, searchQuery]);
 
   return useMemo(() => {
     let list = [...bookings];
-    if (options?.status && options.status !== "all") {
-      list = list.filter((b) => b.status === options.status);
+    if (status && status !== "all") {
+      list = list.filter((b) => b.status === status);
     }
-    if (options?.searchQuery && options.searchQuery.trim()) {
-      const q = options.searchQuery.toLowerCase().trim();
+    if (searchQuery && searchQuery.trim()) {
+      const q = searchQuery.toLowerCase().trim();
       list = list.filter(
         (b) =>
           b.teacherName?.toLowerCase().includes(q) ||
@@ -369,7 +376,7 @@ export function useAdminBookings(options?: {
       );
     }
     return list;
-  }, [bookings, options?.status, options?.searchQuery]);
+  }, [bookings, status, searchQuery]);
 }
 
 export function useAdminSessions(options?: {
@@ -377,6 +384,7 @@ export function useAdminSessions(options?: {
 }): AdminSessionRecord[] | undefined {
   const convex = useConvex();
   const [sessions, setSessions] = useState<AdminSessionRecord[]>(getAdminSessions);
+  const status = options?.status;
 
   useEffect(() => {
     const update = () => setSessions(getAdminSessions());
@@ -385,7 +393,7 @@ export function useAdminSessions(options?: {
     let isMounted = true;
     convex
       .query(api.admin.listSessions, {
-        status: options?.status !== "all" ? options?.status : undefined,
+        status: status !== "all" ? status : undefined,
       })
       .then((res) => {
         if (isMounted && Array.isArray(res) && res.length > 0) {
@@ -398,14 +406,14 @@ export function useAdminSessions(options?: {
       isMounted = false;
       window.removeEventListener(ADMIN_STORE_EVENT, update);
     };
-  }, [convex, options?.status]);
+  }, [convex, status]);
 
   return useMemo(() => {
-    if (options?.status && options.status !== "all") {
-      return sessions.filter((s) => s.status === options.status);
+    if (status && status !== "all") {
+      return sessions.filter((s) => s.status === status);
     }
     return sessions;
-  }, [sessions, options?.status]);
+  }, [sessions, status]);
 }
 
 export function useAdminReviews(): AdminReviewRecord[] | undefined {
@@ -440,6 +448,7 @@ export function useAdminReports(options?: {
 }): AdminReportRecord[] | undefined {
   const convex = useConvex();
   const [reports, setReports] = useState<AdminReportRecord[]>(getAdminReports);
+  const status = options?.status;
 
   useEffect(() => {
     const update = () => setReports(getAdminReports());
@@ -448,7 +457,7 @@ export function useAdminReports(options?: {
     let isMounted = true;
     convex
       .query(api.admin.listReports, {
-        status: options?.status !== "all" ? options?.status : undefined,
+        status: status !== "all" ? status : undefined,
       })
       .then((res) => {
         if (isMounted && Array.isArray(res) && res.length > 0) {
@@ -461,14 +470,14 @@ export function useAdminReports(options?: {
       isMounted = false;
       window.removeEventListener(ADMIN_STORE_EVENT, update);
     };
-  }, [convex, options?.status]);
+  }, [convex, status]);
 
   return useMemo(() => {
-    if (options?.status && options.status !== "all") {
-      return reports.filter((r) => r.status === options.status);
+    if (status && status !== "all") {
+      return reports.filter((r) => r.status === status);
     }
     return reports;
-  }, [reports, options?.status]);
+  }, [reports, status]);
 }
 
 export function useAdminCommunity(): AdminCommunityPostRecord[] | undefined {

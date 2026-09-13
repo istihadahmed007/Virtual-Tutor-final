@@ -9,13 +9,12 @@ export function useTypewriter(text: string, speed: number = 38, startDelay: numb
   const [done, setDone] = useState(false);
 
   useEffect(() => {
-    let timeoutId: ReturnType<typeof setTimeout> | undefined;
     let intervalId: ReturnType<typeof setInterval> | undefined;
 
     setDisplayed("");
     setDone(false);
 
-    timeoutId = setTimeout(() => {
+    const timeoutId = setTimeout(() => {
       let currentIndex = 0;
       intervalId = setInterval(() => {
         if (currentIndex < text.length) {
@@ -29,7 +28,7 @@ export function useTypewriter(text: string, speed: number = 38, startDelay: numb
     }, startDelay);
 
     return () => {
-      if (timeoutId) clearTimeout(timeoutId);
+      clearTimeout(timeoutId);
       if (intervalId) clearInterval(intervalId);
     };
   }, [text, speed, startDelay]);

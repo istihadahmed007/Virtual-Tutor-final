@@ -171,8 +171,8 @@ export function TeacherCard({
       </div>
 
       {/* Bottom Footer: Monthly Tuition + Actions */}
-      <div className="flex items-center justify-between gap-3 pt-3.5 border-t border-slate-200">
-        <div>
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pt-3.5 border-t border-slate-200">
+        <div className="flex items-center justify-between sm:block">
           <div className="flex items-baseline gap-1">
             <span className="text-xl font-bold text-[#0F172A] font-display">
               {formatTk(teacher.monthlyTuition)}
@@ -184,14 +184,14 @@ export function TeacherCard({
           </span>
         </div>
 
-        <div className="flex items-center gap-1.5 sm:gap-2">
+        <div className="flex items-center justify-end gap-1.5 sm:gap-2">
           {/* Direct Message Button */}
           <Button
             variant="outline"
             size="sm"
             onClick={() => onMessageClick ? onMessageClick(teacher) : navigate(`/messages?to=${teacher.userId}`)}
             aria-label={`Send message to ${teacher.name}`}
-            className="h-8 w-8 sm:h-9 sm:w-9 p-0 rounded-full border-slate-200 text-slate-700 hover:text-[#6D5DFB] hover:border-[#6D5DFB]/40"
+            className="h-8 w-8 sm:h-9 sm:w-9 p-0 rounded-full border-slate-200 text-slate-700 hover:text-[#6D5DFB] hover:border-[#6D5DFB]/40 shrink-0"
           >
             <MessageSquare className="h-3.5 w-3.5" />
           </Button>
@@ -201,7 +201,7 @@ export function TeacherCard({
             variant="outline"
             size="sm"
             onClick={() => navigate(`/teachers/${teacher.userId}#booking`)}
-            className="h-8 sm:h-9 px-3 sm:px-3.5 rounded-full border-slate-200 hover:border-[#312E81] text-[#0F172A] text-xs font-semibold cursor-pointer"
+            className="h-8 sm:h-9 px-3 sm:px-3.5 rounded-full border-slate-200 hover:border-[#312E81] text-[#0F172A] text-xs font-semibold cursor-pointer shrink-0"
           >
             Book Lesson
           </Button>
@@ -210,7 +210,7 @@ export function TeacherCard({
           <Button
             size="sm"
             onClick={() => navigate(`/teachers/${teacher.userId}`)}
-            className="h-8 sm:h-9 px-3.5 sm:px-4 rounded-full bg-[#312E81] hover:bg-[#6D5DFB] text-white text-xs font-semibold shadow-xs inline-flex items-center gap-1.5 transition-all active:scale-[0.98] cursor-pointer"
+            className="h-8 sm:h-9 px-3.5 sm:px-4 rounded-full bg-[#312E81] hover:bg-[#6D5DFB] text-white text-xs font-semibold shadow-xs inline-flex items-center gap-1.5 transition-all active:scale-[0.98] cursor-pointer shrink-0"
           >
             <span>View Profile</span>
             <ArrowRight className="h-3 w-3" />

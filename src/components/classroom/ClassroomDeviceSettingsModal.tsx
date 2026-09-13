@@ -93,16 +93,43 @@ export function ClassroomDeviceSettingsModal({
           const camQuery = await navigator.permissions.query({ name: "camera" as any });
           setCamPermission(camQuery.state as any);
           camQuery.onchange = () => setCamPermission(camQuery.state as any);
-        } catch {}
+        } catch {
+          /* ignore */
+        }
 
         try {
           const micQuery = await navigator.permissions.query({ name: "microphone" as any });
           setMicPermission(micQuery.state as any);
           micQuery.onchange = () => setMicPermission(micQuery.state as any);
-        } catch {}
+        } catch {
+          /* ignore */
+        }
       }
     } catch (err: any) {
       console.error("Device enumeration failed:", err);
+    }
+  };
+
+  // Clean up preview streams (declared before useEffect to prevent TDZ)
+  const cleanupPreview = () => {
+    if (previewStreamRef.current) {
+      previewStreamRef.current.getTracks().forEach((t) => t.stop());
+      previewStreamRef.current = null;
+    }
+    if (previewVideoRef.current) {
+      previewVideoRef.current.srcObject = null;
+    }
+    if (animFrameRef.current) {
+      cancelAnimationFrame(animFrameRef.current);
+      animFrameRef.current = null;
+    }
+    if (audioContextRef.current && audioContextRef.current.state !== "closed") {
+      try {
+        audioContextRef.current.close();
+      } catch {
+        /* ignore */
+      }
+      audioContextRef.current = null;
     }
   };
 
@@ -124,27 +151,6 @@ export function ClassroomDeviceSettingsModal({
     }
     return () => cleanupPreview();
   }, [isOpen]);
-
-  // Clean up preview streams
-  const cleanupPreview = () => {
-    if (previewStreamRef.current) {
-      previewStreamRef.current.getTracks().forEach((t) => t.stop());
-      previewStreamRef.current = null;
-    }
-    if (previewVideoRef.current) {
-      previewVideoRef.current.srcObject = null;
-    }
-    if (animFrameRef.current) {
-      cancelAnimationFrame(animFrameRef.current);
-      animFrameRef.current = null;
-    }
-    if (audioContextRef.current && audioContextRef.current.state !== "closed") {
-      try {
-        audioContextRef.current.close();
-      } catch {}
-      audioContextRef.current = null;
-    }
-  };
 
   // Start preview stream when camera or mic changes in modal
   useEffect(() => {
@@ -275,7 +281,9 @@ export function ClassroomDeviceSettingsModal({
         setIsPlayingTestSound(false);
         try {
           audioCtx.close();
-        } catch {}
+        } catch {
+          /* ignore */
+        }
       }, 700);
     } catch (e) {
       setIsPlayingTestSound(false);

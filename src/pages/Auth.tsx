@@ -743,7 +743,7 @@ export default function Auth({ redirectAfterAuth }: AuthProps = {}) {
                   }}
                   className={`flex-1 py-3.5 text-center text-xs sm:text-sm font-semibold transition-colors cursor-pointer ${
                     mode === "register"
-                      ? "text-[#0F172A] border-b-2 border-[#6D5DFB] bg-slate-50 font-bold"
+                      ? "text-[#0F172A] border-b-2 border-[#6D5DFB] bg-slate-50 font-bold -mb-px"
                       : "text-slate-500 hover:text-[#0F172A]"
                   }`}
                 >
@@ -757,7 +757,7 @@ export default function Auth({ redirectAfterAuth }: AuthProps = {}) {
                   }}
                   className={`flex-1 py-3.5 text-center text-xs sm:text-sm font-semibold transition-colors cursor-pointer ${
                     mode === "login"
-                      ? "text-[#0F172A] border-b-2 border-[#6D5DFB] bg-slate-50 font-bold"
+                      ? "text-[#0F172A] border-b-2 border-[#6D5DFB] bg-slate-50 font-bold -mb-px"
                       : "text-slate-500 hover:text-[#0F172A]"
                   }`}
                 >
