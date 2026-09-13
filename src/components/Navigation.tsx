@@ -32,8 +32,8 @@ const publicLinks = [
   { label: "Find Tutors", path: "/teachers" },
   { label: "How It Works", path: "/#how-it-works" },
   { label: "Become a Tutor", path: "/teacher-application" },
+  { label: "Community", path: "/community" },
   { label: "FAQ", path: "/#faq" },
-  { label: "Contact", path: "/#contact" },
 ];
 
 const studentLinks = [

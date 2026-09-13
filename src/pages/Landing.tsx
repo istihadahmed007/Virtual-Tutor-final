@@ -15,13 +15,12 @@ import { api } from "@/convex/_generated/api";
 import { getAllTeacherApplications, LEGACY_FAKE_IDS, TEACHER_STORE_EVENT } from "@/lib/teacher-store";
 import { normalizeTeacherData, AuthoritativeTeacher } from "@/lib/teacher-authoritative-data";
 import { BrandLogo } from "@/components/BrandLogo";
-import { CinematicHeroBackground } from "@/components/CinematicHeroBackground";
-import { FloatingParticles } from "@/components/FloatingParticles";
 import {
   SectionLabel,
   SectionHeader,
   PrimaryButton,
   SecondaryButton,
+  PillButton,
   StatBlock,
   TutorCard,
 } from "@/components/redesign";
@@ -39,15 +38,24 @@ import {
   Clock,
   Menu,
   X,
-  Laptop,
   PenTool,
-  Brain,
-  FileCheck,
   ArrowRight,
-  Plus,
+  Lock,
+  Wallet,
+  ChevronDown,
+  Award,
+  Monitor,
+  FileText,
+  Check,
+  CreditCard,
+  MessageCircle,
+  TrendingUp,
+  Layers,
+  ChevronRight,
+  Filter,
 } from "lucide-react";
 
-// Subtle ambient particle canvas for warm, breathing atmosphere
+// Subtle ambient particle canvas for warm breathing atmosphere
 function AmbientAtmosphere() {
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
 
@@ -59,24 +67,24 @@ function AmbientAtmosphere() {
 
     let animId: number;
     let width = (canvas.width = canvas.parentElement?.clientWidth || window.innerWidth);
-    let height = (canvas.height = canvas.parentElement?.clientHeight || 700);
+    let height = (canvas.height = canvas.parentElement?.clientHeight || 800);
 
     const handleResize = () => {
       if (!canvas) return;
       width = canvas.width = canvas.parentElement?.clientWidth || window.innerWidth;
-      height = canvas.height = canvas.parentElement?.clientHeight || 700;
+      height = canvas.height = canvas.parentElement?.clientHeight || 800;
     };
     window.addEventListener("resize", handleResize);
 
-    const particleCount = 28;
+    const particleCount = 24;
     const particles = Array.from({ length: particleCount }, () => ({
       x: Math.random() * width,
       y: Math.random() * height,
-      vx: (Math.random() - 0.5) * 0.35,
-      vy: -0.2 - Math.random() * 0.3,
-      radius: 1.2 + Math.random() * 2.2,
-      alpha: 0.15 + Math.random() * 0.35,
-      hue: Math.random() > 0.4 ? 20 : 35,
+      vx: (Math.random() - 0.5) * 0.25,
+      vy: -0.15 - Math.random() * 0.25,
+      radius: 1.2 + Math.random() * 2,
+      alpha: 0.12 + Math.random() * 0.2,
+      hue: Math.random() > 0.5 ? 24 : 36, // Orange & amber warm tints
     }));
 
     const render = () => {
@@ -96,8 +104,8 @@ function AmbientAtmosphere() {
         ctx.beginPath();
         ctx.arc(p.x, p.y, p.radius, 0, Math.PI * 2);
         ctx.fillStyle = `hsla(${p.hue}, 90%, 55%, ${p.alpha})`;
-        ctx.shadowBlur = 8;
-        ctx.shadowColor = `hsla(${p.hue}, 90%, 55%, 0.4)`;
+        ctx.shadowBlur = 6;
+        ctx.shadowColor = `hsla(${p.hue}, 90%, 55%, 0.3)`;
         ctx.fill();
         ctx.shadowBlur = 0;
       });
@@ -117,29 +125,29 @@ function AmbientAtmosphere() {
     <div className="absolute inset-0 pointer-events-none overflow-hidden z-0">
       <motion.div
         animate={{
-          scale: [1, 1.15, 1],
-          opacity: [0.35, 0.5, 0.35],
-          x: [0, 20, 0],
-          y: [0, -15, 0],
+          scale: [1, 1.12, 1],
+          opacity: [0.3, 0.45, 0.3],
+          x: [0, 15, 0],
+          y: [0, -10, 0],
         }}
-        transition={{ duration: 10, repeat: Infinity, ease: "easeInOut" }}
-        className="absolute -top-32 left-1/4 w-96 h-96 rounded-full bg-radial from-[#F26522]/12 via-[#F26522]/4 to-transparent blur-3xl"
+        transition={{ duration: 12, repeat: Infinity, ease: "easeInOut" }}
+        className="absolute -top-40 left-1/4 w-96 h-96 rounded-full bg-radial from-[#F26522]/10 via-[#F26522]/3 to-transparent blur-3xl"
       />
       <motion.div
         animate={{
-          scale: [1.1, 0.95, 1.1],
-          opacity: [0.25, 0.4, 0.25],
-          x: [0, -25, 0],
+          scale: [1.08, 0.96, 1.08],
+          opacity: [0.2, 0.35, 0.2],
+          x: [0, -20, 0],
         }}
-        transition={{ duration: 12, repeat: Infinity, ease: "easeInOut", delay: 1 }}
-        className="absolute top-20 right-1/4 w-[28rem] h-[28rem] rounded-full bg-radial from-[#EAA824]/10 via-[#F26522]/3 to-transparent blur-3xl"
+        transition={{ duration: 14, repeat: Infinity, ease: "easeInOut", delay: 1 }}
+        className="absolute top-24 right-1/4 w-[28rem] h-[28rem] rounded-full bg-radial from-[#F7941D]/8 via-[#F26522]/2 to-transparent blur-3xl"
       />
       <canvas ref={canvasRef} className="absolute inset-0 w-full h-full opacity-60" />
     </div>
   );
 }
 
-// Audio visualizer waveform bars component with dynamic glowing audio pulse
+// Audio visualizer waveform bars component
 function LiveWaveform() {
   const heights = [6, 14, 8, 16, 10, 15, 7, 12];
   return (
@@ -169,11 +177,22 @@ export default function Landing() {
   const navigate = useNavigate();
   const { isAuthenticated } = useAuth();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [isScrolled, setIsScrolled] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedSubject, setSelectedSubject] = useState<string>("All");
+  const [selectedLevel, setSelectedLevel] = useState<string>("All");
 
-  // Interactive Live Demo tab state
-  const [activeDemoTab, setActiveDemoTab] = useState<"whiteboard" | "ai" | "video" | "homework">("whiteboard");
+  // Active accordion FAQ index
+  const [activeFaqIndex, setActiveFaqIndex] = useState<number | null>(0);
+
+  // Shrink-on-scroll header behavior
+  useEffect(() => {
+    const handleScroll = () => {
+      setIsScrolled(window.scrollY > 20);
+    };
+    window.addEventListener("scroll", handleScroll, { passive: true });
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
 
   // Query verified teachers
   const teachersQuery = useQuery(api.teachers.list);
@@ -229,122 +248,33 @@ export default function Landing() {
       .filter((t) => {
         const matchesSubject =
           selectedSubject === "All" ||
-          t.subjects?.some((s) =>
-            s.toLowerCase().includes(selectedSubject.toLowerCase())
-          );
+          t.subjects?.some((s) => s.toLowerCase().includes(selectedSubject.toLowerCase()));
+        const matchesLevel =
+          selectedLevel === "All" ||
+          t.classLevels?.some((l) => l.toLowerCase().includes(selectedLevel.toLowerCase()));
         const matchesSearch =
           !searchQuery.trim() ||
           t.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-          t.subjects?.some((s) =>
-            s.toLowerCase().includes(searchQuery.toLowerCase())
-          ) ||
+          t.subjects?.some((s) => s.toLowerCase().includes(searchQuery.toLowerCase())) ||
           t.title?.toLowerCase().includes(searchQuery.toLowerCase());
-        return matchesSubject && matchesSearch;
+        return matchesSubject && matchesLevel && matchesSearch;
       })
       .slice(0, 6);
-  }, [teachers, selectedSubject, searchQuery]);
+  }, [teachers, selectedSubject, selectedLevel, searchQuery]);
 
-  const handleAuthAction = (path: string = "/auth") => {
-    if (isAuthenticated) {
-      navigate("/dashboard");
-    } else {
-      navigate(path);
-    }
-  };
-
-  // Stagger animation variants
-  const heroContainerVariants: Variants = {
-    hidden: { opacity: 0 },
-    visible: {
-      opacity: 1,
-      transition: {
-        staggerChildren: 0.1,
-        delayChildren: 0.05,
-      },
-    },
-  };
-
-  const heroItemVariants: Variants = {
-    hidden: { opacity: 0, y: 18 },
-    visible: {
-      opacity: 1,
-      y: 0,
-      transition: {
-        duration: 0.6,
-        ease: "easeOut",
-      },
-    },
-  };
-
-  const sectionVariants: Variants = {
-    hidden: { opacity: 0, y: 24 },
-    visible: {
-      opacity: 1,
-      y: 0,
-      transition: {
-        duration: 0.7,
-        ease: "easeOut",
-      },
-    },
-  };
-
+  // Motion physics configuration
   const shouldReduceMotion = useReducedMotion();
-
-  // Mouse parallax motion values for Hero section
   const heroMouseX = useMotionValue(0);
   const heroMouseY = useMotionValue(0);
 
-  // Organic spring physics for smooth, responsive parallax tracking
-  const springDefault = { damping: 28, stiffness: 75, mass: 0.5 };
-  const smoothX = useSpring(heroMouseX, springDefault);
-  const smoothY = useSpring(heroMouseY, springDefault);
+  const springConfig = { damping: 26, stiffness: 80, mass: 0.5 };
+  const smoothX = useSpring(heroMouseX, springConfig);
+  const smoothY = useSpring(heroMouseY, springConfig);
 
-  // Deep layer spring (slower, heavier mass for background/anchor elements)
-  const springDeep = { damping: 35, stiffness: 50, mass: 0.8 };
-  const deepSmoothX = useSpring(heroMouseX, springDeep);
-  const deepSmoothY = useSpring(heroMouseY, springDeep);
-
-  // Floating foreground spring (snappier, lighter mass for interactive buttons & pills)
-  const springFloat = { damping: 22, stiffness: 95, mass: 0.35 };
-  const floatSmoothX = useSpring(heroMouseX, springFloat);
-  const floatSmoothY = useSpring(heroMouseY, springFloat);
-
-  // Multi-layered parallax transforms:
-  // 1. Top Pill Badge: slight forward depth
-  const badgeParallaxX = useTransform(smoothX, (v) => (shouldReduceMotion ? 0 : v * 0.016));
-  const badgeParallaxY = useTransform(smoothY, (v) => (shouldReduceMotion ? 0 : v * 0.016));
-
-  // 2. Display Headline: counter-parallax (deep layer, creating huge depth against floating particles)
-  const headlineParallaxX = useTransform(deepSmoothX, (v) => (shouldReduceMotion ? 0 : v * -0.026));
-  const headlineParallaxY = useTransform(deepSmoothY, (v) => (shouldReduceMotion ? 0 : v * -0.022));
-
-  // 3. Editorial Subtitle: mid-depth layer
-  const subtitleParallaxX = useTransform(smoothX, (v) => (shouldReduceMotion ? 0 : v * -0.014));
-  const subtitleParallaxY = useTransform(smoothY, (v) => (shouldReduceMotion ? 0 : v * -0.012));
-
-  // 4. Action CTA Buttons: elevated forward layer
-  const buttonsParallaxX = useTransform(floatSmoothX, (v) => (shouldReduceMotion ? 0 : v * 0.032));
-  const buttonsParallaxY = useTransform(floatSmoothY, (v) => (shouldReduceMotion ? 0 : v * 0.026));
-
-  // 5. Search Bar & Subject Pills: crisp interactive foreground
-  const searchParallaxX = useTransform(smoothX, (v) => (shouldReduceMotion ? 0 : v * 0.02));
-  const searchParallaxY = useTransform(smoothY, (v) => (shouldReduceMotion ? 0 : v * 0.016));
-
-  // 6. Metrics Pills: counter-depth layer
-  const metricsParallaxX = useTransform(deepSmoothX, (v) => (shouldReduceMotion ? 0 : v * -0.024));
-  const metricsParallaxY = useTransform(deepSmoothY, (v) => (shouldReduceMotion ? 0 : v * -0.018));
-
-  // 7. Interactive Classroom Architecture Showcase Card: 3D perspective tilt + subtle translation
-  const cardParallaxX = useTransform(smoothX, (v) => (shouldReduceMotion ? 0 : v * 0.014));
-  const cardParallaxY = useTransform(smoothY, (v) => (shouldReduceMotion ? 0 : v * 0.012));
-  const cardRotateX = useTransform(smoothY, [-400, 400], shouldReduceMotion ? [0, 0] : [3.5, -3.5]);
-  const cardRotateY = useTransform(smoothX, [-600, 600], shouldReduceMotion ? [0, 0] : [-4, 4]);
-
-  // 8. Lateral floating perspective badges (visible on desktop viewports)
-  const leftBadgeX = useTransform(floatSmoothX, (v) => (shouldReduceMotion ? 0 : v * 0.045));
-  const leftBadgeY = useTransform(floatSmoothY, (v) => (shouldReduceMotion ? 0 : v * 0.038));
-  const rightBadgeX = useTransform(floatSmoothX, (v) => (shouldReduceMotion ? 0 : v * -0.042));
-  const rightBadgeY = useTransform(floatSmoothY, (v) => (shouldReduceMotion ? 0 : v * -0.036));
+  const heroCardRotateX = useTransform(smoothY, [-400, 400], shouldReduceMotion ? [0, 0] : [3, -3]);
+  const heroCardRotateY = useTransform(smoothX, [-600, 600], shouldReduceMotion ? [0, 0] : [-3.5, 3.5]);
+  const heroBadgeParallaxX = useTransform(smoothX, (v) => (shouldReduceMotion ? 0 : v * 0.025));
+  const heroBadgeParallaxY = useTransform(smoothY, (v) => (shouldReduceMotion ? 0 : v * 0.025));
 
   useEffect(() => {
     const handlePointerMove = (e: PointerEvent) => {
@@ -355,100 +285,115 @@ export default function Landing() {
     };
 
     window.addEventListener("pointermove", handlePointerMove, { passive: true });
-    return () => {
-      window.removeEventListener("pointermove", handlePointerMove);
-    };
+    return () => window.removeEventListener("pointermove", handlePointerMove);
   }, [heroMouseX, heroMouseY]);
 
+  // Animation variants
+  const containerVariants: Variants = {
+    hidden: { opacity: 0 },
+    visible: {
+      opacity: 1,
+      transition: { staggerChildren: 0.12, delayChildren: 0.1 },
+    },
+  };
+
+  const itemVariants: Variants = {
+    hidden: { opacity: 0, y: 20 },
+    visible: {
+      opacity: 1,
+      y: 0,
+      transition: { duration: 0.55, ease: [0.21, 0.47, 0.32, 0.98] },
+    },
+  };
+
   return (
-    <div className="min-h-screen bg-black text-white font-sans antialiased selection:bg-[#F26522]/30 selection:text-white relative">
-      {/* ─── Global Full-Page Vesper WebGL Volumetric Stardust Ribbon Background ─── */}
-      <CinematicHeroBackground isFixed={true} className="fixed inset-0 z-0 pointer-events-none" />
-
-      {/* ─── Interactive Floating Particles Background (Framer Motion) ─── */}
-      <FloatingParticles count={42} className="fixed inset-0 z-0 pointer-events-none" />
-
-      {/* ─── 1. NAVBAR ─── */}
-      <header className="sticky top-0 z-50 bg-black/60 backdrop-blur-xl border-b border-white/10 text-white transition-colors">
-        <div className="max-w-[1440px] mx-auto px-4 sm:px-8 h-20 flex items-center justify-between">
-          {/* Brand Logo */}
+    <div className="min-h-screen bg-[#F8F7F4] text-[#111111] font-sans antialiased selection:bg-[#F26522]/20 selection:text-[#111111] relative">
+      {/* ─── 1. GLOBAL HEADER ─── */}
+      <header
+        className={`sticky top-0 z-50 transition-all duration-300 ${
+          isScrolled
+            ? "bg-[#F8F7F4]/90 backdrop-blur-md border-b border-[#E5E4DE] shadow-xs py-3"
+            : "bg-transparent py-5"
+        }`}
+      >
+        <div className="max-w-[1440px] mx-auto px-4 sm:px-8 flex items-center justify-between">
+          {/* Logo */}
           <div className="flex items-center">
             <BrandLogo
               variant="horizontal"
               size="md"
               showSubtext={true}
-              isDark={true}
               onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
               className="cursor-pointer"
             />
           </div>
 
-          {/* Desktop Links - Vesper style pill navigation */}
-          <nav className="hidden md:flex items-center gap-1.5 px-3.5 py-1.5 rounded-full border border-white/10 bg-white/5 backdrop-blur-md text-xs sm:text-sm font-medium text-white/80">
+          {/* Desktop Navigation Links */}
+          <nav className="hidden md:flex items-center gap-1.5 px-3.5 py-1.5 rounded-full border border-[#E5E4DE] bg-white/80 backdrop-blur-md text-xs font-semibold text-[#111111]/80 shadow-2xs">
             <Link
               to="/teachers"
-              className="px-3 py-1 rounded-full hover:text-white hover:bg-white/10 transition-colors"
+              className="px-3.5 py-1.5 rounded-full hover:text-[#111111] hover:bg-[#FAF9F5] transition-colors"
             >
               Find Tutors
             </Link>
-            <Link
-              to="/teacher-application"
-              className="px-3 py-1 rounded-full hover:text-white hover:bg-white/10 transition-colors"
-            >
-              Become a Tutor
-            </Link>
             <a
               href="#how-it-works"
-              className="px-3 py-1 rounded-full hover:text-white hover:bg-white/10 transition-colors"
+              className="px-3.5 py-1.5 rounded-full hover:text-[#111111] hover:bg-[#FAF9F5] transition-colors"
             >
               How It Works
             </a>
             <Link
-              to="/students"
-              className="px-3 py-1 rounded-full hover:text-white hover:bg-white/10 transition-colors"
+              to="/teacher-application"
+              className="px-3.5 py-1.5 rounded-full hover:text-[#111111] hover:bg-[#FAF9F5] transition-colors"
             >
-              Student Requests
+              Become a Tutor
             </Link>
             <Link
-              to="/faq"
-              className="px-3 py-1 rounded-full hover:text-white hover:bg-white/10 transition-colors"
+              to="/community"
+              className="px-3.5 py-1.5 rounded-full hover:text-[#111111] hover:bg-[#FAF9F5] transition-colors"
+            >
+              Community
+            </Link>
+            <a
+              href="#faq"
+              className="px-3.5 py-1.5 rounded-full hover:text-[#111111] hover:bg-[#FAF9F5] transition-colors"
             >
               FAQ
-            </Link>
+            </a>
           </nav>
 
-          {/* Desktop CTA matching Capture.PNG */}
+          {/* Desktop Actions */}
           <div className="hidden md:flex items-center gap-3">
             {isAuthenticated ? (
               <button
                 onClick={() => navigate("/dashboard")}
-                className="px-4 py-2 rounded-full bg-white text-black font-semibold text-xs hover:bg-neutral-200 transition-colors shadow-sm cursor-pointer"
+                className="px-5 py-2.5 rounded-full bg-[#111111] hover:bg-[#222222] text-white font-semibold text-xs transition-all shadow-xs cursor-pointer active:scale-95"
               >
-                Go to Workspace
+                Dashboard
               </button>
             ) : (
               <>
                 <button
                   onClick={() => navigate("/auth?mode=login")}
-                  className="px-3.5 py-1.5 rounded-full text-white/80 hover:text-white text-xs font-medium transition-colors cursor-pointer"
+                  className="px-4 py-2 rounded-full text-[#111111]/70 hover:text-[#111111] text-xs font-semibold transition-colors cursor-pointer"
                 >
                   Log In
                 </button>
                 <button
                   onClick={() => navigate("/auth?mode=signup")}
-                  className="px-4 py-2 rounded-full bg-white text-black font-semibold text-xs hover:bg-neutral-200 transition-colors shadow-sm cursor-pointer"
+                  className="px-5 py-2.5 rounded-full bg-[#111111] hover:bg-[#222222] text-white font-semibold text-xs transition-all shadow-xs cursor-pointer active:scale-95"
                 >
-                  Start for Free
+                  Start Learning
                 </button>
               </>
             )}
           </div>
 
-          {/* Mobile Menu Toggle */}
+          {/* Mobile Menu Button */}
           <div className="md:hidden flex items-center">
             <button
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-              className="p-2 rounded-xl text-white hover:bg-white/10 transition-colors"
+              className="p-2 rounded-xl text-[#111111] hover:bg-black/5 transition-colors cursor-pointer"
               aria-label="Toggle Menu"
             >
               {mobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
@@ -456,7 +401,7 @@ export default function Landing() {
           </div>
         </div>
 
-        {/* Mobile Dropdown Menu with AnimatePresence */}
+        {/* Mobile Slide-Down Drawer */}
         <AnimatePresence>
           {mobileMenuOpen && (
             <motion.div
@@ -464,971 +409,855 @@ export default function Landing() {
               animate={{ opacity: 1, height: "auto" }}
               exit={{ opacity: 0, height: 0 }}
               transition={{ duration: 0.25, ease: "easeInOut" }}
-              className="md:hidden border-b border-white/10 bg-black/95 px-4 pt-2 pb-6 space-y-3 overflow-hidden text-white"
+              className="md:hidden border-b border-[#E5E4DE] bg-white px-4 pt-2 pb-6 space-y-3 overflow-hidden shadow-md"
             >
               <Link
                 to="/teachers"
                 onClick={() => setMobileMenuOpen(false)}
-                className="block py-2 text-sm font-medium text-white/90 hover:text-white"
+                className="block py-2 text-sm font-semibold text-[#111111]/80 hover:text-[#111111]"
               >
                 Find Tutors
               </Link>
+              <a
+                href="#how-it-works"
+                onClick={() => setMobileMenuOpen(false)}
+                className="block py-2 text-sm font-semibold text-[#111111]/80 hover:text-[#111111]"
+              >
+                How It Works
+              </a>
               <Link
                 to="/teacher-application"
                 onClick={() => setMobileMenuOpen(false)}
-                className="block py-2 text-sm font-medium text-white/90 hover:text-white"
+                className="block py-2 text-sm font-semibold text-[#111111]/80 hover:text-[#111111]"
               >
                 Become a Tutor
               </Link>
               <Link
-                to="/students"
+                to="/community"
                 onClick={() => setMobileMenuOpen(false)}
-                className="block py-2 text-sm font-medium text-white/90 hover:text-white"
+                className="block py-2 text-sm font-semibold text-[#111111]/80 hover:text-[#111111]"
               >
-                Student Requests
+                Community
               </Link>
-              <Link
-                to="/faq"
+              <a
+                href="#faq"
                 onClick={() => setMobileMenuOpen(false)}
-                className="block py-2 text-sm font-medium text-white/90 hover:text-white"
+                className="block py-2 text-sm font-semibold text-[#111111]/80 hover:text-[#111111]"
               >
                 FAQ
-              </Link>
-              <div className="pt-4 flex flex-col gap-2">
-                <button
-                  onClick={() => {
-                    setMobileMenuOpen(false);
-                    handleAuthAction();
-                  }}
-                  className="w-full py-2.5 rounded-full bg-white text-black font-semibold text-xs hover:bg-neutral-200 transition-colors"
-                >
-                  {isAuthenticated ? "Go to Dashboard" : "Start for Free"}
-                </button>
+              </a>
+              <div className="pt-3 border-t border-[#E5E4DE] flex flex-col gap-2">
+                {isAuthenticated ? (
+                  <button
+                    onClick={() => {
+                      setMobileMenuOpen(false);
+                      navigate("/dashboard");
+                    }}
+                    className="w-full py-2.5 rounded-full bg-[#111111] text-white font-semibold text-xs text-center"
+                  >
+                    Go to Dashboard
+                  </button>
+                ) : (
+                  <>
+                    <button
+                      onClick={() => {
+                        setMobileMenuOpen(false);
+                        navigate("/auth?mode=login");
+                      }}
+                      className="w-full py-2 rounded-full border border-[#E5E4DE] text-[#111111] font-semibold text-xs text-center"
+                    >
+                      Log In
+                    </button>
+                    <button
+                      onClick={() => {
+                        setMobileMenuOpen(false);
+                        navigate("/auth?mode=signup");
+                      }}
+                      className="w-full py-2.5 rounded-full bg-[#111111] text-white font-semibold text-xs text-center"
+                    >
+                      Start Learning
+                    </button>
+                  </>
+                )}
               </div>
             </motion.div>
           )}
         </AnimatePresence>
       </header>
 
-      {/* ─── 2. HERO SECTION WITH RICH MOTION & MOUSE PARALLAX ─── */}
-      <section className="relative pt-16 pb-24 sm:pt-24 sm:pb-36 overflow-hidden bg-transparent text-white">
+      {/* ─── 2. HERO SECTION ─── */}
+      <section className="relative pt-8 pb-20 sm:pt-14 sm:pb-28 overflow-hidden">
+        <AmbientAtmosphere />
+
         <div className="max-w-[1440px] mx-auto px-4 sm:px-8 relative z-10">
-          {/* Ambient Parallax Floating Badges in Hero Lateral Space */}
-          <motion.div
-            style={{ x: leftBadgeX, y: leftBadgeY }}
-            className="hidden lg:flex items-center gap-2.5 px-3.5 py-2 rounded-2xl bg-white/5 border border-white/12 backdrop-blur-xl absolute top-12 left-4 xl:left-12 z-20 pointer-events-none shadow-[0_8px_30px_rgba(0,0,0,0.5)] will-change-transform"
-          >
-            <div className="w-7 h-7 rounded-xl bg-emerald-500/20 border border-emerald-500/30 flex items-center justify-center text-emerald-400">
-              <Sparkles className="w-3.5 h-3.5" />
-            </div>
-            <div className="text-left">
-              <p className="text-[11px] font-semibold text-white">Interactive HD Classroom</p>
-              <p className="text-[9px] text-white/50">Zero lag WebRTC audio/video</p>
-            </div>
-          </motion.div>
-
-          <motion.div
-            style={{ x: rightBadgeX, y: rightBadgeY }}
-            className="hidden lg:flex items-center gap-2.5 px-3.5 py-2 rounded-2xl bg-white/5 border border-white/12 backdrop-blur-xl absolute top-36 right-4 xl:right-12 z-20 pointer-events-none shadow-[0_8px_30px_rgba(0,0,0,0.5)] will-change-transform"
-          >
-            <div className="w-7 h-7 rounded-xl bg-[#F26522]/20 border border-[#F26522]/30 flex items-center justify-center text-[#F26522]">
-              <ShieldCheck className="w-3.5 h-3.5" />
-            </div>
-            <div className="text-left">
-              <p className="text-[11px] font-semibold text-white">Verified Educators</p>
-              <p className="text-[9px] text-white/50">Top university faculty</p>
-            </div>
-          </motion.div>
-
-          <motion.div
-            variants={heroContainerVariants}
-            initial="hidden"
-            animate="visible"
-            className="max-w-4xl mx-auto text-center"
-          >
-            {/* Vesper Style Pill Badge */}
-            <motion.div variants={heroItemVariants} className="flex justify-center mb-6">
-              <motion.div
-                style={{ x: badgeParallaxX, y: badgeParallaxY }}
-                className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full border border-white/15 bg-white/5 backdrop-blur-md text-white/90 text-xs font-medium tracking-wide will-change-transform"
-              >
-                <Plus className="w-3.5 h-3.5 text-white/70" />
-                <span>Live 1-on-1 Academic Platform</span>
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-8 items-center">
+            {/* Left Content Column */}
+            <motion.div
+              variants={containerVariants}
+              initial="hidden"
+              animate="visible"
+              className="lg:col-span-6 space-y-6 text-left"
+            >
+              {/* Eyebrow */}
+              <motion.div variants={itemVariants}>
+                <span className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-[#FAF9F5] border border-[#E5E4DE] text-[#111111] text-xs font-bold tracking-wider uppercase">
+                  <span className="w-2 h-2 rounded-full bg-[#F26522] animate-pulse" />
+                  PERSONALIZED ONLINE LEARNING
+                </span>
               </motion.div>
-            </motion.div>
 
-            {/* Display Headline with deep counter-parallax */}
-            <motion.div variants={heroItemVariants}>
-              <motion.h1
-                style={{ x: headlineParallaxX, y: headlineParallaxY }}
-                className="text-4xl sm:text-6xl lg:text-[4.25rem] font-medium tracking-[-0.035em] leading-[1.12] text-white text-center will-change-transform"
-              >
-                Learn from <span className="font-serif italic font-normal text-white">elite educators</span> on your
-                <br className="hidden sm:block" /> terms in minutes.
-              </motion.h1>
-            </motion.div>
+              {/* Main Headline */}
+              <motion.div variants={itemVariants}>
+                <h1 className="text-4xl sm:text-6xl xl:text-[4.25rem] font-bold tracking-[-0.03em] leading-[1.08] text-[#111111]">
+                  Learn better.
+                  <br />
+                  <span className="text-[#F26522]">With the right teacher.</span>
+                </h1>
+              </motion.div>
 
-            {/* Editorial Subtitle with mid-depth parallax */}
-            <motion.div variants={heroItemVariants}>
-              <motion.p
-                style={{ x: subtitleParallaxX, y: subtitleParallaxY }}
-                className="mt-6 text-base sm:text-xl text-white/70 max-w-2xl mx-auto leading-relaxed font-normal text-center will-change-transform"
-              >
-                Connect with verified teachers for 1-on-1 live lessons, interactive digital whiteboards,
-                and personalized monthly tuition tailored to your curriculum.
-              </motion.p>
-            </motion.div>
+              {/* Supporting Text */}
+              <motion.div variants={itemVariants}>
+                <p className="text-base sm:text-lg text-[#111111]/70 leading-relaxed max-w-xl">
+                  Connect with verified teachers, book live one-to-one lessons, and learn in a professional online classroom.
+                </p>
+              </motion.div>
 
-            {/* Vesper Buttons with forward parallax */}
-            <motion.div variants={heroItemVariants}>
-              <motion.div
-                style={{ x: buttonsParallaxX, y: buttonsParallaxY }}
-                className="mt-8 flex flex-col sm:flex-row items-center justify-center gap-3.5 will-change-transform"
-              >
+              {/* CTAs */}
+              <motion.div variants={itemVariants} className="flex flex-wrap items-center gap-3.5 pt-2">
                 <button
                   onClick={() => navigate("/teachers")}
-                  className="w-full sm:w-auto px-7 py-3 rounded-full bg-white text-black font-semibold text-sm hover:bg-neutral-200 transition-all shadow-[0_4px_20px_rgba(255,255,255,0.2)] hover:scale-105 active:scale-95 cursor-pointer text-center"
+                  className="px-7 py-3.5 rounded-full bg-[#111111] hover:bg-[#222222] text-white font-bold text-sm transition-all shadow-md active:scale-95 flex items-center gap-2 cursor-pointer"
                 >
-                  Start for Free
+                  <span>Find a Tutor</span>
+                  <ArrowRight className="w-4 h-4 text-[#F26522]" />
                 </button>
                 <button
-                  onClick={() => {
-                    const el = document.getElementById("classroom-demo");
-                    el?.scrollIntoView({ behavior: "smooth" });
-                  }}
-                  className="w-full sm:w-auto px-7 py-3 rounded-full bg-white/5 border border-white/20 text-white font-medium text-sm hover:bg-white/10 transition-all backdrop-blur-sm hover:scale-105 active:scale-95 flex items-center justify-center gap-2 cursor-pointer"
+                  onClick={() => navigate("/teacher-application")}
+                  className="px-7 py-3.5 rounded-full bg-white hover:bg-[#FAF9F5] text-[#111111] font-bold text-sm transition-all border border-[#E5E4DE] shadow-xs active:scale-95 cursor-pointer"
                 >
-                  <span>See it in action</span>
-                  <ArrowRight className="w-4 h-4 text-white/70" />
+                  Become a Tutor
                 </button>
               </motion.div>
+
+              {/* Quick Trust Highlights */}
+              <motion.div variants={itemVariants} className="pt-6 border-t border-[#E5E4DE] grid grid-cols-3 gap-4">
+                <div>
+                  <p className="text-xl sm:text-2xl font-black text-[#111111]">100%</p>
+                  <p className="text-xs text-[#111111]/60 font-medium mt-0.5">Verified Teachers</p>
+                </div>
+                <div>
+                  <p className="text-xl sm:text-2xl font-black text-[#111111]">1-on-1</p>
+                  <p className="text-xs text-[#111111]/60 font-medium mt-0.5">Live Interactive</p>
+                </div>
+                <div>
+                  <p className="text-xl sm:text-2xl font-black text-[#111111]">Escrow</p>
+                  <p className="text-xs text-[#111111]/60 font-medium mt-0.5">Secure Payments</p>
+                </div>
+              </motion.div>
             </motion.div>
 
-            {/* Search / Filter bar with interactive foreground parallax */}
-            <motion.div variants={heroItemVariants}>
+            {/* Right Visual Composition with 3D Mouse Parallax */}
+            <motion.div
+              initial={{ opacity: 0, scale: 0.95 }}
+              animate={{ opacity: 1, scale: 1 }}
+              transition={{ duration: 0.7, ease: "easeOut", delay: 0.2 }}
+              style={{ rotateX: heroCardRotateX, rotateY: heroCardRotateY }}
+              className="lg:col-span-6 relative perspective-[1000px]"
+            >
+              {/* Floating Verified Badge */}
               <motion.div
-                style={{ x: searchParallaxX, y: searchParallaxY }}
-                className="mt-8 max-w-xl mx-auto will-change-transform"
+                style={{ x: heroBadgeParallaxX, y: heroBadgeParallaxY }}
+                className="hidden sm:flex items-center gap-2.5 px-4 py-2.5 rounded-2xl bg-white border border-[#E5E4DE] shadow-lg absolute -top-5 -left-5 z-20"
               >
-                <div className="flex items-center bg-white/10 backdrop-blur-xl rounded-full border border-white/20 shadow-[0_8px_32px_rgba(0,0,0,0.4)] p-1.5 focus-within:border-white focus-within:ring-2 focus-within:ring-white/20 transition-all">
-                  <div className="pl-4 text-white/50">
-                    <Search className="w-5 h-5" />
+                <div className="w-8 h-8 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center font-bold">
+                  <ShieldCheck className="w-4 h-4" />
+                </div>
+                <div>
+                  <p className="text-xs font-bold text-[#111111]">Verified University Faculty</p>
+                  <p className="text-[10px] text-[#111111]/60">NID & Credentials Screened</p>
+                </div>
+              </motion.div>
+
+              {/* Main Classroom Studio Dark Card */}
+              <div className="bg-[#111111] rounded-3xl p-6 sm:p-7 border border-[#111111] text-white shadow-2xl relative overflow-hidden">
+                {/* Top Studio Bar */}
+                <div className="flex items-center justify-between pb-4 border-b border-white/10">
+                  <div className="flex items-center gap-2.5">
+                    <span className="w-2.5 h-2.5 rounded-full bg-emerald-400 animate-pulse" />
+                    <span className="text-xs font-bold tracking-wide">Live Classroom #842</span>
+                    <span className="text-[10px] bg-white/10 px-2 py-0.5 rounded-full text-white/70">
+                      WebRTC Low Latency
+                    </span>
                   </div>
-                  <input
-                    type="text"
-                    placeholder="Search by subject, educator name, or curriculum..."
-                    value={searchQuery}
-                    onChange={(e) => setSearchQuery(e.target.value)}
-                    onKeyDown={(e) => {
-                      if (e.key === "Enter") {
-                        navigate(`/teachers?q=${encodeURIComponent(searchQuery)}`);
-                      }
+                  <div className="flex items-center gap-2">
+                    <LiveWaveform />
+                    <span className="text-xs text-white/60 font-mono">42:15</span>
+                  </div>
+                </div>
+
+                {/* Whiteboard Interactive Canvas Preview */}
+                <div className="my-5 p-5 bg-[#191919] rounded-2xl border border-white/10 relative overflow-hidden aspect-video flex flex-col justify-between">
+                  <div className="space-y-1 relative z-10 font-mono text-xs text-white/80">
+                    <p className="text-[#F26522] font-bold">// HSC Higher Mathematics · Calculus:</p>
+                    <p className="text-white text-sm font-semibold">∫ (3x² + 4x - 5) dx = x³ + 2x² - 5x + C</p>
+                    <p className="text-emerald-400 text-[11px] pt-1">✓ Step verified: d/dx(x³ + 2x² - 5x + C) = 3x² + 4x - 5</p>
+                  </div>
+
+                  {/* Animated SVG trajectory drawing the integral curve */}
+                  <motion.div
+                    animate={{
+                      x: [0, 60, 30, 90, 0],
+                      y: [0, 15, -8, 10, 0],
                     }}
-                    className="w-full px-3 py-2 text-sm text-white placeholder:text-white/40 bg-transparent focus:outline-hidden"
-                  />
-                  <button
-                    onClick={() => navigate(`/teachers?q=${encodeURIComponent(searchQuery)}`)}
-                    className="shrink-0 px-4 py-2 rounded-full bg-white text-black text-xs font-semibold hover:bg-neutral-200 transition-colors cursor-pointer"
+                    transition={{ duration: 7, repeat: Infinity, ease: "easeInOut" }}
+                    className="absolute bottom-12 right-12 w-32 h-16 pointer-events-none opacity-50"
                   >
-                    Search
-                  </button>
-                </div>
+                    <svg viewBox="0 0 100 50" className="w-full h-full stroke-[#F26522] fill-none stroke-2">
+                      <motion.path
+                        d="M 10,25 Q 50,5 90,25 T 100,45"
+                        initial={{ pathLength: 0 }}
+                        animate={{ pathLength: 1 }}
+                        transition={{ duration: 3.5, repeat: Infinity, ease: "easeInOut" }}
+                      />
+                    </svg>
+                  </motion.div>
 
-                {/* Quick subject pills with dark glass style */}
-                <div className="flex flex-wrap items-center justify-center gap-2 mt-4">
-                  {subjectPills.slice(0, 6).map((sub) => (
-                    <motion.button
-                      key={sub}
-                      whileHover={{ y: -2, scale: 1.03 }}
-                      whileTap={{ scale: 0.96 }}
-                      onClick={() => {
-                        setSelectedSubject(sub);
-                        navigate(`/teachers?subject=${encodeURIComponent(sub)}`);
-                      }}
-                      className="text-xs px-3 py-1 rounded-full border border-white/15 bg-white/5 hover:bg-white/15 text-white/80 hover:text-white transition-colors cursor-pointer backdrop-blur-xs"
-                    >
-                      {sub}
-                    </motion.button>
-                  ))}
-                </div>
-              </motion.div>
-            </motion.div>
-
-            {/* Bottom 3 Metric Pills with counter-depth parallax */}
-            <motion.div variants={heroItemVariants}>
-              <motion.div
-                style={{ x: metricsParallaxX, y: metricsParallaxY }}
-                className="mt-12 flex flex-wrap items-center justify-center gap-3 sm:gap-6 text-xs text-white/70 font-medium will-change-transform"
-              >
-                <div className="flex items-center gap-2 px-4 py-2 rounded-full border border-white/15 bg-white/5 backdrop-blur-md">
-                  <span className="font-mono text-white/40 text-[11px]">||</span>
-                  <span>15,000+ verified educators</span>
-                </div>
-                <div className="flex items-center gap-2 px-4 py-2 rounded-full border border-white/15 bg-white/5 backdrop-blur-md">
-                  <Plus className="w-3.5 h-3.5 text-white/70" />
-                  <span>98.4% student grade improvement</span>
-                </div>
-                <div className="flex items-center gap-2 px-4 py-2 rounded-full border border-white/15 bg-white/5 backdrop-blur-md">
-                  <div className="flex -space-x-1.5">
-                    <span className="w-4 h-4 rounded-full bg-emerald-400 border border-black inline-block" />
-                    <span className="w-4 h-4 rounded-full bg-amber-400 border border-black inline-block" />
-                    <span className="w-4 h-4 rounded-full bg-indigo-400 border border-black inline-block" />
+                  <div className="flex items-center justify-between pt-3 border-t border-white/10 text-[11px] text-white/60 relative z-10">
+                    <span className="flex items-center gap-1.5 text-white/80">
+                      <PenTool className="w-3.5 h-3.5 text-[#F26522]" /> Tutor Cursor: Active Annotation
+                    </span>
+                    <span className="text-[#F26522] font-semibold">Real-Time Sync</span>
                   </div>
-                  <span>50,000+ active learners enrolled</span>
                 </div>
-              </motion.div>
-            </motion.div>
-          </motion.div>
 
-          {/* ─── INTERACTIVE CLASSROOM ARCHITECTURE SHOWCASE (WITH 3D PERSPECTIVE PARALLAX & TABS) ─── */}
-          <motion.div
-            id="classroom-demo"
-            initial={{ opacity: 0, y: 32 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8, delay: 0.35, ease: "easeOut" }}
-            style={{
-              x: cardParallaxX,
-              y: cardParallaxY,
-              rotateX: cardRotateX,
-              rotateY: cardRotateY,
-              transformPerspective: 1200,
-            }}
-            className="mt-16 max-w-4xl mx-auto will-change-transform"
-          >
-            <div className="bg-[#0B0B0B]/90 backdrop-blur-2xl rounded-3xl border border-white/12 p-5 sm:p-7 shadow-[0_20px_60px_rgba(0,0,0,0.8)]">
-              {/* Header with Live Status & Audio Waveform */}
-              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-5 pb-4 border-b border-white/10">
-                <div className="flex items-center gap-3">
-                  <div className="relative flex items-center gap-2">
-                    <span className="w-2.5 h-2.5 rounded-full bg-[#F26522] animate-pulse" />
-                    <span className="text-xs font-bold uppercase tracking-wider text-white">
-                      Live Classroom Engine
-                    </span>
+                {/* Bottom Participant Strip */}
+                <div className="flex items-center justify-between pt-2 text-xs">
+                  <div className="flex items-center gap-2.5">
+                    <div className="w-8 h-8 rounded-full bg-[#F26522] text-white flex items-center justify-center font-bold text-xs">
+                      TR
+                    </div>
+                    <div>
+                      <p className="font-bold text-white leading-tight">Tanvir Rahman</p>
+                      <p className="text-[10px] text-white/60">Physics Specialist (BUET)</p>
+                    </div>
                   </div>
-                  <LiveWaveform />
-                </div>
-
-                {/* Interactive Demo Mode Tabs */}
-                <div className="flex items-center gap-1 bg-white/5 p-1 rounded-full border border-white/10 text-xs">
                   <button
-                    onClick={() => setActiveDemoTab("whiteboard")}
-                    className={`px-3 py-1 rounded-full font-medium transition-all cursor-pointer ${
-                      activeDemoTab === "whiteboard"
-                        ? "bg-white text-black shadow-xs font-semibold"
-                        : "text-white/60 hover:text-white"
-                    }`}
-                  >
-                    <span className="inline-flex items-center gap-1.5">
-                      <PenTool className="w-3 h-3" />
-                      Whiteboard
-                    </span>
-                  </button>
-                  <button
-                    onClick={() => setActiveDemoTab("ai")}
-                    className={`px-3 py-1 rounded-full font-medium transition-all cursor-pointer ${
-                      activeDemoTab === "ai"
-                        ? "bg-white text-black shadow-xs font-semibold"
-                        : "text-white/60 hover:text-white"
-                    }`}
-                  >
-                    <span className="inline-flex items-center gap-1.5">
-                      <Brain className="w-3 h-3" />
-                      AI Assistant
-                    </span>
-                  </button>
-                  <button
-                    onClick={() => setActiveDemoTab("video")}
-                    className={`px-3 py-1 rounded-full font-medium transition-all cursor-pointer ${
-                      activeDemoTab === "video"
-                        ? "bg-white text-black shadow-xs font-semibold"
-                        : "text-white/60 hover:text-white"
-                    }`}
-                  >
-                    <span className="inline-flex items-center gap-1.5">
-                      <Video className="w-3 h-3" />
-                      1080p Video
-                    </span>
-                  </button>
-                  <button
-                    onClick={() => setActiveDemoTab("homework")}
-                    className={`px-3 py-1 rounded-full font-medium transition-all cursor-pointer ${
-                      activeDemoTab === "homework"
-                        ? "bg-white text-black shadow-xs font-semibold"
-                        : "text-white/60 hover:text-white"
-                    }`}
-                  >
-                    <span className="inline-flex items-center gap-1.5">
-                      <FileCheck className="w-3 h-3" />
-                      Assignments
-                    </span>
-                  </button>
-                </div>
-              </div>
-
-              {/* Animated Interactive Tab Viewport */}
-              <div className="relative rounded-2xl bg-[#111111] text-white p-5 sm:p-6 overflow-hidden min-h-[260px] flex flex-col justify-between">
-                <AnimatePresence mode="wait">
-                  {/* TAB 1: WHITEBOARD */}
-                  {activeDemoTab === "whiteboard" && (
-                    <motion.div
-                      key="whiteboard"
-                      initial={{ opacity: 0, y: 12 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      exit={{ opacity: 0, y: -12 }}
-                      transition={{ duration: 0.3 }}
-                      className="space-y-4"
-                    >
-                      <div className="flex items-center justify-between text-xs text-white/60">
-                        <div className="flex items-center gap-2">
-                          <span className="w-2 h-2 rounded-full bg-emerald-400 animate-ping" />
-                          <span>Collaborative Math Canvas · Room #8492</span>
-                        </div>
-                        <span className="text-[#F26522] font-mono">Vector Pen 2px</span>
-                      </div>
-
-                      <div className="bg-[#1A1A1A] rounded-xl p-4 sm:p-5 border border-white/10 font-mono text-xs sm:text-sm">
-                        <div className="text-emerald-400 mb-2 flex items-center gap-1.5">
-                          <CheckCircle2 className="w-4 h-4" />
-                          <span>Calculus Integration Proof:</span>
-                        </div>
-                        <p className="text-white/90">∫ (3x² + 4x - 5) dx = x³ + 2x² - 5x + C</p>
-                        <p className="text-[#F26522] mt-2 text-xs">// Tutor Note: Notice the constant of integration C is required.</p>
-                      </div>
-
-                      {/* Animated simulated cursor */}
-                      <div className="flex items-center justify-between text-xs text-white/50 pt-1">
-                        <div className="flex items-center gap-2">
-                          <motion.div
-                            animate={{ x: [0, 40, 15, 0], y: [0, -5, 5, 0] }}
-                            transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
-                            className="inline-flex items-center gap-1.5 bg-[#F26522] text-white px-2 py-0.5 rounded-full text-[10px] font-sans font-semibold shadow-xs"
-                          >
-                            <PenTool className="w-2.5 h-2.5" />
-                            <span>Verified Educator</span>
-                          </motion.div>
-                          <span className="text-white/40">Drawing step 4...</span>
-                        </div>
-                        <span className="text-emerald-400 text-[11px]">Real-time WebSockets &lt;15ms</span>
-                      </div>
-                    </motion.div>
-                  )}
-
-                  {/* TAB 2: AI ASSISTANT */}
-                  {activeDemoTab === "ai" && (
-                    <motion.div
-                      key="ai"
-                      initial={{ opacity: 0, y: 12 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      exit={{ opacity: 0, y: -12 }}
-                      transition={{ duration: 0.3 }}
-                      className="space-y-4"
-                    >
-                      <div className="flex items-center justify-between text-xs text-white/60">
-                        <div className="flex items-center gap-2">
-                          <Sparkles className="w-4 h-4 text-[#F26522]" />
-                          <span>AI Pedagogical Assistant · Instant Step Solver</span>
-                        </div>
-                        <span className="text-emerald-400 font-mono">Gemini 2.5 Active</span>
-                      </div>
-
-                      <div className="bg-[#1A1A1A] rounded-xl p-4 sm:p-5 border border-white/10 text-xs sm:text-sm space-y-2">
-                        <div className="text-white/60 text-xs">Student Question: "Why does light refract at boundaries?"</div>
-                        <p className="text-[#F26522] font-semibold">Fermat's Principle of Least Time:</p>
-                        <p className="text-white/80 leading-relaxed">
-                          Light takes the path that requires the shortest travel time. Because light travels slower in optical mediums (n &gt; 1), it bends toward the normal to minimize overall duration.
-                        </p>
-                      </div>
-
-                      <div className="flex items-center justify-between text-xs text-white/50 pt-1">
-                        <span className="text-white/40">Automated lesson summary generated after every class</span>
-                        <span className="text-[#F26522] text-[11px] font-semibold">1-Click PDF Export</span>
-                      </div>
-                    </motion.div>
-                  )}
-
-                  {/* TAB 3: VIDEO */}
-                  {activeDemoTab === "video" && (
-                    <motion.div
-                      key="video"
-                      initial={{ opacity: 0, y: 12 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      exit={{ opacity: 0, y: -12 }}
-                      transition={{ duration: 0.3 }}
-                      className="space-y-4"
-                    >
-                      <div className="flex items-center justify-between text-xs text-white/60">
-                        <div className="flex items-center gap-2">
-                          <Video className="w-4 h-4 text-emerald-400" />
-                          <span>WebRTC Low Latency Video Pipeline</span>
-                        </div>
-                        <span className="text-emerald-400 font-mono">1080p @ 60fps · 24ms</span>
-                      </div>
-
-                      <div className="grid grid-cols-2 gap-3">
-                        <div className="bg-[#1A1A1A] rounded-xl p-3 border border-white/10 flex flex-col justify-between aspect-video">
-                          <div className="flex items-center justify-between text-[11px] text-white/70">
-                            <span>Tutor View</span>
-                            <span className="w-2 h-2 rounded-full bg-emerald-400" />
-                          </div>
-                          <div className="text-center font-medium text-xs text-white/80">
-                            Verified Educator (Faculty)
-                          </div>
-                          <div className="flex items-center justify-between text-[10px] text-white/40">
-                            <span>Mic Active</span>
-                            <span>Noise Suppressed</span>
-                          </div>
-                        </div>
-
-                        <div className="bg-[#1A1A1A] rounded-xl p-3 border border-white/10 flex flex-col justify-between aspect-video">
-                          <div className="flex items-center justify-between text-[11px] text-white/70">
-                            <span>Student View</span>
-                            <span className="w-2 h-2 rounded-full bg-emerald-400" />
-                          </div>
-                          <div className="text-center font-medium text-xs text-white/80">
-                            Enrolled Student (Learner)
-                          </div>
-                          <div className="flex items-center justify-between text-[10px] text-white/40">
-                            <span>Camera On</span>
-                            <span>Screen Share Ready</span>
-                          </div>
-                        </div>
-                      </div>
-
-                      <div className="flex items-center justify-between text-xs text-white/50 pt-1">
-                        <span>Adaptive Bitrate Streaming optimized for Bangladeshi networks</span>
-                        <span className="text-white/40">End-to-End Encrypted</span>
-                      </div>
-                    </motion.div>
-                  )}
-
-                  {/* TAB 4: ASSIGNMENTS */}
-                  {activeDemoTab === "homework" && (
-                    <motion.div
-                      key="homework"
-                      initial={{ opacity: 0, y: 12 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      exit={{ opacity: 0, y: -12 }}
-                      transition={{ duration: 0.3 }}
-                      className="space-y-4"
-                    >
-                      <div className="flex items-center justify-between text-xs text-white/60">
-                        <div className="flex items-center gap-2">
-                          <FileCheck className="w-4 h-4 text-[#F26522]" />
-                          <span>Structured Homework & Feedback Cycle</span>
-                        </div>
-                        <span className="text-emerald-400 font-mono">Graded 98/100</span>
-                      </div>
-
-                      <div className="bg-[#1A1A1A] rounded-xl p-4 sm:p-5 border border-white/10 text-xs sm:text-sm space-y-2">
-                        <div className="flex items-center justify-between text-white/70">
-                          <span className="font-semibold text-white">Problem Set #4: Rotational Dynamics</span>
-                          <span className="bg-emerald-500/20 text-emerald-400 px-2 py-0.5 rounded text-[11px] font-mono">
-                            Grade: A+
-                          </span>
-                        </div>
-                        <p className="text-white/70 text-xs">
-                          Tutor Feedback: "Excellent torque derivation on question 3. Watch out for unit consistency on angular momentum in question 5."
-                        </p>
-                      </div>
-
-                      <div className="flex items-center justify-between text-xs text-white/50 pt-1">
-                        <span>Students submit PDF/Images; Tutors annotate with digital ink</span>
-                        <span className="text-[#F26522] text-[11px] font-semibold">Automated Progress Graph</span>
-                      </div>
-                    </motion.div>
-                  )}
-                </AnimatePresence>
-
-                {/* Bottom Classroom Join Button */}
-                <div className="mt-5 pt-3 border-t border-white/10 flex items-center justify-between">
-                  <div className="flex items-center gap-2 text-xs text-white/70">
-                    <span className="text-[#F26522] font-semibold">Interactive Classroom:</span>
-                    <span>AP Calculus BC with Live Whiteboard</span>
-                  </div>
-                  <PrimaryButton
-                    size="sm"
                     onClick={() => navigate("/classroom/demo")}
+                    className="px-3.5 py-1.5 rounded-full bg-white/10 hover:bg-white/20 text-white text-xs font-semibold transition-colors cursor-pointer"
                   >
-                    Enter Live Classroom
-                  </PrimaryButton>
+                    Enter Live Preview
+                  </button>
                 </div>
               </div>
-            </div>
-          </motion.div>
+            </motion.div>
+          </div>
         </div>
       </section>
 
-      {/* ─── 3. STATS STRIP WITH SCROLL MOTION ─── */}
-      <motion.section
-        initial="hidden"
-        whileInView="visible"
-        viewport={{ once: true, margin: "-60px" }}
-        variants={sectionVariants}
-        className="py-12 border-y border-white/10 bg-black/40 backdrop-blur-md relative z-10 text-white"
-      >
+      {/* ─── 3. TRUST SIGNALS SECTION ─── */}
+      <section className="py-12 border-y border-[#E5E4DE] bg-white">
         <div className="max-w-[1440px] mx-auto px-4 sm:px-8">
-          <div className="grid grid-cols-2 lg:grid-cols-4 gap-6 sm:gap-8">
-            <StatBlock
-              label="Verified Academic Tutors"
-              value="150+"
-              subtext="Audited credentials from top institutions"
-              icon={GraduationCap}
-              theme="dark"
-            />
-            <StatBlock
-              label="Active Monthly Learners"
-              value="4,800+"
-              subtext="Students across English & Bangla Mediums"
-              icon={Users}
-              theme="dark"
-            />
-            <StatBlock
-              label="Average Lesson Rating"
-              value="4.9"
-              suffix="/ 5.0"
-              subtext="Based on 1,200+ verified student reviews"
-              icon={Star}
-              theme="dark"
-            />
-            <StatBlock
-              label="Interactive Classroom Time"
-              value="25,000+"
-              suffix="hrs"
-              subtext="Real-time HD audio, video & whiteboards"
-              icon={Clock}
-              theme="dark"
-            />
+          <div className="grid grid-cols-2 md:grid-cols-5 gap-6 sm:gap-8">
+            {[
+              {
+                icon: ShieldCheck,
+                title: "Verified Teachers",
+                desc: "Certified academic credentials",
+              },
+              {
+                icon: Lock,
+                title: "Secure Payments",
+                desc: "Protected tuition escrow",
+              },
+              {
+                icon: Video,
+                title: "Live Classroom",
+                desc: "HD video & digital board",
+              },
+              {
+                icon: Sparkles,
+                title: "Personalized Learning",
+                desc: "Tailored to your syllabus",
+              },
+              {
+                icon: TrendingUp,
+                title: "Progress Tracking",
+                desc: "Milestones & study hours",
+              },
+            ].map((pillar, idx) => (
+              <div key={idx} className="flex items-start gap-3">
+                <div className="w-10 h-10 rounded-2xl bg-[#FAF9F5] border border-[#E5E4DE] flex items-center justify-center text-[#F26522] shrink-0 shadow-2xs">
+                  <pillar.icon className="w-5 h-5" />
+                </div>
+                <div>
+                  <h4 className="text-xs sm:text-sm font-bold text-[#111111]">{pillar.title}</h4>
+                  <p className="text-[11px] text-[#111111]/60 mt-0.5 leading-snug">{pillar.desc}</p>
+                </div>
+              </div>
+            ))}
           </div>
         </div>
-      </motion.section>
+      </section>
 
-      {/* ─── 4. FEATURED TUTORS DIRECTORY WITH MOTION ─── */}
-      <section className="py-20 sm:py-28 relative z-10 text-white">
+      {/* ─── 4. FIND YOUR TEACHER SECTION ─── */}
+      <section id="find-tutors" className="py-20 sm:py-28">
         <div className="max-w-[1440px] mx-auto px-4 sm:px-8">
-          <motion.div
-            initial="hidden"
-            whileInView="visible"
-            viewport={{ once: true, margin: "-60px" }}
-            variants={sectionVariants}
-            className="flex flex-col md:flex-row md:items-end justify-between mb-12 gap-6"
-          >
-            <SectionHeader
-              number="01"
-              label="FACULTY DIRECTORY"
-              title="Learn from Dedicated, Accredited Tutors"
-              description="Review instructor credentials, student testimonials, hourly fees, and monthly packages."
-              theme="dark"
-            />
+          <div className="flex flex-col md:flex-row md:items-end justify-between mb-10 gap-4">
+            <div>
+              <SectionLabel label="01" text="QUALIFIED INSTRUCTORS" />
+              <h2 className="text-3xl sm:text-4xl font-bold tracking-tight text-[#111111] mt-2">
+                Find your dedicated teacher.
+              </h2>
+              <p className="text-sm text-[#111111]/70 mt-1 max-w-xl">
+                Browse verified educators with proven track records across National Curriculum, English Medium, and Admissions.
+              </p>
+            </div>
             <button
               onClick={() => navigate("/teachers")}
-              className="px-5 py-2.5 rounded-full border border-white/20 bg-white/5 hover:bg-white/10 text-white text-xs sm:text-sm font-medium transition-all backdrop-blur-md hover:scale-105 active:scale-95 flex items-center gap-2 cursor-pointer shrink-0"
+              className="inline-flex items-center gap-1.5 text-xs font-bold text-[#111111] hover:text-[#F26522] transition-colors self-start md:self-auto cursor-pointer"
             >
-              <span>Browse All Tutors</span>
-              <ArrowRight className="w-4 h-4 text-white/70" />
+              <span>View all teachers</span>
+              <ArrowRight className="w-4 h-4" />
             </button>
-          </motion.div>
+          </div>
 
+          {/* Search and Filter Controls */}
+          <div className="bg-white rounded-3xl border border-[#E5E4DE] p-4 sm:p-5 mb-8 shadow-xs space-y-4">
+            <div className="relative">
+              <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-[#111111]/40" />
+              <input
+                type="text"
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                placeholder="Search teachers or subjects (e.g. Physics, Calculus, English)..."
+                className="w-full pl-11 pr-4 py-3 rounded-2xl bg-[#FAF9F5] border border-[#E5E4DE] text-sm text-[#111111] placeholder:text-[#111111]/40 focus:outline-none focus:ring-2 focus:ring-[#F26522]/20 focus:border-[#F26522] transition-all"
+              />
+            </div>
+
+            {/* Subject Filters */}
+            <div className="flex items-center gap-2 overflow-x-auto pb-1 scrollbar-none">
+              {subjectPills.map((sub) => (
+                <button
+                  key={sub}
+                  onClick={() => setSelectedSubject(sub)}
+                  className={`px-4 py-2 rounded-full text-xs font-semibold transition-all shrink-0 cursor-pointer ${
+                    selectedSubject === sub
+                      ? "bg-[#111111] text-white shadow-xs"
+                      : "bg-[#FAF9F5] text-[#111111]/70 hover:text-[#111111] hover:bg-[#F5F4EF] border border-[#E5E4DE]"
+                  }`}
+                >
+                  {sub}
+                </button>
+              ))}
+            </div>
+          </div>
+
+          {/* Tutor Grid */}
           {filteredTeachers.length > 0 ? (
             <motion.div
+              variants={containerVariants}
               initial="hidden"
               whileInView="visible"
-              viewport={{ once: true, margin: "-40px" }}
-              variants={{
-                hidden: { opacity: 0 },
-                visible: {
-                  opacity: 1,
-                  transition: { staggerChildren: 0.08 },
-                },
-              }}
+              viewport={{ once: true }}
               className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
             >
-              {filteredTeachers.map((tutor, index) => {
-                const tutorKey = tutor.userId || tutor._id || `tutor-${index}`;
-                return (
-                  <motion.div
-                    key={tutorKey}
-                    variants={{
-                      hidden: { opacity: 0, y: 20 },
-                      visible: { opacity: 1, y: 0 },
-                    }}
-                  >
-                    <TutorCard
-                      tutor={tutor as any}
-                      theme="dark"
-                      onBook={() => navigate(`/teachers/${tutorKey}`)}
-                    />
-                  </motion.div>
-                );
-              })}
+              {filteredTeachers.map((tutor) => (
+                <motion.div key={tutor.userId || tutor._id} variants={itemVariants}>
+                  <TutorCard
+                    tutor={tutor as any}
+                    theme="light"
+                    onBook={() => navigate(`/teachers/${tutor.userId || tutor._id}`)}
+                  />
+                </motion.div>
+              ))}
             </motion.div>
-          ) : teachers.length === 0 ? (
-            <div className="text-center py-16 bg-[#0B0B0B]/75 backdrop-blur-xl rounded-3xl border border-white/10 p-8 text-white">
-              <GraduationCap className="w-12 h-12 text-[#F26522] mx-auto mb-4" />
-              <h3 className="text-lg font-semibold text-white">
-                No tutors available yet
-              </h3>
-              <p className="text-sm text-white/70 mt-1 max-w-md mx-auto">
-                New verified tutors will appear here once they register and complete their profile.
-              </p>
-              <div className="mt-6">
-                <PrimaryButton
-                  size="sm"
-                  onClick={() => navigate("/teacher-application")}
-                >
-                  Become a Tutor
-                </PrimaryButton>
-              </div>
-            </div>
           ) : (
-            <div className="text-center py-16 bg-[#0B0B0B]/75 backdrop-blur-xl rounded-3xl border border-white/10 p-8 text-white">
-              <GraduationCap className="w-12 h-12 text-[#F26522] mx-auto mb-4" />
-              <h3 className="text-lg font-semibold text-white">
-                No tutors match your search criteria
-              </h3>
-              <p className="text-sm text-white/70 mt-1 max-w-md mx-auto">
-                Try adjusting your subject filters or search terms to find available educators.
+            <div className="text-center py-16 bg-white rounded-3xl border border-[#E5E4DE] p-8 shadow-xs">
+              <GraduationCap className="w-12 h-12 text-[#F26522] mx-auto mb-3" />
+              <h3 className="text-base font-bold text-[#111111]">No teachers match your search</h3>
+              <p className="text-xs text-[#111111]/60 mt-1 max-w-sm mx-auto">
+                Try adjusting your search query or subject filters to find available tutors.
               </p>
-              <div className="mt-6">
-                <PrimaryButton
-                  size="sm"
-                  onClick={() => {
-                    setSelectedSubject("All");
-                    setSearchQuery("");
-                  }}
-                >
-                  Reset Search
-                </PrimaryButton>
-              </div>
+              <button
+                onClick={() => {
+                  setSearchQuery("");
+                  setSelectedSubject("All");
+                }}
+                className="mt-4 px-5 py-2 rounded-full bg-[#111111] text-white text-xs font-bold hover:bg-[#222222] transition-colors cursor-pointer"
+              >
+                Reset Filters
+              </button>
             </div>
           )}
         </div>
       </section>
 
-      {/* ─── 5. HOW IT WORKS (STEP-BY-STEP REVEAL) ─── */}
-      <section id="how-it-works" className="py-20 sm:py-28 border-y border-white/10 bg-black/40 backdrop-blur-md relative z-10 text-white">
+      {/* ─── 5. HOW IT WORKS SECTION ─── */}
+      <section id="how-it-works" className="py-20 sm:py-28 bg-white border-y border-[#E5E4DE]">
         <div className="max-w-[1440px] mx-auto px-4 sm:px-8">
-          <motion.div
-            initial="hidden"
-            whileInView="visible"
-            viewport={{ once: true, margin: "-60px" }}
-            variants={sectionVariants}
-          >
-            <SectionHeader
-              number="02"
-              label="EFFORTLESS PROCESS"
-              title="How Virtual Tutor Works"
-              description="From discovery to your first live lesson, academic excellence is simple and transparent."
-              align="center"
-              theme="dark"
-              className="mb-16"
-            />
-          </motion.div>
+          <div className="text-center max-w-2xl mx-auto mb-16">
+            <SectionLabel label="02" text="SIMPLE THREE-STEP PROCESS" className="justify-center" />
+            <h2 className="text-3xl sm:text-4xl font-bold tracking-tight text-[#111111] mt-2">
+              How Virtual Tutor works
+            </h2>
+            <p className="text-sm text-[#111111]/70 mt-2">
+              From finding the ideal educator to learning live on our interactive whiteboard in minutes.
+            </p>
+          </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            <motion.div
-              initial={{ opacity: 0, y: 24 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.5, delay: 0.1 }}
-              whileHover={{ y: -6, transition: { duration: 0.2 } }}
-              className="bg-[#0B0B0B]/75 backdrop-blur-xl rounded-3xl p-8 border border-white/10 flex flex-col justify-between transition-all hover:border-white/25 hover:shadow-[0_12px_32px_rgba(0,0,0,0.4)]"
-            >
-              <div>
-                <div className="w-12 h-12 rounded-2xl bg-white/10 border border-white/15 text-white flex items-center justify-center font-bold text-lg mb-6 shadow-xs">
-                  01
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 relative">
+            {[
+              {
+                step: "01",
+                title: "Find your teacher",
+                desc: "Filter by subject, grade level, curriculum, and budget. Review transparent verified ratings and educational credentials.",
+                icon: Search,
+              },
+              {
+                step: "02",
+                title: "Book your lesson",
+                desc: "Choose a time slot that matches your schedule. Confirm your booking with zero hassle through automated payment escrow.",
+                icon: Calendar,
+              },
+              {
+                step: "03",
+                title: "Learn live",
+                desc: "Step into our browser-based live classroom with low-latency audio/video, real-time digital whiteboard, and problem-solving tools.",
+                icon: Video,
+              },
+            ].map((st, idx) => (
+              <div
+                key={idx}
+                className="p-8 rounded-3xl bg-[#FAF9F5] border border-[#E5E4DE] hover:border-[#111111]/40 transition-all shadow-xs relative flex flex-col justify-between"
+              >
+                <div>
+                  <div className="flex items-center justify-between mb-6">
+                    <span className="text-3xl font-black text-[#F26522] font-mono">{st.step}</span>
+                    <div className="w-10 h-10 rounded-2xl bg-white border border-[#E5E4DE] flex items-center justify-center text-[#111111] shadow-2xs">
+                      <st.icon className="w-5 h-5" />
+                    </div>
+                  </div>
+                  <h3 className="text-lg font-bold text-[#111111]">{st.title}</h3>
+                  <p className="text-xs text-[#111111]/70 leading-relaxed mt-2">{st.desc}</p>
                 </div>
-                <h3 className="text-xl font-medium tracking-tight text-white mb-2">
-                  Discover Your Perfect Tutor
-                </h3>
-                <p className="text-sm text-white/70 leading-relaxed">
-                  Filter by subject, board curriculum (Cambridge, Edexcel, National Curriculum), hourly budget, and availability slots.
-                </p>
               </div>
-              <div className="mt-8 pt-6 border-t border-white/10 flex items-center gap-2 text-xs font-semibold text-[#F26522]">
-                <Search className="w-4 h-4" />
-                <span>Search & Verify Credentials</span>
-              </div>
-            </motion.div>
-
-            <motion.div
-              initial={{ opacity: 0, y: 24 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.5, delay: 0.2 }}
-              whileHover={{ y: -6, transition: { duration: 0.2 } }}
-              className="bg-[#0B0B0B]/75 backdrop-blur-xl rounded-3xl p-8 border border-white/10 flex flex-col justify-between transition-all hover:border-[#F26522]/40 hover:shadow-[0_12px_32px_rgba(242,101,34,0.15)]"
-            >
-              <div>
-                <div className="w-12 h-12 rounded-2xl bg-[#F26522] text-white flex items-center justify-center font-bold text-lg mb-6 shadow-xs">
-                  02
-                </div>
-                <h3 className="text-xl font-medium tracking-tight text-white mb-2">
-                  Schedule a Trial or Monthly Plan
-                </h3>
-                <p className="text-sm text-white/70 leading-relaxed">
-                  Book directly with transparent pricing in Bangladeshi Taka (Tk). Receive calendar sync, automated reminders, and syllabus notes.
-                </p>
-              </div>
-              <div className="mt-8 pt-6 border-t border-white/10 flex items-center gap-2 text-xs font-semibold text-[#F26522]">
-                <Calendar className="w-4 h-4" />
-                <span>Instant Confirmation</span>
-              </div>
-            </motion.div>
-
-            <motion.div
-              initial={{ opacity: 0, y: 24 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.5, delay: 0.3 }}
-              whileHover={{ y: -6, transition: { duration: 0.2 } }}
-              className="bg-[#0B0B0B]/75 backdrop-blur-xl rounded-3xl p-8 border border-white/10 flex flex-col justify-between transition-all hover:border-white/25 hover:shadow-[0_12px_32px_rgba(0,0,0,0.4)]"
-            >
-              <div>
-                <div className="w-12 h-12 rounded-2xl bg-white/10 border border-white/15 text-white flex items-center justify-center font-bold text-lg mb-6 shadow-xs">
-                  03
-                </div>
-                <h3 className="text-xl font-medium tracking-tight text-white mb-2">
-                  Learn in the Live Classroom
-                </h3>
-                <p className="text-sm text-white/70 leading-relaxed">
-                  Enter the virtual classroom with HD audio/video, real-time shared whiteboard, screen sharing, homework assignments, and AI summaries.
-                </p>
-              </div>
-              <div className="mt-8 pt-6 border-t border-white/10 flex items-center gap-2 text-xs font-semibold text-[#F26522]">
-                <Video className="w-4 h-4" />
-                <span>Real-Time Collaboration</span>
-              </div>
-            </motion.div>
+            ))}
           </div>
         </div>
       </section>
 
-      {/* ─── 6. CLASSROOM FEATURES ─── */}
-      <section className="py-20 sm:py-28 relative z-10 text-white">
-        <div className="max-w-[1440px] mx-auto px-4 sm:px-8">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
-            <motion.div
-              initial="hidden"
-              whileInView="visible"
-              viewport={{ once: true, margin: "-60px" }}
-              variants={sectionVariants}
-            >
-              <SectionHeader
-                number="03"
-                label="PROPRIETARY TECH"
-                title="A Live Classroom Built for True Comprehension"
-                description="Unlike generic video meetings, Virtual Tutor provides academic-first tools tailored for problem solving, equations, and interactive exercises."
-                theme="dark"
-                className="mb-8"
-              />
+      {/* ─── 6. LIVE CLASSROOM SHOWCASE ─── */}
+      <section className="py-20 sm:py-28 bg-[#111111] text-white relative overflow-hidden">
+        <div className="max-w-[1440px] mx-auto px-4 sm:px-8 relative z-10">
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
+            <div className="lg:col-span-5 space-y-6">
+              <span className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/10 text-white text-xs font-bold uppercase tracking-wider">
+                <span className="w-2 h-2 rounded-full bg-[#F26522]" />
+                HUMAN-LED EDUCATION
+              </span>
+              <h2 className="text-3xl sm:text-5xl font-bold tracking-tight text-white leading-tight">
+                A live classroom built for real teaching.
+              </h2>
+              <p className="text-sm sm:text-base text-white/70 leading-relaxed">
+                No simulated AI teachers. Every session is led by a verified human educator with real-time video, interactive drawing, screen sharing, and structured materials.
+              </p>
 
-              <div className="space-y-6">
-                <motion.div
-                  whileHover={{ x: 6 }}
-                  transition={{ duration: 0.2 }}
-                  className="flex items-start gap-4 p-3 rounded-2xl transition-colors hover:bg-white/5"
-                >
-                  <div className="w-10 h-10 rounded-xl bg-white/10 border border-white/15 flex items-center justify-center text-[#F26522] shrink-0 shadow-2xs">
-                    <Laptop className="w-5 h-5" />
+              <div className="space-y-4 pt-2">
+                {[
+                  { title: "Collaborative Whiteboard", desc: "Dual-cursor drawing with mathematical equation and shape tools." },
+                  { title: "HD WebRTC Streaming", desc: "Crystal clear audio and video designed for low-bandwidth networks." },
+                  { title: "Structured Coursework", desc: "Direct assignment distribution, student uploads, and annotated grading." },
+                ].map((feat, i) => (
+                  <div key={i} className="flex items-start gap-3">
+                    <div className="w-5 h-5 rounded-full bg-[#F26522]/20 border border-[#F26522]/40 flex items-center justify-center text-[#F26522] shrink-0 mt-0.5">
+                      <Check className="w-3 h-3" />
+                    </div>
+                    <div>
+                      <h4 className="text-sm font-bold text-white">{feat.title}</h4>
+                      <p className="text-xs text-white/60 mt-0.5">{feat.desc}</p>
+                    </div>
                   </div>
-                  <div>
-                    <h4 className="font-medium text-base text-white">
-                      Collaborative Digital Whiteboard
-                    </h4>
-                    <p className="text-sm text-white/70 mt-1">
-                      Both student and tutor draw, write formulas, graph functions, and annotate diagrams in real-time.
-                    </p>
-                  </div>
-                </motion.div>
-
-                <motion.div
-                  whileHover={{ x: 6 }}
-                  transition={{ duration: 0.2 }}
-                  className="flex items-start gap-4 p-3 rounded-2xl transition-colors hover:bg-white/5"
-                >
-                  <div className="w-10 h-10 rounded-xl bg-white/10 border border-white/15 flex items-center justify-center text-[#F26522] shrink-0 shadow-2xs">
-                    <Sparkles className="w-5 h-5" />
-                  </div>
-                  <div>
-                    <h4 className="font-medium text-base text-white">
-                      AI-Powered Academic Assistant
-                    </h4>
-                    <p className="text-sm text-white/70 mt-1">
-                      Get instant step-by-step math explanations, essay proofreading, and automated lesson summaries.
-                    </p>
-                  </div>
-                </motion.div>
-
-                <motion.div
-                  whileHover={{ x: 6 }}
-                  transition={{ duration: 0.2 }}
-                  className="flex items-start gap-4 p-3 rounded-2xl transition-colors hover:bg-white/5"
-                >
-                  <div className="w-10 h-10 rounded-xl bg-white/10 border border-white/15 flex items-center justify-center text-[#F26522] shrink-0 shadow-2xs">
-                    <BookOpen className="w-5 h-5" />
-                  </div>
-                  <div>
-                    <h4 className="font-medium text-base text-white">
-                      Structured Homework & Assessments
-                    </h4>
-                    <p className="text-sm text-white/70 mt-1">
-                      Tutors assign problem sets directly in the portal; students upload work for annotated grading and feedback.
-                    </p>
-                  </div>
-                </motion.div>
+                ))}
               </div>
 
-              <div className="mt-10">
-                <PrimaryButton
-                  size="md"
+              <div className="pt-4">
+                <button
                   onClick={() => navigate("/classroom/demo")}
+                  className="px-6 py-3 rounded-full bg-[#F26522] hover:bg-[#d85518] text-white font-bold text-xs transition-all shadow-md cursor-pointer"
                 >
-                  Preview Interactive Classroom
-                </PrimaryButton>
+                  Explore Demo Classroom
+                </button>
               </div>
-            </motion.div>
+            </div>
 
-            {/* Visual Classroom Representation with animated glow */}
-            <motion.div
-              initial={{ opacity: 0, scale: 0.96 }}
-              whileInView={{ opacity: 1, scale: 1 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.6 }}
-              className="relative rounded-3xl bg-[#0B0B0B]/85 backdrop-blur-2xl border border-white/15 p-6 sm:p-8 text-white overflow-hidden shadow-[0_20px_50px_rgba(0,0,0,0.6)]"
-            >
-              <div className="flex items-center justify-between mb-6 pb-4 border-b border-white/10">
-                <div className="flex items-center gap-3">
-                  <span className="w-3 h-3 rounded-full bg-emerald-400 animate-pulse" />
-                  <span className="font-medium text-sm">Classroom Room #8492</span>
-                </div>
-                <div className="flex items-center gap-2">
-                  <LiveWaveform />
-                  <span className="text-xs bg-white/10 px-3 py-1 rounded-full text-white/80">
-                    48 mins elapsed
+            <div className="lg:col-span-7">
+              <div className="bg-[#191919] rounded-3xl border border-white/15 p-6 shadow-2xl space-y-4">
+                <div className="flex items-center justify-between pb-3 border-b border-white/10 text-xs">
+                  <div className="flex items-center gap-2">
+                    <span className="w-2.5 h-2.5 rounded-full bg-emerald-400 animate-ping" />
+                    <span className="font-bold text-white">Live Session: HSC Physics Mechanics</span>
+                  </div>
+                  <span className="text-[11px] text-white/60 bg-white/10 px-2.5 py-0.5 rounded-full">
+                    Latency: 32ms
                   </span>
                 </div>
-              </div>
 
-              {/* Whiteboard simulation canvas */}
-              <div className="bg-[#141414] rounded-2xl p-6 border border-white/10 aspect-video flex flex-col justify-between relative overflow-hidden">
-                <div className="font-mono text-xs text-white/60 space-y-1 relative z-10">
-                  <p className="text-[#F26522]">// Integral Problem 3.2:</p>
-                  <p className="text-white text-sm">∫ (3x² + 4x - 5) dx = x³ + 2x² - 5x + C</p>
-                  <p className="text-emerald-400 mt-2">✓ Verified: Derivative d/dx matches integrand.</p>
-                </div>
-
-                {/* Animated pen trajectory indicator */}
-                <motion.div
-                  animate={{
-                    x: [0, 80, 40, 120, 0],
-                    y: [0, 20, -10, 15, 0],
-                  }}
-                  transition={{ duration: 6, repeat: Infinity, ease: "easeInOut" }}
-                  className="absolute bottom-16 right-16 w-32 h-16 pointer-events-none opacity-40"
-                >
-                  <svg viewBox="0 0 100 50" className="w-full h-full stroke-[#F26522] fill-none stroke-2">
-                    <motion.path
-                      d="M 10,25 Q 50,5 90,25 T 100,45"
-                      initial={{ pathLength: 0 }}
-                      animate={{ pathLength: 1 }}
-                      transition={{ duration: 3, repeat: Infinity, ease: "easeInOut" }}
-                    />
-                  </svg>
-                </motion.div>
-
-                <div className="flex items-center justify-between pt-4 border-t border-white/10 text-xs text-white/60 relative z-10">
-                  <span>Tutor Cursor: Verified Educator</span>
-                  <span className="text-[#F26522]">Live Sync Active</span>
-                </div>
-              </div>
-
-              <div className="mt-6 flex items-center justify-between">
-                <div className="flex items-center gap-2">
-                  <div className="w-8 h-8 rounded-full bg-white/20 flex items-center justify-center text-xs font-semibold">
-                    ST
+                <div className="bg-[#111111] rounded-2xl p-5 border border-white/10 aspect-video flex flex-col justify-between">
+                  <div className="font-mono text-xs text-white/70 space-y-1">
+                    <p className="text-[#F26522] font-bold">// Newton's Laws & Vector Resolution:</p>
+                    <p className="text-white text-sm">F_net = m · a  |  ∑ F_x = T · cos(θ) - f_k</p>
+                    <p className="text-emerald-400 text-[11px] pt-1">✓ Normal force balanced: N = m · g - T · sin(θ)</p>
                   </div>
-                  <span className="text-xs text-white/80">Sadia Rahman (Student)</span>
+
+                  <div className="flex items-center justify-between pt-3 border-t border-white/10 text-xs text-white/60">
+                    <span>Teacher Annotation Active</span>
+                    <span className="text-[#F26522] font-semibold">1080p Screen Sync</span>
+                  </div>
                 </div>
-                <span className="text-xs text-white/40">1080p WebRTC Low Latency</span>
               </div>
-            </motion.div>
+            </div>
           </div>
         </div>
       </section>
 
-      {/* ─── 7. CALL TO ACTION & FOOTER ─── */}
-      <section className="py-20 sm:py-28 border-t border-white/10 bg-black/40 backdrop-blur-md text-white relative overflow-hidden z-10">
-        {/* Subtle glowing radial mesh */}
-        <motion.div
-          animate={{ scale: [1, 1.2, 1], opacity: [0.15, 0.25, 0.15] }}
-          transition={{ duration: 8, repeat: Infinity, ease: "easeInOut" }}
-          className="absolute -top-40 right-1/3 w-[36rem] h-[36rem] bg-radial from-[#F26522]/30 to-transparent rounded-full blur-3xl pointer-events-none"
-        />
+      {/* ─── 7. PERSONALIZED LEARNING SECTION ─── */}
+      <section className="py-20 sm:py-28">
+        <div className="max-w-[1440px] mx-auto px-4 sm:px-8">
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
+            <div className="lg:col-span-6 space-y-6">
+              <SectionLabel label="03" text="TAILORED CURRICULUM" />
+              <h2 className="text-3xl sm:text-4xl font-bold tracking-tight text-[#111111]">
+                Education shaped around your goals.
+              </h2>
+              <p className="text-sm sm:text-base text-[#111111]/70 leading-relaxed">
+                Every student learns differently. Virtual Tutor connects you with instructors who design custom milestone plans for Bangla Medium, English Version, Cambridge IGCSE, Edexcel, and University Entrance.
+              </p>
 
-        <div className="max-w-[1440px] mx-auto px-4 sm:px-8 text-center relative z-10">
-          <motion.div
-            initial="hidden"
-            whileInView="visible"
-            viewport={{ once: true }}
-            variants={sectionVariants}
-          >
-            <SectionLabel number="04" text="ACADEMIC TRANSFORMATION" theme="dark" className="mb-4 text-[#F26522]" />
-            <h2 className="text-3xl sm:text-5xl font-medium tracking-tight max-w-3xl mx-auto leading-tight">
-              Ready to Accelerate Your Academic Journey?
-            </h2>
-            <p className="mt-6 text-sm sm:text-base text-white/70 max-w-xl mx-auto leading-relaxed">
-              Join thousands of motivated students and certified educators on Bangladesh's premier live learning platform.
-            </p>
-
-            <div className="mt-10 flex flex-col sm:flex-row items-center justify-center gap-4">
-              <PrimaryButton
-                size="lg"
-                onClick={() => handleAuthAction("/auth?mode=signup")}
-              >
-                Get Started for Free
-              </PrimaryButton>
-              <SecondaryButton
-                size="lg"
-                onClick={() => navigate("/teachers")}
-                className="bg-white/10 text-white border-white/20 hover:bg-white/20"
-              >
-                Browse Qualified Educators
-              </SecondaryButton>
+              <div className="grid grid-cols-2 gap-4 pt-2">
+                <div className="p-4 rounded-2xl bg-white border border-[#E5E4DE] shadow-xs">
+                  <h4 className="text-xs font-bold uppercase tracking-wider text-[#111111]/50">Curriculum Matching</h4>
+                  <p className="text-sm font-bold text-[#111111] mt-1">Bangla & English Medium</p>
+                  <p className="text-xs text-[#111111]/60 mt-0.5">Syllabus-aligned preparation</p>
+                </div>
+                <div className="p-4 rounded-2xl bg-white border border-[#E5E4DE] shadow-xs">
+                  <h4 className="text-xs font-bold uppercase tracking-wider text-[#111111]/50">Pacing</h4>
+                  <p className="text-sm font-bold text-[#111111] mt-1">1-on-1 Focus</p>
+                  <p className="text-xs text-[#111111]/60 mt-0.5">Learn at your speed</p>
+                </div>
+              </div>
             </div>
-          </motion.div>
+
+            <div className="lg:col-span-6">
+              <div className="bg-white rounded-3xl border border-[#E5E4DE] p-7 shadow-xs space-y-5">
+                <h3 className="text-base font-bold text-[#111111]">Sample Student Learning Plan</h3>
+                <div className="space-y-3">
+                  {[
+                    { week: "Week 1-2", topic: "Vector Algebra & Kinematics", status: "Mastered" },
+                    { week: "Week 3-4", topic: "Circular Motion & Gravitation", status: "In Progress" },
+                    { week: "Week 5-6", topic: "Work, Energy & Power Review", status: "Scheduled" },
+                  ].map((p, i) => (
+                    <div key={i} className="flex items-center justify-between p-3.5 bg-[#FAF9F5] rounded-2xl border border-[#E5E4DE]">
+                      <div>
+                        <p className="text-xs font-bold text-[#111111]">{p.topic}</p>
+                        <p className="text-[11px] text-[#111111]/60">{p.week}</p>
+                      </div>
+                      <span className={`px-2.5 py-0.5 rounded-full text-[10px] font-bold ${
+                        p.status === "Mastered"
+                          ? "bg-emerald-100 text-emerald-800"
+                          : p.status === "In Progress"
+                          ? "bg-[#111111] text-white"
+                          : "bg-white border border-[#E5E4DE] text-[#111111]/60"
+                      }`}>
+                        {p.status}
+                      </span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
       </section>
 
-      {/* ─── 8. FOOTER ─── */}
-      <footer className="bg-black/85 backdrop-blur-xl border-t border-white/10 py-12 relative z-10 text-white">
+      {/* ─── 8. STUDENT PROGRESS SECTION ─── */}
+      <section className="py-20 sm:py-28 bg-white border-y border-[#E5E4DE]">
         <div className="max-w-[1440px] mx-auto px-4 sm:px-8">
-          <div className="flex flex-col md:flex-row items-center justify-between gap-6">
-            <BrandLogo
-              variant="horizontal"
-              size="sm"
-              showSubtext={true}
-              isDark={true}
-            />
-            <div className="flex flex-wrap items-center gap-6 text-xs text-white/70">
-              <Link to="/teachers" className="hover:text-white transition-colors">
-                Find Tutors
-              </Link>
-              <Link to="/teacher-application" className="hover:text-white transition-colors">
-                Teach on Virtual Tutor
-              </Link>
-              <Link to="/faq" className="hover:text-white transition-colors">
-                FAQ
-              </Link>
-              <Link to="/contact" className="hover:text-white transition-colors">
-                Contact Support
-              </Link>
-              <Link to="/privacy" className="hover:text-white transition-colors">
-                Privacy Policy
-              </Link>
-            </div>
-            <p className="text-xs text-white/40">
-              © {new Date().getFullYear()} Virtual Tutor Pro. All rights reserved.
+          <div className="text-center max-w-2xl mx-auto mb-14">
+            <SectionLabel label="04" text="MEASURABLE GROWTH" className="justify-center" />
+            <h2 className="text-3xl sm:text-4xl font-bold tracking-tight text-[#111111] mt-2">
+              Track your actual progress.
+            </h2>
+            <p className="text-sm text-[#111111]/70 mt-2">
+              Real metrics on hours studied, completed lessons, and syllabus milestone mastery.
             </p>
+          </div>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+            <div className="bg-[#FAF9F5] rounded-3xl p-6 border border-[#E5E4DE] shadow-xs">
+              <div className="w-10 h-10 rounded-2xl bg-white border border-[#E5E4DE] flex items-center justify-center text-[#F26522] mb-4">
+                <Clock className="w-5 h-5" />
+              </div>
+              <p className="text-3xl font-black text-[#111111]">48h</p>
+              <p className="text-xs font-bold text-[#111111] mt-1">Hours Studied</p>
+              <p className="text-[11px] text-[#111111]/50 mt-0.5">Recorded in live classrooms</p>
+            </div>
+
+            <div className="bg-[#FAF9F5] rounded-3xl p-6 border border-[#E5E4DE] shadow-xs">
+              <div className="w-10 h-10 rounded-2xl bg-white border border-[#E5E4DE] flex items-center justify-center text-[#111111] mb-4">
+                <CheckCircle2 className="w-5 h-5" />
+              </div>
+              <p className="text-3xl font-black text-[#111111]">36</p>
+              <p className="text-xs font-bold text-[#111111] mt-1">Lessons Completed</p>
+              <p className="text-[11px] text-[#111111]/50 mt-0.5">1-on-1 tutoring sessions</p>
+            </div>
+
+            <div className="bg-[#FAF9F5] rounded-3xl p-6 border border-[#E5E4DE] shadow-xs">
+              <div className="w-10 h-10 rounded-2xl bg-white border border-[#E5E4DE] flex items-center justify-center text-[#F26522] mb-4">
+                <TrendingUp className="w-5 h-5" />
+              </div>
+              <p className="text-3xl font-black text-[#111111]">14 Days</p>
+              <p className="text-xs font-bold text-[#111111] mt-1">Learning Streak</p>
+              <p className="text-[11px] text-[#111111]/50 mt-0.5">Consistent weekly attendance</p>
+            </div>
+
+            <div className="bg-[#FAF9F5] rounded-3xl p-6 border border-[#E5E4DE] shadow-xs">
+              <div className="w-10 h-10 rounded-2xl bg-white border border-[#E5E4DE] flex items-center justify-center text-[#111111] mb-4">
+                <Award className="w-5 h-5" />
+              </div>
+              <p className="text-3xl font-black text-[#111111]">94%</p>
+              <p className="text-xs font-bold text-[#111111] mt-1">Assignment Accuracy</p>
+              <p className="text-[11px] text-[#111111]/50 mt-0.5">Educator-reviewed problem sets</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* ─── 9. FOR TEACHERS SECTION ─── */}
+      <section className="py-20 sm:py-28">
+        <div className="max-w-[1440px] mx-auto px-4 sm:px-8">
+          <div className="bg-[#111111] rounded-3xl p-8 sm:p-14 text-white border border-[#111111] shadow-xl relative overflow-hidden">
+            <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center relative z-10">
+              <div className="lg:col-span-8 space-y-4">
+                <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-white/10 text-xs font-bold uppercase tracking-wider text-[#F26522]">
+                  TEACH ON VIRTUAL TUTOR
+                </span>
+                <h2 className="text-3xl sm:text-5xl font-bold tracking-tight text-white">
+                  Keep 85% of your earnings.
+                  <br />
+                  Teach on your own schedule.
+                </h2>
+                <p className="text-sm sm:text-base text-white/70 max-w-2xl leading-relaxed">
+                  Join Bangladesh's premier verified tutoring network. Set your own tuition fees, conduct classes in our WebRTC live classroom, and receive guaranteed month-end payouts.
+                </p>
+                <div className="pt-2 flex flex-wrap items-center gap-4">
+                  <button
+                    onClick={() => navigate("/teacher-application")}
+                    className="px-7 py-3.5 rounded-full bg-[#F26522] hover:bg-[#d85518] text-white font-bold text-xs transition-all shadow-md active:scale-95 cursor-pointer"
+                  >
+                    Apply as a Teacher
+                  </button>
+                  <span className="text-xs text-white/50">Zero upfront platform fees</span>
+                </div>
+              </div>
+
+              <div className="lg:col-span-4 bg-white/5 rounded-2xl p-6 border border-white/10 space-y-3">
+                <h4 className="text-xs font-bold uppercase tracking-wider text-white/50">Educator Benefits</h4>
+                <div className="space-y-2 text-xs text-white/80">
+                  <div className="flex items-center gap-2">
+                    <Check className="w-4 h-4 text-[#F26522]" /> 85% Net Payout Allocation
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <Check className="w-4 h-4 text-[#F26522]" /> Direct Student Discovery
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <Check className="w-4 h-4 text-[#F26522]" /> Integrated Classroom & Calendar
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <Check className="w-4 h-4 text-[#F26522]" /> Automated Month-End Settlement
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* ─── 10. SECURE PAYMENT SECTION ─── */}
+      <section className="py-20 sm:py-28 bg-white border-y border-[#E5E4DE]">
+        <div className="max-w-[1440px] mx-auto px-4 sm:px-8">
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 items-center">
+            <div className="lg:col-span-6 space-y-5">
+              <SectionLabel label="05" text="FINANCIAL INTEGRITY" />
+              <h2 className="text-3xl sm:text-4xl font-bold tracking-tight text-[#111111]">
+                Protected tuition payments.
+              </h2>
+              <p className="text-sm text-[#111111]/70 leading-relaxed">
+                Pay safely using your preferred local mobile financial service or bank card. Student payments are held in escrow and released to educators only after classes are delivered.
+              </p>
+
+              <div className="space-y-3 pt-2">
+                {[
+                  "Official automated checkout via UddoktaPay",
+                  "Instant payment verification with bKash, Nagad, and Rocket",
+                  "100% money-back protection if a scheduled class is missed",
+                ].map((item, i) => (
+                  <div key={i} className="flex items-center gap-2.5 text-xs text-[#111111] font-semibold">
+                    <ShieldCheck className="w-4 h-4 text-emerald-600 shrink-0" />
+                    <span>{item}</span>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            <div className="lg:col-span-6 bg-[#FAF9F5] rounded-3xl p-7 border border-[#E5E4DE] shadow-xs space-y-4">
+              <h4 className="text-xs font-bold uppercase tracking-wider text-[#111111]/50">Supported Payment Channels</h4>
+              <div className="flex flex-wrap gap-2">
+                <span className="px-3.5 py-1.5 rounded-xl text-xs font-black bg-[#D12053] text-white shadow-2xs">bKash</span>
+                <span className="px-3.5 py-1.5 rounded-xl text-xs font-black bg-[#F7941D] text-white shadow-2xs">Nagad</span>
+                <span className="px-3.5 py-1.5 rounded-xl text-xs font-black bg-[#8C3494] text-white shadow-2xs">Rocket</span>
+                <span className="px-3.5 py-1.5 rounded-xl text-xs font-black bg-[#2E3192] text-white shadow-2xs">Upay</span>
+                <span className="px-3.5 py-1.5 rounded-xl text-xs font-bold bg-[#111111] text-white shadow-2xs">Cards</span>
+                <span className="px-3.5 py-1.5 rounded-xl text-xs font-semibold bg-white border border-[#E5E4DE] text-[#111111]">Internet Banking</span>
+              </div>
+              <p className="text-[11px] text-[#111111]/60 pt-2 border-t border-[#E5E4DE]">
+                All transactions are encrypted with 256-bit SSL security standards.
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* ─── 11. FAQ ACCORDION SECTION ─── */}
+      <section id="faq" className="py-20 sm:py-28">
+        <div className="max-w-4xl mx-auto px-4 sm:px-6">
+          <div className="text-center mb-14">
+            <SectionLabel label="06" text="FREQUENTLY ASKED QUESTIONS" className="justify-center" />
+            <h2 className="text-3xl sm:text-4xl font-bold tracking-tight text-[#111111] mt-2">
+              Everything you need to know.
+            </h2>
+          </div>
+
+          <div className="space-y-3">
+            {[
+              {
+                q: "How are teachers verified on Virtual Tutor?",
+                a: "Every educator completes an 8-step application verifying their National ID, educational credentials, subject expertise, and online teaching readiness before being approved.",
+              },
+              {
+                q: "What equipment do I need for live classes?",
+                a: "A desktop, laptop, or tablet with a working microphone and camera. Our live classroom operates directly inside Google Chrome, Edge, and Safari with zero software installation required.",
+              },
+              {
+                q: "How does payment protection work?",
+                a: "Tuition is securely held when booking. Teachers receive their 85% payout share at month-end based on delivered classes. If a tutor cancels or misses a session, you are refunded or rescheduled.",
+              },
+              {
+                q: "Can I choose my own schedule and lesson duration?",
+                a: "Yes. Tutors specify their available weekly slots, and students can book 30-minute consultations, 60-minute standard lessons, or monthly continuous plans.",
+              },
+            ].map((faq, idx) => {
+              const isOpen = activeFaqIndex === idx;
+              return (
+                <div
+                  key={idx}
+                  className="bg-white rounded-2xl border border-[#E5E4DE] overflow-hidden shadow-2xs transition-all"
+                >
+                  <button
+                    onClick={() => setActiveFaqIndex(isOpen ? null : idx)}
+                    className="w-full p-5 text-left flex items-center justify-between gap-4 cursor-pointer"
+                  >
+                    <span className="text-sm font-bold text-[#111111]">{faq.q}</span>
+                    <ChevronDown
+                      className={`w-4 h-4 text-[#111111]/50 transition-transform duration-200 shrink-0 ${
+                        isOpen ? "rotate-180 text-[#F26522]" : ""
+                      }`}
+                    />
+                  </button>
+                  <AnimatePresence>
+                    {isOpen && (
+                      <motion.div
+                        initial={{ opacity: 0, height: 0 }}
+                        animate={{ opacity: 1, height: "auto" }}
+                        exit={{ opacity: 0, height: 0 }}
+                        transition={{ duration: 0.2 }}
+                        className="px-5 pb-5 text-xs sm:text-sm text-[#111111]/70 leading-relaxed border-t border-[#E5E4DE]/60 pt-3"
+                      >
+                        {faq.a}
+                      </motion.div>
+                    )}
+                  </AnimatePresence>
+                </div>
+              );
+            })}
+          </div>
+        </div>
+      </section>
+
+      {/* ─── 12. FINAL CTA SECTION ─── */}
+      <section className="py-20 sm:py-28 bg-[#111111] text-white text-center relative overflow-hidden">
+        <div className="max-w-3xl mx-auto px-4 sm:px-6 relative z-10 space-y-6">
+          <h2 className="text-3xl sm:text-5xl font-bold tracking-tight text-white">
+            Your next great lesson starts here.
+          </h2>
+          <p className="text-sm sm:text-base text-white/70 max-w-xl mx-auto leading-relaxed">
+            Join thousands of motivated students and certified educators on Bangladesh's premier live tutoring platform.
+          </p>
+          <div className="pt-2">
+            <button
+              onClick={() => navigate("/teachers")}
+              className="px-8 py-4 rounded-full bg-[#F26522] hover:bg-[#d85518] text-white font-bold text-sm transition-all shadow-lg active:scale-95 cursor-pointer"
+            >
+              Find a Tutor
+            </button>
+          </div>
+        </div>
+      </section>
+
+      {/* ─── 13. FOUR-COLUMN PROFESSIONAL FOOTER ─── */}
+      <footer className="bg-white border-t border-[#E5E4DE] py-16 text-xs text-[#111111]/70">
+        <div className="max-w-[1440px] mx-auto px-4 sm:px-8">
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-8 mb-12">
+            {/* Column 1: Virtual Tutor */}
+            <div className="space-y-3">
+              <p className="font-bold text-[#111111] text-sm uppercase tracking-wider">Virtual Tutor</p>
+              <p className="text-xs text-[#111111]/60 leading-relaxed">
+                A trusted online learning platform connecting students with verified teachers across Bangladesh and beyond.
+              </p>
+              <div className="pt-1">
+                <Link to="/teachers" className="block py-1 hover:text-[#111111] font-medium">Find Tutors</Link>
+                <Link to="/teacher-application" className="block py-1 hover:text-[#111111] font-medium">Become a Tutor</Link>
+              </div>
+            </div>
+
+            {/* Column 2: Learning */}
+            <div className="space-y-2">
+              <p className="font-bold text-[#111111] text-sm uppercase tracking-wider">Learning</p>
+              <Link to="/lessons" className="block py-1 hover:text-[#111111] font-medium">Lessons</Link>
+              <Link to="/assignments" className="block py-1 hover:text-[#111111] font-medium">Assignments</Link>
+              <Link to="/progress" className="block py-1 hover:text-[#111111] font-medium">Progress</Link>
+              <Link to="/community" className="block py-1 hover:text-[#111111] font-medium">Community</Link>
+            </div>
+
+            {/* Column 3: Support */}
+            <div className="space-y-2">
+              <p className="font-bold text-[#111111] text-sm uppercase tracking-wider">Support</p>
+              <Link to="/faq" className="block py-1 hover:text-[#111111] font-medium">FAQ</Link>
+              <Link to="/contact" className="block py-1 hover:text-[#111111] font-medium">Contact Support</Link>
+              <Link to="/students" className="block py-1 hover:text-[#111111] font-medium">Student Learning Requests</Link>
+            </div>
+
+            {/* Column 4: Legal */}
+            <div className="space-y-2">
+              <p className="font-bold text-[#111111] text-sm uppercase tracking-wider">Legal</p>
+              <Link to="/privacy" className="block py-1 hover:text-[#111111] font-medium">Privacy Policy</Link>
+              <Link to="/terms" className="block py-1 hover:text-[#111111] font-medium">Terms of Service</Link>
+              <Link to="/privacy" className="block py-1 hover:text-[#111111] font-medium">Refund Policy</Link>
+            </div>
+          </div>
+
+          <div className="pt-8 border-t border-[#E5E4DE] flex flex-col sm:flex-row items-center justify-between gap-4 text-[11px] text-[#111111]/50">
+            <p>© {new Date().getFullYear()} Virtual Tutor Pro. All rights reserved.</p>
+            <p>Built for serious, high-quality human education.</p>
           </div>
         </div>
       </footer>

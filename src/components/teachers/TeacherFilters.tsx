@@ -228,15 +228,15 @@ export function TeacherFilters({
         </div>
 
         {/* Results Counter & Clear Action */}
-        <div className="flex items-center gap-3 text-slate-500">
+        <div className="flex items-center gap-3 text-[#111111]/60">
           <span>
-            <strong className="text-slate-900 font-bold">{totalResultsCount}</strong> teacher{totalResultsCount === 1 ? "" : "s"} found
+            <strong className="text-[#111111] font-bold">{totalResultsCount}</strong> teacher{totalResultsCount === 1 ? "" : "s"} found
           </span>
           {(activeFilterCount > 0 || filters.query) && (
             <button
               type="button"
               onClick={onResetFilters}
-              className="text-teal-700 hover:text-teal-800 font-medium hover:underline"
+              className="text-[#F26522] hover:text-[#d45318] font-medium hover:underline cursor-pointer"
             >
               Reset all
             </button>
@@ -246,12 +246,12 @@ export function TeacherFilters({
 
       {/* Comprehensive Filter Side Drawer */}
       <Sheet open={isDrawerOpen} onOpenChange={setIsDrawerOpen}>
-        <SheetContent side="right" className="w-full sm:max-w-md p-6 overflow-y-auto">
-          <SheetHeader className="mb-5 pb-4 border-b border-slate-100">
-            <SheetTitle className="text-lg font-bold text-slate-900">
+        <SheetContent side="right" className="w-full sm:max-w-md p-6 overflow-y-auto bg-white border-l border-[#E5E4DE]">
+          <SheetHeader className="mb-5 pb-4 border-b border-[#E5E4DE]">
+            <SheetTitle className="text-lg font-bold text-[#111111] font-display">
               Filter Teachers
             </SheetTitle>
-            <SheetDescription className="text-xs text-slate-500">
+            <SheetDescription className="text-xs text-[#111111]/50">
               Narrow down educators by subject, curriculum, academic level, language, price, and availability.
             </SheetDescription>
           </SheetHeader>
@@ -259,13 +259,13 @@ export function TeacherFilters({
           <div className="space-y-5 py-2">
             {/* Subject */}
             <div>
-              <label className="text-xs font-bold uppercase tracking-wider text-slate-700 mb-2 block">
+              <label className="text-xs font-bold uppercase tracking-wider text-[#111111]/60 mb-2 block">
                 Academic Subject
               </label>
               <select
                 value={filters.subject}
                 onChange={(e) => handleUpdate("subject", e.target.value)}
-                className="w-full h-10 px-3 text-xs rounded-xl border border-slate-200 bg-white"
+                className="w-full h-10 px-3 text-xs rounded-xl border border-[#E5E4DE] bg-white text-[#111111]"
               >
                 {SUBJECT_OPTIONS.map((s) => (
                   <option key={s} value={s}>{s}</option>
@@ -275,13 +275,13 @@ export function TeacherFilters({
 
             {/* Curriculum */}
             <div>
-              <label className="text-xs font-bold uppercase tracking-wider text-slate-700 mb-2 block">
+              <label className="text-xs font-bold uppercase tracking-wider text-[#111111]/60 mb-2 block">
                 Curriculum / Board
               </label>
               <select
                 value={filters.curriculum}
                 onChange={(e) => handleUpdate("curriculum", e.target.value)}
-                className="w-full h-10 px-3 text-xs rounded-xl border border-slate-200 bg-white"
+                className="w-full h-10 px-3 text-xs rounded-xl border border-[#E5E4DE] bg-white text-[#111111]"
               >
                 {CURRICULUM_OPTIONS.map((c) => (
                   <option key={c} value={c}>{c}</option>
@@ -291,13 +291,13 @@ export function TeacherFilters({
 
             {/* Academic Grade Level */}
             <div>
-              <label className="text-xs font-bold uppercase tracking-wider text-slate-700 mb-2 block">
+              <label className="text-xs font-bold uppercase tracking-wider text-[#111111]/60 mb-2 block">
                 Grade / Academic Level
               </label>
               <select
                 value={filters.gradeLevel}
                 onChange={(e) => handleUpdate("gradeLevel", e.target.value)}
-                className="w-full h-10 px-3 text-xs rounded-xl border border-slate-200 bg-white"
+                className="w-full h-10 px-3 text-xs rounded-xl border border-[#E5E4DE] bg-white text-[#111111]"
               >
                 {GRADE_LEVEL_OPTIONS.map((g) => (
                   <option key={g} value={g}>{g}</option>
@@ -307,13 +307,13 @@ export function TeacherFilters({
 
             {/* Language */}
             <div>
-              <label className="text-xs font-bold uppercase tracking-wider text-slate-700 mb-2 block">
+              <label className="text-xs font-bold uppercase tracking-wider text-[#111111]/60 mb-2 block">
                 Instruction Language
               </label>
               <select
                 value={filters.language}
                 onChange={(e) => handleUpdate("language", e.target.value)}
-                className="w-full h-10 px-3 text-xs rounded-xl border border-slate-200 bg-white"
+                className="w-full h-10 px-3 text-xs rounded-xl border border-[#E5E4DE] bg-white text-[#111111]"
               >
                 {LANGUAGE_OPTIONS.map((l) => (
                   <option key={l} value={l}>{l}</option>
@@ -323,7 +323,7 @@ export function TeacherFilters({
 
             {/* Price Range */}
             <div>
-              <label className="text-xs font-bold uppercase tracking-wider text-slate-700 mb-2 block">
+              <label className="text-xs font-bold uppercase tracking-wider text-[#111111]/60 mb-2 block">
                 Monthly Tuition (Tk)
               </label>
               <div className="grid grid-cols-2 gap-2">
@@ -336,8 +336,8 @@ export function TeacherFilters({
                       onClick={() => handleUpdate("priceRange", p.value)}
                       className={`p-2.5 text-left rounded-xl text-xs font-medium border transition ${
                         isSelected
-                          ? "bg-teal-50 border-teal-500 text-teal-800 ring-1 ring-teal-500"
-                          : "bg-white border-slate-200 text-slate-700 hover:bg-slate-50"
+                          ? "bg-[#111111] border-[#111111] text-white font-bold"
+                          : "bg-white border-[#E5E4DE] text-[#111111]/80 hover:bg-[#F5F4EF]"
                       }`}
                     >
                       {p.label}
@@ -349,7 +349,7 @@ export function TeacherFilters({
 
             {/* Minimum Rating */}
             <div>
-              <label className="text-xs font-bold uppercase tracking-wider text-slate-700 mb-2 block">
+              <label className="text-xs font-bold uppercase tracking-wider text-[#111111]/60 mb-2 block">
                 Minimum Rating
               </label>
               <div className="flex gap-2">
@@ -362,8 +362,8 @@ export function TeacherFilters({
                       onClick={() => handleUpdate("ratingMin", rating)}
                       className={`flex-1 py-2 rounded-xl text-xs font-semibold border transition ${
                         isSelected
-                          ? "bg-amber-50 border-amber-500 text-amber-900 ring-1 ring-amber-500"
-                          : "bg-white border-slate-200 text-slate-700 hover:bg-slate-50"
+                          ? "bg-[#F26522] border-[#F26522] text-white"
+                          : "bg-white border-[#E5E4DE] text-[#111111]/80 hover:bg-[#F5F4EF]"
                       }`}
                     >
                       {rating === 0 ? "Any" : `${rating} ★`}
@@ -375,7 +375,7 @@ export function TeacherFilters({
 
             {/* Availability */}
             <div>
-              <label className="text-xs font-bold uppercase tracking-wider text-slate-700 mb-2 block">
+              <label className="text-xs font-bold uppercase tracking-wider text-[#111111]/60 mb-2 block">
                 Earliest Availability
               </label>
               <div className="grid grid-cols-2 gap-2">
@@ -388,8 +388,8 @@ export function TeacherFilters({
                       onClick={() => handleUpdate("availability", a.value)}
                       className={`p-2.5 text-left rounded-xl text-xs font-medium border transition ${
                         isSelected
-                          ? "bg-teal-50 border-teal-500 text-teal-800 ring-1 ring-teal-500"
-                          : "bg-white border-slate-200 text-slate-700 hover:bg-slate-50"
+                          ? "bg-[#111111] border-[#111111] text-white font-bold"
+                          : "bg-white border-[#E5E4DE] text-[#111111]/80 hover:bg-[#F5F4EF]"
                       }`}
                     >
                       {a.label}
@@ -400,12 +400,12 @@ export function TeacherFilters({
             </div>
 
             {/* Timezone Match */}
-            <div className="p-3 rounded-xl bg-slate-50 border border-slate-200/80 flex items-center justify-between">
+            <div className="p-3 rounded-2xl bg-[#F5F4EF] border border-[#E5E4DE] flex items-center justify-between">
               <div>
-                <p className="text-xs font-semibold text-slate-900">
+                <p className="text-xs font-semibold text-[#111111]">
                   Prioritize My Timezone
                 </p>
-                <p className="text-[11px] text-slate-500">
+                <p className="text-[11px] text-[#111111]/50">
                   Matches slots active in your local time window.
                 </p>
               </div>
@@ -413,22 +413,22 @@ export function TeacherFilters({
                 type="checkbox"
                 checked={filters.matchMyTimezone}
                 onChange={(e) => handleUpdate("matchMyTimezone", e.target.checked)}
-                className="h-4 w-4 rounded-sm text-teal-600 focus:ring-teal-500"
+                className="h-4 w-4 rounded-sm accent-[#111111]"
               />
             </div>
           </div>
 
-          <SheetFooter className="mt-6 pt-4 border-t border-slate-100 flex gap-2">
+          <SheetFooter className="mt-6 pt-4 border-t border-[#E5E4DE] flex gap-2">
             <Button
               variant="outline"
               onClick={onResetFilters}
-              className="flex-1 rounded-xl text-xs"
+              className="flex-1 rounded-full text-xs border-[#E5E4DE] text-[#111111] hover:bg-[#F5F4EF]"
             >
               Clear Filters
             </Button>
             <Button
               onClick={() => setIsDrawerOpen(false)}
-              className="flex-1 rounded-xl bg-teal-600 hover:bg-teal-700 text-white text-xs font-semibold"
+              className="flex-1 rounded-full bg-[#111111] hover:bg-[#F26522] text-white text-xs font-semibold transition-all"
             >
               Show {totalResultsCount} Teachers
             </Button>
