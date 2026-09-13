@@ -570,7 +570,7 @@ export default function Auth({ redirectAfterAuth }: AuthProps = {}) {
   };
 
   return (
-    <div className="min-h-screen bg-[#F5F4EF] flex flex-col justify-center py-12 px-4 sm:px-6 lg:px-8">
+    <div className="min-h-screen bg-[#F8FAFC] flex flex-col justify-center py-12 px-4 sm:px-6 lg:px-8">
       {/* Brand Header */}
       <div className="sm:mx-auto sm:w-full sm:max-w-md text-center mb-6">
         <div className="inline-flex items-center justify-center mb-2 cursor-pointer hover:opacity-90 transition-opacity" onClick={() => navigate("/")}>
@@ -579,7 +579,7 @@ export default function Auth({ redirectAfterAuth }: AuthProps = {}) {
       </div>
 
       <div className="sm:mx-auto sm:w-full sm:max-w-md">
-        <Card className="border-[#E5E4DE] shadow-[0_4px_24px_rgba(0,0,0,0.04)] bg-white rounded-3xl overflow-hidden">
+        <Card className="border-slate-200 shadow-[0_8px_32px_rgba(49,46,129,0.06)] bg-white rounded-3xl overflow-hidden">
           {/* Notification Messages */}
           {error && (
             <div className="bg-rose-50 border-b border-rose-200/60 p-4 flex items-start gap-3">
@@ -595,7 +595,7 @@ export default function Auth({ redirectAfterAuth }: AuthProps = {}) {
                         setLoginEmail(regEmail);
                         setError(null);
                       }}
-                      className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-[#F26522] text-white text-xs font-semibold hover:bg-[#d85518] transition-colors cursor-pointer shadow-xs"
+                      className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-[#312E81] text-white text-xs font-semibold hover:bg-[#6D5DFB] transition-colors cursor-pointer shadow-xs"
                     >
                       Switch to Log In with this email →
                     </button>
@@ -610,7 +610,7 @@ export default function Auth({ redirectAfterAuth }: AuthProps = {}) {
                         setRegEmail(loginEmail);
                         setError(null);
                       }}
-                      className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-[#F26522] text-white text-xs font-semibold hover:bg-[#d85518] transition-colors cursor-pointer shadow-xs"
+                      className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-[#312E81] text-white text-xs font-semibold hover:bg-[#6D5DFB] transition-colors cursor-pointer shadow-xs"
                     >
                       Create an account with this email →
                     </button>
@@ -633,7 +633,7 @@ export default function Auth({ redirectAfterAuth }: AuthProps = {}) {
           {verifyStep === "otp_verify" ? (
             <div>
               <CardHeader className="text-center pb-2 pt-8 px-6">
-                <div className="w-12 h-12 bg-[#F26522]/10 text-[#F26522] rounded-full flex items-center justify-center mx-auto mb-3 border border-[#F26522]/20">
+                <div className="w-12 h-12 bg-[#6D5DFB]/10 text-[#6D5DFB] rounded-full flex items-center justify-center mx-auto mb-3 border border-[#6D5DFB]/20">
                   <Mail className="w-6 h-6" />
                 </div>
                 <CardTitle className="text-2xl font-bold text-slate-900">Check your email</CardTitle>
@@ -662,7 +662,7 @@ export default function Auth({ redirectAfterAuth }: AuthProps = {}) {
                         value={digit}
                         onChange={(e) => handleDigitChange(idx, e.target.value)}
                         onKeyDown={(e) => handleKeyDown(idx, e)}
-                        className="w-11 h-13 sm:w-12 sm:h-14 text-center text-2xl font-bold rounded-xl border border-stone-300 focus:border-[#F26522] focus:ring-2 focus:ring-[#F26522]/20 bg-white text-slate-900 transition-all outline-none"
+                        className="w-11 h-13 sm:w-12 sm:h-14 text-center text-2xl font-bold rounded-xl border border-slate-300 focus:border-[#6D5DFB] focus:ring-2 focus:ring-[#6D5DFB]/20 bg-white text-slate-900 transition-all outline-none"
                         autoFocus={idx === 0}
                       />
                     ))}
@@ -672,7 +672,7 @@ export default function Auth({ redirectAfterAuth }: AuthProps = {}) {
                   <Button
                     type="submit"
                     disabled={isLoading || otpDigits.join("").length !== 6}
-                    className="w-full h-11 bg-[#F26522] hover:bg-[#d85518] text-white font-semibold rounded-full text-sm shadow-xs transition-all cursor-pointer"
+                    className="w-full h-11 bg-[#312E81] hover:bg-[#6D5DFB] text-white font-semibold rounded-full text-sm shadow-xs transition-all cursor-pointer"
                   >
                     {isLoading ? (
                       <span className="flex items-center gap-2">
@@ -691,7 +691,7 @@ export default function Auth({ redirectAfterAuth }: AuthProps = {}) {
                           type="button"
                           onClick={handleResendOTP}
                           disabled={isLoading}
-                          className="font-semibold text-[#F26522] hover:text-[#d85518] inline-flex items-center gap-1.5 transition-colors cursor-pointer"
+                          className="font-semibold text-[#6D5DFB] hover:text-[#312E81] inline-flex items-center gap-1.5 transition-colors cursor-pointer"
                         >
                           <RefreshCw className="w-3.5 h-3.5" /> Resend verification email
                         </button>
@@ -723,7 +723,7 @@ export default function Auth({ redirectAfterAuth }: AuthProps = {}) {
               {/* ══════════════════════════════════════════════════════════
                   VIEW 2: CREATE ACCOUNT OR LOG IN FORM
                  ══════════════════════════════════════════════════════════ */}
-              <div className="flex border-b border-[#E5E4DE]">
+              <div className="flex border-b border-slate-200">
                 <button
                   type="button"
                   onClick={() => {
@@ -732,8 +732,8 @@ export default function Auth({ redirectAfterAuth }: AuthProps = {}) {
                   }}
                   className={`flex-1 py-3.5 text-center text-xs sm:text-sm font-semibold transition-colors cursor-pointer ${
                     mode === "register"
-                      ? "text-[#111111] border-b-2 border-[#F26522] bg-[#F5F4EF]/60 font-bold"
-                      : "text-[#111111]/50 hover:text-[#111111]"
+                      ? "text-[#0F172A] border-b-2 border-[#6D5DFB] bg-slate-50 font-bold"
+                      : "text-slate-500 hover:text-[#0F172A]"
                   }`}
                 >
                   Create Account
@@ -746,8 +746,8 @@ export default function Auth({ redirectAfterAuth }: AuthProps = {}) {
                   }}
                   className={`flex-1 py-3.5 text-center text-xs sm:text-sm font-semibold transition-colors cursor-pointer ${
                     mode === "login"
-                      ? "text-[#111111] border-b-2 border-[#F26522] bg-[#F5F4EF]/60 font-bold"
-                      : "text-[#111111]/50 hover:text-[#111111]"
+                      ? "text-[#0F172A] border-b-2 border-[#6D5DFB] bg-slate-50 font-bold"
+                      : "text-slate-500 hover:text-[#0F172A]"
                   }`}
                 >
                   Log In
@@ -777,11 +777,11 @@ export default function Auth({ redirectAfterAuth }: AuthProps = {}) {
                             onClick={() => setSelectedRole("student")}
                             className={`py-2.5 px-3 rounded-full border text-xs font-semibold flex items-center justify-center gap-1.5 transition-all cursor-pointer ${
                               selectedRole === "student"
-                                ? "bg-[#F26522]/10 border-[#F26522] text-[#111111] shadow-xs ring-1 ring-[#F26522]"
-                                : "border-[#E5E4DE] text-[#111111]/70 hover:bg-[#F5F4EF]"
+                                ? "bg-violet-50 border-[#6D5DFB] text-[#312E81] shadow-xs ring-1 ring-[#6D5DFB]"
+                                : "border-slate-200 text-slate-600 hover:bg-slate-50"
                             }`}
                           >
-                            <GraduationCap className={`w-4 h-4 ${selectedRole === "student" ? "text-[#F26522]" : "text-[#111111]/50"}`} />
+                            <GraduationCap className={`w-4 h-4 ${selectedRole === "student" ? "text-[#6D5DFB]" : "text-slate-400"}`} />
                             Student
                           </button>
 
@@ -790,11 +790,11 @@ export default function Auth({ redirectAfterAuth }: AuthProps = {}) {
                             onClick={() => setSelectedRole("teacher")}
                             className={`py-2.5 px-3 rounded-full border text-xs font-semibold flex items-center justify-center gap-1.5 transition-all cursor-pointer ${
                               selectedRole === "teacher"
-                                ? "bg-[#F26522]/10 border-[#F26522] text-[#111111] shadow-xs ring-1 ring-[#F26522]"
-                                : "border-[#E5E4DE] text-[#111111]/70 hover:bg-[#F5F4EF]"
+                                ? "bg-violet-50 border-[#6D5DFB] text-[#312E81] shadow-xs ring-1 ring-[#6D5DFB]"
+                                : "border-slate-200 text-slate-600 hover:bg-slate-50"
                             }`}
                           >
-                            <BookOpen className={`w-4 h-4 ${selectedRole === "teacher" ? "text-[#F26522]" : "text-[#111111]/50"}`} />
+                            <BookOpen className={`w-4 h-4 ${selectedRole === "teacher" ? "text-[#6D5DFB]" : "text-slate-400"}`} />
                             Teacher
                           </button>
 
@@ -803,30 +803,30 @@ export default function Auth({ redirectAfterAuth }: AuthProps = {}) {
                             onClick={() => setSelectedRole("parent")}
                             className={`py-2.5 px-3 rounded-full border text-xs font-semibold flex items-center justify-center gap-1.5 transition-all cursor-pointer ${
                               selectedRole === "parent"
-                                ? "bg-[#F26522]/10 border-[#F26522] text-[#111111] shadow-xs ring-1 ring-[#F26522]"
-                                : "border-[#E5E4DE] text-[#111111]/70 hover:bg-[#F5F4EF]"
+                                ? "bg-violet-50 border-[#6D5DFB] text-[#312E81] shadow-xs ring-1 ring-[#6D5DFB]"
+                                : "border-slate-200 text-slate-600 hover:bg-slate-50"
                             }`}
                           >
-                            <Users className={`w-4 h-4 ${selectedRole === "parent" ? "text-[#F26522]" : "text-[#111111]/50"}`} />
+                            <Users className={`w-4 h-4 ${selectedRole === "parent" ? "text-[#6D5DFB]" : "text-slate-400"}`} />
                             Parent
                           </button>
                         </div>
 
                         {/* Role Guidance Banner */}
-                        <div className="mt-2.5 p-3 rounded-2xl bg-[#FAF9F5] border border-[#E5E4DE] text-[11px] text-[#111111]/80 leading-relaxed">
+                        <div className="mt-2.5 p-3 rounded-2xl bg-slate-50 border border-slate-200 text-[11px] text-slate-700 leading-relaxed">
                           {selectedRole === "student" && (
                             <p>
-                              <span className="font-bold text-[#111111]">Student Account:</span> Immediate access to browse verified tutors across NCTB, Cambridge & Edexcel, book 1-on-1 sessions, and enter live classrooms.
+                              <span className="font-bold text-[#0F172A]">Student Account:</span> Immediate access to browse verified tutors across NCTB, Cambridge & Edexcel, book 1-on-1 sessions, and enter live classrooms.
                             </p>
                           )}
                           {selectedRole === "teacher" && (
                             <p>
-                              <span className="font-bold text-[#111111]">Educator Onboarding:</span> Create your instructor account, submit credentials for verification, and set your tuition rates (85% net payout model).
+                              <span className="font-bold text-[#0F172A]">Educator Onboarding:</span> Create your instructor account, submit credentials for verification, and set your tuition rates (85% net payout model).
                             </p>
                           )}
                           {selectedRole === "parent" && (
                             <p>
-                              <span className="font-bold text-[#111111]">Parent Account:</span> Monitor your children's learning schedule, review verified tutor credentials, and oversee tuition receipts.
+                              <span className="font-bold text-[#0F172A]">Parent Account:</span> Monitor your children's learning schedule, review verified tutor credentials, and oversee tuition receipts.
                             </p>
                           )}
                         </div>
@@ -967,7 +967,7 @@ export default function Auth({ redirectAfterAuth }: AuthProps = {}) {
                           id="terms"
                           checked={agreeTerms}
                           onChange={(e) => setAgreeTerms(e.target.checked)}
-                          className="mt-1 h-4 w-4 rounded border-stone-300 text-[#F26522] focus:ring-[#F26522]"
+                          className="mt-1 h-4 w-4 rounded border-slate-300 accent-[#312E81] text-[#312E81] focus:ring-[#6D5DFB]"
                         />
                         <label htmlFor="terms" className="text-xs text-slate-600 leading-tight">
                           I agree to the{" "}
@@ -975,7 +975,7 @@ export default function Auth({ redirectAfterAuth }: AuthProps = {}) {
                             href="/terms"
                             target="_blank"
                             rel="noopener noreferrer"
-                            className="text-[#111111] hover:text-[#F26522] underline font-medium"
+                            className="text-[#0F172A] hover:text-[#6D5DFB] underline font-medium"
                           >
                             Terms of Service
                           </a>{" "}
@@ -984,7 +984,7 @@ export default function Auth({ redirectAfterAuth }: AuthProps = {}) {
                             href="/privacy"
                             target="_blank"
                             rel="noopener noreferrer"
-                            className="text-[#111111] hover:text-[#F26522] underline font-medium"
+                            className="text-[#0F172A] hover:text-[#6D5DFB] underline font-medium"
                           >
                             Privacy Policy
                           </a>
@@ -996,7 +996,7 @@ export default function Auth({ redirectAfterAuth }: AuthProps = {}) {
                       <Button
                         type="submit"
                         disabled={isLoading}
-                        className="w-full h-11 bg-[#F26522] hover:bg-[#d85518] text-white font-semibold rounded-full text-sm shadow-xs mt-2 transition-all cursor-pointer"
+                        className="w-full h-11 bg-[#312E81] hover:bg-[#6D5DFB] text-white font-semibold rounded-full text-sm shadow-xs mt-2 transition-all cursor-pointer"
                       >
                         {isLoading ? (
                           <span className="flex items-center gap-2">
@@ -1016,7 +1016,7 @@ export default function Auth({ redirectAfterAuth }: AuthProps = {}) {
                           setMode("login");
                           setError(null);
                         }}
-                        className="font-semibold text-[#F26522] hover:text-[#d85518] cursor-pointer"
+                        className="font-semibold text-[#6D5DFB] hover:text-[#312E81] cursor-pointer"
                       >
                         Log in
                       </button>
@@ -1074,7 +1074,7 @@ export default function Auth({ redirectAfterAuth }: AuthProps = {}) {
                               setForgotEmail(loginEmail);
                               setError(null);
                             }}
-                            className="text-xs font-medium text-[#F26522] hover:text-[#d85518] cursor-pointer"
+                            className="text-xs font-medium text-[#6D5DFB] hover:text-[#312E81] cursor-pointer"
                           >
                             Forgot password?
                           </button>
@@ -1092,7 +1092,7 @@ export default function Auth({ redirectAfterAuth }: AuthProps = {}) {
                             autoComplete="current-password"
                             autoCapitalize="none"
                             autoCorrect="off"
-                            className="pl-10 pr-10 h-11 rounded-xl border-stone-300"
+                            className="pl-10 pr-10 h-11 rounded-xl border-slate-300"
                           />
                           <button
                             type="button"
@@ -1110,7 +1110,7 @@ export default function Auth({ redirectAfterAuth }: AuthProps = {}) {
                         type="submit"
                         disabled={isLoading}
                         style={{ touchAction: "manipulation" }}
-                        className="w-full h-11 bg-[#F26522] hover:bg-[#d85518] text-white font-semibold rounded-full text-sm shadow-xs mt-2 transition-all cursor-pointer touch-manipulation active:scale-[0.99]"
+                        className="w-full h-11 bg-[#312E81] hover:bg-[#6D5DFB] text-white font-semibold rounded-full text-sm shadow-xs mt-2 transition-all cursor-pointer touch-manipulation active:scale-[0.99]"
                       >
                         {isLoading ? (
                           <span className="flex items-center gap-2">
@@ -1130,7 +1130,7 @@ export default function Auth({ redirectAfterAuth }: AuthProps = {}) {
                           setMode("register");
                           setError(null);
                         }}
-                        className="font-semibold text-[#F26522] hover:text-[#d85518] cursor-pointer"
+                        className="font-semibold text-[#6D5DFB] hover:text-[#312E81] cursor-pointer"
                       >
                         Create account
                       </button>
@@ -1231,7 +1231,7 @@ export default function Auth({ redirectAfterAuth }: AuthProps = {}) {
                 <Button
                   type="submit"
                   disabled={isLoading}
-                  className="flex-1 rounded-xl h-11 bg-[#F26522] hover:bg-[#d85518] text-white cursor-pointer font-semibold"
+                  className="flex-1 rounded-xl h-11 bg-[#312E81] hover:bg-[#6D5DFB] text-white cursor-pointer font-semibold"
                 >
                   {isLoading ? <Loader2 className="w-4 h-4 animate-spin" /> : "Update Password"}
                 </Button>

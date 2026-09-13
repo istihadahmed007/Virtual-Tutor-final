@@ -76,8 +76,8 @@ export const TutorCard: React.FC<TutorCardProps> = ({
       onClick={handleCardClick}
       className={`group rounded-2xl border p-5 sm:p-6 transition-all duration-300 cursor-pointer flex flex-col justify-between ${
         isDark
-          ? "bg-[#0D0D0D]/85 backdrop-blur-md border-white/10 hover:border-[#F26522]/50 hover:shadow-[0_8px_32px_rgba(242,101,34,0.12)] text-white"
-          : "bg-white border-[#E5E4DE] hover:border-[#111111]/30 hover:shadow-[0_8px_24px_rgba(0,0,0,0.06)]"
+          ? "bg-[#0D0D0D]/85 backdrop-blur-md border-white/10 hover:border-[#6D5DFB]/50 hover:shadow-[0_8px_32px_rgba(109,93,251,0.15)] text-white"
+          : "bg-white border-[#E2E8F0] hover:border-[#6D5DFB]/40 hover:shadow-[0_12px_32px_rgba(49,46,129,0.07)]"
       } ${className}`}
     >
       <div>
@@ -85,45 +85,45 @@ export const TutorCard: React.FC<TutorCardProps> = ({
         <div className="flex items-start justify-between gap-3">
           <div className="flex items-center gap-3">
             <div
-              className={`relative w-12 h-12 rounded-full overflow-hidden border shrink-0 flex items-center justify-center font-medium text-sm ${
+              className={`relative w-12 h-12 rounded-full overflow-hidden border shrink-0 flex items-center justify-center font-bold text-sm ${
                 isDark
                   ? "bg-white/10 border-white/15 text-white"
-                  : "bg-[#F5F4EF] border-[#E5E4DE] text-[#111111]"
+                  : "bg-[#F8FAFC] border-[#E2E8F0] text-[#312E81]"
               }`}
             >
               {tutor.avatarUrl || tutor.image ? (
                 <img
                   src={tutor.avatarUrl || tutor.image}
                   alt={displayName}
-                  className="w-full h-full object-cover"
+                  className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
                   referrerPolicy="no-referrer"
                 />
               ) : (
                 displayName.slice(0, 2).toUpperCase()
               )}
               {tutor.isOnline && (
-                <span className="absolute bottom-0 right-0 w-3 h-3 rounded-full bg-[#10B981] border-2 border-black" />
+                <span className="absolute bottom-0 right-0 w-3 h-3 rounded-full bg-[#14B8A6] border-2 border-white" />
               )}
             </div>
 
             <div>
               <div className="flex items-center gap-1.5">
                 <h3
-                  className={`font-semibold text-sm sm:text-base transition-colors ${
+                  className={`font-bold text-sm sm:text-base transition-colors ${
                     isDark
-                      ? "text-white group-hover:text-[#F26522]"
-                      : "text-[#111111] group-hover:text-[#F26522]"
+                      ? "text-white group-hover:text-[#6D5DFB]"
+                      : "text-[#0F172A] group-hover:text-[#312E81]"
                   }`}
                 >
                   {displayName}
                 </h3>
                 {isVerified && (
-                  <ShieldCheck className="w-4 h-4 text-[#F26522] shrink-0" />
+                  <ShieldCheck className="w-4 h-4 text-[#14B8A6] shrink-0" />
                 )}
               </div>
               <p
                 className={`text-xs mt-0.5 ${
-                  isDark ? "text-white/60" : "text-[#111111]/60"
+                  isDark ? "text-white/60" : "text-[#64748B]"
                 }`}
               >
                 {isVerified ? "Verified Instructor" : "Faculty Specialist"}
@@ -135,13 +135,13 @@ export const TutorCard: React.FC<TutorCardProps> = ({
             className={`flex items-center gap-1 px-2.5 py-1 rounded-full border ${
               isDark
                 ? "bg-white/5 border-white/10"
-                : "bg-[#FAF9F5] border-[#E5E4DE]"
+                : "bg-[#F8FAFC] border-[#E2E8F0]"
             }`}
           >
-            <Star className="w-3.5 h-3.5 fill-[#F26522] text-[#F26522]" />
+            <Star className="w-3.5 h-3.5 fill-[#F59E0B] text-[#F59E0B]" />
             <span
               className={`text-xs font-bold ${
-                isDark ? "text-white" : "text-[#111111]"
+                isDark ? "text-white" : "text-[#0F172A]"
               }`}
             >
               {displayRating}
@@ -149,7 +149,7 @@ export const TutorCard: React.FC<TutorCardProps> = ({
             {displayReviews > 0 && (
               <span
                 className={`text-[10px] ${
-                  isDark ? "text-white/50" : "text-[#111111]/50"
+                  isDark ? "text-white/50" : "text-[#64748B]"
                 }`}
               >
                 ({displayReviews})
@@ -162,7 +162,7 @@ export const TutorCard: React.FC<TutorCardProps> = ({
         {tutor.bio && (
           <p
             className={`mt-3.5 text-xs sm:text-[13px] line-clamp-2 leading-relaxed font-normal ${
-              isDark ? "text-white/70" : "text-[#111111]/70"
+              isDark ? "text-white/70" : "text-[#64748B]"
             }`}
           >
             {tutor.bio}
@@ -177,7 +177,7 @@ export const TutorCard: React.FC<TutorCardProps> = ({
               className={`text-[11px] font-medium px-2.5 py-0.5 rounded-full border ${
                 isDark
                   ? "bg-white/5 text-white/80 border-white/10"
-                  : "bg-[#F5F4EF] text-[#111111]/80 border-[#E5E4DE]/60"
+                  : "bg-[#F8FAFC] text-[#312E81] border-[#E2E8F0]"
               }`}
             >
               {sub}
@@ -189,20 +189,20 @@ export const TutorCard: React.FC<TutorCardProps> = ({
       {/* Bottom Footer: Rate & Action */}
       <div
         className={`mt-5 pt-4 border-t flex items-center justify-between ${
-          isDark ? "border-white/10" : "border-[#E5E4DE]"
+          isDark ? "border-white/10" : "border-[#E2E8F0]"
         }`}
       >
         <div>
           <span
             className={`text-base sm:text-lg font-bold font-display ${
-              isDark ? "text-white" : "text-[#111111]"
+              isDark ? "text-white" : "text-[#0F172A]"
             }`}
           >
             {displayRate}
           </span>
           <span
             className={`text-xs ${
-              isDark ? "text-white/50" : "text-[#111111]/50"
+              isDark ? "text-white/50" : "text-[#64748B]"
             }`}
           >
             {" "}
@@ -216,12 +216,12 @@ export const TutorCard: React.FC<TutorCardProps> = ({
             if (onBook) onBook(tutorTargetId);
             else navigate(`/teachers/${tutorTargetId}`);
           }}
-          className={`inline-flex items-center gap-1.5 text-xs font-semibold group-hover:text-[#F26522] transition-colors ${
-            isDark ? "text-white/90" : "text-[#111111]"
+          className={`inline-flex items-center gap-1.5 text-xs font-bold text-[#312E81] hover:text-[#6D5DFB] transition-colors cursor-pointer ${
+            isDark ? "text-white/90 hover:text-[#6D5DFB]" : ""
           }`}
         >
           <span>View Profile</span>
-          <ArrowRight className="w-3.5 h-3.5 transition-transform group-hover:translate-x-0.5" />
+          <ArrowRight className="w-3.5 h-3.5 transition-transform group-hover:translate-x-1" />
         </button>
       </div>
     </motion.div>

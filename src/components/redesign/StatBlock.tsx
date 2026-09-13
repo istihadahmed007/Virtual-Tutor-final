@@ -28,14 +28,14 @@ export const StatBlock: React.FC<StatBlockProps> = ({
     <div
       className={`rounded-2xl border p-5 sm:p-6 transition-all duration-300 ${
         isDark
-          ? "bg-[#0D0D0D]/80 backdrop-blur-md border-white/10 hover:border-white/25 hover:shadow-[0_8px_30px_rgba(242,101,34,0.08)]"
-          : "bg-white border-[#E5E4DE] hover:border-[#111111]/20"
+          ? "bg-[#0D0D0D]/80 backdrop-blur-md border-white/10 hover:border-white/25 hover:shadow-[0_8px_30px_rgba(109,93,251,0.12)]"
+          : "bg-white border-[#E2E8F0] hover:border-[#6D5DFB]/30 hover:shadow-[0_8px_24px_rgba(49,46,129,0.06)]"
       } ${className}`}
     >
       <div className="flex items-center justify-between mb-3 sm:mb-4">
         <span
           className={`text-xs sm:text-[13px] font-medium tracking-tight ${
-            isDark ? "text-white/60" : "text-[#111111]/60"
+            isDark ? "text-white/60" : "text-[#64748B]"
           }`}
         >
           {label}
@@ -44,8 +44,8 @@ export const StatBlock: React.FC<StatBlockProps> = ({
           <div
             className={`w-8 h-8 rounded-full flex items-center justify-center shrink-0 ${
               isDark
-                ? "bg-white/10 text-[#F26522]"
-                : "bg-[#F5F4EF] text-[#111111]"
+                ? "bg-white/10 text-[#6D5DFB]"
+                : "bg-[#F8FAFC] text-[#312E81]"
             }`}
           >
             <Icon className="w-4 h-4" />
@@ -55,8 +55,8 @@ export const StatBlock: React.FC<StatBlockProps> = ({
 
       <div className="flex items-baseline gap-1">
         <span
-          className={`text-2xl sm:text-3xl lg:text-4xl font-semibold tracking-[-0.03em] ${
-            isDark ? "text-white" : "text-[#111111]"
+          className={`text-2xl sm:text-3xl lg:text-4xl font-extrabold tracking-tight ${
+            isDark ? "text-white" : "text-[#0F172A]"
           }`}
         >
           {value}
@@ -64,7 +64,7 @@ export const StatBlock: React.FC<StatBlockProps> = ({
         {suffix && (
           <span
             className={`text-sm sm:text-base font-normal ${
-              isDark ? "text-white/60" : "text-[#111111]/60"
+              isDark ? "text-white/60" : "text-[#64748B]"
             }`}
           >
             {suffix}
@@ -75,11 +75,11 @@ export const StatBlock: React.FC<StatBlockProps> = ({
       {(subtext || trend) && (
         <div
           className={`mt-2.5 flex items-center gap-2 text-xs ${
-            isDark ? "text-white/60" : "text-[#111111]/60"
+            isDark ? "text-white/60" : "text-[#64748B]"
           }`}
         >
           {trend && (
-            <span className="font-semibold text-[#F26522]">{trend}</span>
+            <span className="font-semibold text-[#6D5DFB]">{trend}</span>
           )}
           {subtext && <span>{subtext}</span>}
         </div>

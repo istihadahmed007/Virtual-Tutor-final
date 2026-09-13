@@ -616,7 +616,7 @@ export default function Dashboard() {
                     </span>
                   </div>
                   <PillButton
-                    variant="outline"
+                    variant="secondary"
                     size="sm"
                     onClick={() => navigate("/progress")}
                     className="w-full justify-center mt-3"

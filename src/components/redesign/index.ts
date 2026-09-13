@@ -1,10 +1,12 @@
 export { SectionLabel } from "./SectionLabel";
-export { PillButton, PrimaryButton, SecondaryButton } from "./Buttons";
+export { PillButton, PrimaryButton, SecondaryButton, GhostButton } from "./Buttons";
 export { StatBlock } from "./StatBlock";
 export { FloatingBadge } from "./FloatingBadge";
 export { SectionHeader } from "./SectionHeader";
 export { TutorCard } from "./TutorCard";
 export { LessonCard } from "./LessonCard";
+export { Floating3DObjects } from "./Floating3DObjects";
+export { HeroSearchPanel } from "./HeroSearchPanel";
 export { PageHeader } from "../PageHeader";
 export { StatusBadge } from "../StatusBadge";
 export { EmptyState } from "../EmptyState";

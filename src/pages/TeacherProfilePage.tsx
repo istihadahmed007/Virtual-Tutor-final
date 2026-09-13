@@ -259,7 +259,7 @@ export default function TeacherProfilePage() {
   };
 
   return (
-    <main className="min-h-screen bg-[#F5F4EF] text-[#111111] pb-24">
+    <main className="min-h-screen bg-[#F8FAFC] text-[#0F172A] pb-24">
       <SEO
         title={`${teacher.name} - ${teacher.title || teacher.subjects.join(", ") || "Educator"}`}
         description={
@@ -279,13 +279,13 @@ export default function TeacherProfilePage() {
         }}
       />
       {/* Top Navigation Bar */}
-      <header className="bg-white/80 backdrop-blur-xs border-b border-[#E5E4DE] sticky top-0 z-20">
+      <header className="bg-white/90 backdrop-blur-md border-b border-slate-200 sticky top-0 z-20">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between">
           <Button
             variant="ghost"
             size="sm"
             onClick={() => navigate("/teachers")}
-            className="gap-2 text-[#111111]/70 hover:text-[#111111] hover:bg-white rounded-full text-xs font-semibold"
+            className="gap-2 text-slate-600 hover:text-[#0F172A] hover:bg-slate-100 rounded-full text-xs font-semibold cursor-pointer"
           >
             <ArrowLeft className="w-4 h-4" />
             <span>Faculty Directory</span>
@@ -297,9 +297,9 @@ export default function TeacherProfilePage() {
               size="sm"
               onClick={handleStartChat}
               disabled={isStartingChat}
-              className="gap-2 border-[#E5E4DE] text-[#111111] hover:bg-white rounded-full text-xs font-semibold px-4 h-9"
+              className="gap-2 border-slate-200 text-slate-700 hover:bg-slate-50 rounded-full text-xs font-semibold px-4 h-9 cursor-pointer"
             >
-              <MessageCircle className="w-3.5 h-3.5 text-[#F26522]" />
+              <MessageCircle className="w-3.5 h-3.5 text-[#6D5DFB]" />
               <span>{isStartingChat ? "Connecting..." : "Message"}</span>
             </Button>
 
@@ -309,7 +309,7 @@ export default function TeacherProfilePage() {
                 const el = document.getElementById("availability");
                 if (el) el.scrollIntoView({ behavior: "smooth" });
               }}
-              className="bg-[#111111] hover:bg-[#F26522] text-white gap-2 rounded-full text-xs font-bold px-4 h-9 shadow-xs transition-all"
+              className="bg-[#312E81] hover:bg-[#6D5DFB] text-white gap-2 rounded-full text-xs font-bold px-4 h-9 shadow-xs transition-all cursor-pointer"
             >
               <Calendar className="w-3.5 h-3.5" />
               <span>Reserve Session</span>
@@ -328,26 +328,26 @@ export default function TeacherProfilePage() {
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           <div className="lg:col-span-2 space-y-8">
             {/* About / Bio Card */}
-            <Card className="border-[#E5E4DE] bg-white rounded-3xl shadow-xs">
-              <CardHeader className="pb-4 border-b border-[#E5E4DE]/60">
-                <CardTitle className="text-base text-[#111111] font-bold flex items-center gap-2 font-display">
-                  <BookOpen className="w-4 h-4 text-[#F26522]" />
+            <Card className="border-slate-200 bg-white rounded-3xl shadow-xs">
+              <CardHeader className="pb-4 border-b border-slate-100">
+                <CardTitle className="text-base text-[#0F172A] font-bold flex items-center gap-2 font-display">
+                  <BookOpen className="w-4 h-4 text-[#6D5DFB]" />
                   <span>Academic Approach & Pedagogy</span>
                 </CardTitle>
               </CardHeader>
-              <CardContent className="pt-6 space-y-6 text-sm text-[#111111]/80 leading-relaxed">
+              <CardContent className="pt-6 space-y-6 text-sm text-slate-600 leading-relaxed">
                 <p>{teacher.bio}</p>
 
                 {/* Subject Fit & Expertise Tags */}
                 <div>
-                  <h4 className="text-xs font-bold uppercase tracking-wider text-[#111111]/40 mb-3">
+                  <h4 className="text-xs font-bold uppercase tracking-wider text-slate-400 mb-3">
                     Disciplines & Coursework
                   </h4>
                   <div className="flex flex-wrap gap-2">
                     {teacher.subjects.map((sub) => (
                       <span
                         key={sub}
-                        className="px-3.5 py-1.5 rounded-full text-xs font-semibold bg-[#F5F4EF] text-[#111111] border border-[#E5E4DE]"
+                        className="px-3.5 py-1.5 rounded-full text-xs font-semibold bg-slate-50 text-[#0F172A] border border-slate-200"
                       >
                         {sub}
                       </span>
@@ -358,14 +358,14 @@ export default function TeacherProfilePage() {
                 {/* Class Levels & Target Curriculums */}
                 {teacher.classLevels && teacher.classLevels.length > 0 && (
                   <div>
-                    <h4 className="text-xs font-bold uppercase tracking-wider text-[#111111]/40 mb-3">
+                    <h4 className="text-xs font-bold uppercase tracking-wider text-slate-400 mb-3">
                       Target Academic Levels
                     </h4>
                     <div className="flex flex-wrap gap-2">
                       {teacher.classLevels.map((lvl) => (
                         <span
                           key={lvl}
-                          className="px-3.5 py-1.5 rounded-full text-xs font-medium bg-white text-[#111111]/80 border border-[#E5E4DE]"
+                          className="px-3.5 py-1.5 rounded-full text-xs font-medium bg-white text-slate-600 border border-slate-200"
                         >
                           {lvl}
                         </span>
@@ -378,10 +378,10 @@ export default function TeacherProfilePage() {
 
             {/* Intro Video Card if present */}
             {teacher.introVideoUrl && (
-              <Card className="border-[#E5E4DE] bg-white rounded-3xl overflow-hidden shadow-xs">
-                <CardHeader className="pb-4 border-b border-[#E5E4DE]/60">
-                  <CardTitle className="text-base flex items-center gap-2 text-[#111111] font-bold font-display">
-                    <Video className="w-4 h-4 text-[#F26522]" />
+              <Card className="border-slate-200 bg-white rounded-3xl overflow-hidden shadow-xs">
+                <CardHeader className="pb-4 border-b border-slate-100">
+                  <CardTitle className="text-base flex items-center gap-2 text-[#0F172A] font-bold font-display">
+                    <Video className="w-4 h-4 text-[#6D5DFB]" />
                     <span>Introductory Video Lecture</span>
                   </CardTitle>
                 </CardHeader>
@@ -398,10 +398,10 @@ export default function TeacherProfilePage() {
             )}
 
             {/* Verified Education & Credentials */}
-            <Card className="border-[#E5E4DE] bg-white rounded-3xl shadow-xs">
-              <CardHeader className="pb-4 border-b border-[#E5E4DE]/60">
-                <CardTitle className="text-base text-[#111111] font-bold flex items-center gap-2 font-display">
-                  <GraduationCap className="w-4 h-4 text-[#F26522]" />
+            <Card className="border-slate-200 bg-white rounded-3xl shadow-xs">
+              <CardHeader className="pb-4 border-b border-slate-100">
+                <CardTitle className="text-base text-[#0F172A] font-bold flex items-center gap-2 font-display">
+                  <GraduationCap className="w-4 h-4 text-[#6D5DFB]" />
                   <span>Verified Credentials & Honors</span>
                 </CardTitle>
               </CardHeader>
@@ -411,38 +411,38 @@ export default function TeacherProfilePage() {
                     {teacher.education.map((edu, idx) => (
                       <div
                         key={idx}
-                        className="flex items-start gap-3.5 p-4 rounded-2xl bg-[#F5F4EF] border border-[#E5E4DE] text-xs"
+                        className="flex items-start gap-3.5 p-4 rounded-2xl bg-slate-50 border border-slate-200 text-xs"
                       >
-                        <div className="h-9 w-9 rounded-xl bg-[#111111] text-white flex items-center justify-center shrink-0">
+                        <div className="h-9 w-9 rounded-xl bg-[#312E81] text-white flex items-center justify-center shrink-0">
                           <GraduationCap className="w-4 h-4" />
                         </div>
                         <div>
-                          <p className="font-bold text-[#111111] text-sm font-display">{edu.degree}</p>
-                          <p className="text-[#111111]/70 font-medium">{edu.institution}</p>
-                          <p className="text-[#111111]/40 mt-0.5">
+                          <p className="font-bold text-[#0F172A] text-sm font-display">{edu.degree}</p>
+                          <p className="text-slate-600 font-medium">{edu.institution}</p>
+                          <p className="text-slate-400 mt-0.5">
                             {edu.department ? `${edu.department} · ` : ""}
                             {edu.passingYear ? `Class of ${edu.passingYear}` : ""}
                           </p>
                           {edu.result && (
-                            <p className="text-[#F26522] font-semibold mt-1">Honors: {edu.result}</p>
+                            <p className="text-teal-700 font-semibold mt-1">Honors: {edu.result}</p>
                           )}
                         </div>
                       </div>
                     ))}
                   </div>
                 ) : (
-                  <p className="text-xs text-[#111111]/40 italic">Academic degrees verified by administration.</p>
+                  <p className="text-xs text-slate-400 italic">Academic degrees verified by administration.</p>
                 )}
               </CardContent>
             </Card>
 
             {/* Reviews Section */}
-            <Card className="border-[#E5E4DE] bg-white rounded-3xl shadow-xs">
-              <CardHeader className="pb-4 border-b border-[#E5E4DE]/60">
-                <CardTitle className="text-base text-[#111111] font-bold flex items-center justify-between font-display">
+            <Card className="border-slate-200 bg-white rounded-3xl shadow-xs">
+              <CardHeader className="pb-4 border-b border-slate-100">
+                <CardTitle className="text-base text-[#0F172A] font-bold flex items-center justify-between font-display">
                   <span>Student Evaluations ({teacher.reviewCount})</span>
-                  <span className="text-xs font-bold text-[#111111] flex items-center gap-1.5">
-                    <Star className="w-3.5 h-3.5 fill-[#F26522] text-[#F26522]" />
+                  <span className="text-xs font-bold text-[#0F172A] flex items-center gap-1.5">
+                    <Star className="w-3.5 h-3.5 fill-amber-400 text-amber-400" />
                     <span>{teacher.rating.toFixed(2)} / 5.0</span>
                   </span>
                 </CardTitle>
@@ -452,23 +452,23 @@ export default function TeacherProfilePage() {
                 {reviewEligibility?.canReview ? (
                   <form
                     onSubmit={handleSubmitReview}
-                    className="p-5 bg-[#F5F4EF] border border-[#E5E4DE] rounded-3xl space-y-4"
+                    className="p-5 bg-slate-50 border border-slate-200 rounded-3xl space-y-4"
                   >
                     <div className="flex items-center justify-between">
-                      <h4 className="text-sm font-bold text-[#111111] font-display">Submit Course Evaluation</h4>
+                      <h4 className="text-sm font-bold text-[#0F172A] font-display">Submit Course Evaluation</h4>
                       <div className="flex items-center gap-1">
                         {[1, 2, 3, 4, 5].map((star) => (
                           <button
                             type="button"
                             key={star}
                             onClick={() => setRatingInput(star)}
-                            className="p-1 hover:scale-110 transition-transform"
+                            className="p-1 hover:scale-110 transition-transform cursor-pointer"
                           >
                             <Star
                               className={`w-5 h-5 ${
                                 star <= ratingInput
-                                  ? "fill-[#F26522] text-[#F26522]"
-                                  : "text-[#E5E4DE]"
+                                  ? "fill-amber-400 text-amber-400"
+                                  : "text-slate-200"
                               }`}
                             />
                           </button>
@@ -480,7 +480,7 @@ export default function TeacherProfilePage() {
                       onChange={(e) => setCommentInput(e.target.value)}
                       placeholder="Detail your learning outcome and instructor effectiveness..."
                       rows={3}
-                      className="w-full p-3.5 bg-white border border-[#E5E4DE] rounded-2xl text-sm text-[#111111] placeholder:text-[#111111]/40 focus:outline-none focus:border-[#111111]"
+                      className="w-full p-3.5 bg-white border border-slate-200 rounded-2xl text-sm text-[#0F172A] placeholder:text-slate-400 focus:outline-none focus:border-[#6D5DFB]"
                       required
                     />
                     <div className="flex justify-end">
@@ -488,7 +488,7 @@ export default function TeacherProfilePage() {
                         type="submit"
                         disabled={isSubmittingReview}
                         size="sm"
-                        className="bg-[#111111] hover:bg-[#F26522] text-white gap-2 rounded-full font-semibold text-xs px-5 h-9"
+                        className="bg-[#312E81] hover:bg-[#6D5DFB] text-white gap-2 rounded-full font-semibold text-xs px-5 h-9 cursor-pointer"
                       >
                         {isSubmittingReview ? (
                           <Loader2 className="w-4 h-4 animate-spin" />
@@ -507,28 +507,28 @@ export default function TeacherProfilePage() {
                     reviewList.map((review) => (
                       <div
                         key={review._id}
-                        className="p-5 bg-[#F5F4EF] rounded-2xl border border-[#E5E4DE] space-y-2"
+                        className="p-5 bg-slate-50 rounded-2xl border border-slate-200 space-y-2"
                       >
                         <div className="flex items-center justify-between">
-                          <span className="text-xs font-bold text-[#111111] font-display">
+                          <span className="text-xs font-bold text-[#0F172A] font-display">
                             {review.studentName}
                           </span>
                           <div className="flex items-center gap-0.5">
                             {Array.from({ length: review.rating }).map((_, j) => (
-                              <Star key={j} className="w-3.5 h-3.5 fill-[#F26522] text-[#F26522]" />
+                              <Star key={j} className="w-3.5 h-3.5 fill-amber-400 text-amber-400" />
                             ))}
                           </div>
                         </div>
-                        <p className="text-xs sm:text-sm text-[#111111]/70 leading-relaxed">
+                        <p className="text-xs sm:text-sm text-slate-600 leading-relaxed">
                           {review.comment}
                         </p>
-                        <p className="text-[10px] text-[#111111]/40">
+                        <p className="text-[10px] text-slate-400">
                           {new Date(review.createdAt).toLocaleDateString()}
                         </p>
                       </div>
                     ))
                   ) : (
-                    <div className="py-6 text-center text-[#111111]/40 text-xs">
+                    <div className="py-6 text-center text-slate-400 text-xs">
                       No student reviews yet. Reviews will appear here once verified lessons are completed.
                     </div>
                   )}

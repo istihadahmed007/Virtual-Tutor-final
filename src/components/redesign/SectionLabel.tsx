@@ -26,10 +26,10 @@ export const SectionLabel: React.FC<SectionLabelProps> = ({
     <div className={`inline-flex items-center gap-2.5 ${className}`}>
       {number !== undefined && (
         <span
-          className={`w-6 h-6 sm:w-7 sm:h-7 rounded-full text-[11px] sm:text-xs font-bold flex items-center justify-center tracking-tight shrink-0 ${
+          className={`w-6 h-6 sm:w-7 sm:h-7 rounded-full text-[11px] sm:text-xs font-bold flex items-center justify-center tracking-tight shrink-0 shadow-2xs ${
             isDark
-              ? "bg-[#F26522] text-white"
-              : "bg-[#111111] text-white"
+              ? "bg-[#6D5DFB] text-white"
+              : "bg-[#312E81] text-white"
           }`}
         >
           {number}
@@ -38,10 +38,10 @@ export const SectionLabel: React.FC<SectionLabelProps> = ({
       <span
         className={`text-xs sm:text-[13px] font-semibold tracking-wide px-3 sm:px-3.5 py-1 rounded-full border ${
           accent
-            ? "border-[#F26522]/30 bg-[#F26522]/10 text-[#F26522]"
+            ? "border-[#6D5DFB]/30 bg-[#6D5DFB]/10 text-[#6D5DFB]"
             : isDark
             ? "border-white/15 bg-white/10 text-white/90 backdrop-blur-sm"
-            : "border-[#E5E4DE] bg-white text-[#111111]"
+            : "border-[#E2E8F0] bg-white text-[#0F172A] shadow-2xs"
         }`}
       >
         {content}

@@ -8,7 +8,7 @@ interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
   showArrow?: boolean;
   size?: "sm" | "md" | "lg";
   className?: string;
-  variant?: "orange" | "dark" | "white" | "outline";
+  variant?: "primary" | "secondary" | "violet" | "teal" | "white" | "ghost" | "dark" | "orange";
 }
 
 export const PillButton: React.FC<ButtonProps> = ({
@@ -17,13 +17,13 @@ export const PillButton: React.FC<ButtonProps> = ({
   showArrow = false,
   size = "md",
   className = "",
-  variant = "dark",
+  variant = "primary",
   ...props
 }) => {
   const sizeClasses = {
-    sm: "text-xs pl-3.5 pr-2 py-1.5 gap-2",
-    md: "text-xs sm:text-[13px] pl-4 sm:pl-5 pr-2 py-2 gap-2.5",
-    lg: "text-sm sm:text-[15px] pl-5 sm:pl-6 pr-2.5 py-2.5 gap-3",
+    sm: "text-xs pl-3.5 pr-2 py-1.5 gap-2 h-9",
+    md: "text-xs sm:text-[13px] pl-4 sm:pl-5 pr-2 py-2 gap-2.5 h-11",
+    lg: "text-sm sm:text-[15px] pl-5 sm:pl-6 pr-2.5 py-2.5 gap-3 h-13",
   };
 
   const arrowCircleSizes = {
@@ -39,17 +39,25 @@ export const PillButton: React.FC<ButtonProps> = ({
   };
 
   const variantStyles = {
-    orange: "bg-[#F26522] hover:bg-[#e05a1a] text-white",
-    dark: "bg-[#111111] hover:bg-[#222222] text-white",
-    white: "bg-white hover:bg-[#FAF9F5] text-[#111111] border border-[#E5E4DE] shadow-xs",
-    outline: "bg-transparent hover:bg-[#111111]/5 text-[#111111] border border-[#E5E4DE]",
+    primary: "bg-[#312E81] hover:bg-[#6D5DFB] text-white shadow-sm hover:shadow-[0_8px_20px_rgba(109,93,251,0.25)] transition-all",
+    secondary: "bg-white hover:bg-[#F8FAFC] text-[#312E81] border border-[#E2E8F0] hover:border-[#6D5DFB]/40 shadow-2xs hover:shadow-xs",
+    violet: "bg-[#6D5DFB] hover:bg-[#5B4BE8] text-white shadow-sm hover:shadow-[0_8px_20px_rgba(109,93,251,0.3)]",
+    teal: "bg-[#14B8A6] hover:bg-[#0D9488] text-white shadow-sm hover:shadow-[0_8px_20px_rgba(20,184,166,0.25)]",
+    white: "bg-white hover:bg-[#F8FAFC] text-[#0F172A] border border-[#E2E8F0] shadow-xs",
+    ghost: "bg-transparent hover:bg-[#312E81]/5 text-[#312E81] hover:text-[#6D5DFB]",
+    dark: "bg-[#0F172A] hover:bg-[#1E293B] text-white",
+    orange: "bg-[#312E81] hover:bg-[#6D5DFB] text-white",
   };
 
   const circleStyles = {
-    orange: "bg-white text-[#F26522]",
-    dark: "bg-white text-[#111111]",
-    white: "bg-[#111111] text-white",
-    outline: "bg-[#111111] text-white",
+    primary: "bg-white/15 text-white group-hover:bg-white group-hover:text-[#6D5DFB]",
+    secondary: "bg-[#312E81]/10 text-[#312E81] group-hover:bg-[#6D5DFB] group-hover:text-white",
+    violet: "bg-white/15 text-white group-hover:bg-white group-hover:text-[#6D5DFB]",
+    teal: "bg-white/15 text-white group-hover:bg-white group-hover:text-[#14B8A6]",
+    white: "bg-[#312E81] text-white",
+    ghost: "bg-[#312E81]/10 text-[#312E81]",
+    dark: "bg-white/20 text-white",
+    orange: "bg-white/15 text-white",
   };
 
   return (
@@ -57,7 +65,7 @@ export const PillButton: React.FC<ButtonProps> = ({
       whileTap={{ scale: 0.97 }}
       whileHover={{ scale: 1.01 }}
       transition={{ duration: 0.15 }}
-      className={`group relative inline-flex items-center justify-between font-medium rounded-full transition-colors duration-200 select-none cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed ${variantStyles[variant]} ${sizeClasses[size]} ${className}`}
+      className={`group relative inline-flex items-center justify-between font-semibold rounded-full select-none cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-300 ${variantStyles[variant] || variantStyles.primary} ${sizeClasses[size]} ${className}`}
       {...(props as any)}
     >
       {/* Hover Text Roll Effect */}
@@ -73,7 +81,7 @@ export const PillButton: React.FC<ButtonProps> = ({
       {/* Rotating Arrow / Icon Circle */}
       {(showArrow || Icon) && (
         <span
-          className={`shrink-0 rounded-full flex items-center justify-center transition-transform duration-500 ease-[cubic-bezier(0.25,0.1,0.25,1)] group-hover:rotate-[-45deg] ${circleStyles[variant]} ${arrowCircleSizes[size]}`}
+          className={`shrink-0 rounded-full flex items-center justify-center transition-all duration-500 ease-[cubic-bezier(0.25,0.1,0.25,1)] group-hover:rotate-[-45deg] ${circleStyles[variant] || circleStyles.primary} ${arrowCircleSizes[size]}`}
         >
           {Icon ? (
             <Icon className={arrowIconSizes[size]} />
@@ -87,9 +95,13 @@ export const PillButton: React.FC<ButtonProps> = ({
 };
 
 export const PrimaryButton: React.FC<ButtonProps> = (props) => {
-  return <PillButton variant="orange" showArrow {...props} />;
+  return <PillButton variant="primary" showArrow {...props} />;
 };
 
 export const SecondaryButton: React.FC<ButtonProps> = (props) => {
-  return <PillButton variant="white" showArrow {...props} />;
+  return <PillButton variant="secondary" showArrow {...props} />;
+};
+
+export const GhostButton: React.FC<ButtonProps> = (props) => {
+  return <PillButton variant="ghost" {...props} />;
 };

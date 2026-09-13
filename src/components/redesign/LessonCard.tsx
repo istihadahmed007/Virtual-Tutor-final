@@ -51,12 +51,12 @@ export const LessonCard: React.FC<LessonCardProps> = ({
 
   return (
     <div
-      className={`bg-white rounded-2xl border border-[#E5E4DE] p-4 sm:p-5 transition-all duration-300 hover:border-[#111111]/30 flex flex-col sm:flex-row sm:items-center justify-between gap-4 ${className}`}
+      className={`bg-white rounded-2xl border border-[#E2E8F0] p-4 sm:p-5 transition-all duration-300 hover:border-[#6D5DFB]/40 hover:shadow-[0_8px_24px_rgba(49,46,129,0.06)] flex flex-col sm:flex-row sm:items-center justify-between gap-4 ${className}`}
     >
       <div className="flex items-start sm:items-center gap-3.5">
         <div
           className={`w-10 h-10 rounded-xl flex items-center justify-center shrink-0 ${
-            isLive ? "bg-[#F26522] text-white" : "bg-[#F5F4EF] text-[#111111]"
+            isLive ? "bg-[#14B8A6] text-white shadow-sm" : "bg-[#F8FAFC] text-[#312E81]"
           }`}
         >
           <Video className="w-5 h-5" />
@@ -64,33 +64,33 @@ export const LessonCard: React.FC<LessonCardProps> = ({
 
         <div>
           <div className="flex items-center gap-2 flex-wrap">
-            <h4 className="font-semibold text-sm sm:text-base text-[#111111]">
+            <h4 className="font-bold text-sm sm:text-base text-[#0F172A]">
               {lesson.title || `${lesson.subject || "Academic"} Lesson`}
             </h4>
             {isLive && (
-              <span className="inline-flex items-center gap-1 bg-[#F26522]/10 text-[#F26522] text-[10px] font-bold px-2 py-0.5 rounded-full border border-[#F26522]/20">
-                <span className="w-1.5 h-1.5 rounded-full bg-[#F26522] animate-pulse" />
+              <span className="inline-flex items-center gap-1 bg-[#14B8A6]/10 text-[#0D9488] text-[10px] font-bold px-2 py-0.5 rounded-full border border-[#14B8A6]/30">
+                <span className="w-1.5 h-1.5 rounded-full bg-[#14B8A6] animate-pulse" />
                 LIVE NOW
               </span>
             )}
-            <span className="text-[11px] font-medium text-[#111111]/60 bg-[#F5F4EF] px-2 py-0.5 rounded-full border border-[#E5E4DE]">
+            <span className="text-[11px] font-medium text-[#312E81] bg-[#F8FAFC] px-2 py-0.5 rounded-full border border-[#E2E8F0]">
               {lesson.subject || "General"}
             </span>
           </div>
 
-          <div className="flex items-center gap-3 text-xs text-[#111111]/60 mt-1 flex-wrap">
-            <span className="flex items-center gap-1 font-medium text-[#111111]/80">
-              <User className="w-3.5 h-3.5 text-[#111111]/40" />
+          <div className="flex items-center gap-3 text-xs text-[#64748B] mt-1 flex-wrap">
+            <span className="flex items-center gap-1 font-medium text-[#0F172A]">
+              <User className="w-3.5 h-3.5 text-[#64748B]" />
               {lesson.teacherName || "Instructor"}
             </span>
             <span>·</span>
             <span className="flex items-center gap-1">
-              <Calendar className="w-3.5 h-3.5 text-[#111111]/40" />
+              <Calendar className="w-3.5 h-3.5 text-[#64748B]" />
               {formattedDate} at {formattedTime}
             </span>
             <span>·</span>
             <span className="flex items-center gap-1">
-              <Clock className="w-3.5 h-3.5 text-[#111111]/40" />
+              <Clock className="w-3.5 h-3.5 text-[#64748B]" />
               {lesson.durationMinutes || 60}m
             </span>
           </div>
@@ -100,13 +100,13 @@ export const LessonCard: React.FC<LessonCardProps> = ({
       <div className="flex items-center gap-2 sm:self-center shrink-0">
         <button
           onClick={handleAction}
-          className={`w-full sm:w-auto px-4 py-2 rounded-full text-xs font-semibold flex items-center justify-center gap-1.5 transition-all cursor-pointer ${
+          className={`px-4 py-2 rounded-full text-xs font-bold flex items-center gap-1.5 transition-all cursor-pointer ${
             isLive
-              ? "bg-[#F26522] hover:bg-[#e05a1a] text-white shadow-xs"
-              : "bg-[#111111] hover:bg-[#222222] text-white"
+              ? "bg-[#14B8A6] hover:bg-[#0D9488] text-white shadow-xs"
+              : "bg-[#312E81] hover:bg-[#6D5DFB] text-white shadow-xs"
           }`}
         >
-          <span>{isLive ? "Join Classroom Now" : "Enter Room"}</span>
+          <span>{isLive ? "Join Classroom" : "Enter Room"}</span>
           <ArrowRight className="w-3.5 h-3.5" />
         </button>
       </div>
