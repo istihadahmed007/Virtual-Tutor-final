@@ -37,109 +37,32 @@ export function notifyStudentStoreChange() {
   }
 }
 
-// Initial registered students to guarantee the student directory is vibrant and active
-const SEED_STUDENTS: StudentProfileData[] = [
-  {
-    _id: "usr_student_alex",
-    userId: "n576jb9j1bztps4phbs6jn2v8n8dpwdt",
-    name: "Alex Rivera",
-    email: "alex.rivera@example.com",
-    classLevel: "Grade 11 / AS-Level",
-    curriculum: "Cambridge",
-    institution: "Scholastica International",
-    subjects: ["Mathematics", "AP Calculus BC", "Physics Mechanics"],
-    preferredSchedule: "Weekdays 5:00 PM - 8:00 PM",
-    learningGoal: "Master differential equations and prepare for Cambridge AS-Level board exams.",
-    avatarUrl: "",
-    isVerified: true,
-    verificationStatus: "verified",
-    languages: ["English", "Bangla"],
-    completedLessonsCount: 8,
-    isDiscoverable: true,
-    accountStatus: "active",
-    _creationTime: Date.now() - 15 * 86400000,
-  },
-  {
-    _id: "usr_student_sophia",
-    userId: "usr_student_sophia_id",
-    name: "Sophia Chen",
-    email: "sophia.chen@example.com",
-    classLevel: "Grade 12 / A-Level / HSC",
-    curriculum: "IB",
-    institution: "International Hope School",
-    subjects: ["Chemistry", "Biology", "English Literature"],
-    preferredSchedule: "Mon, Wed, Fri after 6:00 PM",
-    learningGoal: "Deep dive into Organic Chemistry mechanisms and IB Higher Level Biology.",
-    avatarUrl: "",
-    isVerified: true,
-    verificationStatus: "verified",
-    languages: ["English"],
-    completedLessonsCount: 14,
-    isDiscoverable: true,
-    accountStatus: "active",
-    _creationTime: Date.now() - 10 * 86400000,
-  },
-  {
-    _id: "usr_student_rahim",
-    userId: "usr_student_rahim_id",
-    name: "Rahim Chowdhury",
-    email: "rahim.c@example.com",
-    classLevel: "Grade 10 / O-Level / SSC",
-    curriculum: "English Version",
-    institution: "Dhaka Residential Model College",
-    subjects: ["Higher Mathematics", "Physics Mechanics", "ICT & Programming"],
-    preferredSchedule: "Weekends 10:00 AM - 2:00 PM",
-    learningGoal: "Strengthen fundamentals in Coordinate Geometry and Newtonian mechanics.",
-    avatarUrl: "",
-    isVerified: true,
-    verificationStatus: "verified",
-    languages: ["Bangla", "English"],
-    completedLessonsCount: 6,
-    isDiscoverable: true,
-    accountStatus: "active",
-    _creationTime: Date.now() - 7 * 86400000,
-  },
-  {
-    _id: "usr_student_maya",
-    userId: "usr_student_maya_id",
-    name: "Maya Patel",
-    email: "maya.patel@example.com",
-    classLevel: "College / Higher Secondary",
-    curriculum: "Cambridge",
-    institution: "Mastermind School",
-    subjects: ["AP Calculus BC", "ICT & Programming", "Spanish"],
-    preferredSchedule: "Tue, Thu 7:00 PM - 9:00 PM",
-    learningGoal: "University admission test preparation and programming in Python.",
-    avatarUrl: "",
-    isVerified: true,
-    verificationStatus: "verified",
-    languages: ["English", "Spanish"],
-    completedLessonsCount: 11,
-    isDiscoverable: true,
-    accountStatus: "active",
-    _creationTime: Date.now() - 4 * 86400000,
-  },
-  {
-    _id: "usr_student_daniel",
-    userId: "usr_student_daniel_id",
-    name: "Daniel Martinez",
-    email: "daniel.m@example.com",
-    classLevel: "Grade 9 / Secondary",
-    curriculum: "Bangla Medium",
-    institution: "St. Joseph Higher Secondary School",
-    subjects: ["Mathematics", "Chemistry", "English Literature"],
-    preferredSchedule: "Evenings 6:00 PM - 8:30 PM",
-    learningGoal: "Build solid foundations for secondary board exams and scientific reasoning.",
-    avatarUrl: "",
-    isVerified: true,
-    verificationStatus: "verified",
-    languages: ["English", "Bangla"],
-    completedLessonsCount: 4,
-    isDiscoverable: true,
-    accountStatus: "active",
-    _creationTime: Date.now() - 2 * 86400000,
-  },
-];
+// Legacy mock student IDs and patterns to actively eliminate
+export const LEGACY_FAKE_STUDENT_IDS = new Set([
+  "usr_student_alex",
+  "usr_student_sophia",
+  "usr_student_rahim",
+  "usr_student_maya",
+  "usr_student_daniel",
+  "n576jb9j1bztps4phbs6jn2v8n8dpwdt",
+  "usr_student_sophia_id",
+  "usr_student_rahim_id",
+  "usr_student_maya_id",
+  "usr_student_daniel_id",
+]);
+
+// ZERO FAKE DATA: Strictly empty seed list. Real students appear when registered/created.
+const SEED_STUDENTS: StudentProfileData[] = [];
+
+function isFakeStudent(p: any): boolean {
+  if (!p) return true;
+  const id = p.userId || p._id || "";
+  const email = (p.email || "").toLowerCase();
+  if (LEGACY_FAKE_STUDENT_IDS.has(id)) return true;
+  if (email.endsWith("@example.com")) return true;
+  if (id.startsWith("usr_student_") && !id.startsWith("student_")) return true;
+  return false;
+}
 
 function normalizeStudentProfile(p: any): StudentProfileData {
   const goal = p.learningGoal || "Master course syllabus and excel in examinations.";
@@ -165,30 +88,27 @@ function normalizeStudentProfile(p: any): StudentProfileData {
 }
 
 export function getAllStudentProfiles(): StudentProfileData[] {
-  if (typeof window === "undefined") return SEED_STUDENTS.map(normalizeStudentProfile);
+  if (typeof window === "undefined") return [];
   try {
     const raw = localStorage.getItem(STORAGE_STUDENTS_KEY);
     if (!raw) {
-      localStorage.setItem(STORAGE_STUDENTS_KEY, JSON.stringify(SEED_STUDENTS));
-      return SEED_STUDENTS.map(normalizeStudentProfile);
+      return [];
     }
     const parsed = JSON.parse(raw);
     if (Array.isArray(parsed) && parsed.length > 0) {
-      // Ensure seed students are also available if not already in store
-      const map = new Map<string, StudentProfileData>();
-      for (const s of SEED_STUDENTS) {
-        map.set(s.userId, normalizeStudentProfile(s));
+      const realStudents = parsed
+        .filter((p) => p && !isFakeStudent(p))
+        .map(normalizeStudentProfile);
+
+      // If any fake students were pruned, re-sync localStorage immediately
+      if (realStudents.length !== parsed.length) {
+        localStorage.setItem(STORAGE_STUDENTS_KEY, JSON.stringify(realStudents));
       }
-      for (const p of parsed) {
-        if (p && (p.userId || p._id)) {
-          map.set(p.userId || p._id, normalizeStudentProfile(p));
-        }
-      }
-      return Array.from(map.values());
+      return realStudents;
     }
-    return SEED_STUDENTS.map(normalizeStudentProfile);
+    return [];
   } catch {
-    return SEED_STUDENTS.map(normalizeStudentProfile);
+    return [];
   }
 }
 

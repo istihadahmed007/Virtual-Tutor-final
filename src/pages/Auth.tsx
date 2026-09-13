@@ -811,6 +811,25 @@ export default function Auth({ redirectAfterAuth }: AuthProps = {}) {
                             Parent
                           </button>
                         </div>
+
+                        {/* Role Guidance Banner */}
+                        <div className="mt-2.5 p-3 rounded-2xl bg-[#FAF9F5] border border-[#E5E4DE] text-[11px] text-[#111111]/80 leading-relaxed">
+                          {selectedRole === "student" && (
+                            <p>
+                              <span className="font-bold text-[#111111]">Student Account:</span> Immediate access to browse verified tutors across NCTB, Cambridge & Edexcel, book 1-on-1 sessions, and enter live classrooms.
+                            </p>
+                          )}
+                          {selectedRole === "teacher" && (
+                            <p>
+                              <span className="font-bold text-[#111111]">Educator Onboarding:</span> Create your instructor account, submit credentials for verification, and set your tuition rates (85% net payout model).
+                            </p>
+                          )}
+                          {selectedRole === "parent" && (
+                            <p>
+                              <span className="font-bold text-[#111111]">Parent Account:</span> Monitor your children's learning schedule, review verified tutor credentials, and oversee tuition receipts.
+                            </p>
+                          )}
+                        </div>
                       </div>
 
                       {/* Full Name */}
@@ -824,7 +843,7 @@ export default function Auth({ redirectAfterAuth }: AuthProps = {}) {
                             id="reg-name"
                             name="name"
                             type="text"
-                            placeholder="Alex Rivera"
+                            placeholder="e.g. Tanvir Ahmed"
                             value={regName}
                             onChange={(e) => setRegName(e.target.value)}
                             required
@@ -847,7 +866,7 @@ export default function Auth({ redirectAfterAuth }: AuthProps = {}) {
                             name="email"
                             type="email"
                             inputMode="email"
-                            placeholder="you@example.com"
+                            placeholder="name@gmail.com"
                             value={regEmail}
                             onChange={(e) => setRegEmail(e.target.value)}
                             required
@@ -889,7 +908,19 @@ export default function Auth({ redirectAfterAuth }: AuthProps = {}) {
                             {showRegPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
                           </button>
                         </div>
-                        <p className="text-[11px] text-slate-500 mt-1">Must be at least 8 characters</p>
+                        {regPassword.length > 0 && (
+                          <div className="flex items-center gap-1.5 mt-1.5 text-[11px]">
+                            {regPassword.length >= 8 ? (
+                              <span className="text-emerald-600 font-semibold flex items-center gap-1">
+                                <CheckCircle2 className="w-3.5 h-3.5" /> 8+ characters requirement met
+                              </span>
+                            ) : (
+                              <span className="text-amber-600 font-semibold flex items-center gap-1">
+                                <AlertCircle className="w-3.5 h-3.5" /> Must be at least 8 characters ({regPassword.length}/8)
+                              </span>
+                            )}
+                          </div>
+                        )}
                       </div>
 
                       {/* Confirm Password */}
@@ -914,6 +945,19 @@ export default function Auth({ redirectAfterAuth }: AuthProps = {}) {
                             className="pl-10 h-11 rounded-xl border-stone-300"
                           />
                         </div>
+                        {regConfirmPassword.length > 0 && (
+                          <div className="flex items-center gap-1.5 mt-1.5 text-[11px]">
+                            {regPassword === regConfirmPassword ? (
+                              <span className="text-emerald-600 font-semibold flex items-center gap-1">
+                                <CheckCircle2 className="w-3.5 h-3.5" /> Passwords match
+                              </span>
+                            ) : (
+                              <span className="text-rose-600 font-semibold flex items-center gap-1">
+                                <AlertCircle className="w-3.5 h-3.5" /> Passwords do not match
+                              </span>
+                            )}
+                          </div>
+                        )}
                       </div>
 
                       {/* Terms agreement */}
@@ -1003,7 +1047,7 @@ export default function Auth({ redirectAfterAuth }: AuthProps = {}) {
                             name="email"
                             type="email"
                             inputMode="email"
-                            placeholder="you@example.com"
+                            placeholder="name@gmail.com"
                             value={loginEmail}
                             onChange={(e) => setLoginEmail(e.target.value)}
                             required

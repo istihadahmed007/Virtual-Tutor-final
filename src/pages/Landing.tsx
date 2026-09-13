@@ -985,12 +985,12 @@ export default function Landing() {
       <section className="py-20 sm:py-28 bg-white border-y border-[#E5E4DE]">
         <div className="max-w-[1440px] mx-auto px-4 sm:px-8">
           <div className="text-center max-w-2xl mx-auto mb-14">
-            <SectionLabel label="04" text="MEASURABLE GROWTH" className="justify-center" />
+            <SectionLabel label="04" text="ANALYTICS & PROGRESS TRACKING" className="justify-center" />
             <h2 className="text-3xl sm:text-4xl font-bold tracking-tight text-[#111111] mt-2">
-              Track your actual progress.
+              Track your authentic learning journey.
             </h2>
             <p className="text-sm text-[#111111]/70 mt-2">
-              Real metrics on hours studied, completed lessons, and syllabus milestone mastery.
+              Every lesson session, study hour, and syllabus milestone is measured and displayed in your personalized student dashboard.
             </p>
           </div>
 
@@ -999,36 +999,44 @@ export default function Landing() {
               <div className="w-10 h-10 rounded-2xl bg-white border border-[#E5E4DE] flex items-center justify-center text-[#F26522] mb-4">
                 <Clock className="w-5 h-5" />
               </div>
-              <p className="text-3xl font-black text-[#111111]">48h</p>
-              <p className="text-xs font-bold text-[#111111] mt-1">Hours Studied</p>
-              <p className="text-[11px] text-[#111111]/50 mt-0.5">Recorded in live classrooms</p>
+              <p className="text-lg font-bold text-[#111111]">Hour Logging</p>
+              <p className="text-xs text-[#111111]/70 mt-1">Verified Classroom Time</p>
+              <p className="text-[11px] text-[#111111]/50 mt-2 leading-relaxed">
+                Precise per-session tracking inside the LiveKit WebRTC classroom with automatic attendance recording.
+              </p>
             </div>
 
             <div className="bg-[#FAF9F5] rounded-3xl p-6 border border-[#E5E4DE] shadow-xs">
               <div className="w-10 h-10 rounded-2xl bg-white border border-[#E5E4DE] flex items-center justify-center text-[#111111] mb-4">
                 <CheckCircle2 className="w-5 h-5" />
               </div>
-              <p className="text-3xl font-black text-[#111111]">36</p>
-              <p className="text-xs font-bold text-[#111111] mt-1">Lessons Completed</p>
-              <p className="text-[11px] text-[#111111]/50 mt-0.5">1-on-1 tutoring sessions</p>
+              <p className="text-lg font-bold text-[#111111]">Milestone Checkpoints</p>
+              <p className="text-xs text-[#111111]/70 mt-1">Syllabus Breakdown</p>
+              <p className="text-[11px] text-[#111111]/50 mt-2 leading-relaxed">
+                Track topic-by-topic comprehension across NCTB, Cambridge, Edexcel, and test preparation curricula.
+              </p>
             </div>
 
             <div className="bg-[#FAF9F5] rounded-3xl p-6 border border-[#E5E4DE] shadow-xs">
               <div className="w-10 h-10 rounded-2xl bg-white border border-[#E5E4DE] flex items-center justify-center text-[#F26522] mb-4">
                 <TrendingUp className="w-5 h-5" />
               </div>
-              <p className="text-3xl font-black text-[#111111]">14 Days</p>
-              <p className="text-xs font-bold text-[#111111] mt-1">Learning Streak</p>
-              <p className="text-[11px] text-[#111111]/50 mt-0.5">Consistent weekly attendance</p>
+              <p className="text-lg font-bold text-[#111111]">Study Momentum</p>
+              <p className="text-xs text-[#111111]/70 mt-1">Weekly Consistency</p>
+              <p className="text-[11px] text-[#111111]/50 mt-2 leading-relaxed">
+                Visual streak badges and schedule reminders encourage disciplined weekly academic routines.
+              </p>
             </div>
 
             <div className="bg-[#FAF9F5] rounded-3xl p-6 border border-[#E5E4DE] shadow-xs">
               <div className="w-10 h-10 rounded-2xl bg-white border border-[#E5E4DE] flex items-center justify-center text-[#111111] mb-4">
                 <Award className="w-5 h-5" />
               </div>
-              <p className="text-3xl font-black text-[#111111]">94%</p>
-              <p className="text-xs font-bold text-[#111111] mt-1">Assignment Accuracy</p>
-              <p className="text-[11px] text-[#111111]/50 mt-0.5">Educator-reviewed problem sets</p>
+              <p className="text-lg font-bold text-[#111111]">Teacher Feedback</p>
+              <p className="text-xs text-[#111111]/70 mt-1">Performance Reviews</p>
+              <p className="text-[11px] text-[#111111]/50 mt-2 leading-relaxed">
+                Receive direct notes, homework critique, and performance evaluations from your personal tutor after every lesson.
+              </p>
             </div>
           </div>
         </div>

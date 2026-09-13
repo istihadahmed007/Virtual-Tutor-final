@@ -193,10 +193,10 @@ export default function TeacherDashboard() {
           />
           <StatBlock
             label="Instructor Rating"
-            value={teacherProfile?.rating ? `${teacherProfile.rating}` : "5.0"}
-            suffix="★"
+            value={teacherProfile?.rating ? `${teacherProfile.rating}` : "New Tutor"}
+            suffix={teacherProfile?.rating ? "★" : undefined}
             icon={Star}
-            subtext="Verified student feedback"
+            subtext={teacherProfile?.rating ? "Verified student feedback" : "Awaiting student reviews"}
           />
         </div>
 

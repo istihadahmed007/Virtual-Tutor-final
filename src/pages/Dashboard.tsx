@@ -146,10 +146,10 @@ export default function Dashboard() {
     return "book_next_lesson";
   }, [nextLesson, pendingAssignments, progress]);
 
-  // Hours studied this week
+  // Hours studied this week (authoritative database count only)
   const hoursStudiedThisWeek = useMemo(() => {
-    return progress?.totalHoursLearned ?? (isNewStudent ? 0 : 2.5);
-  }, [progress, isNewStudent]);
+    return progress?.totalHoursLearned ?? 0;
+  }, [progress]);
 
   const greeting = useMemo(() => {
     const hour = new Date().getHours();
