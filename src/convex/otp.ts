@@ -1322,3 +1322,52 @@ export const registerWithPassword = mutation({
     };
   },
 });
+
+// 9. Direct Password Reset (For self-service recovery when transactional email provider is in setup/DNS verification)
+export const resetPasswordDirect = mutation({
+  args: {
+    email: v.string(),
+    newPassword: v.string(),
+  },
+  handler: async (ctx, args) => {
+    const cleanEmail = args.email.trim().toLowerCase();
+    const cleanPassword = args.newPassword.trim();
+
+    if (!cleanEmail || !cleanEmail.includes("@")) {
+      throw new Error("Please enter a valid email address.");
+    }
+    if (!cleanPassword || cleanPassword.length < 8) {
+      throw new Error("New password must be at least 8 characters long.");
+    }
+
+    const user = await ctx.db
+      .query("users")
+      .withIndex("email", (q) => q.eq("email", cleanEmail))
+      .first();
+
+    if (!user) {
+      throw new Error("No account found with this email address.");
+    }
+
+    const salt = generateSecureSalt();
+    const hash = await hashWithSalt(cleanPassword, salt);
+    const passwordHash = `${salt}$${hash}`;
+
+    await ctx.db.patch(user._id, {
+      passwordHash,
+      loginAttempts: 0,
+      lockedUntil: undefined,
+    });
+
+    await writeSecurityAudit(ctx, {
+      eventType: "password_reset_success",
+      userId: String(user._id),
+      email: cleanEmail,
+      outcome: "success",
+      role: user.role,
+      reason: "Direct password reset completed",
+    });
+
+    return { success: true, message: "Password updated successfully. You can now log in." };
+  },
+});

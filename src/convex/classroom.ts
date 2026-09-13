@@ -253,11 +253,7 @@ async function verifySessionUser(
   ) {
     isTeacher = true;
   } else if (!isTeacher && !isStudent) {
-    if (userRole === "teacher") {
-      isTeacher = true;
-    } else {
-      isStudent = true;
-    }
+    isStudent = true;
   }
 
   // 5. Check if student has been removed from this session

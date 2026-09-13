@@ -584,7 +584,39 @@ export default function Auth({ redirectAfterAuth }: AuthProps = {}) {
           {error && (
             <div className="bg-rose-50 border-b border-rose-200/60 p-4 flex items-start gap-3">
               <AlertCircle className="w-5 h-5 text-rose-600 shrink-0 mt-0.5" />
-              <div className="text-sm font-medium text-rose-800 leading-relaxed">{error}</div>
+              <div className="text-sm font-medium text-rose-800 leading-relaxed flex-1">
+                <div>{error}</div>
+                {error.toLowerCase().includes("already exists") && mode === "register" && (
+                  <div className="mt-2.5">
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setMode("login");
+                        setLoginEmail(regEmail);
+                        setError(null);
+                      }}
+                      className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-[#F26522] text-white text-xs font-semibold hover:bg-[#d85518] transition-colors cursor-pointer shadow-xs"
+                    >
+                      Switch to Log In with this email →
+                    </button>
+                  </div>
+                )}
+                {error.toLowerCase().includes("no account found") && mode === "login" && (
+                  <div className="mt-2.5">
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setMode("register");
+                        setRegEmail(loginEmail);
+                        setError(null);
+                      }}
+                      className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-[#F26522] text-white text-xs font-semibold hover:bg-[#d85518] transition-colors cursor-pointer shadow-xs"
+                    >
+                      Create an account with this email →
+                    </button>
+                  </div>
+                )}
+              </div>
             </div>
           )}
 
@@ -601,7 +633,7 @@ export default function Auth({ redirectAfterAuth }: AuthProps = {}) {
           {verifyStep === "otp_verify" ? (
             <div>
               <CardHeader className="text-center pb-2 pt-8 px-6">
-                <div className="w-12 h-12 bg-teal-50 text-teal-600 rounded-full flex items-center justify-center mx-auto mb-3 border border-teal-200/60">
+                <div className="w-12 h-12 bg-[#F26522]/10 text-[#F26522] rounded-full flex items-center justify-center mx-auto mb-3 border border-[#F26522]/20">
                   <Mail className="w-6 h-6" />
                 </div>
                 <CardTitle className="text-2xl font-bold text-slate-900">Check your email</CardTitle>
@@ -630,7 +662,7 @@ export default function Auth({ redirectAfterAuth }: AuthProps = {}) {
                         value={digit}
                         onChange={(e) => handleDigitChange(idx, e.target.value)}
                         onKeyDown={(e) => handleKeyDown(idx, e)}
-                        className="w-11 h-13 sm:w-12 sm:h-14 text-center text-2xl font-bold rounded-xl border border-stone-300 focus:border-teal-600 focus:ring-2 focus:ring-teal-600/20 bg-white text-slate-900 transition-all outline-none"
+                        className="w-11 h-13 sm:w-12 sm:h-14 text-center text-2xl font-bold rounded-xl border border-stone-300 focus:border-[#F26522] focus:ring-2 focus:ring-[#F26522]/20 bg-white text-slate-900 transition-all outline-none"
                         autoFocus={idx === 0}
                       />
                     ))}
@@ -659,7 +691,7 @@ export default function Auth({ redirectAfterAuth }: AuthProps = {}) {
                           type="button"
                           onClick={handleResendOTP}
                           disabled={isLoading}
-                          className="font-semibold text-teal-600 hover:text-teal-700 inline-flex items-center gap-1.5 transition-colors cursor-pointer"
+                          className="font-semibold text-[#F26522] hover:text-[#d85518] inline-flex items-center gap-1.5 transition-colors cursor-pointer"
                         >
                           <RefreshCw className="w-3.5 h-3.5" /> Resend verification email
                         </button>
@@ -891,7 +923,7 @@ export default function Auth({ redirectAfterAuth }: AuthProps = {}) {
                           id="terms"
                           checked={agreeTerms}
                           onChange={(e) => setAgreeTerms(e.target.checked)}
-                          className="mt-1 h-4 w-4 rounded border-stone-300 text-teal-600 focus:ring-teal-500"
+                          className="mt-1 h-4 w-4 rounded border-stone-300 text-[#F26522] focus:ring-[#F26522]"
                         />
                         <label htmlFor="terms" className="text-xs text-slate-600 leading-tight">
                           I agree to the{" "}
@@ -899,7 +931,7 @@ export default function Auth({ redirectAfterAuth }: AuthProps = {}) {
                             href="/terms"
                             target="_blank"
                             rel="noopener noreferrer"
-                            className="text-teal-700 hover:text-teal-800 underline font-medium"
+                            className="text-[#111111] hover:text-[#F26522] underline font-medium"
                           >
                             Terms of Service
                           </a>{" "}
@@ -908,7 +940,7 @@ export default function Auth({ redirectAfterAuth }: AuthProps = {}) {
                             href="/privacy"
                             target="_blank"
                             rel="noopener noreferrer"
-                            className="text-teal-700 hover:text-teal-800 underline font-medium"
+                            className="text-[#111111] hover:text-[#F26522] underline font-medium"
                           >
                             Privacy Policy
                           </a>
@@ -940,7 +972,7 @@ export default function Auth({ redirectAfterAuth }: AuthProps = {}) {
                           setMode("login");
                           setError(null);
                         }}
-                        className="font-semibold text-teal-600 hover:text-teal-700 cursor-pointer"
+                        className="font-semibold text-[#F26522] hover:text-[#d85518] cursor-pointer"
                       >
                         Log in
                       </button>
@@ -998,7 +1030,7 @@ export default function Auth({ redirectAfterAuth }: AuthProps = {}) {
                               setForgotEmail(loginEmail);
                               setError(null);
                             }}
-                            className="text-xs font-medium text-teal-600 hover:text-teal-700 cursor-pointer"
+                            className="text-xs font-medium text-[#F26522] hover:text-[#d85518] cursor-pointer"
                           >
                             Forgot password?
                           </button>
@@ -1054,7 +1086,7 @@ export default function Auth({ redirectAfterAuth }: AuthProps = {}) {
                           setMode("register");
                           setError(null);
                         }}
-                        className="font-semibold text-teal-600 hover:text-teal-700 cursor-pointer"
+                        className="font-semibold text-[#F26522] hover:text-[#d85518] cursor-pointer"
                       >
                         Create account
                       </button>
@@ -1155,7 +1187,7 @@ export default function Auth({ redirectAfterAuth }: AuthProps = {}) {
                 <Button
                   type="submit"
                   disabled={isLoading}
-                  className="flex-1 rounded-xl h-11 bg-teal-600 hover:bg-teal-700 text-white cursor-pointer"
+                  className="flex-1 rounded-xl h-11 bg-[#F26522] hover:bg-[#d85518] text-white cursor-pointer font-semibold"
                 >
                   {isLoading ? <Loader2 className="w-4 h-4 animate-spin" /> : "Update Password"}
                 </Button>
