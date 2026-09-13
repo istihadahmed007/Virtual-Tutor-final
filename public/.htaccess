@@ -7,9 +7,13 @@
   RewriteRule . /index.html [L]
 </IfModule>
 
-# CORS headers for module scripts (Vite adds crossorigin attribute)
+# MIME types for video streaming
+AddType video/mp4 .mp4
+AddType video/webm .webm
+
+# CORS headers for module scripts and video assets
 <IfModule mod_headers.c>
-  <FilesMatch "\.(js|mjs|css|woff2?|ttf|eot|svg|png|jpg|jpeg|gif|webp|ico)$">
+  <FilesMatch "\.(js|mjs|css|woff2?|ttf|eot|svg|png|jpg|jpeg|gif|webp|ico|mp4|webm)$">
     Header set Access-Control-Allow-Origin "*"
   </FilesMatch>
 </IfModule>
@@ -28,5 +32,7 @@
   ExpiresByType image/png "access plus 1 year"
   ExpiresByType image/jpeg "access plus 1 year"
   ExpiresByType image/webp "access plus 1 year"
+  ExpiresByType video/mp4 "access plus 1 year"
+  ExpiresByType video/webm "access plus 1 year"
   ExpiresByType application/manifest+json "access plus 1 month"
 </IfModule>

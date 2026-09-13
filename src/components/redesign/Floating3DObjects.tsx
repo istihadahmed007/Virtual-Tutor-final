@@ -48,7 +48,7 @@ export const Floating3DObjects: React.FC<{ className?: string }> = ({ className 
         }}
         transition={{ duration: 9, repeat: Infinity, ease: "easeInOut", delay: 1 }}
         style={{ perspective: 1000 }}
-        className="absolute top-[35%] left-[5%] hidden lg:block"
+        className="absolute top-[15%] left-[1%] hidden 2xl:block opacity-60"
       >
         <div className="relative w-24 h-24 rounded-3xl bg-gradient-to-tr from-[#312E81]/15 via-[#6D5DFB]/15 to-[#14B8A6]/20 p-4 shadow-[0_24px_48px_rgba(109,93,251,0.14)] border border-white/60 backdrop-blur-xl flex items-center justify-center">
           {/* Diamond Top Cap Representation */}

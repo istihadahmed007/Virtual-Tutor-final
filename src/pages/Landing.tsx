@@ -178,6 +178,7 @@ export default function Landing() {
   const [isScrolled, setIsScrolled] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedSubject, setSelectedSubject] = useState<string>("All");
+  const [heroTheme, setHeroTheme] = useState<"dark" | "light">("dark");
 
   // Active accordion FAQ index
   const [activeFaqIndex, setActiveFaqIndex] = useState<number | null>(0);
@@ -308,7 +309,9 @@ export default function Landing() {
       <header
         className={`sticky top-0 z-50 transition-all duration-300 ${
           isScrolled
-            ? "bg-white/90 backdrop-blur-md border-b border-slate-200/80 shadow-[0_4px_20px_rgba(15,23,42,0.03)] py-3"
+            ? "bg-white/95 backdrop-blur-md border-b border-slate-200/80 shadow-[0_4px_20px_rgba(15,23,42,0.03)] py-3"
+            : heroTheme === "dark"
+            ? "bg-[#030712]/40 backdrop-blur-sm py-5"
             : "bg-transparent py-5"
         }`}
       >
@@ -319,46 +322,75 @@ export default function Landing() {
               variant="horizontal"
               size="md"
               showSubtext={true}
+              isDark={heroTheme === "dark" && !isScrolled}
               onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
               className="cursor-pointer"
             />
           </div>
 
           {/* Desktop Navigation Links */}
-          <nav className="hidden md:flex items-center gap-1.5 px-4 py-1.5 rounded-full border border-slate-200/80 bg-white/80 backdrop-blur-md text-xs font-semibold text-slate-700 shadow-xs">
+          <nav className={`hidden md:flex items-center gap-1.5 px-4 py-1.5 rounded-full border backdrop-blur-md text-xs font-semibold shadow-xs transition-colors ${
+            heroTheme === "dark" && !isScrolled
+              ? "border-white/15 bg-white/10 text-slate-200"
+              : "border-slate-200/80 bg-white/80 text-slate-700"
+          }`}>
             <Link
               to="/teachers"
-              className="px-3.5 py-1.5 rounded-full hover:text-[#312E81] hover:bg-slate-100 transition-colors"
+              className={`px-3.5 py-1.5 rounded-full transition-colors ${
+                heroTheme === "dark" && !isScrolled
+                  ? "hover:text-white hover:bg-white/10"
+                  : "hover:text-[#312E81] hover:bg-slate-100"
+              }`}
             >
               Find Tutors
             </Link>
             <a
               href="#how-it-works"
-              className="px-3.5 py-1.5 rounded-full hover:text-[#312E81] hover:bg-slate-100 transition-colors"
+              className={`px-3.5 py-1.5 rounded-full transition-colors ${
+                heroTheme === "dark" && !isScrolled
+                  ? "hover:text-white hover:bg-white/10"
+                  : "hover:text-[#312E81] hover:bg-slate-100"
+              }`}
             >
               How It Works
             </a>
             <a
               href="#subjects"
-              className="px-3.5 py-1.5 rounded-full hover:text-[#312E81] hover:bg-slate-100 transition-colors"
+              className={`px-3.5 py-1.5 rounded-full transition-colors ${
+                heroTheme === "dark" && !isScrolled
+                  ? "hover:text-white hover:bg-white/10"
+                  : "hover:text-[#312E81] hover:bg-slate-100"
+              }`}
             >
               Subjects
             </a>
             <Link
               to="/teacher-application"
-              className="px-3.5 py-1.5 rounded-full hover:text-[#312E81] hover:bg-slate-100 transition-colors"
+              className={`px-3.5 py-1.5 rounded-full transition-colors ${
+                heroTheme === "dark" && !isScrolled
+                  ? "hover:text-white hover:bg-white/10"
+                  : "hover:text-[#312E81] hover:bg-slate-100"
+              }`}
             >
               Become a Tutor
             </Link>
             <Link
               to="/community"
-              className="px-3.5 py-1.5 rounded-full hover:text-[#312E81] hover:bg-slate-100 transition-colors"
+              className={`px-3.5 py-1.5 rounded-full transition-colors ${
+                heroTheme === "dark" && !isScrolled
+                  ? "hover:text-white hover:bg-white/10"
+                  : "hover:text-[#312E81] hover:bg-slate-100"
+              }`}
             >
               Community
             </Link>
             <a
               href="#faq"
-              className="px-3.5 py-1.5 rounded-full hover:text-[#312E81] hover:bg-slate-100 transition-colors"
+              className={`px-3.5 py-1.5 rounded-full transition-colors ${
+                heroTheme === "dark" && !isScrolled
+                  ? "hover:text-white hover:bg-white/10"
+                  : "hover:text-[#312E81] hover:bg-slate-100"
+              }`}
             >
               FAQ
             </a>
@@ -486,14 +518,20 @@ export default function Landing() {
       </header>
 
       {/* ─── 2. HERO SECTION ─── */}
-      <section className="relative pt-6 pb-20 sm:pt-12 sm:pb-28 overflow-hidden">
+      <section className={`relative pt-6 pb-20 sm:pt-12 sm:pb-28 overflow-hidden transition-colors duration-500 ${
+        heroTheme === "dark" ? "bg-[#030712] text-white" : "bg-[#F8FAFC] text-[#0F172A]"
+      }`}>
         {/* Plane 0: Cinematic Motion Background Animation with Parallax */}
         <motion.div
           style={{ y: heroBgY }}
           className="absolute inset-0 w-full h-[120%] -top-[10%] pointer-events-none z-0 overflow-hidden"
           aria-hidden="true"
         >
-          <CinematicBackgroundAnimation variant="hero" opacity={0.24} />
+          <CinematicBackgroundAnimation
+            variant={heroTheme === "dark" ? "hero-dark" : "hero"}
+            theme={heroTheme}
+            opacity={heroTheme === "dark" ? 0.90 : 0.65}
+          />
         </motion.div>
 
         <AmbientAtmosphere />
@@ -508,20 +546,55 @@ export default function Landing() {
               animate="visible"
               className="lg:col-span-6 space-y-6 text-left"
             >
-              {/* Eyebrow Pill */}
-              <motion.div variants={itemVariants}>
-                <span className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-white/90 border border-slate-200 shadow-xs text-xs font-bold tracking-wider uppercase text-[#312E81]">
+              {/* Theme Switch & Eyebrow Pill Row */}
+              <div className="flex flex-wrap items-center gap-3">
+                {/* Visual Mode Switch */}
+                <div className={`inline-flex items-center gap-1 p-1 rounded-full border backdrop-blur-md transition-all ${
+                  heroTheme === "dark" ? "bg-white/10 border-white/15 text-white" : "bg-white border-slate-200 text-slate-800 shadow-2xs"
+                }`}>
+                  <button
+                    type="button"
+                    onClick={() => setHeroTheme("dark")}
+                    className={`px-3 py-1 rounded-full text-xs font-bold transition-all cursor-pointer ${
+                      heroTheme === "dark" ? "bg-white text-slate-950 shadow-xs" : "text-slate-400 hover:text-white"
+                    }`}
+                  >
+                    🌙 Cinematic Motion
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setHeroTheme("light")}
+                    className={`px-3 py-1 rounded-full text-xs font-bold transition-all cursor-pointer ${
+                      heroTheme === "light" ? "bg-[#312E81] text-white shadow-xs" : "text-slate-400 hover:text-slate-700"
+                    }`}
+                  >
+                    ☀️ Minimal Light
+                  </button>
+                </div>
+
+                {/* Eyebrow Badge */}
+                <span className={`inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full border shadow-xs text-xs font-bold tracking-wider uppercase backdrop-blur-md transition-colors ${
+                  heroTheme === "dark"
+                    ? "bg-white/10 border-white/20 text-white"
+                    : "bg-white/90 border-slate-200 text-[#312E81]"
+                }`}>
                   <span className="w-2 h-2 rounded-full bg-[#14B8A6] animate-pulse" />
                   VERIFIED 1-ON-1 ONLINE LEARNING · BANGLADESH
                 </span>
-              </motion.div>
+              </div>
 
               {/* Main Headline */}
               <motion.div variants={itemVariants}>
-                <h1 className="text-4xl sm:text-6xl xl:text-[4.25rem] font-bold tracking-tight leading-[1.08] text-[#0F172A]">
+                <h1 className={`text-4xl sm:text-6xl xl:text-[4.25rem] font-bold tracking-tight leading-[1.08] transition-colors ${
+                  heroTheme === "dark" ? "text-white" : "text-[#0F172A]"
+                }`}>
                   Learn better.
                   <br />
-                  <span className="bg-gradient-to-r from-[#312E81] via-[#6D5DFB] to-[#14B8A6] bg-clip-text text-transparent">
+                  <span className={
+                    heroTheme === "dark"
+                      ? "bg-gradient-to-r from-white via-[#C7D2FE] to-[#2DD4BF] bg-clip-text text-transparent"
+                      : "bg-gradient-to-r from-[#312E81] via-[#6D5DFB] to-[#14B8A6] bg-clip-text text-transparent"
+                  }>
                     With the right teacher.
                   </span>
                 </h1>
@@ -529,7 +602,9 @@ export default function Landing() {
 
               {/* Supporting Text */}
               <motion.div variants={itemVariants}>
-                <p className="text-base sm:text-lg text-slate-600 leading-relaxed max-w-xl">
+                <p className={`text-base sm:text-lg leading-relaxed max-w-xl transition-colors ${
+                  heroTheme === "dark" ? "text-slate-300" : "text-slate-600"
+                }`}>
                   Connect with verified teachers, book live one-to-one lessons, and learn in a professional WebRTC classroom with real-time digital whiteboard and protected escrow payments.
                 </p>
               </motion.div>
@@ -539,31 +614,45 @@ export default function Landing() {
                 <PrimaryButton
                   onClick={() => navigate("/teachers")}
                   size="lg"
-                  className="shadow-[0_8px_25px_rgba(49,46,129,0.2)]"
+                  className={
+                    heroTheme === "dark"
+                      ? "bg-white text-slate-950 hover:bg-slate-100 shadow-[0_0_30px_rgba(255,255,255,0.25)] border-white font-semibold"
+                      : "shadow-[0_8px_25px_rgba(49,46,129,0.2)]"
+                  }
                 >
                   Find a Tutor
                 </PrimaryButton>
                 <SecondaryButton
                   onClick={() => navigate("/teacher-application")}
                   size="lg"
+                  className={
+                    heroTheme === "dark"
+                      ? "bg-white/10 text-white border-white/20 hover:bg-white/20 backdrop-blur-md"
+                      : ""
+                  }
                 >
                   Become a Tutor
                 </SecondaryButton>
               </motion.div>
 
               {/* Quick Trust Highlights */}
-              <motion.div variants={itemVariants} className="pt-6 border-t border-slate-200/80 grid grid-cols-3 gap-4">
+              <motion.div
+                variants={itemVariants}
+                className={`pt-6 border-t grid grid-cols-3 gap-4 transition-colors ${
+                  heroTheme === "dark" ? "border-white/15" : "border-slate-200/80"
+                }`}
+              >
                 <div>
-                  <p className="text-2xl font-black text-[#312E81]">100%</p>
-                  <p className="text-xs text-slate-500 font-medium mt-0.5">Verified Teachers</p>
+                  <p className={`text-2xl font-black ${heroTheme === "dark" ? "text-white" : "text-[#312E81]"}`}>100%</p>
+                  <p className={`text-xs font-medium mt-0.5 ${heroTheme === "dark" ? "text-slate-400" : "text-slate-500"}`}>Verified Teachers</p>
                 </div>
                 <div>
-                  <p className="text-2xl font-black text-[#6D5DFB]">1-on-1</p>
-                  <p className="text-xs text-slate-500 font-medium mt-0.5">Interactive Live Video</p>
+                  <p className={`text-2xl font-black ${heroTheme === "dark" ? "text-[#C7D2FE]" : "text-[#6D5DFB]"}`}>1-on-1</p>
+                  <p className={`text-xs font-medium mt-0.5 ${heroTheme === "dark" ? "text-slate-400" : "text-slate-500"}`}>Interactive Live Video</p>
                 </div>
                 <div>
-                  <p className="text-2xl font-black text-[#14B8A6]">Escrow</p>
-                  <p className="text-xs text-slate-500 font-medium mt-0.5">Payment Protection</p>
+                  <p className={`text-2xl font-black ${heroTheme === "dark" ? "text-[#2DD4BF]" : "text-[#14B8A6]"}`}>Escrow</p>
+                  <p className={`text-xs font-medium mt-0.5 ${heroTheme === "dark" ? "text-slate-400" : "text-slate-500"}`}>Payment Protection</p>
                 </div>
               </motion.div>
             </motion.div>
