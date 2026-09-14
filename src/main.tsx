@@ -217,7 +217,7 @@ root.render(
           storage={loggedConvexAuthStorage}
           shouldHandleCode={false}
         >
-          <BrowserRouter>
+          <BrowserRouter basename={import.meta.env.BASE_URL}>
             <AppHelmet />
             <RouteErrorBoundary>
               <Suspense fallback={<RouteLoading />}>

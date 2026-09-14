@@ -867,7 +867,14 @@ function uddoktapayApiPlugin(): Plugin {
     };
   }
 
+const base =
+  process.env.VITE_BASE_URL ||
+  (process.env.NODE_ENV === "production" || process.env.GITHUB_PAGES === "true" || process.env.GITHUB_ACTIONS === "true"
+    ? "/Virtual-Tutor-final/"
+    : "/");
+
 export default defineConfig({
+  base,
   plugins: [react(), tailwindcss(), livekitApiPlugin(), uddoktapayApiPlugin()],
   resolve: {
     alias: {
