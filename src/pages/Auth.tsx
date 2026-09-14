@@ -36,7 +36,7 @@ import {
   checkRedirectLoop,
 } from "@/lib/auth-handshake-logger";
 import { BrandLogo } from "@/components/BrandLogo";
-import { CinematicBackgroundAnimation } from "@/components/redesign/CinematicBackgroundAnimation";
+import { InternalBackground } from "@/components/redesign/InternalBackground";
 
 const logo = "/logo.svg";
 
@@ -571,11 +571,9 @@ export default function Auth({ redirectAfterAuth }: AuthProps = {}) {
   };
 
   return (
-    <div className="min-h-screen bg-black text-white flex flex-col justify-center py-12 px-4 sm:px-6 lg:px-8 relative overflow-hidden selection:bg-violet-500/30 selection:text-white">
-      {/* Plane 0: Global Living Background Canvas */}
-      <div className="fixed inset-0 pointer-events-none z-0 overflow-hidden" aria-hidden="true">
-        <CinematicBackgroundAnimation variant="fullscreen" theme="dark" opacity={0.65} />
-      </div>
+    <div className="min-h-screen bg-[#07080D] text-white flex flex-col justify-center py-12 px-4 sm:px-6 lg:px-8 relative overflow-hidden selection:bg-violet-500/30 selection:text-white">
+      {/* Plane 0: Refined Static Dark Ambient Atmosphere */}
+      <InternalBackground />
 
       {/* Brand Header */}
       <div className="sm:mx-auto sm:w-full sm:max-w-md text-center mb-6 relative z-10">
@@ -585,7 +583,7 @@ export default function Auth({ redirectAfterAuth }: AuthProps = {}) {
       </div>
 
       <div className="sm:mx-auto sm:w-full sm:max-w-md relative z-10">
-        <Card className="border border-white/12 shadow-[0_16px_48px_rgba(0,0,0,0.6),inset_0_1px_0_rgba(255,255,255,0.1)] bg-slate-950/50 backdrop-blur-2xl rounded-3xl overflow-hidden text-white">
+        <Card className="border border-white/10 shadow-[0_16px_48px_rgba(0,0,0,0.6),inset_0_1px_0_rgba(255,255,255,0.08)] bg-white/[0.045] backdrop-blur-2xl rounded-3xl overflow-hidden text-white">
           {/* Notification Messages */}
           {error && (
             <div className="bg-rose-500/10 border-b border-rose-500/30 p-4 flex items-start gap-3">

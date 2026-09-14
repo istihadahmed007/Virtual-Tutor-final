@@ -31,7 +31,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { ErrorLogsViewerModal } from "@/components/ErrorLogsViewerModal";
 import { BrandLogo } from "@/components/BrandLogo";
-import { CinematicBackgroundAnimation } from "@/components/redesign/CinematicBackgroundAnimation";
+import { InternalBackground } from "@/components/redesign/InternalBackground";
 
 interface AdminLayoutProps {
   children: ReactNode;
@@ -221,12 +221,12 @@ export function AdminLayout({ children }: AdminLayoutProps) {
   );
 
   return (
-    <div className="relative min-h-screen bg-black text-white flex flex-col md:flex-row antialiased overflow-x-hidden selection:bg-violet-500/30">
-      {/* Universal Living Atmosphere */}
-      <CinematicBackgroundAnimation />
+    <div className="relative min-h-screen bg-[#07080D] text-white flex flex-col md:flex-row antialiased overflow-x-hidden selection:bg-violet-500/30">
+      {/* Refined Static Dark Ambient Atmosphere */}
+      <InternalBackground />
 
       {/* Desktop Fixed Sidebar */}
-      <aside className="hidden md:flex w-64 flex-col fixed inset-y-0 z-40 border-r border-white/10 bg-slate-950/60 backdrop-blur-2xl text-white">
+      <aside className="hidden md:flex w-64 flex-col fixed inset-y-0 z-40 border-r border-white/10 bg-white/[0.03] backdrop-blur-2xl text-white">
         {sidebarContent}
       </aside>
 

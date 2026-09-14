@@ -16,3 +16,4 @@ export { MouseSpotlight } from "./MouseSpotlight";
 export { CursorEnhancement } from "./CursorEnhancement";
 export { FloatingNavPill } from "./FloatingNavPill";
 export { AgentWaveCanvas } from "./AgentWaveCanvas";
+export { InternalBackground } from "./InternalBackground";

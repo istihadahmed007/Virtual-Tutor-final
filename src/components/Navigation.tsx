@@ -152,10 +152,10 @@ export function Navigation() {
       <header className={`sticky z-50 px-3 sm:px-6 max-w-[1440px] mx-auto pointer-events-none transition-all duration-300 ${
         isScrolled ? "top-2 sm:top-2.5" : "top-3 sm:top-4"
       }`}>
-        <div className={`pointer-events-auto bg-slate-950/45 backdrop-blur-2xl rounded-full border border-white/12 transition-all duration-300 flex items-center justify-between text-white ${
+        <div className={`pointer-events-auto bg-[#07080D]/60 hover:bg-[#07080D]/75 backdrop-blur-2xl rounded-full border border-white/12 transition-all duration-300 flex items-center justify-between text-white ${
           isScrolled
-            ? "px-3 sm:px-4 py-1.5 shadow-[0_8px_32px_rgba(0,0,0,0.4),inset_0_1px_0_rgba(255,255,255,0.12)]"
-            : "px-3 sm:px-5 py-2 sm:py-2.5 shadow-[0_8px_24px_rgba(0,0,0,0.25),inset_0_1px_0_rgba(255,255,255,0.08)]"
+            ? "px-3 sm:px-4 py-1.5 shadow-[0_12px_36px_rgba(0,0,0,0.45),inset_0_1px_0_rgba(255,255,255,0.12)] border-white/15"
+            : "px-3 sm:px-5 py-2 sm:py-2.5 shadow-[0_8px_32px_rgba(0,0,0,0.3),inset_0_1px_0_rgba(255,255,255,0.08)]"
         }`}>
           {/* LEFT: Logo & Brand */}
           <div className="flex items-center gap-3 sm:gap-6">

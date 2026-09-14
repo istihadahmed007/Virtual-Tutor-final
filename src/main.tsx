@@ -111,7 +111,7 @@ const AdminNotificationsPage = lazyWithRetry(() => import("./pages/admin/AdminNo
 const AdminAuditLogsPage = lazyWithRetry(() => import("./pages/admin/AdminAuditLogsPage"), "AdminAuditLogsPage");
 const AdminSettingsPage = lazyWithRetry(() => import("./pages/admin/AdminSettingsPage"), "AdminSettingsPage");
 
-import { CinematicBackgroundAnimation } from "@/components/redesign/CinematicBackgroundAnimation";
+import { InternalBackground } from "@/components/redesign/InternalBackground";
 
 function RouteLoading() {
   return (
@@ -130,11 +130,9 @@ function AppShell({ children }: { children: React.ReactNode }) {
   const isMobileActiveChat = location.pathname === "/messages" && Boolean(searchParams.get("id"));
 
   return (
-    <div className={`min-h-screen bg-black text-white relative font-sans selection:bg-violet-500/30 selection:text-white ${isMobileActiveChat ? "pb-0" : "pb-16 md:pb-0"}`}>
-      {/* Global Living Background Atmosphere (Agent Wave) */}
-      <div className="fixed inset-0 pointer-events-none z-0 overflow-hidden" aria-hidden="true">
-        <CinematicBackgroundAnimation variant="fullscreen" theme="dark" opacity={0.65} />
-      </div>
+    <div className={`min-h-screen bg-[#07080D] text-white relative font-sans selection:bg-violet-500/30 selection:text-white ${isMobileActiveChat ? "pb-0" : "pb-16 md:pb-0"}`}>
+      {/* Refined Static Dark Ambient Atmosphere for Internal Pages */}
+      <InternalBackground />
 
       {/* Global Foreground Glass UI */}
       <div className="relative z-10 flex flex-col min-h-screen">
