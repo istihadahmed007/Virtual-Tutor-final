@@ -21,36 +21,39 @@ export const InternalBackground: React.FC<InternalBackgroundProps> = ({
 }) => {
   return (
     <div
-      className={`fixed inset-0 w-full h-full pointer-events-none z-0 overflow-hidden select-none bg-[#07080D] ${className}`}
+      className={`fixed inset-0 w-full h-full pointer-events-none z-0 overflow-hidden select-none ${className}`}
+      style={{
+        background: "linear-gradient(135deg, #07142F 0%, #0B1D41 45%, #102A5C 100%)",
+      }}
       aria-hidden="true"
     >
-      {/* Primary Ambient Atmosphere: Top-center Soft Violet/Indigo Glow */}
+      {/* Primary Ambient Blue Light: Top-Center Royal Blue Ambient Diffusion */}
       <div
-        className="absolute -top-[25%] left-1/2 -translate-x-1/2 w-[1000px] sm:w-[1400px] h-[550px] sm:h-[750px] rounded-full pointer-events-none"
+        className="absolute -top-[20%] left-1/2 -translate-x-1/2 w-[1100px] sm:w-[1500px] h-[600px] sm:h-[800px] rounded-full pointer-events-none"
         style={{
           background:
-            "radial-gradient(ellipse 65% 50% at 50% 30%, rgba(109, 93, 251, 0.13), rgba(49, 46, 129, 0.07) 50%, transparent 80%)",
-          filter: "blur(60px)",
-        }}
-      />
-
-      {/* Secondary Ambient Accent: Subtle Emerald/Teal Horizon Light on bottom-right */}
-      <div
-        className="absolute -bottom-[20%] right-[-10%] w-[650px] sm:w-[900px] h-[500px] sm:h-[700px] rounded-full pointer-events-none"
-        style={{
-          background:
-            "radial-gradient(ellipse 60% 45% at 50% 50%, rgba(20, 184, 166, 0.055), transparent 75%)",
-          filter: "blur(75px)",
-        }}
-      />
-
-      {/* Tertiary Soft Fill: Subtle Indigo Depth on middle-left */}
-      <div
-        className="absolute top-[35%] -left-[15%] w-[500px] sm:w-[700px] h-[400px] sm:h-[600px] rounded-full pointer-events-none"
-        style={{
-          background:
-            "radial-gradient(ellipse 55% 45% at 50% 50%, rgba(99, 102, 241, 0.045), transparent 75%)",
+            "radial-gradient(ellipse 65% 50% at 50% 30%, rgba(65, 105, 225, 0.16), rgba(39, 71, 184, 0.08) 50%, transparent 80%)",
           filter: "blur(70px)",
+        }}
+      />
+
+      {/* Secondary Ambient Accent: Soft Blue Horizon on Bottom-Right */}
+      <div
+        className="absolute -bottom-[20%] right-[-10%] w-[700px] sm:w-[950px] h-[550px] sm:h-[750px] rounded-full pointer-events-none"
+        style={{
+          background:
+            "radial-gradient(ellipse 60% 45% at 50% 50%, rgba(91, 124, 255, 0.09), transparent 75%)",
+          filter: "blur(80px)",
+        }}
+      />
+
+      {/* Tertiary Soft Fill: Deep Royal Blue Light on middle-left */}
+      <div
+        className="absolute top-[35%] -left-[15%] w-[550px] sm:w-[750px] h-[450px] sm:h-[650px] rounded-full pointer-events-none"
+        style={{
+          background:
+            "radial-gradient(ellipse 55% 45% at 50% 50%, rgba(142, 167, 255, 0.06), transparent 75%)",
+          filter: "blur(75px)",
         }}
       />
 
@@ -59,13 +62,13 @@ export const InternalBackground: React.FC<InternalBackgroundProps> = ({
         className="absolute inset-0 pointer-events-none"
         style={{
           background:
-            "radial-gradient(ellipse 90% 80% at 50% 40%, transparent 45%, rgba(4, 5, 8, 0.6) 100%)",
+            "radial-gradient(ellipse 90% 80% at 50% 40%, transparent 45%, rgba(7, 20, 47, 0.5) 100%)",
         }}
       />
 
-      {/* Micro-grain film texture overlay for tactile depth */}
+      {/* Micro-grain film texture overlay for tactile luxury */}
       <div
-        className="absolute inset-0 opacity-[0.035] pointer-events-none mix-blend-screen"
+        className="absolute inset-0 opacity-[0.025] pointer-events-none mix-blend-screen"
         style={{
           backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E")`,
         }}

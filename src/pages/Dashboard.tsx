@@ -160,15 +160,15 @@ export default function Dashboard() {
 
   return (
     <main className="min-h-screen bg-transparent text-white pb-24 pt-6 sm:pt-8">
-      <div className="max-w-[1440px] mx-auto px-4 sm:px-8">
+      <div className="max-w-[1280px] mx-auto px-4 sm:px-6 lg:px-8">
         {/* Editorial Top Heading */}
         <div className="flex flex-col sm:flex-row sm:items-end justify-between mb-6 gap-4">
           <div>
             <SectionLabel number="01" text="Student Workspace" className="mb-2.5" />
-            <h1 className="text-2xl sm:text-4xl font-bold tracking-[-0.03em] text-white font-display">
+            <h1 className="text-2xl sm:text-4xl font-extrabold tracking-[-0.03em] text-[#F8FAFF]">
               {greeting}{user?.name ? `, ${user.name}` : ""}
             </h1>
-            <p className="text-xs sm:text-sm text-white/70 mt-1 font-normal">
+            <p className="text-xs sm:text-sm text-[#B8C5E0] mt-1 font-normal">
               Here's what needs your attention today.
             </p>
           </div>
@@ -206,10 +206,10 @@ export default function Dashboard() {
               onClick={() => navigate(item.path)}
               className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/5 border border-white/12 text-xs font-semibold text-white/90 hover:bg-white/10 hover:border-white/20 hover:text-white transition-all shrink-0 cursor-pointer backdrop-blur-md"
             >
-              <item.icon className="w-3.5 h-3.5 text-[#F26522]" />
+              <item.icon className="w-3.5 h-3.5 text-[#5B7CFF]" />
               <span>{item.label}</span>
               {typeof item.badge === "number" && item.badge > 0 && (
-                <span className="w-4 h-4 rounded-full bg-[#F26522] text-white text-[10px] font-bold flex items-center justify-center">
+                <span className="w-4 h-4 rounded-full bg-[#4169E1] text-white text-[10px] font-bold flex items-center justify-center shadow-xs">
                   {item.badge}
                 </span>
               )}
@@ -324,7 +324,7 @@ export default function Dashboard() {
               <div className="flex items-center justify-between mb-6 pb-4 border-b border-white/10">
                 <div>
                   <h3 className="text-base sm:text-lg font-semibold text-white flex items-center gap-2">
-                    <Calendar className="w-4 h-4 text-[#F26522]" />
+                    <Calendar className="w-4 h-4 text-[#5B7CFF]" />
                     <span>Upcoming Lessons</span>
                   </h3>
                   <p className="text-xs text-white/60 mt-0.5">
@@ -334,7 +334,7 @@ export default function Dashboard() {
                 {upcomingLessons.length > 0 && (
                   <button
                     onClick={() => navigate("/lessons")}
-                    className="text-xs font-semibold text-white hover:text-[#F26522] transition-colors cursor-pointer"
+                    className="text-xs font-semibold text-white hover:text-[#8EA7FF] transition-colors cursor-pointer"
                   >
                     View all ({upcomingLessons.length}) →
                   </button>
@@ -573,7 +573,7 @@ export default function Dashboard() {
                     <div className="flex items-center gap-2.5">
                       <link.icon
                         className={`w-4 h-4 ${
-                          link.primary ? "text-[#F26522]" : "text-white/60"
+                          link.primary ? "text-[#5B7CFF]" : "text-white/60"
                         }`}
                       />
                       <span>{link.label}</span>
@@ -591,7 +591,7 @@ export default function Dashboard() {
             {/* Mastery & Milestones Overview */}
             <div className="bg-white/[0.04] backdrop-blur-xl rounded-3xl border border-white/12 text-white shadow-[0_8px_32px_rgba(0,0,0,0.36),inset_0_1px_0_rgba(255,255,255,0.08)] p-6 sm:p-8">
               <h4 className="text-xs font-bold uppercase tracking-wider text-white/40 mb-4 flex items-center gap-1.5">
-                <TrendingUp className="w-3.5 h-3.5 text-[#F26522]" />
+                <TrendingUp className="w-3.5 h-3.5 text-[#5B7CFF]" />
                 <span>Mastery & Milestones</span>
               </h4>
 
@@ -611,7 +611,7 @@ export default function Dashboard() {
                   </div>
                   <div className="flex justify-between py-2 border-b border-white/10">
                     <span className="text-white/60">Active Streak:</span>
-                    <span className="font-bold text-[#F26522]">
+                    <span className="font-bold text-[#5B7CFF]">
                       {progress.streakDays || 1} days 🔥
                     </span>
                   </div>

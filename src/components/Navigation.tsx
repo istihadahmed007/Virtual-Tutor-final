@@ -149,13 +149,13 @@ export function Navigation() {
   return (
     <>
       {/* Floating Centered Pill Navbar */}
-      <header className={`sticky z-50 px-3 sm:px-6 max-w-[1440px] mx-auto pointer-events-none transition-all duration-300 ${
+      <header className={`sticky z-50 px-3 sm:px-6 max-w-[1280px] mx-auto pointer-events-none transition-all duration-300 ${
         isScrolled ? "top-2 sm:top-2.5" : "top-3 sm:top-4"
       }`}>
-        <div className={`pointer-events-auto bg-[#07080D]/60 hover:bg-[#07080D]/75 backdrop-blur-2xl rounded-full border border-white/12 transition-all duration-300 flex items-center justify-between text-white ${
+        <div className={`pointer-events-auto bg-[#07142F]/75 hover:bg-[#07142F]/85 backdrop-blur-2xl rounded-full border border-white/10 transition-all duration-300 flex items-center justify-between text-white ${
           isScrolled
-            ? "px-3 sm:px-4 py-1.5 shadow-[0_12px_36px_rgba(0,0,0,0.45),inset_0_1px_0_rgba(255,255,255,0.12)] border-white/15"
-            : "px-3 sm:px-5 py-2 sm:py-2.5 shadow-[0_8px_32px_rgba(0,0,0,0.3),inset_0_1px_0_rgba(255,255,255,0.08)]"
+            ? "px-3 sm:px-4 py-1.5 shadow-[0_12px_36px_rgba(0,0,0,0.35),inset_0_1px_0_rgba(255,255,255,0.12)] border-white/14"
+            : "px-3 sm:px-5 py-2 sm:py-2.5 shadow-[0_8px_32px_rgba(0,0,0,0.25),inset_0_1px_0_rgba(255,255,255,0.08)]"
         }`}>
           {/* LEFT: Logo & Brand */}
           <div className="flex items-center gap-3 sm:gap-6">
@@ -181,7 +181,7 @@ export function Navigation() {
                   <button
                     key={link.path}
                     onClick={() => handleLinkClick(link.path)}
-                    className="px-3.5 py-1.5 rounded-full text-xs font-medium text-white/70 hover:text-white hover:bg-white/10 transition-all cursor-pointer"
+                    className="px-3.5 py-1.5 rounded-full text-xs font-medium text-white/75 hover:text-white hover:bg-white/10 transition-all cursor-pointer"
                   >
                     {link.label}
                   </button>
@@ -200,7 +200,7 @@ export function Navigation() {
                       onClick={() => navigate(link.path)}
                       className={`px-3 py-1.5 rounded-full text-xs font-semibold transition-all flex items-center gap-1.5 cursor-pointer ${
                         isActive
-                          ? "bg-white/15 text-white border border-white/20 shadow-[0_0_12px_rgba(109,93,251,0.25)]"
+                          ? "bg-[#4169E1]/20 text-[#8EA7FF] border border-[#4169E1]/35 shadow-[0_0_14px_rgba(65,105,225,0.25)]"
                           : "text-white/70 hover:text-white hover:bg-white/10"
                       }`}
                     >
@@ -216,8 +216,8 @@ export function Navigation() {
           {/* RIGHT: Status, Time, Actions, Profile */}
           <div className="flex items-center gap-2 sm:gap-3">
             {/* Live Clock (Hidden on small mobile) */}
-            <div className="hidden lg:flex items-center gap-1.5 text-xs text-white/70 px-3 py-1 rounded-full bg-white/5 border border-white/10">
-              <Clock className="w-3.5 h-3.5 text-[#F26522]" />
+            <div className="hidden lg:flex items-center gap-1.5 text-xs text-white/75 px-3 py-1 rounded-full bg-white/5 border border-white/10">
+              <Clock className="w-3.5 h-3.5 text-[#5B7CFF]" />
               <span>{currentTime ? `${currentTime} in London` : "Live"}</span>
             </div>
 
@@ -236,7 +236,7 @@ export function Navigation() {
                   >
                     <Bell className="w-4 h-4" />
                     {(unreadCount ?? 0) > 0 && (
-                      <span className="absolute top-1 right-1 min-w-4 h-4 px-1 bg-[#F26522] text-[10px] text-white font-bold rounded-full flex items-center justify-center">
+                      <span className="absolute top-1 right-1 min-w-4 h-4 px-1 bg-[#4169E1] text-[10px] text-white font-bold rounded-full flex items-center justify-center shadow-xs">
                         {unreadCount}
                       </span>
                     )}
@@ -249,7 +249,7 @@ export function Navigation() {
                         className="fixed inset-0 z-40"
                         onClick={() => setNotificationsOpen(false)}
                       />
-                      <div className="absolute right-0 top-full mt-3 w-80 sm:w-96 bg-slate-950/90 backdrop-blur-2xl rounded-2xl shadow-[0_16px_40px_rgba(0,0,0,0.7)] border border-white/12 py-3 z-50 max-h-[80vh] flex flex-col text-white">
+                      <div className="absolute right-0 top-full mt-3 w-80 sm:w-96 bg-[#0B1D41]/95 backdrop-blur-2xl rounded-2xl shadow-[0_16px_40px_rgba(0,0,0,0.5)] border border-white/12 py-3 z-50 max-h-[80vh] flex flex-col text-white">
                         <div className="flex items-center justify-between px-4 pb-2 border-b border-white/10">
                           <h3 className="text-xs font-bold text-white uppercase tracking-wider">
                             Notifications
@@ -257,7 +257,7 @@ export function Navigation() {
                           {(unreadCount ?? 0) > 0 && (
                             <button
                               onClick={() => markAllAsRead()}
-                              className="text-xs text-[#F26522] hover:underline font-semibold cursor-pointer"
+                              className="text-xs text-[#8EA7FF] hover:underline font-semibold cursor-pointer"
                             >
                               Mark all as read
                             </button>
@@ -281,7 +281,7 @@ export function Navigation() {
                                   }
                                 }}
                                 className={`p-3.5 hover:bg-white/10 cursor-pointer transition-colors ${
-                                  !n.read ? "bg-[#F26522]/10" : ""
+                                  !n.read ? "bg-[#4169E1]/15" : ""
                                 }`}
                               >
                                 <p className="text-xs font-bold text-white">
@@ -331,7 +331,7 @@ export function Navigation() {
                         className="fixed inset-0 z-40"
                         onClick={() => setProfileOpen(false)}
                       />
-                      <div className="absolute right-0 top-full mt-3 w-64 bg-slate-950/90 backdrop-blur-2xl rounded-2xl shadow-[0_16px_40px_rgba(0,0,0,0.7)] border border-white/12 py-2 z-50 text-white">
+                      <div className="absolute right-0 top-full mt-3 w-64 bg-[#0B1D41]/95 backdrop-blur-2xl rounded-2xl shadow-[0_16px_40px_rgba(0,0,0,0.5)] border border-white/12 py-2 z-50 text-white">
                         <div className="px-4 py-3 border-b border-white/10 flex items-center gap-3">
                           <ProfileAvatar
                             name={user?.name}
@@ -346,7 +346,7 @@ export function Navigation() {
                             <p className="text-[11px] text-white/50 truncate">
                               {user?.email}
                             </p>
-                            <span className="inline-block mt-1 text-[10px] font-semibold text-[#F26522] bg-[#F26522]/10 px-2 py-0.5 rounded-full border border-[#F26522]/20">
+                            <span className="inline-block mt-1 text-[10px] font-semibold text-[#8EA7FF] bg-[#4169E1]/20 px-2 py-0.5 rounded-full border border-[#4169E1]/30">
                               {isAdmin
                                 ? "Platform Admin"
                                 : isTeacher
@@ -366,7 +366,7 @@ export function Navigation() {
                             }}
                             className="w-full px-4 py-2.5 text-left text-xs text-white font-semibold hover:bg-white/10 flex items-center gap-2.5 cursor-pointer"
                           >
-                            <ShieldCheck className="w-4 h-4 text-[#F26522]" />{" "}
+                            <ShieldCheck className="w-4 h-4 text-[#5B7CFF]" />{" "}
                             Admin Console
                           </button>
                         )}
@@ -389,7 +389,7 @@ export function Navigation() {
                           }}
                           className="w-full px-4 py-2.5 text-left text-xs text-white/90 hover:text-white hover:bg-white/10 flex items-center gap-2.5 cursor-pointer"
                         >
-                          <GraduationCap className="w-4 h-4 text-[#F26522]" />{" "}
+                          <GraduationCap className="w-4 h-4 text-[#5B7CFF]" />{" "}
                           {isTeacher ? "Tutor Portal" : "Apply to Teach"}
                         </button>
                         <button
@@ -471,11 +471,11 @@ export function Navigation() {
           />
 
           {/* Bottom Sheet Card */}
-          <div className="relative z-10 bg-slate-950/95 backdrop-blur-3xl text-white rounded-t-3xl sm:rounded-3xl mx-0 sm:mx-4 mb-0 sm:mb-4 p-6 sm:p-8 max-h-[85vh] overflow-y-auto border border-white/15 shadow-2xl animate-in slide-in-from-bottom duration-300">
+          <div className="relative z-10 bg-[#07142F]/95 backdrop-blur-3xl text-white rounded-t-3xl sm:rounded-3xl mx-0 sm:mx-4 mb-0 sm:mb-4 p-6 sm:p-8 max-h-[85vh] overflow-y-auto border border-white/12 shadow-2xl animate-in slide-in-from-bottom duration-300">
             {/* Header bar with close button and live time */}
             <div className="flex items-center justify-between pb-6 border-b border-white/10">
               <div className="flex items-center gap-2 text-xs font-medium text-white/70">
-                <span className="w-2 h-2 rounded-full bg-[#F26522] animate-pulse" />
+                <span className="w-2 h-2 rounded-full bg-[#4169E1] animate-pulse" />
                 <span>{currentTime ? `${currentTime} in London` : "Live"}</span>
               </div>
               <button
@@ -493,7 +493,7 @@ export function Navigation() {
                     <button
                       key={link.path}
                       onClick={() => handleLinkClick(link.path)}
-                      className="block w-full text-left text-2xl font-medium tracking-tight text-white hover:text-[#F26522] transition-colors cursor-pointer"
+                      className="block w-full text-left text-2xl font-medium tracking-tight text-white hover:text-[#5B7CFF] transition-colors cursor-pointer"
                     >
                       {link.label}
                     </button>
@@ -505,10 +505,10 @@ export function Navigation() {
                         navigate(link.path);
                         setMobileOpen(false);
                       }}
-                      className="flex items-center justify-between w-full text-left text-xl font-medium text-white hover:text-[#F26522] transition-colors cursor-pointer"
+                      className="flex items-center justify-between w-full text-left text-xl font-medium text-white hover:text-[#5B7CFF] transition-colors cursor-pointer"
                     >
                       <span className="flex items-center gap-3">
-                        <link.icon className="w-5 h-5 text-[#F26522]" />
+                        <link.icon className="w-5 h-5 text-[#5B7CFF]" />
                         {link.label}
                       </span>
                       <ArrowRight className="w-4 h-4 text-white/40" />
@@ -569,7 +569,7 @@ export function Navigation() {
 
       {/* Mobile Sticky Bottom Dock (When logged in) */}
       {isAuthenticated && !isMobileActiveChat && (
-        <nav className="md:hidden fixed bottom-3 left-4 right-4 bg-slate-950/75 backdrop-blur-2xl border border-white/15 rounded-full z-40 px-2 py-1.5 shadow-[0_8px_32px_rgba(0,0,0,0.6),inset_0_1px_0_rgba(255,255,255,0.12)]">
+        <nav className="md:hidden fixed bottom-3 left-4 right-4 bg-[#07142F]/85 backdrop-blur-2xl border border-white/12 rounded-full z-40 px-2 py-1.5 shadow-[0_8px_32px_rgba(0,0,0,0.5),inset_0_1px_0_rgba(255,255,255,0.10)]">
           <div className="flex items-center justify-around">
             {navLinks.slice(0, 5).map((link) => {
               const isActive =
@@ -584,7 +584,7 @@ export function Navigation() {
                   onClick={() => navigate(link.path)}
                   className={`flex flex-col items-center justify-center py-1 px-2.5 rounded-full transition-all cursor-pointer ${
                     isActive
-                      ? "text-[#F26522] font-bold drop-shadow-[0_0_8px_rgba(242,101,34,0.4)]"
+                      ? "text-[#8EA7FF] font-bold drop-shadow-[0_0_8px_rgba(65,105,225,0.4)]"
                       : "text-white/60 hover:text-white"
                   }`}
                 >

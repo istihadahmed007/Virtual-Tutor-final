@@ -138,7 +138,7 @@ export function TeacherFilters({
             value={filters.query}
             onChange={(e) => handleUpdate("query", e.target.value)}
             placeholder="Search by teacher name, subject, topic (e.g. Calculus, Python, IELTS)..."
-            className="w-full h-11 pl-11 pr-10 text-sm rounded-full border border-white/12 bg-white/5 placeholder-white/40 focus:outline-hidden focus:border-violet-400 focus:ring-2 focus:ring-violet-500/20 transition-all text-white backdrop-blur-md"
+            className="w-full h-12 pl-11 pr-10 text-[15px] rounded-xl border border-white/10 bg-white/[0.045] placeholder-[#8493B3] focus:outline-hidden focus:border-[#4169E1] focus:ring-2 focus:ring-[#4169E1]/25 transition-all text-[#F8FAFF] backdrop-blur-md"
           />
           {filters.query && (
             <button
@@ -158,10 +158,10 @@ export function TeacherFilters({
               value={filters.sortBy}
               onChange={(e) => handleUpdate("sortBy", e.target.value as FilterState["sortBy"])}
               aria-label="Sort educators"
-              className="h-11 pl-4 pr-9 text-xs font-semibold rounded-full border border-white/12 bg-slate-950/60 text-white hover:border-white/25 focus:outline-hidden focus:border-violet-400 appearance-none cursor-pointer backdrop-blur-md"
+              className="h-12 pl-4 pr-9 text-xs font-semibold rounded-xl border border-white/10 bg-[#0B1D41]/80 text-white hover:border-white/20 focus:outline-hidden focus:border-[#4169E1] appearance-none cursor-pointer backdrop-blur-md"
             >
               {SORT_OPTIONS.map((opt) => (
-                <option key={opt.value} value={opt.value} className="bg-slate-900 text-white">
+                <option key={opt.value} value={opt.value} className="bg-[#0B1D41] text-white">
                   Sort: {opt.label}
                 </option>
               ))}
@@ -173,12 +173,12 @@ export function TeacherFilters({
           <Button
             variant="outline"
             onClick={() => setIsDrawerOpen(true)}
-            className="h-11 px-4 rounded-full border-white/15 bg-white/5 hover:bg-white/10 text-white text-xs font-semibold inline-flex items-center gap-2 cursor-pointer backdrop-blur-md"
+            className="h-12 px-4 rounded-xl border-white/10 bg-white/[0.05] hover:bg-white/[0.10] text-white text-xs font-semibold inline-flex items-center gap-2 cursor-pointer backdrop-blur-md"
           >
-            <SlidersHorizontal className="h-4 w-4 text-violet-400" />
+            <SlidersHorizontal className="h-4 w-4 text-[#5B7CFF]" />
             <span>Filters</span>
             {activeFilterCount > 0 && (
-              <span className="flex h-5 w-5 items-center justify-center rounded-full bg-violet-600 text-white text-[11px] font-bold shadow-xs">
+              <span className="flex h-5 w-5 items-center justify-center rounded-full bg-[#4169E1] text-white text-[11px] font-bold shadow-xs">
                 {activeFilterCount}
               </span>
             )}
@@ -199,7 +199,7 @@ export function TeacherFilters({
                 onClick={() => handleUpdate("subject", sub)}
                 className={`px-3.5 py-1.5 rounded-full font-medium transition-all cursor-pointer ${
                   isSelected
-                    ? "bg-gradient-to-r from-violet-600 to-indigo-600 text-white shadow-xs border border-violet-400/50"
+                    ? "bg-[#4169E1] text-white shadow-xs border border-[#5B7CFF]/50"
                     : "bg-white/5 border border-white/10 text-white/70 hover:text-white hover:bg-white/10"
                 }`}
               >
@@ -214,7 +214,7 @@ export function TeacherFilters({
             onClick={() => handleUpdate("ratingMin", filters.ratingMin === 4.8 ? 0 : 4.8)}
             className={`px-3.5 py-1.5 rounded-full font-medium transition-all inline-flex items-center gap-1 cursor-pointer ${
               filters.ratingMin === 4.8
-                ? "bg-violet-600 text-white shadow-xs border border-violet-400/50"
+                ? "bg-[#4169E1] text-white shadow-xs border border-[#5B7CFF]/50"
                 : "bg-white/5 border border-white/10 text-white/70 hover:text-white hover:bg-white/10"
             }`}
           >
@@ -231,7 +231,7 @@ export function TeacherFilters({
             <button
               type="button"
               onClick={onResetFilters}
-              className="text-violet-400 hover:text-violet-300 font-medium hover:underline cursor-pointer"
+              className="text-[#8EA7FF] hover:text-white font-medium hover:underline cursor-pointer"
             >
               Reset all
             </button>
@@ -241,7 +241,7 @@ export function TeacherFilters({
 
       {/* Comprehensive Filter Side Drawer */}
       <Sheet open={isDrawerOpen} onOpenChange={setIsDrawerOpen}>
-        <SheetContent side="right" className="w-full sm:max-w-md p-6 overflow-y-auto bg-slate-950/95 backdrop-blur-2xl border-l border-white/15 text-white">
+        <SheetContent side="right" className="w-full sm:max-w-md p-6 overflow-y-auto bg-[#07142F]/95 backdrop-blur-2xl border-l border-white/12 text-white">
           <SheetHeader className="mb-5 pb-4 border-b border-white/10">
             <SheetTitle className="text-lg font-bold text-white font-display">
               Filter Teachers
@@ -331,7 +331,7 @@ export function TeacherFilters({
                       onClick={() => handleUpdate("priceRange", p.value)}
                       className={`p-2.5 text-left rounded-xl text-xs font-medium border transition cursor-pointer ${
                         isSelected
-                          ? "bg-violet-600/30 border-violet-400 text-white font-bold shadow-xs"
+                          ? "bg-[#4169E1]/25 border-[#4169E1] text-white font-bold shadow-xs"
                           : "bg-white/5 border-white/10 text-white/80 hover:bg-white/10"
                       }`}
                     >
@@ -357,7 +357,7 @@ export function TeacherFilters({
                       onClick={() => handleUpdate("ratingMin", rating)}
                       className={`flex-1 py-2 rounded-xl text-xs font-semibold border transition cursor-pointer ${
                         isSelected
-                          ? "bg-violet-600 border-violet-400 text-white shadow-xs"
+                          ? "bg-[#4169E1] border-[#5B7CFF] text-white shadow-xs"
                           : "bg-white/5 border-white/10 text-white/80 hover:bg-white/10"
                       }`}
                     >
@@ -383,7 +383,7 @@ export function TeacherFilters({
                       onClick={() => handleUpdate("availability", a.value)}
                       className={`p-2.5 text-left rounded-xl text-xs font-medium border transition cursor-pointer ${
                         isSelected
-                          ? "bg-violet-600/30 border-violet-400 text-white font-bold shadow-xs"
+                          ? "bg-[#4169E1]/25 border-[#4169E1] text-white font-bold shadow-xs"
                           : "bg-white/5 border-white/10 text-white/80 hover:bg-white/10"
                       }`}
                     >
@@ -408,7 +408,7 @@ export function TeacherFilters({
                 type="checkbox"
                 checked={filters.matchMyTimezone}
                 onChange={(e) => handleUpdate("matchMyTimezone", e.target.checked)}
-                className="h-4 w-4 rounded-sm accent-violet-600 cursor-pointer"
+                className="h-4 w-4 rounded-sm accent-[#4169E1] cursor-pointer"
               />
             </div>
           </div>
@@ -423,7 +423,7 @@ export function TeacherFilters({
             </Button>
             <Button
               onClick={() => setIsDrawerOpen(false)}
-              className="flex-1 rounded-full bg-gradient-to-r from-violet-600 to-indigo-600 hover:from-violet-500 hover:to-indigo-500 text-white text-xs font-semibold transition-all shadow-xs cursor-pointer"
+              className="flex-1 rounded-full bg-[#4169E1] hover:bg-[#5B7CFF] text-white text-xs font-semibold transition-all shadow-xs cursor-pointer"
             >
               Show {totalResultsCount} Teachers
             </Button>

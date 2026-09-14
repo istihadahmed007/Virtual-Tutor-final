@@ -70,18 +70,18 @@ export default function TeacherDashboard() {
 
   return (
     <main className="min-h-screen bg-transparent text-white pb-24 pt-6 sm:pt-8">
-      <div className="max-w-[1440px] mx-auto px-4 sm:px-8">
+      <div className="max-w-[1280px] mx-auto px-4 sm:px-6 lg:px-8">
         {/* Editorial Header */}
         <div className="flex flex-col sm:flex-row sm:items-end justify-between mb-8 sm:mb-10 gap-4">
           <div>
             <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-semibold bg-white/10 text-white/80 border border-white/15 mb-3">
-              <span className="text-violet-400 font-mono">01</span>
+              <span className="text-[#8EA7FF] font-mono">01</span>
               <span>Faculty Management</span>
             </div>
-            <h1 className="text-2xl sm:text-4xl font-bold tracking-[-0.03em] text-white">
+            <h1 className="text-2xl sm:text-4xl font-extrabold tracking-[-0.03em] text-[#F8FAFF]">
               Teacher Dashboard{user?.name ? `, ${user.name}` : ""}
             </h1>
-            <p className="text-xs sm:text-sm text-white/70 mt-1 font-normal">
+            <p className="text-xs sm:text-sm text-[#B8C5E0] mt-1 font-normal">
               Manage your live classes, schedule, student discovery, and teaching requests.
             </p>
           </div>
@@ -105,12 +105,12 @@ export default function TeacherDashboard() {
               onClick={() => navigate("/calendar")}
               className="inline-flex items-center gap-2 px-4 py-2 rounded-full border border-white/15 bg-white/5 hover:bg-white/10 text-white text-xs font-semibold transition-all cursor-pointer"
             >
-              <Calendar className="w-3.5 h-3.5 text-violet-400" />
+              <Calendar className="w-3.5 h-3.5 text-[#5B7CFF]" />
               <span>Calendar Schedule</span>
             </button>
             <button
               onClick={() => navigate("/classroom")}
-              className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-gradient-to-r from-violet-600 to-indigo-600 hover:from-violet-500 hover:to-indigo-500 text-white text-xs font-bold shadow-[0_4px_16px_rgba(109,93,251,0.35)] transition-all cursor-pointer"
+              className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-[#4169E1] hover:bg-[#5B7CFF] text-white text-xs font-bold shadow-[0_4px_16px_rgba(65,105,225,0.35)] transition-all cursor-pointer"
             >
               <Video className="w-3.5 h-3.5" />
               <span>Start Classroom</span>
@@ -144,11 +144,11 @@ export default function TeacherDashboard() {
         )}
 
         {/* Hero Banner: Student Discovery Invitation */}
-        <div className="relative rounded-3xl bg-gradient-to-br from-violet-950/40 via-slate-950/60 to-indigo-950/40 backdrop-blur-xl border border-white/12 text-white p-7 sm:p-9 mb-8 overflow-hidden shadow-[0_8px_32px_rgba(0,0,0,0.36)]">
+        <div className="relative rounded-3xl bg-gradient-to-br from-[#0B1D41]/70 via-[#07142F]/80 to-[#102A5C]/70 backdrop-blur-xl border border-white/12 text-white p-7 sm:p-9 mb-8 overflow-hidden shadow-[0_8px_32px_rgba(0,0,0,0.36)]">
           <div className="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-6">
             <div className="max-w-xl">
               <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-semibold bg-white/10 text-white border border-white/15 mb-4">
-                <Search className="w-3.5 h-3.5 text-violet-400" />
+                <Search className="w-3.5 h-3.5 text-[#5B7CFF]" />
                 <span>Reciprocal Discovery · Active Learners</span>
               </div>
               <h2 className="text-xl sm:text-2xl font-bold tracking-tight text-white">
@@ -161,14 +161,14 @@ export default function TeacherDashboard() {
             <div className="flex items-center gap-3 shrink-0">
               <button
                 onClick={() => navigate("/students")}
-                className="px-6 py-3 rounded-full bg-gradient-to-r from-violet-600 to-indigo-600 hover:from-violet-500 hover:to-indigo-500 text-white text-xs font-bold shadow-[0_4px_20px_rgba(109,93,251,0.35)] transition-all cursor-pointer"
+                className="px-6 py-3 rounded-full bg-[#4169E1] hover:bg-[#5B7CFF] text-white text-xs font-bold shadow-[0_4px_20px_rgba(65,105,225,0.35)] transition-all cursor-pointer"
               >
                 Browse Student Requests
               </button>
             </div>
           </div>
-          {/* Subtle Violet Radial Glow */}
-          <div className="absolute right-0 bottom-0 w-80 h-80 bg-radial from-violet-600/20 to-transparent rounded-full blur-3xl pointer-events-none" />
+          {/* Subtle Royal Blue Radial Glow */}
+          <div className="absolute right-0 bottom-0 w-80 h-80 bg-radial from-[#4169E1]/20 to-transparent rounded-full blur-3xl pointer-events-none" />
         </div>
 
         {/* 4 Quantitative Metric Cards */}

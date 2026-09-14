@@ -368,15 +368,15 @@ export default function TeachersPage() {
                 variant="outline"
                 size="sm"
                 onClick={() => navigate("/lessons")}
-                className="rounded-full border-white/15 bg-white/5 text-white/80 hover:bg-white/10 hover:text-white text-xs font-semibold px-4 py-2 gap-1.5 cursor-pointer"
+                className="rounded-xl border-white/12 bg-white/[0.06] text-[#F8FAFF] hover:bg-white/10 text-xs font-semibold px-4 py-2 gap-1.5 cursor-pointer"
               >
-                <BookOpen className="w-3.5 h-3.5 text-violet-400" />
+                <BookOpen className="w-3.5 h-3.5 text-[#8EA7FF]" />
                 <span>My Lessons</span>
               </Button>
               <Button
                 size="sm"
                 onClick={() => navigate("/calendar")}
-                className="rounded-full bg-gradient-to-r from-violet-600 to-indigo-600 hover:from-violet-500 hover:to-indigo-500 text-white text-xs font-semibold px-4 py-2 gap-1.5 shadow-[0_4px_20px_rgba(109,93,251,0.35)] transition-all cursor-pointer"
+                className="rounded-xl bg-[#4169E1] hover:bg-[#5B7CFF] text-white text-xs font-semibold px-4 py-2 gap-1.5 shadow-[0_4px_20px_rgba(65,105,225,0.35)] transition-all cursor-pointer"
               >
                 <Calendar className="w-3.5 h-3.5" />
                 <span>Schedule Calendar</span>

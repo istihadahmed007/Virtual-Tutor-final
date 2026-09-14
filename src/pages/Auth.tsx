@@ -571,7 +571,7 @@ export default function Auth({ redirectAfterAuth }: AuthProps = {}) {
   };
 
   return (
-    <div className="min-h-screen bg-[#07080D] text-white flex flex-col justify-center py-12 px-4 sm:px-6 lg:px-8 relative overflow-hidden selection:bg-violet-500/30 selection:text-white">
+    <div className="min-h-screen bg-transparent text-white flex flex-col justify-center py-12 px-4 sm:px-6 lg:px-8 relative overflow-hidden selection:bg-[#4169E1]/30 selection:text-white">
       {/* Plane 0: Refined Static Dark Ambient Atmosphere */}
       <InternalBackground />
 
@@ -583,7 +583,7 @@ export default function Auth({ redirectAfterAuth }: AuthProps = {}) {
       </div>
 
       <div className="sm:mx-auto sm:w-full sm:max-w-md relative z-10">
-        <Card className="border border-white/10 shadow-[0_16px_48px_rgba(0,0,0,0.6),inset_0_1px_0_rgba(255,255,255,0.08)] bg-white/[0.045] backdrop-blur-2xl rounded-3xl overflow-hidden text-white">
+        <Card className="border border-white/10 shadow-[0_16px_48px_rgba(0,0,0,0.5),inset_0_1px_0_rgba(255,255,255,0.08)] bg-white/[0.045] backdrop-blur-2xl rounded-2xl overflow-hidden text-white">
           {/* Notification Messages */}
           {error && (
             <div className="bg-rose-500/10 border-b border-rose-500/30 p-4 flex items-start gap-3">
@@ -599,7 +599,7 @@ export default function Auth({ redirectAfterAuth }: AuthProps = {}) {
                         setLoginEmail(regEmail);
                         setError(null);
                       }}
-                      className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-violet-600 text-white text-xs font-semibold hover:bg-violet-500 transition-colors cursor-pointer shadow-xs"
+                      className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-[#4169E1] text-white text-xs font-semibold hover:bg-[#5B7CFF] transition-colors cursor-pointer shadow-xs"
                     >
                       Switch to Log In with this email →
                     </button>
@@ -614,7 +614,7 @@ export default function Auth({ redirectAfterAuth }: AuthProps = {}) {
                         setRegEmail(loginEmail);
                         setError(null);
                       }}
-                      className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-violet-600 text-white text-xs font-semibold hover:bg-violet-500 transition-colors cursor-pointer shadow-xs"
+                      className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-[#4169E1] text-white text-xs font-semibold hover:bg-[#5B7CFF] transition-colors cursor-pointer shadow-xs"
                     >
                       Create an account with this email →
                     </button>
@@ -637,7 +637,7 @@ export default function Auth({ redirectAfterAuth }: AuthProps = {}) {
           {verifyStep === "otp_verify" ? (
             <div>
               <CardHeader className="text-center pb-2 pt-8 px-6">
-                <div className="w-12 h-12 bg-violet-500/10 text-violet-400 rounded-full flex items-center justify-center mx-auto mb-3 border border-violet-500/20">
+                <div className="w-12 h-12 bg-[#4169E1]/15 text-[#8EA7FF] rounded-full flex items-center justify-center mx-auto mb-3 border border-[#4169E1]/25">
                   <Mail className="w-6 h-6" />
                 </div>
                 <CardTitle className="text-2xl font-bold text-white">Check your email</CardTitle>
@@ -666,7 +666,7 @@ export default function Auth({ redirectAfterAuth }: AuthProps = {}) {
                         value={digit}
                         onChange={(e) => handleDigitChange(idx, e.target.value)}
                         onKeyDown={(e) => handleKeyDown(idx, e)}
-                        className="w-11 h-13 sm:w-12 sm:h-14 text-center text-2xl font-bold rounded-xl border border-white/15 focus:border-violet-400 focus:ring-2 focus:ring-violet-500/20 bg-white/5 text-white transition-all outline-hidden"
+                        className="w-11 h-13 sm:w-12 sm:h-14 text-center text-2xl font-bold rounded-xl border border-white/15 focus:border-[#4169E1] focus:ring-2 focus:ring-[#4169E1]/25 bg-white/5 text-white transition-all outline-hidden"
                         autoFocus={idx === 0}
                       />
                     ))}
@@ -676,7 +676,7 @@ export default function Auth({ redirectAfterAuth }: AuthProps = {}) {
                   <Button
                     type="submit"
                     disabled={isLoading || otpDigits.join("").length !== 6}
-                    className="w-full h-11 bg-gradient-to-r from-violet-600 to-indigo-600 hover:from-violet-500 hover:to-indigo-500 text-white font-semibold rounded-full text-sm shadow-[0_4px_20px_rgba(109,93,251,0.35)] transition-all cursor-pointer"
+                    className="w-full h-12 bg-[#4169E1] hover:bg-[#5B7CFF] text-white font-semibold rounded-xl text-sm shadow-[0_4px_20px_rgba(65,105,225,0.32)] transition-all cursor-pointer"
                   >
                     {isLoading ? (
                       <span className="flex items-center gap-2">
@@ -695,7 +695,7 @@ export default function Auth({ redirectAfterAuth }: AuthProps = {}) {
                           type="button"
                           onClick={handleResendOTP}
                           disabled={isLoading}
-                          className="font-semibold text-violet-400 hover:text-violet-300 inline-flex items-center gap-1.5 transition-colors cursor-pointer"
+                          className="font-semibold text-[#8EA7FF] hover:text-[#5B7CFF] inline-flex items-center gap-1.5 transition-colors cursor-pointer"
                         >
                           <RefreshCw className="w-3.5 h-3.5" /> Resend verification email
                         </button>
@@ -736,7 +736,7 @@ export default function Auth({ redirectAfterAuth }: AuthProps = {}) {
                   }}
                   className={`flex-1 py-3.5 text-center text-xs sm:text-sm font-semibold transition-colors cursor-pointer ${
                     mode === "register"
-                      ? "text-white border-b-2 border-violet-400 bg-white/5 font-bold -mb-px"
+                      ? "text-white border-b-2 border-[#4169E1] bg-white/5 font-bold -mb-px"
                       : "text-white/60 hover:text-white"
                   }`}
                 >
@@ -750,7 +750,7 @@ export default function Auth({ redirectAfterAuth }: AuthProps = {}) {
                   }}
                   className={`flex-1 py-3.5 text-center text-xs sm:text-sm font-semibold transition-colors cursor-pointer ${
                     mode === "login"
-                      ? "text-white border-b-2 border-violet-400 bg-white/5 font-bold -mb-px"
+                      ? "text-white border-b-2 border-[#4169E1] bg-white/5 font-bold -mb-px"
                       : "text-white/60 hover:text-white"
                   }`}
                 >
@@ -779,45 +779,45 @@ export default function Auth({ redirectAfterAuth }: AuthProps = {}) {
                           <button
                             type="button"
                             onClick={() => setSelectedRole("student")}
-                            className={`py-2.5 px-3 rounded-full border text-xs font-semibold flex items-center justify-center gap-1.5 transition-all cursor-pointer ${
+                            className={`py-2.5 px-3 rounded-xl border text-xs font-semibold flex items-center justify-center gap-1.5 transition-all cursor-pointer ${
                               selectedRole === "student"
-                                ? "bg-violet-500/20 border-violet-400 text-white shadow-xs ring-1 ring-violet-400"
+                                ? "bg-[#4169E1]/20 border-[#4169E1] text-white shadow-xs ring-1 ring-[#4169E1]"
                                 : "border-white/10 bg-white/5 text-white/70 hover:bg-white/10"
                             }`}
                           >
-                            <GraduationCap className={`w-4 h-4 ${selectedRole === "student" ? "text-violet-400" : "text-white/50"}`} />
+                            <GraduationCap className={`w-4 h-4 ${selectedRole === "student" ? "text-[#8EA7FF]" : "text-white/50"}`} />
                             Student
                           </button>
 
                           <button
                             type="button"
                             onClick={() => setSelectedRole("teacher")}
-                            className={`py-2.5 px-3 rounded-full border text-xs font-semibold flex items-center justify-center gap-1.5 transition-all cursor-pointer ${
+                            className={`py-2.5 px-3 rounded-xl border text-xs font-semibold flex items-center justify-center gap-1.5 transition-all cursor-pointer ${
                               selectedRole === "teacher"
-                                ? "bg-violet-500/20 border-violet-400 text-white shadow-xs ring-1 ring-violet-400"
+                                ? "bg-[#4169E1]/20 border-[#4169E1] text-white shadow-xs ring-1 ring-[#4169E1]"
                                 : "border-white/10 bg-white/5 text-white/70 hover:bg-white/10"
                             }`}
                           >
-                            <BookOpen className={`w-4 h-4 ${selectedRole === "teacher" ? "text-violet-400" : "text-white/50"}`} />
+                            <BookOpen className={`w-4 h-4 ${selectedRole === "teacher" ? "text-[#8EA7FF]" : "text-white/50"}`} />
                             Teacher
                           </button>
 
                           <button
                             type="button"
                             onClick={() => setSelectedRole("parent")}
-                            className={`py-2.5 px-3 rounded-full border text-xs font-semibold flex items-center justify-center gap-1.5 transition-all cursor-pointer ${
+                            className={`py-2.5 px-3 rounded-xl border text-xs font-semibold flex items-center justify-center gap-1.5 transition-all cursor-pointer ${
                               selectedRole === "parent"
-                                ? "bg-violet-500/20 border-violet-400 text-white shadow-xs ring-1 ring-violet-400"
+                                ? "bg-[#4169E1]/20 border-[#4169E1] text-white shadow-xs ring-1 ring-[#4169E1]"
                                 : "border-white/10 bg-white/5 text-white/70 hover:bg-white/10"
                             }`}
                           >
-                            <Users className={`w-4 h-4 ${selectedRole === "parent" ? "text-violet-400" : "text-white/50"}`} />
+                            <Users className={`w-4 h-4 ${selectedRole === "parent" ? "text-[#8EA7FF]" : "text-white/50"}`} />
                             Parent
                           </button>
                         </div>
 
                         {/* Role Guidance Banner */}
-                        <div className="mt-2.5 p-3 rounded-2xl bg-white/5 border border-white/10 text-[11px] text-white/70 leading-relaxed">
+                        <div className="mt-2.5 p-3 rounded-xl bg-white/5 border border-white/10 text-[11px] text-[#B8C5E0] leading-relaxed">
                           {selectedRole === "student" && (
                             <p>
                               <span className="font-bold text-white">Student Account:</span> Immediate access to browse verified tutors across NCTB, Cambridge & Edexcel, book 1-on-1 sessions, and enter live classrooms.
@@ -838,11 +838,11 @@ export default function Auth({ redirectAfterAuth }: AuthProps = {}) {
 
                       {/* Full Name */}
                       <div>
-                        <label htmlFor="reg-name" className="block text-xs font-semibold text-slate-700 mb-1">
+                        <label htmlFor="reg-name" className="block text-xs font-semibold text-[#B8C5E0] mb-1.5">
                           Full Name
                         </label>
                         <div className="relative">
-                          <User className="w-4 h-4 text-slate-400 absolute left-3.5 top-1/2 -translate-y-1/2" />
+                          <User className="w-4 h-4 text-white/40 absolute left-3.5 top-1/2 -translate-y-1/2" />
                           <Input
                             id="reg-name"
                             name="name"
@@ -853,18 +853,18 @@ export default function Auth({ redirectAfterAuth }: AuthProps = {}) {
                             required
                             autoComplete="name"
                             autoCapitalize="words"
-                            className="pl-10 h-11 rounded-xl border-stone-300"
+                            className="pl-10 h-12"
                           />
                         </div>
                       </div>
 
                       {/* Email */}
                       <div>
-                        <label htmlFor="reg-email" className="block text-xs font-semibold text-slate-700 mb-1">
+                        <label htmlFor="reg-email" className="block text-xs font-semibold text-[#B8C5E0] mb-1.5">
                           Email Address
                         </label>
                         <div className="relative">
-                          <Mail className="w-4 h-4 text-slate-400 absolute left-3.5 top-1/2 -translate-y-1/2" />
+                          <Mail className="w-4 h-4 text-white/40 absolute left-3.5 top-1/2 -translate-y-1/2" />
                           <Input
                             id="reg-email"
                             name="email"
@@ -878,18 +878,18 @@ export default function Auth({ redirectAfterAuth }: AuthProps = {}) {
                             autoCapitalize="none"
                             autoCorrect="off"
                             spellCheck={false}
-                            className="pl-10 h-11 rounded-xl border-stone-300"
+                            className="pl-10 h-12"
                           />
                         </div>
                       </div>
 
                       {/* Password */}
                       <div>
-                        <label htmlFor="reg-password" className="block text-xs font-semibold text-slate-700 mb-1">
+                        <label htmlFor="reg-password" className="block text-xs font-semibold text-[#B8C5E0] mb-1.5">
                           Password
                         </label>
                         <div className="relative">
-                          <Lock className="w-4 h-4 text-slate-400 absolute left-3.5 top-1/2 -translate-y-1/2" />
+                          <Lock className="w-4 h-4 text-white/40 absolute left-3.5 top-1/2 -translate-y-1/2" />
                           <Input
                             id="reg-password"
                             name="password"
@@ -902,12 +902,12 @@ export default function Auth({ redirectAfterAuth }: AuthProps = {}) {
                             autoComplete="new-password"
                             autoCapitalize="none"
                             autoCorrect="off"
-                            className="pl-10 pr-10 h-11 rounded-xl border-stone-300"
+                            className="pl-10 pr-10 h-12"
                           />
                           <button
                             type="button"
                             onClick={() => setShowRegPassword(!showRegPassword)}
-                            className="absolute right-3.5 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 p-1 cursor-pointer"
+                            className="absolute right-3.5 top-1/2 -translate-y-1/2 text-white/40 hover:text-white p-1 cursor-pointer"
                           >
                             {showRegPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
                           </button>
@@ -915,11 +915,11 @@ export default function Auth({ redirectAfterAuth }: AuthProps = {}) {
                         {regPassword.length > 0 && (
                           <div className="flex items-center gap-1.5 mt-1.5 text-[11px]">
                             {regPassword.length >= 8 ? (
-                              <span className="text-emerald-600 font-semibold flex items-center gap-1">
+                              <span className="text-emerald-400 font-semibold flex items-center gap-1">
                                 <CheckCircle2 className="w-3.5 h-3.5" /> 8+ characters requirement met
                               </span>
                             ) : (
-                              <span className="text-amber-600 font-semibold flex items-center gap-1">
+                              <span className="text-amber-400 font-semibold flex items-center gap-1">
                                 <AlertCircle className="w-3.5 h-3.5" /> Must be at least 8 characters ({regPassword.length}/8)
                               </span>
                             )}
@@ -929,11 +929,11 @@ export default function Auth({ redirectAfterAuth }: AuthProps = {}) {
 
                       {/* Confirm Password */}
                       <div>
-                        <label htmlFor="reg-confirm-password" className="block text-xs font-semibold text-slate-700 mb-1">
+                        <label htmlFor="reg-confirm-password" className="block text-xs font-semibold text-[#B8C5E0] mb-1.5">
                           Confirm Password
                         </label>
                         <div className="relative">
-                          <Lock className="w-4 h-4 text-slate-400 absolute left-3.5 top-1/2 -translate-y-1/2" />
+                          <Lock className="w-4 h-4 text-white/40 absolute left-3.5 top-1/2 -translate-y-1/2" />
                           <Input
                             id="reg-confirm-password"
                             name="confirmPassword"
@@ -946,17 +946,17 @@ export default function Auth({ redirectAfterAuth }: AuthProps = {}) {
                             autoComplete="new-password"
                             autoCapitalize="none"
                             autoCorrect="off"
-                            className="pl-10 h-11 rounded-xl border-stone-300"
+                            className="pl-10 h-12"
                           />
                         </div>
                         {regConfirmPassword.length > 0 && (
                           <div className="flex items-center gap-1.5 mt-1.5 text-[11px]">
                             {regPassword === regConfirmPassword ? (
-                              <span className="text-emerald-600 font-semibold flex items-center gap-1">
+                              <span className="text-emerald-400 font-semibold flex items-center gap-1">
                                 <CheckCircle2 className="w-3.5 h-3.5" /> Passwords match
                               </span>
                             ) : (
-                              <span className="text-rose-600 font-semibold flex items-center gap-1">
+                              <span className="text-rose-400 font-semibold flex items-center gap-1">
                                 <AlertCircle className="w-3.5 h-3.5" /> Passwords do not match
                               </span>
                             )}
@@ -971,15 +971,15 @@ export default function Auth({ redirectAfterAuth }: AuthProps = {}) {
                           id="terms"
                           checked={agreeTerms}
                           onChange={(e) => setAgreeTerms(e.target.checked)}
-                          className="mt-1 h-4 w-4 rounded border-slate-300 accent-[#312E81] text-[#312E81] focus:ring-[#6D5DFB]"
+                          className="mt-1 h-4 w-4 rounded accent-[#4169E1] cursor-pointer"
                         />
-                        <label htmlFor="terms" className="text-xs text-slate-600 leading-tight">
+                        <label htmlFor="terms" className="text-xs text-[#B8C5E0] leading-tight">
                           I agree to the{" "}
                           <a
                             href="/terms"
                             target="_blank"
                             rel="noopener noreferrer"
-                            className="text-[#0F172A] hover:text-[#6D5DFB] underline font-medium"
+                            className="text-[#8EA7FF] hover:text-white underline font-medium"
                           >
                             Terms of Service
                           </a>{" "}
@@ -988,7 +988,7 @@ export default function Auth({ redirectAfterAuth }: AuthProps = {}) {
                             href="/privacy"
                             target="_blank"
                             rel="noopener noreferrer"
-                            className="text-[#0F172A] hover:text-[#6D5DFB] underline font-medium"
+                            className="text-[#8EA7FF] hover:text-white underline font-medium"
                           >
                             Privacy Policy
                           </a>
@@ -1000,7 +1000,7 @@ export default function Auth({ redirectAfterAuth }: AuthProps = {}) {
                       <Button
                         type="submit"
                         disabled={isLoading}
-                        className="w-full h-11 bg-gradient-to-r from-violet-600 to-indigo-600 hover:from-violet-500 hover:to-indigo-500 text-white font-semibold rounded-full text-sm shadow-[0_4px_20px_rgba(109,93,251,0.35)] mt-2 transition-all cursor-pointer"
+                        className="w-full h-12 bg-[#4169E1] hover:bg-[#5B7CFF] text-white font-semibold rounded-xl text-[15px] shadow-[0_4px_20px_rgba(65,105,225,0.32)] mt-2 transition-all cursor-pointer"
                       >
                         {isLoading ? (
                           <span className="flex items-center gap-2">
@@ -1020,7 +1020,7 @@ export default function Auth({ redirectAfterAuth }: AuthProps = {}) {
                           setMode("login");
                           setError(null);
                         }}
-                        className="font-semibold text-violet-400 hover:text-violet-300 cursor-pointer"
+                        className="font-semibold text-[#8EA7FF] hover:text-[#5B7CFF] cursor-pointer"
                       >
                         Log in
                       </button>
@@ -1112,7 +1112,7 @@ export default function Auth({ redirectAfterAuth }: AuthProps = {}) {
                       <Button
                         type="submit"
                         disabled={isLoading}
-                        className="w-full h-11 bg-gradient-to-r from-violet-600 to-indigo-600 hover:from-violet-500 hover:to-indigo-500 text-white font-semibold rounded-full text-sm shadow-[0_4px_20px_rgba(109,93,251,0.35)] mt-2 transition-all cursor-pointer"
+                        className="w-full h-12 bg-[#4169E1] hover:bg-[#5B7CFF] text-white font-semibold rounded-xl text-base shadow-[0_4px_20px_rgba(65,105,225,0.35)] mt-2 transition-all cursor-pointer"
                       >
                         {isLoading ? (
                           <span className="flex items-center gap-2">
@@ -1124,7 +1124,7 @@ export default function Auth({ redirectAfterAuth }: AuthProps = {}) {
                       </Button>
                     </form>
 
-                    <div className="mt-6 text-center text-xs text-white/60">
+                    <div className="mt-6 text-center text-xs text-[#B8C5E0]">
                       Don't have an account?{" "}
                       <button
                         type="button"
@@ -1132,7 +1132,7 @@ export default function Auth({ redirectAfterAuth }: AuthProps = {}) {
                           setMode("register");
                           setError(null);
                         }}
-                        className="font-semibold text-violet-400 hover:text-violet-300 cursor-pointer"
+                        className="font-semibold text-[#8EA7FF] hover:text-[#5B7CFF] cursor-pointer"
                       >
                         Create account
                       </button>
@@ -1149,10 +1149,10 @@ export default function Auth({ redirectAfterAuth }: AuthProps = {}) {
           FORGOT PASSWORD MODAL
          ══════════════════════════════════════════════════════════ */}
       {forgotModalOpen && (
-        <div className="fixed inset-0 z-50 bg-black/75 backdrop-blur-md flex items-center justify-center p-4">
-          <div className="bg-slate-950/90 backdrop-blur-2xl rounded-2xl max-w-md w-full p-6 shadow-2xl border border-white/15 text-white animate-in fade-in zoom-in-95">
+        <div className="fixed inset-0 z-50 bg-[#07142F]/80 backdrop-blur-md flex items-center justify-center p-4">
+          <div className="bg-[#0B1D41]/95 backdrop-blur-2xl rounded-2xl max-w-md w-full p-6 sm:p-8 shadow-[0_20px_50px_rgba(0,0,0,0.5)] border border-white/10 text-white animate-in fade-in zoom-in-95">
             <div className="flex items-center justify-between mb-4">
-              <h3 className="text-lg font-bold text-white">
+              <h3 className="text-xl font-bold text-[#F8FAFF]">
                 Reset your password
               </h3>
               <button
@@ -1165,11 +1165,11 @@ export default function Auth({ redirectAfterAuth }: AuthProps = {}) {
             </div>
 
             <form onSubmit={handleForgotSubmit} className="space-y-4">
-              <p className="text-xs text-white/70">
+              <p className="text-xs text-[#B8C5E0]">
                 Enter your account email and choose a new password below.
               </p>
               <div>
-                <label className="block text-xs font-semibold text-white/80 mb-1">
+                <label className="block text-xs font-semibold text-[#B8C5E0] mb-1.5">
                   Email Address
                 </label>
                 <Input
@@ -1178,12 +1178,12 @@ export default function Auth({ redirectAfterAuth }: AuthProps = {}) {
                   value={forgotEmail}
                   onChange={(e) => setForgotEmail(e.target.value)}
                   required
-                  className="h-11 rounded-xl"
+                  className="h-12 rounded-xl"
                 />
               </div>
 
               <div>
-                <label className="block text-xs font-semibold text-white/80 mb-1">
+                <label className="block text-xs font-semibold text-[#B8C5E0] mb-1.5">
                   New Password
                 </label>
                 <div className="relative">
@@ -1194,7 +1194,7 @@ export default function Auth({ redirectAfterAuth }: AuthProps = {}) {
                     onChange={(e) => setForgotNewPassword(e.target.value)}
                     required
                     minLength={8}
-                    className="h-11 rounded-xl pr-10"
+                    className="h-12 rounded-xl pr-10"
                   />
                   <button
                     type="button"
@@ -1207,7 +1207,7 @@ export default function Auth({ redirectAfterAuth }: AuthProps = {}) {
               </div>
 
               <div>
-                <label className="block text-xs font-semibold text-white/80 mb-1">
+                <label className="block text-xs font-semibold text-[#B8C5E0] mb-1.5">
                   Confirm New Password
                 </label>
                 <Input
@@ -1217,23 +1217,23 @@ export default function Auth({ redirectAfterAuth }: AuthProps = {}) {
                   onChange={(e) => setForgotConfirmPassword(e.target.value)}
                   required
                   minLength={8}
-                  className="h-11 rounded-xl"
+                  className="h-12 rounded-xl"
                 />
               </div>
 
-              <div className="flex gap-2 pt-2">
+              <div className="flex gap-3 pt-2">
                 <Button
                   type="button"
                   variant="outline"
                   onClick={() => setForgotModalOpen(false)}
-                  className="flex-1 rounded-xl h-11 border-white/15 text-white/80 hover:bg-white/10"
+                  className="flex-1 rounded-xl h-12 border-white/12 text-[#B8C5E0] hover:bg-white/[0.06]"
                 >
                   Cancel
                 </Button>
                 <Button
                   type="submit"
                   disabled={isLoading}
-                  className="flex-1 rounded-xl h-11 bg-gradient-to-r from-violet-600 to-indigo-600 hover:from-violet-500 hover:to-indigo-500 text-white cursor-pointer font-semibold shadow-[0_4px_20px_rgba(109,93,251,0.35)]"
+                  className="flex-1 rounded-xl h-12 bg-[#4169E1] hover:bg-[#5B7CFF] text-white cursor-pointer font-semibold shadow-[0_4px_20px_rgba(65,105,225,0.35)]"
                 >
                   {isLoading ? <Loader2 className="w-4 h-4 animate-spin" /> : "Update Password"}
                 </Button>

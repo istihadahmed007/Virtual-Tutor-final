@@ -89,20 +89,14 @@ export const TutorCard: React.FC<TutorCardProps> = ({
       onMouseMove={handleMouseMove}
       onMouseLeave={handleMouseLeave}
       data-interactive="true"
-      className={`group relative rounded-2xl border p-5 sm:p-6 transition-all duration-300 cursor-pointer flex flex-col justify-between overflow-hidden ${
-        isDark
-          ? "bg-slate-900/40 backdrop-blur-xl border-white/12 hover:border-[#6D5DFB]/60 hover:bg-slate-900/60 shadow-[0_16px_36px_rgba(0,0,0,0.3),inset_0_1px_0_rgba(255,255,255,0.12)] hover:shadow-[0_20px_44px_rgba(109,93,251,0.25),inset_0_1px_0_rgba(255,255,255,0.2)] text-white"
-          : "bg-white border-[#E2E8F0] hover:border-[#6D5DFB]/40 hover:shadow-[0_16px_36px_rgba(49,46,129,0.09)]"
-      } ${className}`}
+      className={`group relative rounded-2xl border border-white/10 p-5 sm:p-6 transition-all duration-300 cursor-pointer flex flex-col justify-between overflow-hidden bg-white/[0.055] backdrop-blur-xl hover:border-[#4169E1]/50 hover:bg-white/[0.08] shadow-[0_12px_40px_rgba(0,0,0,0.18)] hover:shadow-[0_16px_40px_rgba(65,105,225,0.2)] text-[#F8FAFF] ${className}`}
     >
       {/* Local Spotlight Follower */}
       {mousePos && !shouldReduceMotion && (
         <div
           className="pointer-events-none absolute -inset-px rounded-2xl opacity-100 transition-opacity duration-200 z-0"
           style={{
-            background: `radial-gradient(320px circle at ${mousePos.x}px ${mousePos.y}px, ${
-              isDark ? "rgba(109, 93, 251, 0.16)" : "rgba(109, 93, 251, 0.08)"
-            }, transparent 70%)`,
+            background: `radial-gradient(320px circle at ${mousePos.x}px ${mousePos.y}px, rgba(65, 105, 225, 0.16), transparent 70%)`,
           }}
           aria-hidden="true"
         />
@@ -112,13 +106,7 @@ export const TutorCard: React.FC<TutorCardProps> = ({
         {/* Top bar: Avatar, Name, Verified, and Rating */}
         <div className="flex items-start justify-between gap-3">
           <div className="flex items-center gap-3">
-            <div
-              className={`relative w-12 h-12 rounded-full overflow-hidden border shrink-0 flex items-center justify-center font-bold text-sm transition-transform duration-500 ${
-                isDark
-                  ? "bg-white/10 border-white/15 text-white"
-                  : "bg-[#F8FAFC] border-[#E2E8F0] text-[#312E81]"
-              }`}
-            >
+            <div className="relative w-12 h-12 rounded-full overflow-hidden border border-white/15 bg-white/10 text-[#F8FAFF] shrink-0 flex items-center justify-center font-bold text-sm transition-transform duration-500">
               {tutor.avatarUrl || tutor.image ? (
                 <img
                   src={tutor.avatarUrl || tutor.image}
@@ -130,19 +118,13 @@ export const TutorCard: React.FC<TutorCardProps> = ({
                 displayName.slice(0, 2).toUpperCase()
               )}
               {tutor.isOnline && (
-                <span className="absolute bottom-0 right-0 w-3 h-3 rounded-full bg-[#14B8A6] border-2 border-white ring-2 ring-[#14B8A6]/20 animate-pulse" />
+                <span className="absolute bottom-0 right-0 w-3 h-3 rounded-full bg-emerald-400 border-2 border-[#07142F] ring-2 ring-emerald-400/20 animate-pulse" />
               )}
             </div>
 
             <div>
               <div className="flex items-center gap-1.5">
-                <h3
-                  className={`font-bold text-sm sm:text-base transition-colors ${
-                    isDark
-                      ? "text-white group-hover:text-[#6D5DFB]"
-                      : "text-[#0F172A] group-hover:text-[#312E81]"
-                  }`}
-                >
+                <h3 className="font-bold text-sm sm:text-base text-[#F8FAFF] group-hover:text-[#8EA7FF] transition-colors">
                   {displayName}
                 </h3>
                 {isVerified && (
@@ -152,41 +134,23 @@ export const TutorCard: React.FC<TutorCardProps> = ({
                     className="relative shrink-0 flex items-center justify-center"
                     title="Verified Instructor"
                   >
-                    <ShieldCheck className="w-4 h-4 text-[#14B8A6] shrink-0 drop-shadow-[0_0_6px_rgba(20,184,166,0.4)]" />
+                    <ShieldCheck className="w-4 h-4 text-emerald-400 shrink-0 drop-shadow-[0_0_6px_rgba(52,211,153,0.4)]" />
                   </motion.div>
                 )}
               </div>
-              <p
-                className={`text-xs mt-0.5 ${
-                  isDark ? "text-white/60" : "text-[#64748B]"
-                }`}
-              >
+              <p className="text-xs text-[#B8C5E0] mt-0.5">
                 {isVerified ? "Verified Instructor" : "Faculty Specialist"}
               </p>
             </div>
           </div>
 
-          <div
-            className={`flex items-center gap-1 px-2.5 py-1 rounded-full border transition-all duration-300 group-hover:border-[#F59E0B]/30 ${
-              isDark
-                ? "bg-white/5 border-white/10"
-                : "bg-[#F8FAFC] border-[#E2E8F0]"
-            }`}
-          >
+          <div className="flex items-center gap-1 px-2.5 py-1 rounded-full border border-white/10 bg-white/[0.04] transition-all duration-300 group-hover:border-[#F59E0B]/40">
             <Star className="w-3.5 h-3.5 fill-[#F59E0B] text-[#F59E0B]" />
-            <span
-              className={`text-xs font-bold ${
-                isDark ? "text-white" : "text-[#0F172A]"
-              }`}
-            >
+            <span className="text-xs font-bold text-[#F8FAFF]">
               {displayRating}
             </span>
             {displayReviews > 0 && (
-              <span
-                className={`text-[10px] ${
-                  isDark ? "text-white/50" : "text-[#64748B]"
-                }`}
-              >
+              <span className="text-[10px] text-[#8493B3]">
                 ({displayReviews})
               </span>
             )}
@@ -195,11 +159,7 @@ export const TutorCard: React.FC<TutorCardProps> = ({
 
         {/* Bio preview */}
         {tutor.bio && (
-          <p
-            className={`mt-3.5 text-xs sm:text-[13px] line-clamp-2 leading-relaxed font-normal ${
-              isDark ? "text-white/70" : "text-[#64748B]"
-            }`}
-          >
+          <p className="mt-3.5 text-xs sm:text-[13px] line-clamp-2 leading-relaxed font-normal text-[#B8C5E0]">
             {tutor.bio}
           </p>
         )}
@@ -209,11 +169,7 @@ export const TutorCard: React.FC<TutorCardProps> = ({
           {displaySubjects.map((sub, i) => (
             <span
               key={i}
-              className={`text-[11px] font-medium px-2.5 py-0.5 rounded-full border transition-all duration-200 group-hover:border-[#6D5DFB]/30 ${
-                isDark
-                  ? "bg-white/5 text-white/80 border-white/10"
-                  : "bg-[#F8FAFC] text-[#312E81] border-[#E2E8F0]"
-              }`}
+              className="text-[11px] font-medium px-2.5 py-0.5 rounded-full border border-white/10 bg-white/[0.05] text-[#B8C5E0] transition-all duration-200 group-hover:border-[#4169E1]/40 group-hover:text-[#F8FAFF]"
             >
               {sub}
             </span>
@@ -222,24 +178,12 @@ export const TutorCard: React.FC<TutorCardProps> = ({
       </div>
 
       {/* Bottom Footer: Rate & Action */}
-      <div
-        className={`relative z-10 mt-5 pt-4 border-t flex items-center justify-between ${
-          isDark ? "border-white/10" : "border-[#E2E8F0]"
-        }`}
-      >
+      <div className="relative z-10 mt-5 pt-4 border-t border-white/10 flex items-center justify-between">
         <div>
-          <span
-            className={`text-base sm:text-lg font-bold font-display ${
-              isDark ? "text-white" : "text-[#0F172A]"
-            }`}
-          >
+          <span className="text-base sm:text-lg font-bold font-display text-[#F8FAFF]">
             {displayRate}
           </span>
-          <span
-            className={`text-xs ${
-              isDark ? "text-white/50" : "text-[#64748B]"
-            }`}
-          >
+          <span className="text-xs text-[#8493B3]">
             {" "}
             / month
           </span>
@@ -251,9 +195,7 @@ export const TutorCard: React.FC<TutorCardProps> = ({
             if (onBook) onBook(tutorTargetId);
             else navigate(`/teachers/${tutorTargetId}`);
           }}
-          className={`inline-flex items-center gap-1.5 text-xs font-bold text-[#312E81] hover:text-[#6D5DFB] transition-colors cursor-pointer ${
-            isDark ? "text-white/90 hover:text-[#6D5DFB]" : ""
-          }`}
+          className="inline-flex items-center gap-1.5 text-xs font-bold text-[#8EA7FF] hover:text-[#5B7CFF] transition-colors cursor-pointer"
         >
           <span>View Profile</span>
           <ArrowRight className="w-3.5 h-3.5 transition-transform duration-300 group-hover:translate-x-1.5" />

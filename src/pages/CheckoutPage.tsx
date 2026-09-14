@@ -579,19 +579,19 @@ export default function CheckoutPage() {
             <span>Back</span>
           </button>
 
-          <div className="inline-flex items-center gap-1.5 text-xs text-white/70 font-medium">
-            <Lock className="w-3.5 h-3.5 text-violet-400" />
+          <div className="inline-flex items-center gap-1.5 text-xs text-[#B8C5E0] font-medium">
+            <Lock className="w-3.5 h-3.5 text-[#8EA7FF]" />
             <span>256-Bit SSL Escrow · Paymently BDT</span>
           </div>
         </div>
 
         {/* Verification in Progress Alert */}
         {isVerifying && (
-          <div className="bg-white/5 border border-violet-500/40 rounded-2xl p-4 flex items-center gap-3 text-white text-xs animate-pulse backdrop-blur-md">
-            <Loader2 className="w-5 h-5 text-violet-400 animate-spin shrink-0" />
+          <div className="bg-white/[0.055] border border-[#4169E1]/40 rounded-2xl p-4 flex items-center gap-3 text-white text-xs animate-pulse backdrop-blur-md">
+            <Loader2 className="w-5 h-5 text-[#8EA7FF] animate-spin shrink-0" />
             <div>
-              <p className="font-bold text-white">Verifying payment with Paymently...</p>
-              <p className="text-white/70 mt-0.5">Confirming your transaction with the payment gateway.</p>
+              <p className="font-bold text-[#F8FAFF]">Verifying payment with Paymently...</p>
+              <p className="text-[#B8C5E0] mt-0.5">Confirming your transaction with the payment gateway.</p>
             </div>
           </div>
         )}
@@ -608,7 +608,7 @@ export default function CheckoutPage() {
                   size="sm"
                   variant="outline"
                   onClick={() => handleVerifyInvoice(activeInvoiceId)}
-                  className="mt-2 h-7 text-xs border-amber-400/30 bg-amber-500/20 text-amber-200 hover:bg-amber-500/30 flex items-center gap-1.5 cursor-pointer"
+                  className="mt-2 h-8 text-xs border-amber-400/30 bg-amber-500/20 text-amber-200 hover:bg-amber-500/30 flex items-center gap-1.5 cursor-pointer rounded-xl"
                 >
                   <RefreshCw className="w-3 h-3" />
                   <span>Check Status Again</span>
@@ -619,7 +619,7 @@ export default function CheckoutPage() {
         )}
 
         {/* 1. Review Class & Educator Card */}
-        <div className="bg-white/[0.04] backdrop-blur-xl rounded-3xl border border-white/12 p-5 sm:p-6 shadow-[0_8px_32px_rgba(0,0,0,0.36),inset_0_1px_0_rgba(255,255,255,0.08)] space-y-4 text-white">
+        <div className="bg-white/[0.055] backdrop-blur-xl rounded-2xl border border-white/10 p-5 sm:p-6 shadow-[0_12px_40px_rgba(0,0,0,0.18)] space-y-4 text-white">
           <div className="flex items-start gap-4">
             <ProfileAvatar
               name={effectiveTeacherName}
@@ -632,7 +632,7 @@ export default function CheckoutPage() {
             />
             <div className="min-w-0 flex-1">
               <div className="flex items-center gap-1.5 flex-wrap">
-                <span className="inline-block px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-white/10 text-white border border-white/15">
+                <span className="inline-block px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-[#4169E1]/20 text-[#8EA7FF] border border-[#4169E1]/30">
                   {effectiveSubject}
                 </span>
                 <span className="inline-flex items-center gap-0.5 text-[10px] font-semibold text-teal-300 bg-teal-500/20 px-2 py-0.5 rounded-full border border-teal-400/30">
@@ -640,10 +640,10 @@ export default function CheckoutPage() {
                   Verified Educator
                 </span>
               </div>
-              <h2 className="text-base sm:text-lg font-bold text-white mt-1 truncate">
+              <h2 className="text-base sm:text-lg font-bold text-[#F8FAFF] mt-1 truncate">
                 {effectiveTeacherName}
               </h2>
-              <p className="text-xs text-white/70 line-clamp-1 font-medium mt-0.5">
+              <p className="text-xs text-[#B8C5E0] line-clamp-1 font-medium mt-0.5">
                 {effectiveCourseName}
               </p>
             </div>
@@ -662,60 +662,60 @@ export default function CheckoutPage() {
         </div>
 
         {/* 2. Student Information Form */}
-        <div className="bg-white/[0.04] backdrop-blur-xl rounded-3xl border border-white/12 p-5 sm:p-6 shadow-[0_8px_32px_rgba(0,0,0,0.36),inset_0_1px_0_rgba(255,255,255,0.08)] space-y-3.5 text-white">
-          <h3 className="text-xs font-bold text-white uppercase tracking-wider">
+        <div className="bg-white/[0.055] backdrop-blur-xl rounded-2xl border border-white/10 p-5 sm:p-6 shadow-[0_12px_40px_rgba(0,0,0,0.18)] space-y-3.5 text-white">
+          <h3 className="text-xs font-bold text-[#F8FAFF] uppercase tracking-wider">
             Student Information
           </h3>
 
           <div className="space-y-3">
             <div>
-              <label htmlFor="student-name-input" className="block text-xs font-semibold text-white/80 mb-1">
+              <label htmlFor="student-name-input" className="block text-xs font-semibold text-[#B8C5E0] mb-1.5">
                 Student Full Name *
               </label>
               <div className="relative">
-                <User className="w-4 h-4 text-white/40 absolute left-3 top-1/2 -translate-y-1/2" />
+                <User className="w-4 h-4 text-white/40 absolute left-3.5 top-1/2 -translate-y-1/2" />
                 <input
                   id="student-name-input"
                   type="text"
                   value={studentName}
                   onChange={(e) => setStudentName(e.target.value)}
                   placeholder="Enter student full name"
-                  className="w-full pl-9 pr-3 py-2.5 rounded-xl border border-white/12 bg-white/5 text-xs sm:text-sm text-white placeholder:text-white/40 focus:outline-none focus:ring-2 focus:ring-violet-500/30 focus:border-violet-400 transition-colors"
+                  className="w-full h-12 pl-10 pr-3.5 rounded-xl border border-white/10 bg-white/[0.045] text-sm text-[#F8FAFF] placeholder:text-[#8493B3] focus:outline-none focus:ring-2 focus:ring-[#4169E1]/25 focus:border-[#4169E1] transition-colors"
                 />
               </div>
             </div>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
               <div>
-                <label htmlFor="student-phone-input" className="block text-xs font-semibold text-white/80 mb-1">
+                <label htmlFor="student-phone-input" className="block text-xs font-semibold text-[#B8C5E0] mb-1.5">
                   Mobile Number (bKash / Nagad)
                 </label>
                 <div className="relative">
-                  <Phone className="w-4 h-4 text-white/40 absolute left-3 top-1/2 -translate-y-1/2" />
+                  <Phone className="w-4 h-4 text-white/40 absolute left-3.5 top-1/2 -translate-y-1/2" />
                   <input
                     id="student-phone-input"
                     type="tel"
                     value={studentPhone}
                     onChange={(e) => setStudentPhone(e.target.value)}
                     placeholder="01XXXXXXXXX"
-                    className="w-full pl-9 pr-3 py-2.5 rounded-xl border border-white/12 bg-white/5 text-xs sm:text-sm text-white placeholder:text-white/40 focus:outline-none focus:ring-2 focus:ring-violet-500/30 focus:border-violet-400 transition-colors"
+                    className="w-full h-12 pl-10 pr-3.5 rounded-xl border border-white/10 bg-white/[0.045] text-sm text-[#F8FAFF] placeholder:text-[#8493B3] focus:outline-none focus:ring-2 focus:ring-[#4169E1]/25 focus:border-[#4169E1] transition-colors"
                   />
                 </div>
               </div>
 
               <div>
-                <label htmlFor="student-email-input" className="block text-xs font-semibold text-white/80 mb-1">
+                <label htmlFor="student-email-input" className="block text-xs font-semibold text-[#B8C5E0] mb-1.5">
                   Receipt Email Address
                 </label>
                 <div className="relative">
-                  <Mail className="w-4 h-4 text-white/40 absolute left-3 top-1/2 -translate-y-1/2" />
+                  <Mail className="w-4 h-4 text-white/40 absolute left-3.5 top-1/2 -translate-y-1/2" />
                   <input
                     id="student-email-input"
                     type="email"
                     value={studentEmail}
                     onChange={(e) => setStudentEmail(e.target.value)}
                     placeholder="student@example.com"
-                    className="w-full pl-9 pr-3 py-2.5 rounded-xl border border-white/12 bg-white/5 text-xs sm:text-sm text-white placeholder:text-white/40 focus:outline-none focus:ring-2 focus:ring-violet-500/30 focus:border-violet-400 transition-colors"
+                    className="w-full h-12 pl-10 pr-3.5 rounded-xl border border-white/10 bg-white/[0.045] text-sm text-[#F8FAFF] placeholder:text-[#8493B3] focus:outline-none focus:ring-2 focus:ring-[#4169E1]/25 focus:border-[#4169E1] transition-colors"
                   />
                 </div>
               </div>
@@ -724,14 +724,14 @@ export default function CheckoutPage() {
         </div>
 
         {/* 3. Official Virtual Tutor Gateway (Paymently) */}
-        <div className="bg-white/[0.04] backdrop-blur-xl rounded-3xl border border-white/12 p-5 sm:p-6 shadow-[0_8px_32px_rgba(0,0,0,0.36),inset_0_1px_0_rgba(255,255,255,0.08)] space-y-4 text-white">
+        <div className="bg-white/[0.055] backdrop-blur-xl rounded-2xl border border-white/10 p-5 sm:p-6 shadow-[0_12px_40px_rgba(0,0,0,0.18)] space-y-4 text-white">
           <div className="flex items-center justify-between">
             <div>
-              <h3 className="text-xs font-bold text-white uppercase tracking-wider">
+              <h3 className="text-xs font-bold text-[#F8FAFF] uppercase tracking-wider">
                 Payment Method
               </h3>
-              <p className="text-[11px] text-white/60 mt-0.5">
-                Official Gateway: <span className="font-mono font-semibold text-violet-300">vartualtutor.paymently.io</span>
+              <p className="text-[11px] text-[#B8C5E0] mt-0.5">
+                Official Gateway: <span className="font-mono font-semibold text-[#8EA7FF]">vartualtutor.paymently.io</span>
               </p>
             </div>
             <span className="inline-flex items-center gap-1 text-[11px] font-bold text-teal-300 bg-teal-500/20 px-2.5 py-1 rounded-full border border-teal-400/30">
@@ -741,14 +741,14 @@ export default function CheckoutPage() {
           </div>
 
           {/* Interactive Payment Tabs */}
-          <div className="grid grid-cols-3 gap-1.5 p-1 bg-white/5 rounded-2xl border border-white/10 text-xs">
+          <div className="grid grid-cols-3 gap-1.5 p-1 bg-white/[0.04] rounded-2xl border border-white/10 text-xs">
             <button
               type="button"
               onClick={() => setPaymentTab("online")}
               className={`py-2 px-2.5 rounded-xl font-bold flex items-center justify-center gap-1.5 transition-all cursor-pointer ${
                 paymentTab === "online"
-                  ? "bg-gradient-to-r from-violet-600 to-indigo-600 text-white shadow-sm"
-                  : "text-white/70 hover:text-white hover:bg-white/10"
+                  ? "bg-[#4169E1] text-white shadow-sm"
+                  : "text-[#B8C5E0] hover:text-white hover:bg-white/[0.06]"
               }`}
             >
               <CreditCard className="w-3.5 h-3.5" />
@@ -760,8 +760,8 @@ export default function CheckoutPage() {
               onClick={() => setPaymentTab("qr")}
               className={`py-2 px-2.5 rounded-xl font-bold flex items-center justify-center gap-1.5 transition-all cursor-pointer ${
                 paymentTab === "qr"
-                  ? "bg-gradient-to-r from-violet-600 to-indigo-600 text-white shadow-sm"
-                  : "text-white/70 hover:text-white hover:bg-white/10"
+                  ? "bg-[#4169E1] text-white shadow-sm"
+                  : "text-[#B8C5E0] hover:text-white hover:bg-white/[0.06]"
               }`}
             >
               <QrCode className="w-3.5 h-3.5" />
@@ -773,8 +773,8 @@ export default function CheckoutPage() {
               onClick={() => setPaymentTab("trxid")}
               className={`py-2 px-2.5 rounded-xl font-bold flex items-center justify-center gap-1.5 transition-all cursor-pointer ${
                 paymentTab === "trxid"
-                  ? "bg-gradient-to-r from-violet-600 to-indigo-600 text-white shadow-sm"
-                  : "text-white/70 hover:text-white hover:bg-white/10"
+                  ? "bg-[#4169E1] text-white shadow-sm"
+                  : "text-[#B8C5E0] hover:text-white hover:bg-white/[0.06]"
               }`}
             >
               <Zap className="w-3.5 h-3.5" />
@@ -784,13 +784,13 @@ export default function CheckoutPage() {
 
           {/* TAB 1: Instant Online Pay via Paymently Portal */}
           {paymentTab === "online" && (
-            <div className="p-4 rounded-2xl border border-violet-500/40 bg-gradient-to-br from-violet-600/10 to-indigo-600/10 space-y-3.5 backdrop-blur-md">
+            <div className="p-4 rounded-2xl border border-[#4169E1]/30 bg-[#4169E1]/10 space-y-3.5 backdrop-blur-md">
               <div className="flex items-center justify-between">
                 <div>
-                  <h4 className="text-sm font-bold text-white">
+                  <h4 className="text-sm font-bold text-[#F8FAFF]">
                     Virtual Tutor Official Gateway (Paymently)
                   </h4>
-                  <p className="text-[11px] text-white/60 mt-0.5">
+                  <p className="text-[11px] text-[#B8C5E0] mt-0.5">
                     Pay securely using bKash, Nagad, Rocket, Upay, Cards, or Net Banking
                   </p>
                 </div>
@@ -799,7 +799,7 @@ export default function CheckoutPage() {
 
               {/* Supported Channels in Paymently */}
               <div className="pt-2 border-t border-white/10">
-                <span className="text-[10px] font-bold text-white/50 uppercase tracking-wider block mb-2">
+                <span className="text-[10px] font-bold text-[#8493B3] uppercase tracking-wider block mb-2">
                   Supported MFS & Banking Channels:
                 </span>
                 <div className="flex flex-wrap gap-1.5">
@@ -825,13 +825,13 @@ export default function CheckoutPage() {
               </div>
 
               {/* Direct Gateway Link Box */}
-              <div className="p-3 bg-white/5 rounded-xl border border-white/10 space-y-2">
+              <div className="p-3 bg-white/[0.04] rounded-xl border border-white/10 space-y-2">
                 <div className="flex items-center justify-between text-[11px]">
-                  <span className="font-semibold text-white/70">Official Gateway Link:</span>
+                  <span className="font-semibold text-[#B8C5E0]">Official Gateway Link:</span>
                   <button
                     type="button"
                     onClick={handleCopyPaymentLink}
-                    className="inline-flex items-center gap-1 font-bold text-violet-400 hover:text-violet-300 cursor-pointer"
+                    className="inline-flex items-center gap-1 font-bold text-[#8EA7FF] hover:text-[#5B7CFF] cursor-pointer"
                   >
                     {copiedLink ? (
                       <>
@@ -855,10 +855,10 @@ export default function CheckoutPage() {
 
           {/* TAB 2: Scan & Pay with QR Code */}
           {paymentTab === "qr" && (
-            <div className="p-4 rounded-2xl border border-white/10 bg-white/5 space-y-4 text-center">
+            <div className="p-4 rounded-2xl border border-white/10 bg-white/[0.04] space-y-4 text-center">
               <div className="space-y-1">
-                <h4 className="text-sm font-bold text-white">Scan with bKash or Nagad App</h4>
-                <p className="text-[11px] text-white/60">
+                <h4 className="text-sm font-bold text-[#F8FAFF]">Scan with bKash or Nagad App</h4>
+                <p className="text-[11px] text-[#B8C5E0]">
                   Open your mobile wallet app and scan this official merchant QR code to complete payment
                 </p>
               </div>
@@ -877,10 +877,10 @@ export default function CheckoutPage() {
 
               {/* Steps */}
               <div className="text-left bg-white/5 p-3.5 rounded-xl border border-white/10 space-y-2 text-xs">
-                <div className="font-bold text-white text-[11px] uppercase tracking-wider">
+                <div className="font-bold text-[#F8FAFF] text-[11px] uppercase tracking-wider">
                   How to Pay via QR:
                 </div>
-                <ol className="list-decimal list-inside space-y-1 text-white/80 text-[11px]">
+                <ol className="list-decimal list-inside space-y-1 text-[#B8C5E0] text-[11px]">
                   <li>Open <strong>bKash</strong>, <strong>Nagad</strong>, or <strong>Upay</strong> App on your smartphone.</li>
                   <li>Tap <strong>Scan QR</strong> and point camera at the code above.</li>
                   <li>Enter payable tuition amount: <strong>৳{effectiveAmount.toLocaleString()} BDT</strong>.</li>
@@ -895,7 +895,7 @@ export default function CheckoutPage() {
                   variant="outline"
                   size="sm"
                   onClick={handleCopyPaymentLink}
-                  className="rounded-full text-xs font-semibold gap-1.5 h-8 border-white/15 bg-white/5 hover:bg-white/10 text-white cursor-pointer"
+                  className="rounded-xl text-xs font-semibold gap-1.5 h-8 border-white/15 bg-white/5 hover:bg-white/10 text-white cursor-pointer"
                 >
                   {copiedLink ? <Check className="w-3 h-3 text-emerald-400" /> : <Copy className="w-3 h-3" />}
                   <span>{copiedLink ? "Link Copied" : "Copy Payment Link"}</span>
@@ -904,7 +904,7 @@ export default function CheckoutPage() {
                   href={OFFICIAL_PAYMENTLY_URL}
                   target="_blank"
                   rel="noreferrer"
-                  className="inline-flex items-center gap-1 text-xs font-bold text-violet-400 hover:underline px-3 py-1.5"
+                  className="inline-flex items-center gap-1 text-xs font-bold text-[#8EA7FF] hover:text-[#5B7CFF] px-3 py-1.5"
                 >
                   <span>Open Link in Browser</span>
                   <ExternalLink className="w-3 h-3" />
@@ -915,45 +915,45 @@ export default function CheckoutPage() {
 
           {/* TAB 3: Manual TrxID Confirmation */}
           {paymentTab === "trxid" && (
-            <div className="p-4 rounded-2xl border border-white/10 bg-white/5 space-y-3.5">
+            <div className="p-4 rounded-2xl border border-white/10 bg-white/[0.04] space-y-3.5">
               <div>
-                <h4 className="text-sm font-bold text-white">Already Paid? Confirm TrxID</h4>
-                <p className="text-[11px] text-white/60 mt-0.5">
+                <h4 className="text-sm font-bold text-[#F8FAFF]">Already Paid? Confirm TrxID</h4>
+                <p className="text-[11px] text-[#B8C5E0] mt-0.5">
                   If you sent payment via Paymently portal or QR scan, submit your Transaction ID to activate immediately.
                 </p>
               </div>
 
               <div className="space-y-3 pt-1">
                 <div>
-                  <label htmlFor="manual-trx-input" className="block text-xs font-semibold text-white/80 mb-1">
+                  <label htmlFor="manual-trx-input" className="block text-xs font-semibold text-[#B8C5E0] mb-1.5">
                     bKash / Nagad Transaction ID (TrxID) or Invoice ID *
                   </label>
                   <div className="relative">
-                    <Smartphone className="w-4 h-4 text-white/40 absolute left-3 top-1/2 -translate-y-1/2" />
+                    <Smartphone className="w-4 h-4 text-white/40 absolute left-3.5 top-1/2 -translate-y-1/2" />
                     <input
                       id="manual-trx-input"
                       type="text"
                       value={manualTrxId}
                       onChange={(e) => setManualTrxId(e.target.value.toUpperCase())}
                       placeholder="e.g. 9K382JX7 or PAY-12345"
-                      className="w-full pl-9 pr-3 py-2.5 rounded-xl border border-white/12 bg-white/5 text-xs sm:text-sm font-mono text-white placeholder:text-white/40 focus:outline-none focus:ring-2 focus:ring-violet-500/30 focus:border-violet-400 uppercase"
+                      className="w-full h-12 pl-10 pr-3.5 rounded-xl border border-white/10 bg-white/[0.045] text-sm font-mono text-[#F8FAFF] placeholder:text-[#8493B3] focus:outline-none focus:ring-2 focus:ring-[#4169E1]/25 focus:border-[#4169E1] uppercase"
                     />
                   </div>
                 </div>
 
                 <div>
-                  <label htmlFor="manual-sender-input" className="block text-xs font-semibold text-white/80 mb-1">
+                  <label htmlFor="manual-sender-input" className="block text-xs font-semibold text-[#B8C5E0] mb-1.5">
                     Sender Mobile Number (Optional)
                   </label>
                   <div className="relative">
-                    <Phone className="w-4 h-4 text-white/40 absolute left-3 top-1/2 -translate-y-1/2" />
+                    <Phone className="w-4 h-4 text-white/40 absolute left-3.5 top-1/2 -translate-y-1/2" />
                     <input
                       id="manual-sender-input"
                       type="tel"
                       value={manualSenderPhone}
                       onChange={(e) => setManualSenderPhone(e.target.value)}
                       placeholder="e.g. 017XXXXXXXX"
-                      className="w-full pl-9 pr-3 py-2.5 rounded-xl border border-white/12 bg-white/5 text-xs sm:text-sm text-white placeholder:text-white/40 focus:outline-none focus:ring-2 focus:ring-violet-500/30 focus:border-violet-400"
+                      className="w-full h-12 pl-10 pr-3.5 rounded-xl border border-white/10 bg-white/[0.045] text-sm text-[#F8FAFF] placeholder:text-[#8493B3] focus:outline-none focus:ring-2 focus:ring-[#4169E1]/25 focus:border-[#4169E1]"
                     />
                   </div>
                 </div>
@@ -962,7 +962,7 @@ export default function CheckoutPage() {
                   type="button"
                   disabled={isVerifying || !manualTrxId.trim()}
                   onClick={handleManualTrxVerify}
-                  className="w-full h-11 rounded-full bg-gradient-to-r from-violet-600 to-indigo-600 hover:from-violet-500 hover:to-indigo-500 text-white font-bold text-xs sm:text-sm shadow-[0_4px_16px_rgba(109,93,251,0.35)] transition-all active:scale-[0.99] flex items-center justify-center gap-2 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed mt-2"
+                  className="w-full h-12 rounded-xl bg-[#4169E1] hover:bg-[#5B7CFF] text-white font-bold text-sm shadow-[0_4px_16px_rgba(65,105,225,0.35)] transition-all active:scale-[0.99] flex items-center justify-center gap-2 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed mt-2"
                 >
                   {isVerifying ? (
                     <>
@@ -983,11 +983,11 @@ export default function CheckoutPage() {
 
         {/* 4. Active Paymently Session Banner */}
         {gatewayRedirectUrl && (
-          <div className="bg-gradient-to-br from-violet-950/40 via-slate-950/60 to-indigo-950/40 border border-violet-500/40 rounded-3xl p-5 sm:p-6 shadow-[0_8px_32px_rgba(0,0,0,0.36)] space-y-4 text-white">
+          <div className="bg-[#0B1D41]/85 border border-[#4169E1]/30 rounded-2xl p-5 sm:p-6 shadow-[0_12px_40px_rgba(0,0,0,0.18)] space-y-4 text-white">
             <div className="flex items-center justify-between pb-2 border-b border-white/10">
               <div className="flex items-center gap-2">
-                <div className="w-2.5 h-2.5 rounded-full bg-violet-400 animate-ping" />
-                <h4 className="text-xs font-bold uppercase tracking-wider text-white">
+                <div className="w-2.5 h-2.5 rounded-full bg-[#5B7CFF] animate-ping" />
+                <h4 className="text-xs font-bold uppercase tracking-wider text-[#F8FAFF]">
                   Paymently Gateway Session Open
                 </h4>
               </div>
@@ -996,7 +996,7 @@ export default function CheckoutPage() {
               </span>
             </div>
 
-            <p className="text-xs text-white/80 leading-relaxed">
+            <p className="text-xs text-[#B8C5E0] leading-relaxed">
               Your official Paymently checkout is open in another tab. If the checkout window didn't open or was blocked, click below:
             </p>
 
@@ -1006,15 +1006,15 @@ export default function CheckoutPage() {
               href={gatewayRedirectUrl}
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-flex items-center justify-center gap-2 w-full h-12 rounded-full bg-gradient-to-r from-violet-600 to-indigo-600 hover:from-violet-500 hover:to-indigo-500 text-white font-bold text-xs sm:text-sm shadow-[0_4px_20px_rgba(109,93,251,0.35)] transition-all active:scale-[0.99]"
+              className="inline-flex items-center justify-center gap-2 w-full h-12 rounded-xl bg-[#4169E1] hover:bg-[#5B7CFF] text-white font-bold text-sm shadow-[0_4px_20px_rgba(65,105,225,0.35)] transition-all active:scale-[0.99]"
             >
               <span>Launch Virtual Tutor Gateway (Paymently)</span>
               <ExternalLink className="w-4 h-4" />
             </a>
 
             <div className="pt-2 border-t border-white/10 flex items-center justify-between flex-wrap gap-2 text-xs">
-              <div className="flex items-center gap-2 text-white/70">
-                <Loader2 className="w-4 h-4 text-violet-400 animate-spin shrink-0" />
+              <div className="flex items-center gap-2 text-[#B8C5E0]">
+                <Loader2 className="w-4 h-4 text-[#8EA7FF] animate-spin shrink-0" />
                 <span className="text-[11px]">Auto-checking confirmation every 3s...</span>
               </div>
 
@@ -1024,7 +1024,7 @@ export default function CheckoutPage() {
                   size="sm"
                   variant="ghost"
                   onClick={() => setPaymentTab("trxid")}
-                  className="h-8 text-xs text-white/70 hover:text-white cursor-pointer"
+                  className="h-8 text-xs text-[#B8C5E0] hover:text-white cursor-pointer"
                 >
                   <span>Enter TrxID</span>
                 </Button>
@@ -1036,7 +1036,7 @@ export default function CheckoutPage() {
                     variant="outline"
                     disabled={isVerifying}
                     onClick={() => handleVerifyInvoice(activeInvoiceId)}
-                    className="h-8 text-xs border-white/15 text-white bg-white/5 hover:bg-white/10 flex items-center gap-1.5 cursor-pointer rounded-full"
+                    className="h-8 text-xs border-white/15 text-white bg-white/5 hover:bg-white/10 flex items-center gap-1.5 cursor-pointer rounded-xl"
                   >
                     <RefreshCw className={`w-3.5 h-3.5 ${isVerifying ? "animate-spin" : ""}`} />
                     <span>Check Now</span>
@@ -1048,26 +1048,26 @@ export default function CheckoutPage() {
         )}
 
         {/* 5. Total Amount & Primary Action CTA */}
-        <div className="bg-white/[0.04] backdrop-blur-xl rounded-3xl border border-white/12 p-5 sm:p-6 shadow-[0_8px_32px_rgba(0,0,0,0.36),inset_0_1px_0_rgba(255,255,255,0.08)] space-y-4 text-white">
+        <div className="bg-white/[0.055] backdrop-blur-xl rounded-2xl border border-white/10 p-5 sm:p-6 shadow-[0_12px_40px_rgba(0,0,0,0.18)] space-y-4 text-white">
           <div className="space-y-2 text-xs">
-            <div className="flex justify-between text-white/70">
+            <div className="flex justify-between text-[#B8C5E0]">
               <span>Tuition Fee ({effectiveClassesCount} Live Classes):</span>
-              <span className="font-semibold text-white">৳{effectiveAmount.toLocaleString()} BDT</span>
+              <span className="font-semibold text-[#F8FAFF]">৳{effectiveAmount.toLocaleString()} BDT</span>
             </div>
-            <div className="flex justify-between text-white/50 text-[11px]">
+            <div className="flex justify-between text-[#8493B3] text-[11px]">
               <span>Paymently Gateway Processing Fee:</span>
               <span className="text-emerald-400 font-bold">FREE (৳0)</span>
             </div>
             <div className="pt-3 border-t border-white/10 flex items-center justify-between">
               <div>
-                <span className="text-xs font-bold text-white block">Total Payable</span>
-                <span className="text-[10px] text-white/40">Tuition escrow protection guarantee included</span>
+                <span className="text-xs font-bold text-[#F8FAFF] block">Total Payable</span>
+                <span className="text-[10px] text-[#8493B3]">Tuition escrow protection guarantee included</span>
               </div>
               <div className="text-right">
-                <span className="text-2xl font-black text-white tracking-tight">
+                <span className="text-2xl font-black text-[#F8FAFF] tracking-tight">
                   ৳{effectiveAmount.toLocaleString()}
                 </span>
-                <span className="text-xs font-bold text-white/60 ml-1">BDT</span>
+                <span className="text-xs font-bold text-[#B8C5E0] ml-1">BDT</span>
               </div>
             </div>
           </div>
@@ -1078,7 +1078,7 @@ export default function CheckoutPage() {
             type="button"
             disabled={isProcessing || isVerifying}
             onClick={handlePayWithPaymently}
-            className="w-full h-12 rounded-full bg-gradient-to-r from-violet-600 to-indigo-600 hover:from-violet-500 hover:to-indigo-500 text-white font-bold text-sm shadow-[0_4px_20px_rgba(109,93,251,0.35)] transition-all active:scale-[0.99] flex items-center justify-center gap-2 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
+            className="w-full h-12 rounded-xl bg-[#4169E1] hover:bg-[#5B7CFF] text-white font-bold text-sm shadow-[0_4px_20px_rgba(65,105,225,0.35)] transition-all active:scale-[0.99] flex items-center justify-center gap-2 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
           >
             {isProcessing ? (
               <>
@@ -1092,18 +1092,18 @@ export default function CheckoutPage() {
               </>
             ) : gatewayRedirectUrl ? (
               <>
-                <ExternalLink className="w-4 h-4 text-violet-300" />
+                <ExternalLink className="w-4 h-4 text-white/80" />
                 <span>Re-Open Paymently Portal (৳{effectiveAmount.toLocaleString()})</span>
               </>
             ) : (
               <>
-                <Lock className="w-4 h-4 text-violet-300" />
+                <Lock className="w-4 h-4 text-white/80" />
                 <span>Pay ৳{effectiveAmount.toLocaleString()} with Virtual Tutor Gateway ↗</span>
               </>
             )}
           </button>
 
-          <div className="flex items-center justify-between text-[11px] text-white/50 pt-1 border-t border-white/10">
+          <div className="flex items-center justify-between text-[11px] text-[#8493B3] pt-1 border-t border-white/10">
             <span className="inline-flex items-center gap-1">
               <ShieldCheck className="w-3.5 h-3.5 text-emerald-400" />
               <span>Official Gateway: vartualtutor.paymently.io</span>
@@ -1111,7 +1111,7 @@ export default function CheckoutPage() {
             <button
               type="button"
               onClick={handleCopyPaymentLink}
-              className="text-violet-400 hover:underline font-semibold cursor-pointer"
+              className="text-[#8EA7FF] hover:text-[#5B7CFF] hover:underline font-semibold cursor-pointer"
             >
               Copy Gateway URL
             </button>

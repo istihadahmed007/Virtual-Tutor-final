@@ -20,68 +20,43 @@ export const StatBlock: React.FC<StatBlockProps> = ({
   icon: Icon,
   trend,
   className = "",
-  theme = "light",
 }) => {
-  const isDark = theme === "dark";
-
   return (
     <div
-      className={`rounded-2xl border p-5 sm:p-6 transition-all duration-300 ${
-        isDark
-          ? "bg-[#0D0D0D]/80 backdrop-blur-md border-white/10 hover:border-white/25 hover:shadow-[0_8px_30px_rgba(109,93,251,0.12)]"
-          : "bg-white border-[#E2E8F0] hover:border-[#6D5DFB]/30 hover:shadow-[0_8px_24px_rgba(49,46,129,0.06)]"
-      } ${className}`}
+      className={`rounded-2xl border p-6 transition-all duration-300 bg-white/[0.055] backdrop-blur-xl border-white/10 hover:border-white/20 hover:shadow-[0_12px_40px_rgba(0,0,0,0.22)] ${className}`}
     >
-      <div className="flex items-center justify-between mb-3 sm:mb-4">
-        <span
-          className={`text-xs sm:text-[13px] font-medium tracking-tight ${
-            isDark ? "text-white/60" : "text-[#64748B]"
-          }`}
-        >
+      <div className="flex items-center justify-between mb-4">
+        <span className="text-[13.5px] font-semibold tracking-tight text-[#B8C5E0]">
           {label}
         </span>
         {Icon && (
-          <div
-            className={`w-8 h-8 rounded-full flex items-center justify-center shrink-0 ${
-              isDark
-                ? "bg-white/10 text-[#6D5DFB]"
-                : "bg-[#F8FAFC] text-[#312E81]"
-            }`}
-          >
+          <div className="w-9 h-9 rounded-xl flex items-center justify-center shrink-0 bg-[#4169E1]/15 text-[#8EA7FF] border border-[#4169E1]/25">
             <Icon className="w-4 h-4" />
           </div>
         )}
       </div>
 
-      <div className="flex items-baseline gap-1">
-        <span
-          className={`text-2xl sm:text-3xl lg:text-4xl font-extrabold tracking-tight ${
-            isDark ? "text-white" : "text-[#0F172A]"
-          }`}
-        >
+      <div className="flex items-baseline gap-1.5">
+        <span className="text-3xl sm:text-4xl font-extrabold tracking-[-0.03em] text-[#F8FAFF]">
           {value}
         </span>
         {suffix && (
-          <span
-            className={`text-sm sm:text-base font-normal ${
-              isDark ? "text-white/60" : "text-[#64748B]"
-            }`}
-          >
+          <span className="text-base font-medium text-[#B8C5E0]">
             {suffix}
           </span>
         )}
       </div>
 
       {(subtext || trend) && (
-        <div
-          className={`mt-2.5 flex items-center gap-2 text-xs ${
-            isDark ? "text-white/60" : "text-[#64748B]"
-          }`}
-        >
-          {trend && (
-            <span className="font-semibold text-[#6D5DFB]">{trend}</span>
+        <div className="mt-3 pt-3 border-t border-white/8 flex items-center justify-between text-xs">
+          {subtext && (
+            <span className="text-[#8493B3] text-[12px] truncate">{subtext}</span>
           )}
-          {subtext && <span>{subtext}</span>}
+          {trend && (
+            <span className="text-[#8EA7FF] font-semibold text-[12px] ml-auto">
+              {trend}
+            </span>
+          )}
         </div>
       )}
     </div>

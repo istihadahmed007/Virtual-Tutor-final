@@ -348,12 +348,12 @@ export default function Landing() {
       <CursorEnhancement />
 
       {/* ─── 1. GLOBAL FLOATING GLASS HEADER ─── */}
-      <header className="fixed top-4 inset-x-0 z-50 transition-all duration-300 px-4 sm:px-6 max-w-[1400px] mx-auto">
+      <header className="fixed top-4 inset-x-0 z-50 transition-all duration-300 px-4 sm:px-6 max-w-[1280px] mx-auto">
         <div
           className={`w-full rounded-2xl sm:rounded-full px-4 sm:px-6 py-3 flex items-center justify-between transition-all duration-300 ${
             isScrolled
-              ? "bg-slate-950/75 backdrop-blur-2xl border border-white/20 shadow-[0_12px_36px_rgba(0,0,0,0.5),inset_0_1px_0_rgba(255,255,255,0.15)]"
-              : "bg-slate-950/40 backdrop-blur-xl border border-white/12 shadow-[0_8px_24px_rgba(0,0,0,0.3),inset_0_1px_0_rgba(255,255,255,0.1)]"
+              ? "bg-[#07142F]/80 backdrop-blur-2xl border border-white/14 shadow-[0_12px_36px_rgba(0,0,0,0.4),inset_0_1px_0_rgba(255,255,255,0.12)]"
+              : "bg-[#07142F]/55 backdrop-blur-xl border border-white/10 shadow-[0_8px_24px_rgba(0,0,0,0.25),inset_0_1px_0_rgba(255,255,255,0.08)]"
           }`}
         >
           {/* Logo */}
@@ -393,14 +393,13 @@ export default function Landing() {
                 <GhostButton
                   onClick={() => navigate("/auth?mode=login")}
                   size="sm"
-                  className="text-slate-200 hover:text-white hover:bg-white/10"
+                  className="text-[#B8C5E0] hover:text-[#F8FAFF] hover:bg-white/10"
                 >
                   Log In
                 </GhostButton>
                 <PrimaryButton
                   onClick={() => navigate("/auth?mode=signup")}
                   size="sm"
-                  className="bg-white text-slate-950 hover:bg-slate-100 font-bold shadow-[0_0_24px_rgba(255,255,255,0.25)] border-white"
                 >
                   Start Learning
                 </PrimaryButton>
@@ -513,7 +512,7 @@ export default function Landing() {
 
       {/* ─── 2. HERO SECTION ─── */}
       <section className="relative pt-28 sm:pt-36 pb-20 sm:pb-28 overflow-hidden z-10">
-        <div className="max-w-[1440px] mx-auto px-4 sm:px-8 relative z-10">
+        <div className="max-w-[1280px] mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-8 items-center">
             {/* Left Content Column */}
             <motion.div
@@ -524,15 +523,15 @@ export default function Landing() {
             >
               {/* Eyebrow Pill Row */}
               <div className="flex flex-wrap items-center gap-3">
-                <span className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full border border-white/20 bg-white/[0.08] backdrop-blur-md shadow-[0_0_20px_rgba(109,93,251,0.2)] text-xs font-bold tracking-wider uppercase text-white">
-                  <span className="w-2 h-2 rounded-full bg-[#14B8A6] animate-pulse" />
+                <span className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full border border-white/14 bg-white/[0.06] backdrop-blur-md shadow-[0_0_20px_rgba(65,105,225,0.2)] text-xs font-bold tracking-wider uppercase text-[#F8FAFF]">
+                  <span className="w-2 h-2 rounded-full bg-[#4169E1] animate-pulse" />
                   VERIFIED 1-ON-1 ONLINE LEARNING · BANGLADESH
                 </span>
               </div>
 
-              {/* Main Headline with Blur-to-Sharp Choreography */}
+              {/* Main Headline with Blur-to-Sharp Choreography & Manrope Scale */}
               <motion.div variants={itemVariants}>
-                <h1 className="text-4xl sm:text-6xl xl:text-[4.25rem] font-bold tracking-tight leading-[1.08] text-white">
+                <h1 className="text-[34px] sm:text-[46px] lg:text-[58px] xl:text-[66px] font-extrabold tracking-[-0.035em] leading-[1.03] text-[#F8FAFF]">
                   <motion.span
                     initial={shouldReduceMotion ? {} : { opacity: 0, y: 25 }}
                     animate={{ opacity: 1, y: 0 }}
@@ -545,7 +544,7 @@ export default function Landing() {
                     initial={shouldReduceMotion ? {} : { opacity: 0.1, filter: "blur(6px)", y: 15 }}
                     animate={{ opacity: 1, filter: "blur(0px)", y: 0 }}
                     transition={{ duration: 0.85, ease: [0.16, 1, 0.3, 1], delay: 0.35 }}
-                    className="block bg-gradient-to-r from-white via-[#C7D2FE] to-[#2DD4BF] bg-clip-text text-transparent drop-shadow-[0_4px_24px_rgba(109,93,251,0.3)]"
+                    className="block bg-gradient-to-r from-white via-[#8EA7FF] to-[#5B7CFF] bg-clip-text text-transparent drop-shadow-[0_4px_24px_rgba(65,105,225,0.35)]"
                   >
                     With the right teacher.
                   </motion.span>
@@ -554,7 +553,7 @@ export default function Landing() {
 
               {/* Supporting Text */}
               <motion.div variants={itemVariants}>
-                <p className="text-base sm:text-lg leading-relaxed max-w-xl text-slate-200 drop-shadow-[0_1px_4px_rgba(0,0,0,0.7)]">
+                <p className="text-[17px] sm:text-[18.5px] leading-[1.6] max-w-xl text-[#B8C5E0] drop-shadow-[0_1px_4px_rgba(0,0,0,0.7)]">
                   Connect with verified teachers, book live one-to-one lessons, and learn in a professional WebRTC classroom with real-time digital whiteboard and protected escrow payments.
                 </p>
               </motion.div>
@@ -564,14 +563,12 @@ export default function Landing() {
                 <PrimaryButton
                   onClick={() => navigate("/teachers")}
                   size="lg"
-                  className="bg-white text-slate-950 hover:bg-slate-100 shadow-[0_0_30px_rgba(255,255,255,0.3)] border-white font-bold"
                 >
                   Find a Tutor
                 </PrimaryButton>
                 <SecondaryButton
                   onClick={() => navigate("/teacher-application")}
                   size="lg"
-                  className="bg-white/10 text-white border-white/20 hover:bg-white/20 backdrop-blur-md"
                 >
                   Become a Tutor
                 </SecondaryButton>
@@ -704,7 +701,7 @@ export default function Landing() {
 
       {/* ─── 3. TRUST SIGNALS SECTION ─── */}
       <section className="py-12 border-y border-white/10 bg-white/[0.02] backdrop-blur-md relative z-10">
-        <div className="max-w-[1440px] mx-auto px-4 sm:px-8">
+        <div className="max-w-[1280px] mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid grid-cols-2 md:grid-cols-5 gap-6 sm:gap-8">
             {[
               {
@@ -734,7 +731,7 @@ export default function Landing() {
               },
             ].map((pillar, idx) => (
               <div key={idx} className="flex items-start gap-3">
-                <div className="w-10 h-10 rounded-2xl bg-white/[0.07] border border-white/15 flex items-center justify-center text-[#2DD4BF] shrink-0 shadow-[0_4px_16px_rgba(0,0,0,0.2)]">
+                <div className="w-10 h-10 rounded-2xl bg-white/[0.07] border border-white/15 flex items-center justify-center text-[#5B7CFF] shrink-0 shadow-[0_4px_16px_rgba(0,0,0,0.2)]">
                   <pillar.icon className="w-5 h-5" />
                 </div>
                 <div>
@@ -749,7 +746,7 @@ export default function Landing() {
 
       {/* ─── 4. FIND YOUR TEACHER SECTION ─── */}
       <section id="find-tutors" className="py-20 sm:py-28 relative z-10">
-        <div className="max-w-[1440px] mx-auto px-4 sm:px-8">
+        <div className="max-w-[1280px] mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex flex-col md:flex-row md:items-end justify-between mb-10 gap-4">
             <div>
               <SectionLabel label="01" text="QUALIFIED INSTRUCTORS" theme="dark" />
@@ -762,7 +759,7 @@ export default function Landing() {
             </div>
             <button
               onClick={() => navigate("/teachers")}
-              className="inline-flex items-center gap-1.5 text-xs font-bold text-[#A5B4FC] hover:text-white transition-colors self-start md:self-auto cursor-pointer"
+              className="inline-flex items-center gap-1.5 text-xs font-bold text-[#8EA7FF] hover:text-white transition-colors self-start md:self-auto cursor-pointer"
             >
               <span>View all teachers</span>
               <ArrowRight className="w-4 h-4" />
@@ -842,7 +839,7 @@ export default function Landing() {
 
       {/* ─── 5. HOW IT WORKS SECTION ─── */}
       <section id="how-it-works" className="py-20 sm:py-28 relative z-10">
-        <div className="max-w-[1440px] mx-auto px-4 sm:px-8 relative z-10">
+        <div className="max-w-[1280px] mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
           <div className="text-center max-w-2xl mx-auto mb-16">
             <SectionLabel label="02" text="SIMPLE THREE-STEP PROCESS" className="justify-center" theme="dark" />
             <h2 className="text-3xl sm:text-4xl font-bold tracking-tight text-white mt-2">
@@ -856,7 +853,7 @@ export default function Landing() {
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8 relative">
             {/* Connecting progression line on desktop */}
             <div className="hidden md:block absolute top-1/2 left-[15%] right-[15%] h-[2px] -translate-y-14 z-0 pointer-events-none" aria-hidden="true">
-              <div className="w-full h-full bg-gradient-to-r from-[#6D5DFB]/40 via-[#14B8A6]/50 to-[#6D5DFB]/40 rounded-full" />
+              <div className="w-full h-full bg-gradient-to-r from-[#4169E1]/40 via-[#5B7CFF]/50 to-[#4169E1]/40 rounded-full" />
             </div>
 
             {[
@@ -888,14 +885,14 @@ export default function Landing() {
               >
                 <div>
                   <div className="flex items-center justify-between mb-6">
-                    <span className="text-3xl font-black text-transparent bg-clip-text bg-gradient-to-br from-[#A5B4FC] to-[#6D5DFB] font-mono transition-transform duration-300 group-hover:scale-105 drop-shadow-[0_0_8px_rgba(109,93,251,0.4)]">
+                    <span className="text-3xl font-black text-transparent bg-clip-text bg-gradient-to-br from-[#8EA7FF] to-[#4169E1] font-mono transition-transform duration-300 group-hover:scale-105 drop-shadow-[0_0_8px_rgba(65,105,225,0.4)]">
                       {st.step}
                     </span>
-                    <div className="w-10 h-10 rounded-2xl bg-white/[0.08] border border-white/15 flex items-center justify-center text-[#2DD4BF] shadow-[0_4px_16px_rgba(0,0,0,0.2)] transition-transform duration-300 group-hover:rotate-6">
+                    <div className="w-10 h-10 rounded-2xl bg-white/[0.08] border border-white/15 flex items-center justify-center text-[#5B7CFF] shadow-[0_4px_16px_rgba(0,0,0,0.2)] transition-transform duration-300 group-hover:rotate-6">
                       <st.icon className="w-5 h-5" />
                     </div>
                   </div>
-                  <h3 className="text-lg font-bold text-white group-hover:text-[#C7D2FE] transition-colors">{st.title}</h3>
+                  <h3 className="text-lg font-bold text-white group-hover:text-[#8EA7FF] transition-colors">{st.title}</h3>
                   <p className="text-xs text-slate-300 leading-relaxed mt-2">{st.desc}</p>
                 </div>
               </motion.div>
@@ -906,7 +903,7 @@ export default function Landing() {
 
       {/* ─── 6. POPULAR SUBJECTS SECTION (8 VISUAL TILES) ─── */}
       <section id="subjects" className="py-20 sm:py-28 relative z-10">
-        <div className="max-w-[1440px] mx-auto px-4 sm:px-8 relative z-10">
+        <div className="max-w-[1280px] mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
           <div className="flex flex-col md:flex-row md:items-end justify-between mb-12 gap-4">
             <div>
               <SectionLabel label="03" text="EXPLORE SUBJECTS" theme="dark" />
@@ -919,7 +916,7 @@ export default function Landing() {
             </div>
             <button
               onClick={() => navigate("/teachers")}
-              className="inline-flex items-center gap-1.5 text-xs font-bold text-[#A5B4FC] hover:text-white transition-colors self-start md:self-auto cursor-pointer"
+              className="inline-flex items-center gap-1.5 text-xs font-bold text-[#8EA7FF] hover:text-white transition-colors self-start md:self-auto cursor-pointer"
             >
               <span>Explore all subjects</span>
               <ArrowRight className="w-4 h-4" />
@@ -1013,11 +1010,11 @@ export default function Landing() {
 
       {/* ─── 7. LIVE CLASSROOM SHOWCASE ─── */}
       <section className="py-20 sm:py-28 relative z-10">
-        <div className="max-w-[1440px] mx-auto px-4 sm:px-8 relative z-10">
+        <div className="max-w-[1280px] mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
             <div className="lg:col-span-5 space-y-6">
               <span className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/10 border border-white/15 text-white text-xs font-bold uppercase tracking-wider backdrop-blur-md">
-                <span className="w-2 h-2 rounded-full bg-[#14B8A6]" />
+                <span className="w-2 h-2 rounded-full bg-[#4169E1]" />
                 HUMAN-LED LIVE EDUCATION
               </span>
               <h2 className="text-3xl sm:text-5xl font-bold tracking-tight text-white leading-tight">
@@ -1034,7 +1031,7 @@ export default function Landing() {
                   { title: "Structured Coursework", desc: "Direct assignment distribution, student uploads, and annotated homework grading." },
                 ].map((feat, i) => (
                   <div key={i} className="flex items-start gap-3">
-                    <div className="w-5 h-5 rounded-full bg-[#14B8A6]/20 border border-[#14B8A6]/40 flex items-center justify-center text-[#2DD4BF] shrink-0 mt-0.5">
+                    <div className="w-5 h-5 rounded-full bg-[#4169E1]/20 border border-[#4169E1]/40 flex items-center justify-center text-[#8EA7FF] shrink-0 mt-0.5">
                       <Check className="w-3 h-3" />
                     </div>
                     <div>
@@ -1048,7 +1045,7 @@ export default function Landing() {
               <div className="pt-4">
                 <button
                   onClick={() => navigate("/classroom/demo")}
-                  className="px-6 py-3 rounded-full bg-gradient-to-r from-[#6D5DFB] to-[#5B4BE8] hover:from-[#7C6EFB] hover:to-[#6D5DFB] text-white font-bold text-xs transition-all shadow-[0_4px_20px_rgba(109,93,251,0.4)] border border-white/20 cursor-pointer"
+                  className="px-6 py-3 rounded-full bg-[#4169E1] hover:bg-[#5B7CFF] text-white font-bold text-xs transition-all shadow-[0_4px_20px_rgba(65,105,225,0.32)] border border-[#5B7CFF]/30 cursor-pointer"
                 >
                   Explore Demo Classroom
                 </button>
@@ -1059,7 +1056,7 @@ export default function Landing() {
               <div className="glass-dock rounded-3xl p-6 shadow-2xl space-y-4 border border-white/15">
                 <div className="flex items-center justify-between pb-3 border-b border-white/10 text-xs">
                   <div className="flex items-center gap-2">
-                    <span className="w-2.5 h-2.5 rounded-full bg-[#14B8A6] animate-ping" />
+                    <span className="w-2.5 h-2.5 rounded-full bg-[#4169E1] animate-ping" />
                     <span className="font-bold text-white">Live Session: HSC Physics Mechanics</span>
                   </div>
                   <span className="text-[11px] text-white/80 bg-white/10 border border-white/10 px-2.5 py-0.5 rounded-full">
@@ -1069,14 +1066,14 @@ export default function Landing() {
 
                 <div className="bg-[#0B0F19]/85 rounded-2xl p-5 border border-white/10 aspect-video flex flex-col justify-between backdrop-blur-md">
                   <div className="font-mono text-xs text-white/80 space-y-1">
-                    <p className="text-[#A5B4FC] font-bold">// Newton's Laws & Vector Resolution:</p>
+                    <p className="text-[#8EA7FF] font-bold">// Newton's Laws & Vector Resolution:</p>
                     <p className="text-white text-sm">F_net = m · a  |  ∑ F_x = T · cos(θ) - f_k</p>
-                    <p className="text-[#2DD4BF] text-[11px] pt-1">✓ Normal force balanced: N = m · g - T · sin(θ)</p>
+                    <p className="text-[#5B7CFF] text-[11px] pt-1">✓ Normal force balanced: N = m · g - T · sin(θ)</p>
                   </div>
 
                   <div className="flex items-center justify-between pt-3 border-t border-white/10 text-xs text-white/70">
                     <span>Teacher Annotation Active</span>
-                    <span className="text-[#2DD4BF] font-semibold">1080p Screen Sync</span>
+                    <span className="text-[#8EA7FF] font-semibold">1080p Screen Sync</span>
                   </div>
                 </div>
               </div>
@@ -1087,7 +1084,7 @@ export default function Landing() {
 
       {/* ─── 8. PERSONALIZED LEARNING ROADMAP ─── */}
       <section className="py-20 sm:py-28 relative z-10">
-        <div className="max-w-[1440px] mx-auto px-4 sm:px-8">
+        <div className="max-w-[1280px] mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
             <div className="lg:col-span-6 space-y-6">
               <SectionLabel label="04" text="TAILORED ROADMAP" theme="dark" />
@@ -1130,7 +1127,7 @@ export default function Landing() {
                         p.status === "Mastered"
                           ? "bg-teal-500/20 text-[#2DD4BF] border-teal-500/30"
                           : p.status === "In Progress"
-                          ? "bg-[#6D5DFB]/30 text-[#C7D2FE] border-[#6D5DFB]/40"
+                          ? "bg-[#4169E1]/30 text-[#8EA7FF] border-[#4169E1]/40"
                           : "bg-white/[0.08] border-white/15 text-slate-400"
                       }`}>
                         {p.status}
@@ -1146,7 +1143,7 @@ export default function Landing() {
 
       {/* ─── 9. STUDENT PROGRESS & ANALYTICS ─── */}
       <section className="py-20 sm:py-28 relative z-10">
-        <div className="max-w-[1440px] mx-auto px-4 sm:px-8">
+        <div className="max-w-[1280px] mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center max-w-2xl mx-auto mb-14">
             <SectionLabel label="05" text="ACADEMIC TRACKING" className="justify-center" theme="dark" />
             <h2 className="text-3xl sm:text-4xl font-bold tracking-tight text-white mt-2">
@@ -1159,44 +1156,44 @@ export default function Landing() {
 
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
             <div className="glass-panel glass-panel-hover rounded-3xl p-6 border border-white/15">
-              <div className="w-10 h-10 rounded-2xl bg-white/[0.08] border border-white/15 flex items-center justify-center text-[#C7D2FE] mb-4">
+              <div className="w-10 h-10 rounded-2xl bg-white/[0.08] border border-white/15 flex items-center justify-center text-[#8EA7FF] mb-4">
                 <Clock className="w-5 h-5" />
               </div>
               <p className="text-lg font-bold text-white">Hour Logging</p>
-              <p className="text-xs text-[#2DD4BF] font-semibold mt-1">Verified Classroom Time</p>
+              <p className="text-xs text-[#5B7CFF] font-semibold mt-1">Verified Classroom Time</p>
               <p className="text-[11px] text-slate-300 mt-2 leading-relaxed">
                 Precise per-session tracking inside the WebRTC classroom with automatic attendance recording.
               </p>
             </div>
 
             <div className="glass-panel glass-panel-hover rounded-3xl p-6 border border-white/15">
-              <div className="w-10 h-10 rounded-2xl bg-white/[0.08] border border-white/15 flex items-center justify-center text-[#A5B4FC] mb-4">
+              <div className="w-10 h-10 rounded-2xl bg-white/[0.08] border border-white/15 flex items-center justify-center text-[#8EA7FF] mb-4">
                 <CheckCircle2 className="w-5 h-5" />
               </div>
               <p className="text-lg font-bold text-white">Milestones</p>
-              <p className="text-xs text-[#2DD4BF] font-semibold mt-1">Syllabus Breakdown</p>
+              <p className="text-xs text-[#5B7CFF] font-semibold mt-1">Syllabus Breakdown</p>
               <p className="text-[11px] text-slate-300 mt-2 leading-relaxed">
                 Track topic-by-topic comprehension across NCTB, Cambridge, Edexcel, and test preparation curricula.
               </p>
             </div>
 
             <div className="glass-panel glass-panel-hover rounded-3xl p-6 border border-white/15">
-              <div className="w-10 h-10 rounded-2xl bg-white/[0.08] border border-white/15 flex items-center justify-center text-[#2DD4BF] mb-4">
+              <div className="w-10 h-10 rounded-2xl bg-white/[0.08] border border-white/15 flex items-center justify-center text-[#5B7CFF] mb-4">
                 <TrendingUp className="w-5 h-5" />
               </div>
               <p className="text-lg font-bold text-white">Study Momentum</p>
-              <p className="text-xs text-[#2DD4BF] font-semibold mt-1">Weekly Consistency</p>
+              <p className="text-xs text-[#5B7CFF] font-semibold mt-1">Weekly Consistency</p>
               <p className="text-[11px] text-slate-300 mt-2 leading-relaxed">
                 Visual streak badges and schedule reminders encourage disciplined weekly academic routines.
               </p>
             </div>
 
             <div className="glass-panel glass-panel-hover rounded-3xl p-6 border border-white/15">
-              <div className="w-10 h-10 rounded-2xl bg-white/[0.08] border border-white/15 flex items-center justify-center text-[#C7D2FE] mb-4">
+              <div className="w-10 h-10 rounded-2xl bg-white/[0.08] border border-white/15 flex items-center justify-center text-[#8EA7FF] mb-4">
                 <Award className="w-5 h-5" />
               </div>
               <p className="text-lg font-bold text-white">Teacher Notes</p>
-              <p className="text-xs text-[#2DD4BF] font-semibold mt-1">Performance Reviews</p>
+              <p className="text-xs text-[#5B7CFF] font-semibold mt-1">Performance Reviews</p>
               <p className="text-[11px] text-slate-300 mt-2 leading-relaxed">
                 Receive direct notes, homework critique, and performance evaluations from your personal tutor after every lesson.
               </p>
@@ -1207,15 +1204,15 @@ export default function Landing() {
 
       {/* ─── 10. FOR TEACHERS SECTION ─── */}
       <section className="py-20 sm:py-28 relative z-10">
-        <div className="max-w-[1440px] mx-auto px-4 sm:px-8">
+        <div className="max-w-[1280px] mx-auto px-4 sm:px-6 lg:px-8">
           <div className="glass-dock rounded-3xl p-8 sm:p-14 text-white shadow-2xl relative overflow-hidden border border-white/20">
             {/* Subtle atmospheric educator ambient light */}
-            <div className="absolute top-0 right-0 w-96 h-96 bg-[#6D5DFB]/20 rounded-full blur-3xl pointer-events-none" />
-            <div className="absolute bottom-0 left-0 w-80 h-80 bg-[#14B8A6]/15 rounded-full blur-3xl pointer-events-none" />
+            <div className="absolute top-0 right-0 w-96 h-96 bg-[#4169E1]/20 rounded-full blur-3xl pointer-events-none" />
+            <div className="absolute bottom-0 left-0 w-80 h-80 bg-[#5B7CFF]/15 rounded-full blur-3xl pointer-events-none" />
 
             <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center relative z-10">
               <div className="lg:col-span-8 space-y-4">
-                <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-white/10 border border-white/15 text-xs font-bold uppercase tracking-wider text-[#2DD4BF] backdrop-blur-md">
+                <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-white/10 border border-white/15 text-xs font-bold uppercase tracking-wider text-[#8EA7FF] backdrop-blur-md">
                   TEACH ON VIRTUAL TUTOR
                 </span>
                 <h2 className="text-3xl sm:text-5xl font-bold tracking-tight text-white">
@@ -1229,7 +1226,7 @@ export default function Landing() {
                 <div className="pt-2 flex flex-wrap items-center gap-4">
                   <button
                     onClick={() => navigate("/teacher-application")}
-                    className="px-7 py-3.5 rounded-full bg-gradient-to-r from-[#6D5DFB] to-[#5B4BE8] hover:from-[#7C6EFB] hover:to-[#6D5DFB] text-white font-bold text-xs transition-all shadow-[0_8px_25px_rgba(109,93,251,0.45)] border border-white/20 active:scale-95 cursor-pointer"
+                    className="px-7 py-3.5 rounded-full bg-[#4169E1] hover:bg-[#5B7CFF] text-white font-bold text-xs transition-all shadow-[0_6px_25px_rgba(65,105,225,0.35)] border border-white/20 active:scale-95 cursor-pointer"
                   >
                     Apply as a Teacher
                   </button>
@@ -1241,16 +1238,16 @@ export default function Landing() {
                 <h4 className="text-xs font-bold uppercase tracking-wider text-slate-300">Educator Benefits</h4>
                 <div className="space-y-2 text-xs text-white">
                   <div className="flex items-center gap-2">
-                    <Check className="w-4 h-4 text-[#2DD4BF]" /> 85% Net Payout Allocation
+                    <Check className="w-4 h-4 text-[#5B7CFF]" /> 85% Net Payout Allocation
                   </div>
                   <div className="flex items-center gap-2">
-                    <Check className="w-4 h-4 text-[#2DD4BF]" /> Direct Student Discovery
+                    <Check className="w-4 h-4 text-[#5B7CFF]" /> Direct Student Discovery
                   </div>
                   <div className="flex items-center gap-2">
-                    <Check className="w-4 h-4 text-[#2DD4BF]" /> Integrated Classroom & Calendar
+                    <Check className="w-4 h-4 text-[#5B7CFF]" /> Integrated Classroom & Calendar
                   </div>
                   <div className="flex items-center gap-2">
-                    <Check className="w-4 h-4 text-[#2DD4BF]" /> Automated Month-End Settlement
+                    <Check className="w-4 h-4 text-[#5B7CFF]" /> Automated Month-End Settlement
                   </div>
                 </div>
               </div>
@@ -1261,7 +1258,7 @@ export default function Landing() {
 
       {/* ─── 11. SECURE PAYMENT SECTION ─── */}
       <section className="py-20 sm:py-28 relative z-10">
-        <div className="max-w-[1440px] mx-auto px-4 sm:px-8">
+        <div className="max-w-[1280px] mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 items-center">
             <div className="lg:col-span-6 space-y-5">
               <SectionLabel label="06" text="FINANCIAL INTEGRITY" theme="dark" />
@@ -1290,7 +1287,7 @@ export default function Landing() {
                   href="https://vartualtutor.paymently.io/paymentlink/default/BDT"
                   target="_blank"
                   rel="noreferrer"
-                  className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full bg-gradient-to-r from-[#6D5DFB] to-[#5B4BE8] hover:from-[#7C6EFB] hover:to-[#6D5DFB] text-white text-xs font-bold shadow-[0_4px_20px_rgba(109,93,251,0.4)] border border-white/20 transition-all"
+                  className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full bg-[#4169E1] hover:bg-[#5B7CFF] text-white text-xs font-bold shadow-[0_4px_20px_rgba(65,105,225,0.32)] border border-[#5B7CFF]/30 transition-all"
                 >
                   <span>Open Official Payment Gateway</span>
                   <ExternalLink className="w-3.5 h-3.5" />
@@ -1304,7 +1301,7 @@ export default function Landing() {
                   <h4 className="text-xs font-bold uppercase tracking-wider text-slate-400">Official Merchant Portal</h4>
                   <p className="text-xs font-mono font-bold text-white mt-0.5">vartualtutor.paymently.io</p>
                 </div>
-                <span className="text-[10px] font-bold uppercase tracking-wider px-2.5 py-1 rounded-full bg-teal-500/20 text-[#2DD4BF] border border-teal-500/30">
+                <span className="text-[10px] font-bold uppercase tracking-wider px-2.5 py-1 rounded-full bg-[#4169E1]/20 text-[#8EA7FF] border border-[#4169E1]/30">
                   Active BDT Gateway
                 </span>
               </div>
@@ -1324,7 +1321,7 @@ export default function Landing() {
                     href="https://vartualtutor.paymently.io/paymentlink/default/BDT"
                     target="_blank"
                     rel="noreferrer"
-                    className="text-[11px] font-bold text-[#6D5DFB] hover:underline inline-flex items-center gap-1 pt-0.5"
+                    className="text-[11px] font-bold text-[#4169E1] hover:underline inline-flex items-center gap-1 pt-0.5"
                   >
                     <span>vartualtutor.paymently.io/paymentlink/default/BDT</span>
                     <ExternalLink className="w-3 h-3" />
@@ -1339,7 +1336,7 @@ export default function Landing() {
                   <span className="px-3.5 py-1.5 rounded-xl text-xs font-black bg-[#F7941D] text-white shadow-2xs">Nagad</span>
                   <span className="px-3.5 py-1.5 rounded-xl text-xs font-black bg-[#8C3494] text-white shadow-2xs">Rocket</span>
                   <span className="px-3.5 py-1.5 rounded-xl text-xs font-black bg-[#2E3192] text-white shadow-2xs">Upay</span>
-                  <span className="px-3.5 py-1.5 rounded-xl text-xs font-bold bg-[#312E81] text-white shadow-2xs border border-white/20">Visa / Mastercard</span>
+                  <span className="px-3.5 py-1.5 rounded-xl text-xs font-bold bg-[#172554] text-white shadow-2xs border border-white/20">Visa / Mastercard</span>
                   <span className="px-3.5 py-1.5 rounded-xl text-xs font-semibold bg-white/10 border border-white/15 text-white">Internet Banking</span>
                 </div>
               </div>
@@ -1391,10 +1388,10 @@ export default function Landing() {
                     onClick={() => setActiveFaqIndex(isOpen ? null : idx)}
                     className="w-full p-5 text-left flex items-center justify-between gap-4 cursor-pointer"
                   >
-                    <span className="text-sm font-bold text-white hover:text-[#C7D2FE] transition-colors">{faq.q}</span>
+                    <span className="text-sm font-bold text-white hover:text-[#8EA7FF] transition-colors">{faq.q}</span>
                     <ChevronDown
                       className={`w-4 h-4 text-slate-400 transition-transform duration-200 shrink-0 ${
-                        isOpen ? "rotate-180 text-[#2DD4BF]" : ""
+                        isOpen ? "rotate-180 text-[#5B7CFF]" : ""
                       }`}
                     />
                   </button>
@@ -1420,11 +1417,11 @@ export default function Landing() {
 
       {/* ─── 13. FINAL CTA SECTION ─── */}
       <section className="py-20 sm:py-28 relative z-10">
-        <div className="max-w-5xl mx-auto px-4 sm:px-6">
+        <div className="max-w-[1280px] mx-auto px-4 sm:px-6 lg:px-8">
           <div className="glass-dock rounded-3xl p-10 sm:p-16 text-center text-white relative overflow-hidden border border-white/20 shadow-2xl">
             {/* Ambient accent glows */}
-            <div className="absolute top-0 right-1/4 w-80 h-80 bg-[#6D5DFB]/25 rounded-full blur-3xl pointer-events-none" />
-            <div className="absolute bottom-0 left-1/4 w-80 h-80 bg-[#14B8A6]/20 rounded-full blur-3xl pointer-events-none" />
+            <div className="absolute top-0 right-1/4 w-80 h-80 bg-[#4169E1]/25 rounded-full blur-3xl pointer-events-none" />
+            <div className="absolute bottom-0 left-1/4 w-80 h-80 bg-[#5B7CFF]/20 rounded-full blur-3xl pointer-events-none" />
 
             <div className="relative z-10 space-y-6">
               <h2 className="text-3xl sm:text-5xl font-bold tracking-tight text-white">
@@ -1436,13 +1433,13 @@ export default function Landing() {
               <div className="pt-2 flex flex-wrap items-center justify-center gap-4">
                 <button
                   onClick={() => navigate("/teachers")}
-                  className="px-8 py-4 rounded-full bg-white text-slate-950 hover:bg-slate-100 font-bold text-sm transition-all shadow-[0_0_30px_rgba(255,255,255,0.3)] active:scale-95 cursor-pointer"
+                  className="px-8 py-4 rounded-full bg-[#4169E1] hover:bg-[#5B7CFF] text-white font-bold text-sm transition-all shadow-[0_4px_24px_rgba(65,105,225,0.35)] active:scale-95 cursor-pointer"
                 >
                   Find a Tutor
                 </button>
                 <button
                   onClick={() => navigate("/teacher-application")}
-                  className="px-8 py-4 rounded-full bg-white/10 hover:bg-white/20 text-white font-bold text-sm transition-all border border-white/20 backdrop-blur-md active:scale-95 cursor-pointer"
+                  className="px-8 py-4 rounded-full bg-white/[0.06] hover:bg-white/[0.12] text-[#F8FAFF] font-bold text-sm transition-all border border-white/15 backdrop-blur-md active:scale-95 cursor-pointer"
                 >
                   Become a Tutor
                 </button>
@@ -1453,8 +1450,8 @@ export default function Landing() {
       </section>
 
       {/* ─── 14. FOUR-COLUMN PROFESSIONAL GLASS FOOTER ─── */}
-      <footer className="bg-slate-950/75 backdrop-blur-2xl border-t border-white/10 py-16 text-xs text-slate-400 relative z-10">
-        <div className="max-w-[1440px] mx-auto px-4 sm:px-8">
+      <footer className="bg-[#07142F]/85 backdrop-blur-2xl border-t border-white/10 py-16 text-xs text-slate-400 relative z-10">
+        <div className="max-w-[1280px] mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid grid-cols-2 md:grid-cols-4 gap-8 mb-12">
             {/* Column 1: Virtual Tutor */}
             <div className="space-y-3">

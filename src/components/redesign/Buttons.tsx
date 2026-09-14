@@ -83,25 +83,25 @@ export const PillButton: React.FC<ButtonProps> = ({
   };
 
   const variantStyles = {
-    primary: "bg-[#312E81] hover:bg-[#6D5DFB] text-white shadow-sm hover:shadow-[0_8px_24px_rgba(109,93,251,0.28)] transition-all",
-    secondary: "bg-white hover:bg-[#F8FAFC] text-[#312E81] border border-[#E2E8F0] hover:border-[#6D5DFB]/40 shadow-2xs hover:shadow-xs",
-    violet: "bg-[#6D5DFB] hover:bg-[#5B4BE8] text-white shadow-sm hover:shadow-[0_8px_24px_rgba(109,93,251,0.32)]",
-    teal: "bg-[#14B8A6] hover:bg-[#0D9488] text-white shadow-sm hover:shadow-[0_8px_24px_rgba(20,184,166,0.28)]",
-    white: "bg-white hover:bg-[#F8FAFC] text-[#0F172A] border border-[#E2E8F0] shadow-xs",
-    ghost: "bg-transparent hover:bg-[#312E81]/5 text-[#312E81] hover:text-[#6D5DFB]",
-    dark: "bg-[#0F172A] hover:bg-[#1E293B] text-white",
-    orange: "bg-[#312E81] hover:bg-[#6D5DFB] text-white",
+    primary: "bg-[#4169E1] hover:bg-[#5B7CFF] text-white shadow-[0_4px_20px_rgba(65,105,225,0.28)] hover:shadow-[0_6px_28px_rgba(91,124,255,0.4)] border border-[#5B7CFF]/30",
+    secondary: "bg-white/[0.06] hover:bg-white/[0.10] text-[#F8FAFF] hover:text-white border border-white/12 hover:border-white/20 shadow-xs",
+    violet: "bg-[#4169E1] hover:bg-[#5B7CFF] text-white shadow-[0_4px_20px_rgba(65,105,225,0.3)]",
+    teal: "bg-[#10B981] hover:bg-[#059669] text-white shadow-sm",
+    white: "bg-white hover:bg-[#F8FAFC] text-[#07142F] border border-white/20 shadow-xs",
+    ghost: "bg-transparent hover:bg-white/[0.08] text-[#B8C5E0] hover:text-[#F8FAFF]",
+    dark: "bg-[#07142F] hover:bg-[#0B1D41] text-white border border-white/10",
+    orange: "bg-[#4169E1] hover:bg-[#5B7CFF] text-white",
   };
 
   const circleStyles = {
-    primary: "bg-white/15 text-white group-hover:bg-white group-hover:text-[#6D5DFB]",
-    secondary: "bg-[#312E81]/10 text-[#312E81] group-hover:bg-[#6D5DFB] group-hover:text-white",
-    violet: "bg-white/15 text-white group-hover:bg-white group-hover:text-[#6D5DFB]",
-    teal: "bg-white/15 text-white group-hover:bg-white group-hover:text-[#14B8A6]",
-    white: "bg-[#312E81] text-white",
-    ghost: "bg-[#312E81]/10 text-[#312E81]",
+    primary: "bg-white/20 text-white group-hover:bg-white group-hover:text-[#4169E1]",
+    secondary: "bg-white/10 text-[#F8FAFF] group-hover:bg-[#4169E1] group-hover:text-white",
+    violet: "bg-white/20 text-white group-hover:bg-white group-hover:text-[#4169E1]",
+    teal: "bg-white/20 text-white group-hover:bg-white group-hover:text-[#10B981]",
+    white: "bg-[#07142F] text-white",
+    ghost: "bg-white/10 text-[#B8C5E0] group-hover:text-white",
     dark: "bg-white/20 text-white",
-    orange: "bg-white/15 text-white",
+    orange: "bg-white/20 text-white",
   };
 
   const defaultJustify = hasTrailingIcon ? "justify-between" : "justify-center";
