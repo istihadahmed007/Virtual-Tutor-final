@@ -1,0 +1,1 @@
+import{j as e}from"./react-vendor-Dm1qCwnR.js";const t=()=>e.jsx("iframe",{src:"/vesper.html",title:"Vesper.ai — Operational AI Infrastructure",className:"w-screen h-screen border-none m-0 p-0 block bg-black",style:{position:"fixed",top:0,left:0,width:"100vw",height:"100vh",border:"none",zIndex:9999,background:"#000000"}});export{t as VesperLandingPage,t as default};
