@@ -35,8 +35,9 @@
           var decoded = l.search.slice(1).split('&').map(function(s) { 
             return s.replace(/~and~/g, '&')
           }).join('?');
+          var basePath = l.pathname.replace(/\/+$/, '');
           window.history.replaceState(null, null,
-              l.pathname.slice(0, -1) + decoded + l.hash
+              basePath + (decoded.startsWith('/') ? decoded : '/' + decoded) + l.hash
           );
         }
       }(window.location))

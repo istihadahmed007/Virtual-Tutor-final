@@ -206,7 +206,7 @@ errorTracker.init(convex);
 const container = document.getElementById("root")!;
 const existingRoot = (window as unknown as { __reactRoot?: ReturnType<typeof createRoot> }).__reactRoot;
 const root = existingRoot || createRoot(container);
-(window as unknown as { __reactRoot?: ReturnType<typeof createRoot> }).__reactRoot = root;
+const appBasename = (import.meta.env.BASE_URL || "/").replace(/\/+$/, "");
 
 root.render(
   <StrictMode>
@@ -217,7 +217,7 @@ root.render(
           storage={loggedConvexAuthStorage}
           shouldHandleCode={false}
         >
-          <BrowserRouter basename={import.meta.env.BASE_URL}>
+          <BrowserRouter basename={appBasename}>
             <AppHelmet />
             <RouteErrorBoundary>
               <Suspense fallback={<RouteLoading />}>
