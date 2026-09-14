@@ -152,10 +152,10 @@ export function Navigation() {
       <header className={`sticky z-50 px-3 sm:px-6 max-w-[1440px] mx-auto pointer-events-none transition-all duration-300 ${
         isScrolled ? "top-2 sm:top-2.5" : "top-3 sm:top-4"
       }`}>
-        <div className={`pointer-events-auto bg-white/95 backdrop-blur-md rounded-full border border-[#E5E4DE] transition-all duration-300 flex items-center justify-between ${
+        <div className={`pointer-events-auto bg-slate-950/45 backdrop-blur-2xl rounded-full border border-white/12 transition-all duration-300 flex items-center justify-between text-white ${
           isScrolled
-            ? "px-3 sm:px-4 py-1.5 shadow-[0_4px_24px_rgba(0,0,0,0.06)]"
-            : "px-3 sm:px-5 py-2 sm:py-2.5 shadow-[0_4px_20px_rgba(0,0,0,0.03)]"
+            ? "px-3 sm:px-4 py-1.5 shadow-[0_8px_32px_rgba(0,0,0,0.4),inset_0_1px_0_rgba(255,255,255,0.12)]"
+            : "px-3 sm:px-5 py-2 sm:py-2.5 shadow-[0_8px_24px_rgba(0,0,0,0.25),inset_0_1px_0_rgba(255,255,255,0.08)]"
         }`}>
           {/* LEFT: Logo & Brand */}
           <div className="flex items-center gap-3 sm:gap-6">
@@ -169,7 +169,7 @@ export function Navigation() {
                     : "/"
                 )
               }
-              className="flex items-center shrink-0 focus:outline-hidden rounded-full cursor-pointer"
+              className="flex items-center shrink-0 focus:outline-hidden rounded-full cursor-pointer hover:opacity-90 transition-opacity"
             >
               <BrandLogo variant="horizontal" size="sm" />
             </button>
@@ -181,7 +181,7 @@ export function Navigation() {
                   <button
                     key={link.path}
                     onClick={() => handleLinkClick(link.path)}
-                    className="px-3.5 py-1.5 rounded-full text-xs font-medium text-[#111111]/70 hover:text-[#111111] hover:bg-[#F5F4EF] transition-all cursor-pointer"
+                    className="px-3.5 py-1.5 rounded-full text-xs font-medium text-white/70 hover:text-white hover:bg-white/10 transition-all cursor-pointer"
                   >
                     {link.label}
                   </button>
@@ -200,8 +200,8 @@ export function Navigation() {
                       onClick={() => navigate(link.path)}
                       className={`px-3 py-1.5 rounded-full text-xs font-semibold transition-all flex items-center gap-1.5 cursor-pointer ${
                         isActive
-                          ? "bg-[#111111] text-white"
-                          : "text-[#111111]/70 hover:text-[#111111] hover:bg-[#F5F4EF]"
+                          ? "bg-white/15 text-white border border-white/20 shadow-[0_0_12px_rgba(109,93,251,0.25)]"
+                          : "text-white/70 hover:text-white hover:bg-white/10"
                       }`}
                     >
                       <link.icon className="w-3.5 h-3.5" />
@@ -216,7 +216,7 @@ export function Navigation() {
           {/* RIGHT: Status, Time, Actions, Profile */}
           <div className="flex items-center gap-2 sm:gap-3">
             {/* Live Clock (Hidden on small mobile) */}
-            <div className="hidden lg:flex items-center gap-1.5 text-xs text-[#111111]/60 px-3 py-1 rounded-full bg-[#F5F4EF] border border-[#E5E4DE]/60">
+            <div className="hidden lg:flex items-center gap-1.5 text-xs text-white/70 px-3 py-1 rounded-full bg-white/5 border border-white/10">
               <Clock className="w-3.5 h-3.5 text-[#F26522]" />
               <span>{currentTime ? `${currentTime} in London` : "Live"}</span>
             </div>
@@ -231,7 +231,7 @@ export function Navigation() {
                       setNotificationsOpen(!notificationsOpen);
                       setProfileOpen(false);
                     }}
-                    className="relative p-2 text-[#111111]/70 hover:text-[#111111] hover:bg-[#F5F4EF] rounded-full transition-colors cursor-pointer"
+                    className="relative p-2 text-white/70 hover:text-white hover:bg-white/10 rounded-full transition-colors cursor-pointer"
                     title="Notifications"
                   >
                     <Bell className="w-4 h-4" />
@@ -249,9 +249,9 @@ export function Navigation() {
                         className="fixed inset-0 z-40"
                         onClick={() => setNotificationsOpen(false)}
                       />
-                      <div className="absolute right-0 top-full mt-3 w-80 sm:w-96 bg-white rounded-2xl shadow-[0_8px_32px_rgba(0,0,0,0.08)] border border-[#E5E4DE] py-3 z-50 max-h-[80vh] flex flex-col">
-                        <div className="flex items-center justify-between px-4 pb-2 border-b border-[#E5E4DE]">
-                          <h3 className="text-xs font-bold text-[#111111] uppercase tracking-wider">
+                      <div className="absolute right-0 top-full mt-3 w-80 sm:w-96 bg-slate-950/90 backdrop-blur-2xl rounded-2xl shadow-[0_16px_40px_rgba(0,0,0,0.7)] border border-white/12 py-3 z-50 max-h-[80vh] flex flex-col text-white">
+                        <div className="flex items-center justify-between px-4 pb-2 border-b border-white/10">
+                          <h3 className="text-xs font-bold text-white uppercase tracking-wider">
                             Notifications
                           </h3>
                           {(unreadCount ?? 0) > 0 && (
@@ -263,9 +263,9 @@ export function Navigation() {
                             </button>
                           )}
                         </div>
-                        <div className="overflow-y-auto flex-1 divide-y divide-[#E5E4DE]/60">
+                        <div className="overflow-y-auto flex-1 divide-y divide-white/10">
                           {!notifications || notifications.length === 0 ? (
-                            <div className="p-6 text-center text-xs text-[#111111]/40">
+                            <div className="p-6 text-center text-xs text-white/50">
                               No notifications yet
                             </div>
                           ) : (
@@ -280,17 +280,17 @@ export function Navigation() {
                                     setNotificationsOpen(false);
                                   }
                                 }}
-                                className={`p-3.5 hover:bg-[#F5F4EF] cursor-pointer transition-colors ${
-                                  !n.read ? "bg-[#F26522]/5" : ""
+                                className={`p-3.5 hover:bg-white/10 cursor-pointer transition-colors ${
+                                  !n.read ? "bg-[#F26522]/10" : ""
                                 }`}
                               >
-                                <p className="text-xs font-bold text-[#111111]">
+                                <p className="text-xs font-bold text-white">
                                   {n.title}
                                 </p>
-                                <p className="text-xs text-[#111111]/70 mt-0.5 leading-relaxed">
+                                <p className="text-xs text-white/70 mt-0.5 leading-relaxed">
                                   {n.message}
                                 </p>
-                                <p className="text-[10px] text-[#111111]/40 mt-1">
+                                <p className="text-[10px] text-white/40 mt-1">
                                   {new Date(n.createdAt).toLocaleDateString()}
                                 </p>
                               </div>
@@ -309,7 +309,7 @@ export function Navigation() {
                       setProfileOpen(!profileOpen);
                       setNotificationsOpen(false);
                     }}
-                    className="flex items-center gap-2 pl-1 pr-2.5 py-1 rounded-full hover:bg-[#F5F4EF] transition-colors border border-transparent hover:border-[#E5E4DE] cursor-pointer"
+                    className="flex items-center gap-2 pl-1 pr-2.5 py-1 rounded-full hover:bg-white/10 transition-colors border border-transparent hover:border-white/15 cursor-pointer text-white"
                   >
                     <ProfileAvatar
                       name={user?.name}
@@ -319,10 +319,10 @@ export function Navigation() {
                       showStatus={true}
                       status="online"
                     />
-                    <span className="text-xs font-medium text-[#111111] hidden sm:block max-w-[90px] truncate">
+                    <span className="text-xs font-medium text-white hidden sm:block max-w-[90px] truncate">
                       {user?.name || "Account"}
                     </span>
-                    <ChevronDown className="w-3.5 h-3.5 text-[#111111]/50 hidden sm:block" />
+                    <ChevronDown className="w-3.5 h-3.5 text-white/60 hidden sm:block" />
                   </button>
 
                   {profileOpen && (
@@ -331,8 +331,8 @@ export function Navigation() {
                         className="fixed inset-0 z-40"
                         onClick={() => setProfileOpen(false)}
                       />
-                      <div className="absolute right-0 top-full mt-3 w-64 bg-white rounded-2xl shadow-[0_8px_32px_rgba(0,0,0,0.08)] border border-[#E5E4DE] py-2 z-50">
-                        <div className="px-4 py-3 border-b border-[#E5E4DE] flex items-center gap-3">
+                      <div className="absolute right-0 top-full mt-3 w-64 bg-slate-950/90 backdrop-blur-2xl rounded-2xl shadow-[0_16px_40px_rgba(0,0,0,0.7)] border border-white/12 py-2 z-50 text-white">
+                        <div className="px-4 py-3 border-b border-white/10 flex items-center gap-3">
                           <ProfileAvatar
                             name={user?.name}
                             image={user?.image || user?.avatarUrl}
@@ -340,13 +340,13 @@ export function Navigation() {
                             size="md"
                           />
                           <div className="min-w-0 flex-1">
-                            <p className="text-xs font-bold text-[#111111] truncate">
+                            <p className="text-xs font-bold text-white truncate">
                               {user?.name}
                             </p>
-                            <p className="text-[11px] text-[#111111]/50 truncate">
+                            <p className="text-[11px] text-white/50 truncate">
                               {user?.email}
                             </p>
-                            <span className="inline-block mt-1 text-[10px] font-semibold text-[#F26522] bg-[#F26522]/10 px-2 py-0.5 rounded-full">
+                            <span className="inline-block mt-1 text-[10px] font-semibold text-[#F26522] bg-[#F26522]/10 px-2 py-0.5 rounded-full border border-[#F26522]/20">
                               {isAdmin
                                 ? "Platform Admin"
                                 : isTeacher
@@ -364,7 +364,7 @@ export function Navigation() {
                               navigate("/admin");
                               setProfileOpen(false);
                             }}
-                            className="w-full px-4 py-2.5 text-left text-xs text-[#111111] font-semibold hover:bg-[#F5F4EF] flex items-center gap-2.5 cursor-pointer"
+                            className="w-full px-4 py-2.5 text-left text-xs text-white font-semibold hover:bg-white/10 flex items-center gap-2.5 cursor-pointer"
                           >
                             <ShieldCheck className="w-4 h-4 text-[#F26522]" />{" "}
                             Admin Console
@@ -377,9 +377,9 @@ export function Navigation() {
                             );
                             setProfileOpen(false);
                           }}
-                          className="w-full px-4 py-2.5 text-left text-xs text-[#111111] hover:bg-[#F5F4EF] flex items-center gap-2.5 cursor-pointer"
+                          className="w-full px-4 py-2.5 text-left text-xs text-white/90 hover:text-white hover:bg-white/10 flex items-center gap-2.5 cursor-pointer"
                         >
-                          <LayoutDashboard className="w-4 h-4 text-[#111111]/50" />{" "}
+                          <LayoutDashboard className="w-4 h-4 text-white/60" />{" "}
                           Dashboard
                         </button>
                         <button
@@ -387,7 +387,7 @@ export function Navigation() {
                             navigate("/teacher-application");
                             setProfileOpen(false);
                           }}
-                          className="w-full px-4 py-2.5 text-left text-xs text-[#111111] hover:bg-[#F5F4EF] flex items-center gap-2.5 cursor-pointer"
+                          className="w-full px-4 py-2.5 text-left text-xs text-white/90 hover:text-white hover:bg-white/10 flex items-center gap-2.5 cursor-pointer"
                         >
                           <GraduationCap className="w-4 h-4 text-[#F26522]" />{" "}
                           {isTeacher ? "Tutor Portal" : "Apply to Teach"}
@@ -397,9 +397,9 @@ export function Navigation() {
                             navigate("/profile");
                             setProfileOpen(false);
                           }}
-                          className="w-full px-4 py-2.5 text-left text-xs text-[#111111] hover:bg-[#F5F4EF] flex items-center gap-2.5 cursor-pointer"
+                          className="w-full px-4 py-2.5 text-left text-xs text-white/90 hover:text-white hover:bg-white/10 flex items-center gap-2.5 cursor-pointer"
                         >
-                          <User className="w-4 h-4 text-[#111111]/50" /> Profile &
+                          <User className="w-4 h-4 text-white/60" /> Profile &
                           Settings
                         </button>
                         <button
@@ -407,18 +407,18 @@ export function Navigation() {
                             setContactOpen(true);
                             setProfileOpen(false);
                           }}
-                          className="w-full px-4 py-2.5 text-left text-xs text-[#111111] hover:bg-[#F5F4EF] flex items-center gap-2.5 cursor-pointer"
+                          className="w-full px-4 py-2.5 text-left text-xs text-white/90 hover:text-white hover:bg-white/10 flex items-center gap-2.5 cursor-pointer"
                         >
-                          <Mail className="w-4 h-4 text-[#111111]/50" /> Support
+                          <Mail className="w-4 h-4 text-white/60" /> Support
                         </button>
 
-                        <div className="border-t border-[#E5E4DE] my-1" />
+                        <div className="border-t border-white/10 my-1" />
                         <button
                           onClick={() => {
                             handleSignOut();
                             setProfileOpen(false);
                           }}
-                          className="w-full px-4 py-2.5 text-left text-xs text-red-600 hover:bg-red-50 flex items-center gap-2.5 cursor-pointer"
+                          className="w-full px-4 py-2.5 text-left text-xs text-rose-400 hover:bg-rose-500/10 flex items-center gap-2.5 cursor-pointer"
                         >
                           <LogOut className="w-4 h-4" /> Sign Out
                         </button>
@@ -432,7 +432,7 @@ export function Navigation() {
               <div className="flex items-center gap-2">
                 <button
                   onClick={() => navigate("/auth")}
-                  className="text-xs font-semibold text-[#111111]/80 hover:text-[#111111] px-3.5 py-2 rounded-full hover:bg-[#F5F4EF] transition-colors cursor-pointer"
+                  className="text-xs font-semibold text-white/80 hover:text-white px-3.5 py-2 rounded-full hover:bg-white/10 transition-colors cursor-pointer"
                 >
                   Log In
                 </button>
@@ -449,7 +449,7 @@ export function Navigation() {
             {/* Mobile Circular Menu Trigger */}
             <button
               onClick={() => setMobileOpen(true)}
-              className="md:hidden w-9 h-9 bg-[#111111] text-white rounded-full flex items-center justify-center transition-transform hover:scale-105 cursor-pointer"
+              className="md:hidden w-9 h-9 bg-white/10 hover:bg-white/20 text-white rounded-full flex items-center justify-center transition-transform hover:scale-105 border border-white/15 cursor-pointer"
               aria-label="Toggle Menu"
             >
               <Menu className="w-4 h-4" />
@@ -466,21 +466,21 @@ export function Navigation() {
         <div className="fixed inset-0 z-50 flex flex-col justify-end">
           {/* Backdrop */}
           <div
-            className="fixed inset-0 bg-black/60 backdrop-blur-xs transition-opacity"
+            className="fixed inset-0 bg-black/75 backdrop-blur-md transition-opacity"
             onClick={() => setMobileOpen(false)}
           />
 
           {/* Bottom Sheet Card */}
-          <div className="relative z-10 bg-white rounded-t-3xl sm:rounded-3xl mx-0 sm:mx-4 mb-0 sm:mb-4 p-6 sm:p-8 max-h-[85vh] overflow-y-auto border border-[#E5E4DE] shadow-2xl animate-in slide-in-from-bottom duration-300">
+          <div className="relative z-10 bg-slate-950/95 backdrop-blur-3xl text-white rounded-t-3xl sm:rounded-3xl mx-0 sm:mx-4 mb-0 sm:mb-4 p-6 sm:p-8 max-h-[85vh] overflow-y-auto border border-white/15 shadow-2xl animate-in slide-in-from-bottom duration-300">
             {/* Header bar with close button and live time */}
-            <div className="flex items-center justify-between pb-6 border-b border-[#E5E4DE]">
-              <div className="flex items-center gap-2 text-xs font-medium text-[#111111]/60">
+            <div className="flex items-center justify-between pb-6 border-b border-white/10">
+              <div className="flex items-center gap-2 text-xs font-medium text-white/70">
                 <span className="w-2 h-2 rounded-full bg-[#F26522] animate-pulse" />
                 <span>{currentTime ? `${currentTime} in London` : "Live"}</span>
               </div>
               <button
                 onClick={() => setMobileOpen(false)}
-                className="w-9 h-9 rounded-full bg-[#F5F4EF] flex items-center justify-center text-[#111111] hover:bg-[#E5E4DE] transition-colors cursor-pointer"
+                className="w-9 h-9 rounded-full bg-white/10 flex items-center justify-center text-white hover:bg-white/20 transition-colors cursor-pointer border border-white/10"
               >
                 <X className="w-5 h-5" />
               </button>
@@ -493,7 +493,7 @@ export function Navigation() {
                     <button
                       key={link.path}
                       onClick={() => handleLinkClick(link.path)}
-                      className="block w-full text-left text-2xl font-medium tracking-tight text-[#111111] hover:text-[#F26522] transition-colors cursor-pointer"
+                      className="block w-full text-left text-2xl font-medium tracking-tight text-white hover:text-[#F26522] transition-colors cursor-pointer"
                     >
                       {link.label}
                     </button>
@@ -505,19 +505,19 @@ export function Navigation() {
                         navigate(link.path);
                         setMobileOpen(false);
                       }}
-                      className="flex items-center justify-between w-full text-left text-xl font-medium text-[#111111] hover:text-[#F26522] transition-colors cursor-pointer"
+                      className="flex items-center justify-between w-full text-left text-xl font-medium text-white hover:text-[#F26522] transition-colors cursor-pointer"
                     >
                       <span className="flex items-center gap-3">
                         <link.icon className="w-5 h-5 text-[#F26522]" />
                         {link.label}
                       </span>
-                      <ArrowRight className="w-4 h-4 text-[#111111]/30" />
+                      <ArrowRight className="w-4 h-4 text-white/40" />
                     </button>
                   ))}
             </div>
 
             {/* Bottom Actions */}
-            <div className="pt-6 border-t border-[#E5E4DE] space-y-3">
+            <div className="pt-6 border-t border-white/10 space-y-3">
               {!isAuthenticated ? (
                 <>
                   <PrimaryButton
@@ -535,7 +535,7 @@ export function Navigation() {
                       navigate("/auth");
                       setMobileOpen(false);
                     }}
-                    className="w-full text-center py-2 text-xs font-semibold text-[#111111]/70 hover:text-[#111111] cursor-pointer"
+                    className="w-full text-center py-2 text-xs font-semibold text-white/70 hover:text-white cursor-pointer"
                   >
                     Already have an account? Sign in
                   </button>
@@ -547,7 +547,7 @@ export function Navigation() {
                       navigate("/profile");
                       setMobileOpen(false);
                     }}
-                    className="flex-1 py-3 text-center rounded-full bg-[#F5F4EF] text-xs font-semibold text-[#111111] cursor-pointer"
+                    className="flex-1 py-3 text-center rounded-full bg-white/10 text-xs font-semibold text-white hover:bg-white/15 cursor-pointer border border-white/10"
                   >
                     My Profile
                   </button>
@@ -556,7 +556,7 @@ export function Navigation() {
                       handleSignOut();
                       setMobileOpen(false);
                     }}
-                    className="flex-1 py-3 text-center rounded-full bg-red-50 text-xs font-semibold text-red-600 cursor-pointer"
+                    className="flex-1 py-3 text-center rounded-full bg-rose-500/10 text-xs font-semibold text-rose-400 hover:bg-rose-500/20 cursor-pointer border border-rose-500/20"
                   >
                     Sign Out
                   </button>
@@ -569,7 +569,7 @@ export function Navigation() {
 
       {/* Mobile Sticky Bottom Dock (When logged in) */}
       {isAuthenticated && !isMobileActiveChat && (
-        <nav className="md:hidden fixed bottom-3 left-4 right-4 bg-white/95 backdrop-blur-md border border-[#E5E4DE] rounded-full z-40 px-2 py-1.5 shadow-[0_4px_20px_rgba(0,0,0,0.06)]">
+        <nav className="md:hidden fixed bottom-3 left-4 right-4 bg-slate-950/75 backdrop-blur-2xl border border-white/15 rounded-full z-40 px-2 py-1.5 shadow-[0_8px_32px_rgba(0,0,0,0.6),inset_0_1px_0_rgba(255,255,255,0.12)]">
           <div className="flex items-center justify-around">
             {navLinks.slice(0, 5).map((link) => {
               const isActive =
@@ -584,8 +584,8 @@ export function Navigation() {
                   onClick={() => navigate(link.path)}
                   className={`flex flex-col items-center justify-center py-1 px-2.5 rounded-full transition-all cursor-pointer ${
                     isActive
-                      ? "text-[#F26522] font-bold"
-                      : "text-[#111111]/50 hover:text-[#111111]"
+                      ? "text-[#F26522] font-bold drop-shadow-[0_0_8px_rgba(242,101,34,0.4)]"
+                      : "text-white/60 hover:text-white"
                   }`}
                 >
                   <link.icon className="w-4 h-4" />

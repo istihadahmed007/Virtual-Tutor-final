@@ -36,6 +36,7 @@ import {
   checkRedirectLoop,
 } from "@/lib/auth-handshake-logger";
 import { BrandLogo } from "@/components/BrandLogo";
+import { CinematicBackgroundAnimation } from "@/components/redesign/CinematicBackgroundAnimation";
 
 const logo = "/logo.svg";
 
@@ -570,16 +571,10 @@ export default function Auth({ redirectAfterAuth }: AuthProps = {}) {
   };
 
   return (
-    <div className="min-h-screen bg-[#F8FAFC] flex flex-col justify-center py-12 px-4 sm:px-6 lg:px-8 relative overflow-hidden selection:bg-[#6D5DFB]/15 selection:text-[#312E81]">
-      {/* Plane 0: Atmospheric study texture & ambient soft lighting */}
-      <div className="absolute inset-0 pointer-events-none z-0 overflow-hidden" aria-hidden="true">
-        <img
-          src="https://images.unsplash.com/photo-1497633762265-9d179a990aa6?auto=format&fit=crop&q=80&w=1800"
-          alt=""
-          className="w-full h-full object-cover opacity-[0.04] mix-blend-luminosity scale-105"
-        />
-        <div className="absolute inset-0 bg-gradient-to-b from-[#F8FAFC]/80 via-[#F8FAFC]/95 to-[#F8FAFC]" />
-        <div className="absolute top-1/4 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[36rem] h-[36rem] bg-gradient-to-tr from-[#6D5DFB]/10 via-[#14B8A6]/8 to-transparent rounded-full blur-3xl" />
+    <div className="min-h-screen bg-black text-white flex flex-col justify-center py-12 px-4 sm:px-6 lg:px-8 relative overflow-hidden selection:bg-violet-500/30 selection:text-white">
+      {/* Plane 0: Global Living Background Canvas */}
+      <div className="fixed inset-0 pointer-events-none z-0 overflow-hidden" aria-hidden="true">
+        <CinematicBackgroundAnimation variant="fullscreen" theme="dark" opacity={0.65} />
       </div>
 
       {/* Brand Header */}
@@ -590,12 +585,12 @@ export default function Auth({ redirectAfterAuth }: AuthProps = {}) {
       </div>
 
       <div className="sm:mx-auto sm:w-full sm:max-w-md relative z-10">
-        <Card className="border-slate-200 shadow-[0_8px_32px_rgba(49,46,129,0.06)] bg-white rounded-3xl overflow-hidden">
+        <Card className="border border-white/12 shadow-[0_16px_48px_rgba(0,0,0,0.6),inset_0_1px_0_rgba(255,255,255,0.1)] bg-slate-950/50 backdrop-blur-2xl rounded-3xl overflow-hidden text-white">
           {/* Notification Messages */}
           {error && (
-            <div className="bg-rose-50 border-b border-rose-200/60 p-4 flex items-start gap-3">
-              <AlertCircle className="w-5 h-5 text-rose-600 shrink-0 mt-0.5" />
-              <div className="text-sm font-medium text-rose-800 leading-relaxed flex-1">
+            <div className="bg-rose-500/10 border-b border-rose-500/30 p-4 flex items-start gap-3">
+              <AlertCircle className="w-5 h-5 text-rose-400 shrink-0 mt-0.5" />
+              <div className="text-sm font-medium text-rose-200 leading-relaxed flex-1">
                 <div>{error}</div>
                 {error.toLowerCase().includes("already exists") && mode === "register" && (
                   <div className="mt-2.5">
@@ -606,7 +601,7 @@ export default function Auth({ redirectAfterAuth }: AuthProps = {}) {
                         setLoginEmail(regEmail);
                         setError(null);
                       }}
-                      className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-[#312E81] text-white text-xs font-semibold hover:bg-[#6D5DFB] transition-colors cursor-pointer shadow-xs"
+                      className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-violet-600 text-white text-xs font-semibold hover:bg-violet-500 transition-colors cursor-pointer shadow-xs"
                     >
                       Switch to Log In with this email →
                     </button>
@@ -621,7 +616,7 @@ export default function Auth({ redirectAfterAuth }: AuthProps = {}) {
                         setRegEmail(loginEmail);
                         setError(null);
                       }}
-                      className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-[#312E81] text-white text-xs font-semibold hover:bg-[#6D5DFB] transition-colors cursor-pointer shadow-xs"
+                      className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-violet-600 text-white text-xs font-semibold hover:bg-violet-500 transition-colors cursor-pointer shadow-xs"
                     >
                       Create an account with this email →
                     </button>
@@ -632,9 +627,9 @@ export default function Auth({ redirectAfterAuth }: AuthProps = {}) {
           )}
 
           {successMessage && (
-            <div className="bg-emerald-50 border-b border-emerald-200/60 p-4 flex items-start gap-3">
-              <CheckCircle2 className="w-5 h-5 text-emerald-600 shrink-0 mt-0.5" />
-              <div className="text-sm font-medium text-emerald-800 leading-relaxed">{successMessage}</div>
+            <div className="bg-emerald-500/10 border-b border-emerald-500/30 p-4 flex items-start gap-3">
+              <CheckCircle2 className="w-5 h-5 text-emerald-400 shrink-0 mt-0.5" />
+              <div className="text-sm font-medium text-emerald-200 leading-relaxed">{successMessage}</div>
             </div>
           )}
 
@@ -644,14 +639,14 @@ export default function Auth({ redirectAfterAuth }: AuthProps = {}) {
           {verifyStep === "otp_verify" ? (
             <div>
               <CardHeader className="text-center pb-2 pt-8 px-6">
-                <div className="w-12 h-12 bg-[#6D5DFB]/10 text-[#6D5DFB] rounded-full flex items-center justify-center mx-auto mb-3 border border-[#6D5DFB]/20">
+                <div className="w-12 h-12 bg-violet-500/10 text-violet-400 rounded-full flex items-center justify-center mx-auto mb-3 border border-violet-500/20">
                   <Mail className="w-6 h-6" />
                 </div>
-                <CardTitle className="text-2xl font-bold text-slate-900">Check your email</CardTitle>
-                <CardDescription className="text-sm text-slate-600 mt-2">
-                  We sent a 6-digit verification code to <span className="font-semibold text-slate-900">{otpTargetEmail}</span>
+                <CardTitle className="text-2xl font-bold text-white">Check your email</CardTitle>
+                <CardDescription className="text-sm text-white/70 mt-2">
+                  We sent a 6-digit verification code to <span className="font-semibold text-white">{otpTargetEmail}</span>
                 </CardDescription>
-                <p className="text-xs text-slate-500 mt-1">
+                <p className="text-xs text-white/50 mt-1">
                   Please enter the 6-digit verification code sent to your email address before continuing.
                 </p>
               </CardHeader>
@@ -673,7 +668,7 @@ export default function Auth({ redirectAfterAuth }: AuthProps = {}) {
                         value={digit}
                         onChange={(e) => handleDigitChange(idx, e.target.value)}
                         onKeyDown={(e) => handleKeyDown(idx, e)}
-                        className="w-11 h-13 sm:w-12 sm:h-14 text-center text-2xl font-bold rounded-xl border border-slate-300 focus:border-[#6D5DFB] focus:ring-2 focus:ring-[#6D5DFB]/20 bg-white text-slate-900 transition-all outline-none"
+                        className="w-11 h-13 sm:w-12 sm:h-14 text-center text-2xl font-bold rounded-xl border border-white/15 focus:border-violet-400 focus:ring-2 focus:ring-violet-500/20 bg-white/5 text-white transition-all outline-hidden"
                         autoFocus={idx === 0}
                       />
                     ))}
@@ -683,7 +678,7 @@ export default function Auth({ redirectAfterAuth }: AuthProps = {}) {
                   <Button
                     type="submit"
                     disabled={isLoading || otpDigits.join("").length !== 6}
-                    className="w-full h-11 bg-[#312E81] hover:bg-[#6D5DFB] text-white font-semibold rounded-full text-sm shadow-xs transition-all cursor-pointer"
+                    className="w-full h-11 bg-gradient-to-r from-violet-600 to-indigo-600 hover:from-violet-500 hover:to-indigo-500 text-white font-semibold rounded-full text-sm shadow-[0_4px_20px_rgba(109,93,251,0.35)] transition-all cursor-pointer"
                   >
                     {isLoading ? (
                       <span className="flex items-center gap-2">
@@ -696,19 +691,19 @@ export default function Auth({ redirectAfterAuth }: AuthProps = {}) {
 
                   {/* Resend & Actions */}
                   <div className="space-y-3 pt-2 text-center text-sm">
-                    <div className="text-slate-600">
+                    <div className="text-white/70">
                       {canResend ? (
                         <button
                           type="button"
                           onClick={handleResendOTP}
                           disabled={isLoading}
-                          className="font-semibold text-[#6D5DFB] hover:text-[#312E81] inline-flex items-center gap-1.5 transition-colors cursor-pointer"
+                          className="font-semibold text-violet-400 hover:text-violet-300 inline-flex items-center gap-1.5 transition-colors cursor-pointer"
                         >
                           <RefreshCw className="w-3.5 h-3.5" /> Resend verification email
                         </button>
                       ) : (
-                        <span className="text-slate-400 font-medium">
-                          Resend available in <span className="text-slate-700 font-bold">{otpCountdown}s</span>
+                        <span className="text-white/40 font-medium">
+                          Resend available in <span className="text-white font-bold">{otpCountdown}s</span>
                         </span>
                       )}
                     </div>
@@ -720,7 +715,7 @@ export default function Auth({ redirectAfterAuth }: AuthProps = {}) {
                           setVerifyStep("form");
                           setError(null);
                         }}
-                        className="text-xs text-slate-500 hover:text-slate-700 font-medium inline-flex items-center gap-1 transition-colors cursor-pointer"
+                        className="text-xs text-white/50 hover:text-white/80 font-medium inline-flex items-center gap-1 transition-colors cursor-pointer"
                       >
                         <Edit2 className="w-3 h-3" /> Change email / Back to registration
                       </button>
@@ -734,7 +729,7 @@ export default function Auth({ redirectAfterAuth }: AuthProps = {}) {
               {/* ══════════════════════════════════════════════════════════
                   VIEW 2: CREATE ACCOUNT OR LOG IN FORM
                  ══════════════════════════════════════════════════════════ */}
-              <div className="flex border-b border-slate-200">
+              <div className="flex border-b border-white/10">
                 <button
                   type="button"
                   onClick={() => {
@@ -743,8 +738,8 @@ export default function Auth({ redirectAfterAuth }: AuthProps = {}) {
                   }}
                   className={`flex-1 py-3.5 text-center text-xs sm:text-sm font-semibold transition-colors cursor-pointer ${
                     mode === "register"
-                      ? "text-[#0F172A] border-b-2 border-[#6D5DFB] bg-slate-50 font-bold -mb-px"
-                      : "text-slate-500 hover:text-[#0F172A]"
+                      ? "text-white border-b-2 border-violet-400 bg-white/5 font-bold -mb-px"
+                      : "text-white/60 hover:text-white"
                   }`}
                 >
                   Create Account
@@ -757,8 +752,8 @@ export default function Auth({ redirectAfterAuth }: AuthProps = {}) {
                   }}
                   className={`flex-1 py-3.5 text-center text-xs sm:text-sm font-semibold transition-colors cursor-pointer ${
                     mode === "login"
-                      ? "text-[#0F172A] border-b-2 border-[#6D5DFB] bg-slate-50 font-bold -mb-px"
-                      : "text-slate-500 hover:text-[#0F172A]"
+                      ? "text-white border-b-2 border-violet-400 bg-white/5 font-bold -mb-px"
+                      : "text-white/60 hover:text-white"
                   }`}
                 >
                   Log In
@@ -769,8 +764,8 @@ export default function Auth({ redirectAfterAuth }: AuthProps = {}) {
                 /* ─── REGISTER FORM ────────────────────────────── */
                 <div>
                   <CardHeader className="pb-3 pt-6 px-6">
-                    <CardTitle className="text-2xl font-bold text-slate-900">Create your account</CardTitle>
-                    <CardDescription className="text-sm text-slate-500">
+                    <CardTitle className="text-2xl font-bold text-white">Create your account</CardTitle>
+                    <CardDescription className="text-sm text-white/70">
                       Join ভার্চুয়াল টিউটর to access live classrooms and interactive learning.
                     </CardDescription>
                   </CardHeader>
@@ -779,7 +774,7 @@ export default function Auth({ redirectAfterAuth }: AuthProps = {}) {
                     <form onSubmit={handleRegisterSubmit} className="space-y-4">
                       {/* Role Selector Pills */}
                       <div>
-                        <label className="block text-xs font-semibold text-slate-700 mb-2">
+                        <label className="block text-xs font-semibold text-white/80 mb-2">
                           I am a:
                         </label>
                         <div className="grid grid-cols-3 gap-2">
@@ -788,11 +783,11 @@ export default function Auth({ redirectAfterAuth }: AuthProps = {}) {
                             onClick={() => setSelectedRole("student")}
                             className={`py-2.5 px-3 rounded-full border text-xs font-semibold flex items-center justify-center gap-1.5 transition-all cursor-pointer ${
                               selectedRole === "student"
-                                ? "bg-violet-50 border-[#6D5DFB] text-[#312E81] shadow-xs ring-1 ring-[#6D5DFB]"
-                                : "border-slate-200 text-slate-600 hover:bg-slate-50"
+                                ? "bg-violet-500/20 border-violet-400 text-white shadow-xs ring-1 ring-violet-400"
+                                : "border-white/10 bg-white/5 text-white/70 hover:bg-white/10"
                             }`}
                           >
-                            <GraduationCap className={`w-4 h-4 ${selectedRole === "student" ? "text-[#6D5DFB]" : "text-slate-400"}`} />
+                            <GraduationCap className={`w-4 h-4 ${selectedRole === "student" ? "text-violet-400" : "text-white/50"}`} />
                             Student
                           </button>
 
@@ -801,11 +796,11 @@ export default function Auth({ redirectAfterAuth }: AuthProps = {}) {
                             onClick={() => setSelectedRole("teacher")}
                             className={`py-2.5 px-3 rounded-full border text-xs font-semibold flex items-center justify-center gap-1.5 transition-all cursor-pointer ${
                               selectedRole === "teacher"
-                                ? "bg-violet-50 border-[#6D5DFB] text-[#312E81] shadow-xs ring-1 ring-[#6D5DFB]"
-                                : "border-slate-200 text-slate-600 hover:bg-slate-50"
+                                ? "bg-violet-500/20 border-violet-400 text-white shadow-xs ring-1 ring-violet-400"
+                                : "border-white/10 bg-white/5 text-white/70 hover:bg-white/10"
                             }`}
                           >
-                            <BookOpen className={`w-4 h-4 ${selectedRole === "teacher" ? "text-[#6D5DFB]" : "text-slate-400"}`} />
+                            <BookOpen className={`w-4 h-4 ${selectedRole === "teacher" ? "text-violet-400" : "text-white/50"}`} />
                             Teacher
                           </button>
 
@@ -814,30 +809,30 @@ export default function Auth({ redirectAfterAuth }: AuthProps = {}) {
                             onClick={() => setSelectedRole("parent")}
                             className={`py-2.5 px-3 rounded-full border text-xs font-semibold flex items-center justify-center gap-1.5 transition-all cursor-pointer ${
                               selectedRole === "parent"
-                                ? "bg-violet-50 border-[#6D5DFB] text-[#312E81] shadow-xs ring-1 ring-[#6D5DFB]"
-                                : "border-slate-200 text-slate-600 hover:bg-slate-50"
+                                ? "bg-violet-500/20 border-violet-400 text-white shadow-xs ring-1 ring-violet-400"
+                                : "border-white/10 bg-white/5 text-white/70 hover:bg-white/10"
                             }`}
                           >
-                            <Users className={`w-4 h-4 ${selectedRole === "parent" ? "text-[#6D5DFB]" : "text-slate-400"}`} />
+                            <Users className={`w-4 h-4 ${selectedRole === "parent" ? "text-violet-400" : "text-white/50"}`} />
                             Parent
                           </button>
                         </div>
 
                         {/* Role Guidance Banner */}
-                        <div className="mt-2.5 p-3 rounded-2xl bg-slate-50 border border-slate-200 text-[11px] text-slate-700 leading-relaxed">
+                        <div className="mt-2.5 p-3 rounded-2xl bg-white/5 border border-white/10 text-[11px] text-white/70 leading-relaxed">
                           {selectedRole === "student" && (
                             <p>
-                              <span className="font-bold text-[#0F172A]">Student Account:</span> Immediate access to browse verified tutors across NCTB, Cambridge & Edexcel, book 1-on-1 sessions, and enter live classrooms.
+                              <span className="font-bold text-white">Student Account:</span> Immediate access to browse verified tutors across NCTB, Cambridge & Edexcel, book 1-on-1 sessions, and enter live classrooms.
                             </p>
                           )}
                           {selectedRole === "teacher" && (
                             <p>
-                              <span className="font-bold text-[#0F172A]">Educator Onboarding:</span> Create your instructor account, submit credentials for verification, and set your tuition rates (85% net payout model).
+                              <span className="font-bold text-white">Educator Onboarding:</span> Create your instructor account, submit credentials for verification, and set your tuition rates (85% net payout model).
                             </p>
                           )}
                           {selectedRole === "parent" && (
                             <p>
-                              <span className="font-bold text-[#0F172A]">Parent Account:</span> Monitor your children's learning schedule, review verified tutor credentials, and oversee tuition receipts.
+                              <span className="font-bold text-white">Parent Account:</span> Monitor your children's learning schedule, review verified tutor credentials, and oversee tuition receipts.
                             </p>
                           )}
                         </div>
@@ -1007,7 +1002,7 @@ export default function Auth({ redirectAfterAuth }: AuthProps = {}) {
                       <Button
                         type="submit"
                         disabled={isLoading}
-                        className="w-full h-11 bg-[#312E81] hover:bg-[#6D5DFB] text-white font-semibold rounded-full text-sm shadow-xs mt-2 transition-all cursor-pointer"
+                        className="w-full h-11 bg-gradient-to-r from-violet-600 to-indigo-600 hover:from-violet-500 hover:to-indigo-500 text-white font-semibold rounded-full text-sm shadow-[0_4px_20px_rgba(109,93,251,0.35)] mt-2 transition-all cursor-pointer"
                       >
                         {isLoading ? (
                           <span className="flex items-center gap-2">
@@ -1019,7 +1014,7 @@ export default function Auth({ redirectAfterAuth }: AuthProps = {}) {
                       </Button>
                     </form>
 
-                    <div className="mt-6 text-center text-xs text-slate-500">
+                    <div className="mt-6 text-center text-xs text-white/60">
                       Already have an account?{" "}
                       <button
                         type="button"
@@ -1027,7 +1022,7 @@ export default function Auth({ redirectAfterAuth }: AuthProps = {}) {
                           setMode("login");
                           setError(null);
                         }}
-                        className="font-semibold text-[#6D5DFB] hover:text-[#312E81] cursor-pointer"
+                        className="font-semibold text-violet-400 hover:text-violet-300 cursor-pointer"
                       >
                         Log in
                       </button>
@@ -1038,8 +1033,8 @@ export default function Auth({ redirectAfterAuth }: AuthProps = {}) {
                 /* ─── LOGIN FORM ──────────────────────────────── */
                 <div>
                   <CardHeader className="pb-3 pt-6 px-6">
-                    <CardTitle className="text-2xl font-bold text-slate-900">Welcome back</CardTitle>
-                    <CardDescription className="text-sm text-slate-500">
+                    <CardTitle className="text-2xl font-bold text-white">Welcome back</CardTitle>
+                    <CardDescription className="text-sm text-white/70">
                       Sign in to your account.
                     </CardDescription>
                   </CardHeader>
@@ -1048,11 +1043,11 @@ export default function Auth({ redirectAfterAuth }: AuthProps = {}) {
                     <form onSubmit={handleLoginSubmit} className="space-y-4">
                       {/* Email */}
                       <div>
-                        <label htmlFor="login-email" className="block text-xs font-semibold text-slate-700 mb-1">
+                        <label htmlFor="login-email" className="block text-xs font-semibold text-white/80 mb-1">
                           Email Address
                         </label>
                         <div className="relative">
-                          <Mail className="w-4 h-4 text-slate-400 absolute left-3.5 top-1/2 -translate-y-1/2" />
+                          <Mail className="w-4 h-4 text-white/40 absolute left-3.5 top-1/2 -translate-y-1/2" />
                           <Input
                             id="login-email"
                             name="email"
@@ -1066,7 +1061,7 @@ export default function Auth({ redirectAfterAuth }: AuthProps = {}) {
                             autoCapitalize="none"
                             autoCorrect="off"
                             spellCheck={false}
-                            className="pl-10 h-11 rounded-xl border-stone-300"
+                            className="pl-10 h-11 rounded-xl"
                           />
                         </div>
                       </div>
@@ -1074,7 +1069,7 @@ export default function Auth({ redirectAfterAuth }: AuthProps = {}) {
                       {/* Password */}
                       <div>
                         <div className="flex items-center justify-between mb-1">
-                          <label htmlFor="login-password" className="block text-xs font-semibold text-slate-700">
+                          <label htmlFor="login-password" className="block text-xs font-semibold text-white/80">
                             Password
                           </label>
                           <button
@@ -1085,13 +1080,13 @@ export default function Auth({ redirectAfterAuth }: AuthProps = {}) {
                               setForgotEmail(loginEmail);
                               setError(null);
                             }}
-                            className="text-xs font-medium text-[#6D5DFB] hover:text-[#312E81] cursor-pointer"
+                            className="text-xs text-violet-400 hover:text-violet-300 font-medium cursor-pointer"
                           >
                             Forgot password?
                           </button>
                         </div>
                         <div className="relative">
-                          <Lock className="w-4 h-4 text-slate-400 absolute left-3.5 top-1/2 -translate-y-1/2" />
+                          <Lock className="w-4 h-4 text-white/40 absolute left-3.5 top-1/2 -translate-y-1/2" />
                           <Input
                             id="login-password"
                             name="password"
@@ -1103,12 +1098,12 @@ export default function Auth({ redirectAfterAuth }: AuthProps = {}) {
                             autoComplete="current-password"
                             autoCapitalize="none"
                             autoCorrect="off"
-                            className="pl-10 pr-10 h-11 rounded-xl border-slate-300"
+                            className="pl-10 pr-10 h-11 rounded-xl"
                           />
                           <button
                             type="button"
                             onClick={() => setShowLoginPassword(!showLoginPassword)}
-                            className="absolute right-3.5 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 p-1 cursor-pointer"
+                            className="absolute right-3.5 top-1/2 -translate-y-1/2 text-white/40 hover:text-white p-1 cursor-pointer"
                           >
                             {showLoginPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
                           </button>
@@ -1117,23 +1112,21 @@ export default function Auth({ redirectAfterAuth }: AuthProps = {}) {
 
                       {/* Submit Button */}
                       <Button
-                        id="login-submit-btn"
                         type="submit"
                         disabled={isLoading}
-                        style={{ touchAction: "manipulation" }}
-                        className="w-full h-11 bg-[#312E81] hover:bg-[#6D5DFB] text-white font-semibold rounded-full text-sm shadow-xs mt-2 transition-all cursor-pointer touch-manipulation active:scale-[0.99]"
+                        className="w-full h-11 bg-gradient-to-r from-violet-600 to-indigo-600 hover:from-violet-500 hover:to-indigo-500 text-white font-semibold rounded-full text-sm shadow-[0_4px_20px_rgba(109,93,251,0.35)] mt-2 transition-all cursor-pointer"
                       >
                         {isLoading ? (
                           <span className="flex items-center gap-2">
                             <Loader2 className="w-4 h-4 animate-spin" /> Signing in...
                           </span>
                         ) : (
-                          "Log in"
+                          "Sign in"
                         )}
                       </Button>
                     </form>
 
-                    <div className="mt-5 text-center text-xs text-slate-500">
+                    <div className="mt-6 text-center text-xs text-white/60">
                       Don't have an account?{" "}
                       <button
                         type="button"
@@ -1141,7 +1134,7 @@ export default function Auth({ redirectAfterAuth }: AuthProps = {}) {
                           setMode("register");
                           setError(null);
                         }}
-                        className="font-semibold text-[#6D5DFB] hover:text-[#312E81] cursor-pointer"
+                        className="font-semibold text-violet-400 hover:text-violet-300 cursor-pointer"
                       >
                         Create account
                       </button>
@@ -1158,27 +1151,27 @@ export default function Auth({ redirectAfterAuth }: AuthProps = {}) {
           FORGOT PASSWORD MODAL
          ══════════════════════════════════════════════════════════ */}
       {forgotModalOpen && (
-        <div className="fixed inset-0 z-50 bg-slate-900/50 backdrop-blur-xs flex items-center justify-center p-4">
-          <div className="bg-white rounded-2xl max-w-md w-full p-6 shadow-xl border border-stone-200 animate-in fade-in zoom-in-95">
+        <div className="fixed inset-0 z-50 bg-black/75 backdrop-blur-md flex items-center justify-center p-4">
+          <div className="bg-slate-950/90 backdrop-blur-2xl rounded-2xl max-w-md w-full p-6 shadow-2xl border border-white/15 text-white animate-in fade-in zoom-in-95">
             <div className="flex items-center justify-between mb-4">
-              <h3 className="text-lg font-bold text-slate-900">
+              <h3 className="text-lg font-bold text-white">
                 Reset your password
               </h3>
               <button
                 type="button"
                 onClick={() => setForgotModalOpen(false)}
-                className="text-slate-400 hover:text-slate-600 text-lg leading-none cursor-pointer"
+                className="text-white/40 hover:text-white text-lg leading-none cursor-pointer"
               >
                 ✕
               </button>
             </div>
 
             <form onSubmit={handleForgotSubmit} className="space-y-4">
-              <p className="text-xs text-slate-600">
+              <p className="text-xs text-white/70">
                 Enter your account email and choose a new password below.
               </p>
               <div>
-                <label className="block text-xs font-semibold text-slate-700 mb-1">
+                <label className="block text-xs font-semibold text-white/80 mb-1">
                   Email Address
                 </label>
                 <Input
@@ -1187,12 +1180,12 @@ export default function Auth({ redirectAfterAuth }: AuthProps = {}) {
                   value={forgotEmail}
                   onChange={(e) => setForgotEmail(e.target.value)}
                   required
-                  className="h-11 rounded-xl border-stone-300"
+                  className="h-11 rounded-xl"
                 />
               </div>
 
               <div>
-                <label className="block text-xs font-semibold text-slate-700 mb-1">
+                <label className="block text-xs font-semibold text-white/80 mb-1">
                   New Password
                 </label>
                 <div className="relative">
@@ -1203,12 +1196,12 @@ export default function Auth({ redirectAfterAuth }: AuthProps = {}) {
                     onChange={(e) => setForgotNewPassword(e.target.value)}
                     required
                     minLength={8}
-                    className="h-11 rounded-xl border-stone-300 pr-10"
+                    className="h-11 rounded-xl pr-10"
                   />
                   <button
                     type="button"
                     onClick={() => setShowForgotNewPassword(!showForgotNewPassword)}
-                    className="absolute right-3.5 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 cursor-pointer"
+                    className="absolute right-3.5 top-1/2 -translate-y-1/2 text-white/40 hover:text-white cursor-pointer"
                   >
                     {showForgotNewPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
                   </button>
@@ -1216,7 +1209,7 @@ export default function Auth({ redirectAfterAuth }: AuthProps = {}) {
               </div>
 
               <div>
-                <label className="block text-xs font-semibold text-slate-700 mb-1">
+                <label className="block text-xs font-semibold text-white/80 mb-1">
                   Confirm New Password
                 </label>
                 <Input
@@ -1226,7 +1219,7 @@ export default function Auth({ redirectAfterAuth }: AuthProps = {}) {
                   onChange={(e) => setForgotConfirmPassword(e.target.value)}
                   required
                   minLength={8}
-                  className="h-11 rounded-xl border-stone-300"
+                  className="h-11 rounded-xl"
                 />
               </div>
 
@@ -1235,14 +1228,14 @@ export default function Auth({ redirectAfterAuth }: AuthProps = {}) {
                   type="button"
                   variant="outline"
                   onClick={() => setForgotModalOpen(false)}
-                  className="flex-1 rounded-xl h-11"
+                  className="flex-1 rounded-xl h-11 border-white/15 text-white/80 hover:bg-white/10"
                 >
                   Cancel
                 </Button>
                 <Button
                   type="submit"
                   disabled={isLoading}
-                  className="flex-1 rounded-xl h-11 bg-[#312E81] hover:bg-[#6D5DFB] text-white cursor-pointer font-semibold"
+                  className="flex-1 rounded-xl h-11 bg-gradient-to-r from-violet-600 to-indigo-600 hover:from-violet-500 hover:to-indigo-500 text-white cursor-pointer font-semibold shadow-[0_4px_20px_rgba(109,93,251,0.35)]"
                 >
                   {isLoading ? <Loader2 className="w-4 h-4 animate-spin" /> : "Update Password"}
                 </Button>

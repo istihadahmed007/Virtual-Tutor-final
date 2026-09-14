@@ -15,3 +15,4 @@ export { GlobalScrollProgress } from "./GlobalScrollProgress";
 export { MouseSpotlight } from "./MouseSpotlight";
 export { CursorEnhancement } from "./CursorEnhancement";
 export { FloatingNavPill } from "./FloatingNavPill";
+export { AgentWaveCanvas } from "./AgentWaveCanvas";

@@ -91,7 +91,7 @@ export const TutorCard: React.FC<TutorCardProps> = ({
       data-interactive="true"
       className={`group relative rounded-2xl border p-5 sm:p-6 transition-all duration-300 cursor-pointer flex flex-col justify-between overflow-hidden ${
         isDark
-          ? "bg-[#0D0D0D]/85 backdrop-blur-md border-white/10 hover:border-[#6D5DFB]/50 hover:shadow-[0_16px_36px_rgba(109,93,251,0.2)] text-white"
+          ? "bg-slate-900/40 backdrop-blur-xl border-white/12 hover:border-[#6D5DFB]/60 hover:bg-slate-900/60 shadow-[0_16px_36px_rgba(0,0,0,0.3),inset_0_1px_0_rgba(255,255,255,0.12)] hover:shadow-[0_20px_44px_rgba(109,93,251,0.25),inset_0_1px_0_rgba(255,255,255,0.2)] text-white"
           : "bg-white border-[#E2E8F0] hover:border-[#6D5DFB]/40 hover:shadow-[0_16px_36px_rgba(49,46,129,0.09)]"
       } ${className}`}
     >

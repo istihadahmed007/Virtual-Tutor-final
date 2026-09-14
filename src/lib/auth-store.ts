@@ -118,10 +118,24 @@ const LEGACY_DEMO_EMAILS = new Set<string>();
 
 const DEFAULT_ACCOUNTS: StoredAccount[] = [];
 
-export function getRegisteredUsers(): StoredAccount[] {
-  if (typeof window === "undefined") return [];
+function getSafeStorage(type: "localStorage" | "sessionStorage"): Storage | null {
   try {
-    const raw = localStorage.getItem(STORAGE_USERS_KEY);
+    if (typeof window !== "undefined" && window[type]) {
+      return window[type];
+    }
+    if (typeof globalThis !== "undefined" && (globalThis as unknown as Record<string, Storage>)[type]) {
+      return (globalThis as unknown as Record<string, Storage>)[type];
+    }
+  } catch {
+    return null;
+  }
+  return null;
+}
+
+export function getRegisteredUsers(): StoredAccount[] {
+  if (typeof window === "undefined" && typeof globalThis === "undefined") return [];
+  try {
+    const raw = getSafeStorage("localStorage")?.getItem(STORAGE_USERS_KEY);
     if (!raw) return [];
     const parsed = JSON.parse(raw);
     return Array.isArray(parsed) ? parsed : [];
@@ -131,9 +145,9 @@ export function getRegisteredUsers(): StoredAccount[] {
 }
 
 export function saveRegisteredUsers(users: StoredAccount[]) {
-  if (typeof window === "undefined") return;
+  if (typeof window === "undefined" && typeof globalThis === "undefined") return;
   try {
-    localStorage.setItem(STORAGE_USERS_KEY, JSON.stringify(users));
+    getSafeStorage("localStorage")?.setItem(STORAGE_USERS_KEY, JSON.stringify(users));
     notifyAuthChange();
   } catch (err) {
     console.error("Failed to save users database:", err);
@@ -141,7 +155,7 @@ export function saveRegisteredUsers(users: StoredAccount[]) {
 }
 
 export function getActiveSession(): AuthUser | null {
-  if (typeof window === "undefined") return null;
+  if (typeof window === "undefined" && typeof globalThis === "undefined") return null;
 
   // 1. Fast path: in-memory cache
   if (memorySessionCache && memorySessionCache._id && memorySessionCache.email) {
@@ -153,7 +167,7 @@ export function getActiveSession(): AuthUser | null {
 
   // 2. Try localStorage
   try {
-    const raw = localStorage.getItem(STORAGE_SESSION_KEY);
+    const raw = getSafeStorage("localStorage")?.getItem(STORAGE_SESSION_KEY);
     if (raw) {
       const parsed = JSON.parse(raw) as AuthUser;
       if (parsed && parsed._id && parsed.email) {
@@ -180,7 +194,7 @@ export function getActiveSession(): AuthUser | null {
   // 4. Fallback to sessionStorage
   if (!user) {
     try {
-      const rawSession = sessionStorage.getItem(STORAGE_SESSION_KEY);
+      const rawSession = getSafeStorage("sessionStorage")?.getItem(STORAGE_SESSION_KEY);
       if (rawSession) {
         const parsed = JSON.parse(rawSession) as AuthUser;
         if (parsed && parsed._id && parsed.email) {
@@ -204,7 +218,7 @@ export function getActiveSession(): AuthUser | null {
     // If loaded from cookie, restore to localStorage if possible
     if (source !== "localStorage") {
       try {
-        localStorage.setItem(STORAGE_SESSION_KEY, JSON.stringify(user));
+        getSafeStorage("localStorage")?.setItem(STORAGE_SESSION_KEY, JSON.stringify(user));
       } catch {
         // Safe to ignore in private browsing
       }
@@ -217,8 +231,9 @@ export function getActiveSession(): AuthUser | null {
 
     // Keep sessionStorage aligned
     try {
-      sessionStorage.setItem(STORAGE_SESSION_KEY, JSON.stringify(user));
-      sessionStorage.setItem("selected_role", user.role);
+      const ss = getSafeStorage("sessionStorage");
+      ss?.setItem(STORAGE_SESSION_KEY, JSON.stringify(user));
+      ss?.setItem("selected_role", user.role);
     } catch {
       // Safe to ignore
     }
@@ -231,15 +246,20 @@ export function getActiveSession(): AuthUser | null {
 }
 
 export function setActiveSession(user: AuthUser | null) {
-  if (typeof window === "undefined") return;
+  if (typeof window === "undefined" && typeof globalThis === "undefined") return;
 
   // Update in-memory reference immediately
   memorySessionCache = user;
 
+  const ls = getSafeStorage("localStorage");
+  const ss = getSafeStorage("sessionStorage");
+
   if (user) {
     // Write to multi-tier persistent storage
     try {
-      localStorage.setItem(STORAGE_SESSION_KEY, JSON.stringify(user));
+      if (ls) {
+        ls.setItem(STORAGE_SESSION_KEY, JSON.stringify(user));
+      }
     } catch (err) {
       authLogger.warn("AuthStore:LocalStorageWriteError", "localStorage write failed or restricted", {
         error: err instanceof Error ? `${err.name}: ${err.message}` : String(err),
@@ -249,8 +269,10 @@ export function setActiveSession(user: AuthUser | null) {
     }
 
     try {
-      sessionStorage.setItem(STORAGE_SESSION_KEY, JSON.stringify(user));
-      sessionStorage.setItem("selected_role", user.role);
+      if (ss) {
+        ss.setItem(STORAGE_SESSION_KEY, JSON.stringify(user));
+        ss.setItem("selected_role", user.role);
+      }
     } catch (err) {
       authLogger.warn("AuthStore:SessionStorageWriteError", "sessionStorage write failed or restricted", {
         error: err instanceof Error ? `${err.name}: ${err.message}` : String(err),
@@ -262,14 +284,16 @@ export function setActiveSession(user: AuthUser | null) {
   } else {
     // Clear all storage layers
     try {
-      localStorage.removeItem(STORAGE_SESSION_KEY);
+      ls?.removeItem(STORAGE_SESSION_KEY);
     } catch {
       // Safe to ignore
     }
 
     try {
-      sessionStorage.removeItem(STORAGE_SESSION_KEY);
-      sessionStorage.removeItem("selected_role");
+      if (ss) {
+        ss.removeItem(STORAGE_SESSION_KEY);
+        ss.removeItem("selected_role");
+      }
     } catch {
       // Safe to ignore
     }

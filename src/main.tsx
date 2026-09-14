@@ -111,10 +111,15 @@ const AdminNotificationsPage = lazyWithRetry(() => import("./pages/admin/AdminNo
 const AdminAuditLogsPage = lazyWithRetry(() => import("./pages/admin/AdminAuditLogsPage"), "AdminAuditLogsPage");
 const AdminSettingsPage = lazyWithRetry(() => import("./pages/admin/AdminSettingsPage"), "AdminSettingsPage");
 
+import { CinematicBackgroundAnimation } from "@/components/redesign/CinematicBackgroundAnimation";
+
 function RouteLoading() {
   return (
-    <div className="min-h-screen flex items-center justify-center bg-[#F5F4EF]">
-      <div className="animate-pulse text-[#111111]/40 text-sm font-medium">Loading...</div>
+    <div className="min-h-screen flex items-center justify-center bg-black/80 backdrop-blur-xl">
+      <div className="flex flex-col items-center gap-3">
+        <div className="w-8 h-8 rounded-full border-2 border-violet-500/30 border-t-violet-400 animate-spin" />
+        <span className="text-white/60 text-xs font-medium tracking-wide">Loading workspace...</span>
+      </div>
     </div>
   );
 }
@@ -125,10 +130,20 @@ function AppShell({ children }: { children: React.ReactNode }) {
   const isMobileActiveChat = location.pathname === "/messages" && Boolean(searchParams.get("id"));
 
   return (
-    <div className={`min-h-screen bg-[#F5F4EF] text-[#111111] ${isMobileActiveChat ? "pb-0" : "pb-16 md:pb-0"}`}>
-      <AppHelmet />
-      <Navigation />
-      {children}
+    <div className={`min-h-screen bg-black text-white relative font-sans selection:bg-violet-500/30 selection:text-white ${isMobileActiveChat ? "pb-0" : "pb-16 md:pb-0"}`}>
+      {/* Global Living Background Atmosphere (Agent Wave) */}
+      <div className="fixed inset-0 pointer-events-none z-0 overflow-hidden" aria-hidden="true">
+        <CinematicBackgroundAnimation variant="fullscreen" theme="dark" opacity={0.65} />
+      </div>
+
+      {/* Global Foreground Glass UI */}
+      <div className="relative z-10 flex flex-col min-h-screen">
+        <AppHelmet />
+        <Navigation />
+        <main className="flex-1 w-full">
+          {children}
+        </main>
+      </div>
     </div>
   );
 }
@@ -212,8 +227,8 @@ root.render(
                   <Route path="/auth" element={<AuthPage redirectAfterAuth="/dashboard" />} />
                   <Route path="/classroom" element={<RequireAuth><ClassroomPage /></RequireAuth>} />
                   <Route path="/classroom/:lessonId" element={<RequireAuth><ClassroomPage /></RequireAuth>} />
-                  <Route path="/checkout" element={<RequireAuth><CheckoutPage /></RequireAuth>} />
-                  <Route path="/checkout/:transactionId" element={<RequireAuth><CheckoutPage /></RequireAuth>} />
+                  <Route path="/checkout" element={<RequireAuth><AppShell><CheckoutPage /></AppShell></RequireAuth>} />
+                  <Route path="/checkout/:transactionId" element={<RequireAuth><AppShell><CheckoutPage /></AppShell></RequireAuth>} />
                   <Route path="/dashboard" element={<RequireAuth><AppShell><Dashboard /></AppShell></RequireAuth>} />
                   <Route path="/teachers" element={<AppShell><TeachersPage /></AppShell>} />
                   <Route path="/students" element={<AppShell><StudentsPage /></AppShell>} />
@@ -228,10 +243,10 @@ root.render(
                   <Route path="/teacher-dashboard" element={<RequireApprovedTeacher><AppShell><TeacherDashboard /></AppShell></RequireApprovedTeacher>} />
                   <Route path="/messages" element={<RequireAuth><AppShell><MessagesPage /></AppShell></RequireAuth>} />
                   <Route path="/community" element={<RequireAuth><AppShell><CommunityPage /></AppShell></RequireAuth>} />
-                  <Route path="/resume-builder" element={<ResumeBuilder />} />
-                  <Route path="/privacy" element={<PrivacyPolicy />} />
-                  <Route path="/privacy-policy" element={<PrivacyPolicy />} />
-                  <Route path="/terms" element={<PrivacyPolicy />} />
+                  <Route path="/resume-builder" element={<AppShell><ResumeBuilder /></AppShell>} />
+                  <Route path="/privacy" element={<AppShell><PrivacyPolicy /></AppShell>} />
+                  <Route path="/privacy-policy" element={<AppShell><PrivacyPolicy /></AppShell>} />
+                  <Route path="/terms" element={<AppShell><PrivacyPolicy /></AppShell>} />
 
                   {/* Admin Console Dedicated Area */}
                   <Route path="/admin" element={<RequireAdmin><AdminLayout><AdminDashboard /></AdminLayout></RequireAdmin>} />

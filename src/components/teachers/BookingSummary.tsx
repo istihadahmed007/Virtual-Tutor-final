@@ -245,110 +245,110 @@ export function BookingSummary({
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="sm:max-w-lg max-h-[min(90vh,calc(100dvh-2rem))] flex flex-col p-0 gap-0 overflow-hidden rounded-3xl bg-white border border-slate-200 shadow-2xl">
+      <DialogContent className="sm:max-w-lg max-h-[min(90vh,calc(100dvh-2rem))] flex flex-col p-0 gap-0 overflow-hidden rounded-3xl bg-slate-950/90 backdrop-blur-2xl border border-white/15 text-white shadow-[0_16px_50px_rgba(0,0,0,0.8)]">
         {!isConfirmed ? (
           <>
-            <DialogHeader className="px-6 pt-5 pb-3 border-b border-slate-200 bg-white shrink-0 pr-12 text-left">
-              <div className="flex items-center gap-1.5 text-xs font-semibold text-[#0F172A] bg-slate-50 px-2.5 py-0.5 rounded-full w-fit mb-1 border border-slate-200">
-                <FileCheck className="w-3.5 h-3.5 text-[#6D5DFB]" />
+            <DialogHeader className="px-6 pt-5 pb-3 border-b border-white/10 bg-transparent shrink-0 pr-12 text-left">
+              <div className="flex items-center gap-1.5 text-xs font-semibold text-white/80 bg-white/10 px-2.5 py-0.5 rounded-full w-fit mb-1 border border-white/15">
+                <FileCheck className="w-3.5 h-3.5 text-violet-400" />
                 <span>Review & Confirm Session</span>
               </div>
-              <DialogTitle className="text-lg sm:text-xl font-bold text-[#0F172A] leading-snug font-display">
+              <DialogTitle className="text-lg sm:text-xl font-bold text-white leading-snug font-display">
                 Book Lesson with {teacher.name}
               </DialogTitle>
-              <DialogDescription className="text-xs text-slate-500">
+              <DialogDescription className="text-xs text-white/50">
                 Please verify session details and scheduled time below.
               </DialogDescription>
             </DialogHeader>
 
             <div className="overflow-y-auto px-6 py-4 space-y-3.5 text-xs flex-1 overscroll-contain">
               {/* Teacher Info Card */}
-              <div className="flex items-center gap-3 p-3 rounded-2xl bg-slate-50 border border-slate-200">
+              <div className="flex items-center gap-3 p-3 rounded-2xl bg-white/5 border border-white/10">
                 {teacher.avatarUrl ? (
                   <img
                     src={teacher.avatarUrl}
                     alt={teacher.name}
-                    className="h-11 w-11 rounded-xl object-cover ring-1 ring-slate-200 shrink-0"
+                    className="h-11 w-11 rounded-xl object-cover ring-1 ring-white/20 shrink-0"
                   />
                 ) : (
-                  <div className="h-11 w-11 rounded-xl bg-white text-[#312E81] font-bold flex items-center justify-center text-sm shrink-0 border border-slate-200">
+                  <div className="h-11 w-11 rounded-xl bg-white/10 text-white font-bold flex items-center justify-center text-sm shrink-0 border border-white/10">
                     {teacher.name.slice(0, 2).toUpperCase()}
                   </div>
                 )}
                 <div className="min-w-0">
                   <div className="flex items-center gap-1.5 flex-wrap">
-                    <h4 className="font-bold text-[#0F172A] text-sm truncate font-display">{teacher.name}</h4>
-                    <span className="text-[10px] font-semibold text-teal-700 bg-white px-2 py-0.5 rounded-full border border-slate-200">
+                    <h4 className="font-bold text-white text-sm truncate font-display">{teacher.name}</h4>
+                    <span className="text-[10px] font-semibold text-teal-300 bg-teal-500/20 px-2 py-0.5 rounded-full border border-teal-400/30">
                       Verified
                     </span>
                   </div>
-                  <p className="text-slate-500 truncate text-[11px]">{teacher.title}</p>
-                  <p className="text-amber-500 font-semibold mt-0.5 flex items-center gap-1 text-[11px]">
+                  <p className="text-white/60 truncate text-[11px]">{teacher.title}</p>
+                  <p className="text-amber-400 font-semibold mt-0.5 flex items-center gap-1 text-[11px]">
                     ★ {teacher.rating ? teacher.rating.toFixed(1) : "5.0"} ({teacher.reviewCount || 0} reviews)
                   </p>
                 </div>
               </div>
 
               {/* Status Badge */}
-              <div className="flex items-center justify-between p-2.5 px-3.5 rounded-xl bg-slate-50 border border-slate-200">
-                <span className="text-slate-600 font-medium">Session Status:</span>
-                <span className="px-2.5 py-1 rounded-full text-[11px] font-bold bg-[#312E81] text-white shadow-xs">
+              <div className="flex items-center justify-between p-2.5 px-3.5 rounded-xl bg-white/5 border border-white/10">
+                <span className="text-white/70 font-medium">Session Status:</span>
+                <span className="px-2.5 py-1 rounded-full text-[11px] font-bold bg-violet-600 text-white shadow-[0_0_12px_rgba(109,93,251,0.4)]">
                   Pending Confirmation
                 </span>
               </div>
 
               {/* Session Details Grid */}
-              <div className="rounded-2xl border border-slate-200 p-3.5 space-y-2 bg-white">
-                <div className="flex justify-between py-1 border-b border-slate-100">
-                  <span className="text-slate-500">Subject:</span>
-                  <span className="font-bold text-[#0F172A]">{booking.subject}</span>
+              <div className="rounded-2xl border border-white/10 p-3.5 space-y-2 bg-white/[0.03]">
+                <div className="flex justify-between py-1 border-b border-white/10">
+                  <span className="text-white/50">Subject:</span>
+                  <span className="font-bold text-white">{booking.subject}</span>
                 </div>
-                <div className="flex justify-between py-1 border-b border-slate-100">
-                  <span className="text-slate-500">Session Type:</span>
-                  <span className="font-medium text-[#0F172A]">1-on-1 Live Video</span>
+                <div className="flex justify-between py-1 border-b border-white/10">
+                  <span className="text-white/50">Session Type:</span>
+                  <span className="font-medium text-white">1-on-1 Live Video</span>
                 </div>
-                <div className="flex justify-between py-1 border-b border-slate-100">
-                  <span className="text-slate-500">Scheduled Date:</span>
-                  <span className="font-semibold text-[#0F172A]">
+                <div className="flex justify-between py-1 border-b border-white/10">
+                  <span className="text-white/50">Scheduled Date:</span>
+                  <span className="font-semibold text-white">
                     {booking.day} ({bookingDate})
                   </span>
                 </div>
-                <div className="flex justify-between py-1 border-b border-slate-100">
-                  <span className="text-slate-500">Scheduled Time:</span>
-                  <span className="font-semibold text-[#6D5DFB]">
+                <div className="flex justify-between py-1 border-b border-white/10">
+                  <span className="text-white/50">Scheduled Time:</span>
+                  <span className="font-semibold text-violet-400">
                     {booking.time}
                   </span>
                 </div>
-                <div className="flex justify-between py-1 border-b border-slate-100">
-                  <span className="text-slate-500">Timezone:</span>
-                  <span className="font-medium text-slate-600">{studentTz}</span>
+                <div className="flex justify-between py-1 border-b border-white/10">
+                  <span className="text-white/50">Timezone:</span>
+                  <span className="font-medium text-white/70">{studentTz}</span>
                 </div>
-                <div className="flex justify-between py-1 border-b border-slate-100">
-                  <span className="text-slate-500">Duration:</span>
-                  <span className="font-semibold text-[#0F172A]">{booking.durationMinutes} minutes</span>
+                <div className="flex justify-between py-1 border-b border-white/10">
+                  <span className="text-white/50">Duration:</span>
+                  <span className="font-semibold text-white">{booking.durationMinutes} minutes</span>
                 </div>
                 <div className="flex justify-between pt-1 text-sm font-bold">
-                  <span className="text-[#0F172A]">Rate:</span>
-                  <span className="text-[#0F172A] font-bold text-base font-display">{formatTk(booking.price)} / mo</span>
+                  <span className="text-white/80">Rate:</span>
+                  <span className="text-white font-bold text-base font-display">{formatTk(booking.price)} / mo</span>
                 </div>
               </div>
 
               {/* Direct Paymently Gateway Option */}
-              <div className="flex items-center justify-between p-2.5 rounded-2xl bg-slate-50 border border-slate-200 text-xs">
+              <div className="flex items-center justify-between p-2.5 rounded-2xl bg-white/5 border border-white/10 text-xs">
                 <div className="flex items-center gap-2">
-                  <div className="w-6 h-6 rounded-lg bg-[#312E81] text-white flex items-center justify-center font-bold text-[10px]">
+                  <div className="w-6 h-6 rounded-lg bg-violet-600 text-white flex items-center justify-center font-bold text-[10px]">
                     ৳
                   </div>
                   <div>
-                    <span className="font-bold text-[#0F172A] block text-[11px]">Virtual Tutor Secure Gateway (Paymently)</span>
-                    <span className="text-[10px] text-slate-500">bKash, Nagad, Rocket, Upay, Cards & QR</span>
+                    <span className="font-bold text-white block text-[11px]">Virtual Tutor Secure Gateway (Paymently)</span>
+                    <span className="text-[10px] text-white/50">bKash, Nagad, Rocket, Upay, Cards & QR</span>
                   </div>
                 </div>
                 <a
                   href="https://vartualtutor.paymently.io/paymentlink/default/BDT"
                   target="_blank"
                   rel="noreferrer"
-                  className="text-[11px] font-bold text-[#6D5DFB] hover:text-[#312E81] inline-flex items-center gap-1 shrink-0"
+                  className="text-[11px] font-bold text-violet-400 hover:text-violet-300 inline-flex items-center gap-1 shrink-0"
                 >
                   <span>Pay via Gateway</span>
                   <ExternalLink className="w-3 h-3" />
@@ -356,27 +356,27 @@ export function BookingSummary({
               </div>
 
               {/* Security & Cancellation Policy */}
-              <div className="flex items-start gap-2.5 p-3 rounded-2xl bg-slate-50 border border-slate-200 text-slate-600">
-                <ShieldCheck className="h-4 w-4 text-teal-600 shrink-0 mt-0.5" />
+              <div className="flex items-start gap-2.5 p-3 rounded-2xl bg-white/[0.03] border border-white/10 text-white/70">
+                <ShieldCheck className="h-4 w-4 text-teal-400 shrink-0 mt-0.5" />
                 <p className="text-[11px] leading-relaxed">
                   <strong>Conflict Prevention:</strong> This slot is reserved immediately upon confirmation. You can reschedule anytime from your student dashboard up to 12 hours prior to class.
                 </p>
               </div>
             </div>
 
-            <DialogFooter className="px-6 py-3.5 border-t border-slate-200 bg-white shrink-0 flex flex-row items-center justify-end gap-2.5">
+            <DialogFooter className="px-6 py-3.5 border-t border-white/10 bg-transparent shrink-0 flex flex-row items-center justify-end gap-2.5">
               <Button
                 variant="outline"
                 onClick={onClose}
                 disabled={isSubmitting}
-                className="rounded-full text-xs h-9 px-4 border-slate-200 text-[#0F172A] hover:bg-slate-50 cursor-pointer"
+                className="rounded-full text-xs h-9 px-4 border-white/15 text-white/80 hover:bg-white/10 cursor-pointer"
               >
                 Cancel
               </Button>
               <Button
                 onClick={handleConfirmAndPay}
                 disabled={isSubmitting}
-                className="rounded-full bg-[#312E81] hover:bg-[#6D5DFB] text-white text-xs font-bold h-9 px-5 shadow-xs gap-1.5 transition-all cursor-pointer"
+                className="rounded-full bg-gradient-to-r from-violet-600 to-indigo-600 hover:from-violet-500 hover:to-indigo-500 text-white text-xs font-bold h-9 px-5 shadow-[0_4px_16px_rgba(109,93,251,0.35)] gap-1.5 transition-all cursor-pointer"
               >
                 {isSubmitting ? "Initiating Checkout..." : "Pay Tuition & Confirm"}
               </Button>
@@ -384,43 +384,43 @@ export function BookingSummary({
           </>
         ) : (
           <div className="p-6 overflow-y-auto max-h-[85vh] text-center">
-            <div className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-2xl bg-emerald-50 text-emerald-600 ring-4 ring-emerald-50 border border-emerald-200">
+            <div className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-2xl bg-emerald-500/20 text-emerald-400 ring-4 ring-emerald-500/10 border border-emerald-500/30">
               <CheckCircle2 className="h-8 w-8" />
             </div>
 
-            <span className="px-3 py-1 rounded-full text-xs font-bold bg-emerald-50 text-emerald-800 border border-emerald-200 inline-block mb-2">
+            <span className="px-3 py-1 rounded-full text-xs font-bold bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 inline-block mb-2">
               Status: Confirmed
             </span>
 
-            <h3 className="text-xl font-bold text-[#111111] mb-1 font-display">
+            <h3 className="text-xl font-bold text-white mb-1 font-display">
               Classroom Booking Confirmed!
             </h3>
-            <p className="text-xs text-[#111111]/70 max-w-sm mx-auto leading-relaxed mb-5">
+            <p className="text-xs text-white/70 max-w-sm mx-auto leading-relaxed mb-5">
               Your 1-on-1 session with <strong>{teacher.name}</strong> has been secured. You and your tutor can join the live classroom at the scheduled time.
             </p>
 
-            <div className="rounded-2xl bg-[#F5F4EF] p-4 border border-[#E5E4DE] text-xs text-left mb-6 space-y-2">
+            <div className="rounded-2xl bg-white/5 p-4 border border-white/10 text-xs text-left mb-6 space-y-2">
               <div className="flex justify-between items-center">
-                <span className="text-[#111111]/50">Meeting Code:</span>
-                <span className="font-mono font-bold text-[#111111] bg-white px-2 py-0.5 rounded-md border border-[#E5E4DE]">
+                <span className="text-white/50">Meeting Code:</span>
+                <span className="font-mono font-bold text-white bg-white/10 px-2 py-0.5 rounded-md border border-white/15">
                   {meetingCode || createdSessionId}
                 </span>
               </div>
               <div className="flex justify-between">
-                <span className="text-[#111111]/50">Scheduled Date:</span>
-                <span className="font-semibold text-[#111111]">{booking.day} ({bookingDate})</span>
+                <span className="text-white/50">Scheduled Date:</span>
+                <span className="font-semibold text-white">{booking.day} ({bookingDate})</span>
               </div>
               <div className="flex justify-between">
-                <span className="text-[#111111]/50">Scheduled Time:</span>
-                <span className="font-semibold text-[#111111]">{booking.time} ({studentTz})</span>
+                <span className="text-white/50">Scheduled Time:</span>
+                <span className="font-semibold text-white">{booking.time} ({studentTz})</span>
               </div>
               <div className="flex justify-between">
-                <span className="text-[#111111]/50">Duration:</span>
-                <span className="font-semibold text-[#111111]">{booking.durationMinutes} minutes</span>
+                <span className="text-white/50">Duration:</span>
+                <span className="font-semibold text-white">{booking.durationMinutes} minutes</span>
               </div>
               <div className="flex justify-between">
-                <span className="text-[#111111]/50">Status Badge:</span>
-                <span className="text-emerald-700 font-bold">Upcoming</span>
+                <span className="text-white/50">Status Badge:</span>
+                <span className="text-emerald-400 font-bold">Upcoming</span>
               </div>
             </div>
 
@@ -428,13 +428,13 @@ export function BookingSummary({
               <Button
                 variant="outline"
                 onClick={handleGoToDashboard}
-                className="flex-1 rounded-full text-xs font-semibold border-slate-200 text-[#0F172A] hover:bg-slate-50 cursor-pointer"
+                className="flex-1 rounded-full text-xs font-semibold border-white/15 text-white/80 hover:bg-white/10 cursor-pointer"
               >
                 Go to Dashboard
               </Button>
               <Button
                 onClick={handleGoToClassroom}
-                className="flex-1 rounded-full bg-[#312E81] hover:bg-[#6D5DFB] text-white text-xs font-bold inline-flex items-center justify-center gap-1.5 shadow-xs transition-all cursor-pointer"
+                className="flex-1 rounded-full bg-gradient-to-r from-violet-600 to-indigo-600 hover:from-violet-500 hover:to-indigo-500 text-white text-xs font-bold inline-flex items-center justify-center gap-1.5 shadow-[0_4px_16px_rgba(109,93,251,0.35)] transition-all cursor-pointer"
               >
                 <Video className="w-3.5 h-3.5" />
                 <span>Join Live Classroom</span>

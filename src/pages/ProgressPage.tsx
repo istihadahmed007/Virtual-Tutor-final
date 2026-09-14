@@ -11,7 +11,7 @@ export default function ProgressPage() {
   const subjects = subjectBreakdown ?? [];
 
   return (
-    <main className="min-h-screen bg-[#F5F4EF] text-[#111111] pb-24">
+    <main className="min-h-screen bg-transparent text-white pb-24 relative z-10">
       <div className="max-w-5xl mx-auto px-4 sm:px-6 py-8 lg:py-12">
         <PageHeader
           title="Performance & Analytics"
@@ -50,24 +50,24 @@ export default function ProgressPage() {
               ].map((s, i) => (
                 <div
                   key={i}
-                  className="bg-white rounded-3xl border border-[#E5E4DE] p-6 hover:border-[#111111]/40 transition-all shadow-xs"
+                  className="bg-white/[0.04] backdrop-blur-xl rounded-3xl border border-white/12 p-6 hover:border-violet-400/40 hover:bg-white/[0.07] transition-all shadow-[0_8px_32px_rgba(0,0,0,0.36),inset_0_1px_0_rgba(255,255,255,0.08)]"
                 >
-                  <div className="w-10 h-10 rounded-2xl bg-[#F5F4EF] text-[#111111] border border-[#E5E4DE] flex items-center justify-center mb-4">
-                    <s.icon className="w-5 h-5 text-[#F26522]" />
+                  <div className="w-10 h-10 rounded-2xl bg-white/10 text-violet-400 border border-white/15 flex items-center justify-center mb-4">
+                    <s.icon className="w-5 h-5" />
                   </div>
-                  <p className="text-3xl font-extrabold text-[#111111] font-display">
+                  <p className="text-3xl font-extrabold text-white font-display">
                     {s.value}
                   </p>
-                  <p className="text-xs font-semibold text-[#111111]/70 mt-1">{s.label}</p>
-                  <p className="text-[11px] text-[#111111]/40 mt-1">{s.hint}</p>
+                  <p className="text-xs font-semibold text-white/70 mt-1">{s.label}</p>
+                  <p className="text-[11px] text-white/40 mt-1">{s.hint}</p>
                 </div>
               ))}
             </div>
 
             {/* Subject Breakdown */}
             {subjects.length > 0 && (
-              <div className="bg-white rounded-3xl border border-[#E5E4DE] p-6 lg:p-8 mb-8 shadow-xs">
-                <h3 className="text-lg font-bold text-[#111111] mb-6 font-display">
+              <div className="bg-white/[0.04] backdrop-blur-xl rounded-3xl border border-white/12 p-6 lg:p-8 mb-8 shadow-[0_8px_32px_rgba(0,0,0,0.36),inset_0_1px_0_rgba(255,255,255,0.08)]">
+                <h3 className="text-lg font-bold text-white mb-6 font-display">
                   Subject Breakdown & Hours
                 </h3>
                 <div className="space-y-5">
@@ -80,18 +80,18 @@ export default function ProgressPage() {
                     return (
                       <div key={s.subject}>
                         <div className="flex items-center justify-between mb-2">
-                          <span className="text-sm font-semibold text-[#111111]">
+                          <span className="text-sm font-semibold text-white">
                             {s.subject}
                           </span>
-                          <span className="text-xs text-[#111111]/60 font-medium">
+                          <span className="text-xs text-white/60 font-medium">
                             {s.lessonsCompleted} lesson
                             {s.lessonsCompleted !== 1 ? "s" : ""} ·{" "}
                             {s.hoursLearned}h
                           </span>
                         </div>
-                        <div className="h-2.5 bg-[#F5F4EF] rounded-full overflow-hidden border border-[#E5E4DE]/60">
+                        <div className="h-2.5 bg-white/10 rounded-full overflow-hidden border border-white/10">
                           <div
-                            className="h-full bg-[#111111] rounded-full transition-all"
+                            className="h-full bg-gradient-to-r from-violet-500 to-indigo-500 rounded-full transition-all shadow-[0_0_10px_rgba(139,92,246,0.5)]"
                             style={{ width: `${pct}%` }}
                           />
                         </div>
@@ -104,15 +104,15 @@ export default function ProgressPage() {
 
             {/* Subjects Studied */}
             {progress.subjectsStudied.length > 0 && (
-              <div className="bg-white rounded-3xl border border-[#E5E4DE] p-6 lg:p-8 shadow-xs">
-                <h3 className="text-lg font-bold text-[#111111] mb-4 font-display">
+              <div className="bg-white/[0.04] backdrop-blur-xl rounded-3xl border border-white/12 p-6 lg:p-8 shadow-[0_8px_32px_rgba(0,0,0,0.36),inset_0_1px_0_rgba(255,255,255,0.08)]">
+                <h3 className="text-lg font-bold text-white mb-4 font-display">
                   Active Enrolled Subjects
                 </h3>
                 <div className="flex flex-wrap gap-2">
                   {progress.subjectsStudied.map((s) => (
                     <span
                       key={s}
-                      className="px-4 py-2 bg-[#F5F4EF] text-[#111111] text-xs font-semibold rounded-full border border-[#E5E4DE]"
+                      className="px-4 py-2 bg-white/10 text-white text-xs font-semibold rounded-full border border-white/10"
                     >
                       {s}
                     </span>

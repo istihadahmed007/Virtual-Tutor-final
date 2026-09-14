@@ -358,17 +358,17 @@ export default function StudentsPage() {
   };
 
   return (
-    <main className="min-h-screen bg-[#F5F4EF] text-[#111111] pb-24">
+    <main className="min-h-screen bg-transparent text-white pb-24 relative z-10">
       {/* Header */}
-      <div className="border-b border-[#E5E4DE] bg-white/50 backdrop-blur-xs">
+      <div className="border-b border-white/10 bg-slate-950/40 backdrop-blur-xl">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
           <div className="flex flex-col lg:flex-row lg:items-end justify-between gap-6">
             <div>
               <SectionLabel number="02" text="Academic Inquiries & Student Directory" />
-              <h1 className="text-3xl sm:text-5xl font-extrabold text-[#111111] tracking-tight font-display mt-2">
+              <h1 className="text-3xl sm:text-5xl font-extrabold text-white tracking-tight font-display mt-2">
                 Student Learning Demands.
               </h1>
-              <p className="text-sm sm:text-base text-[#111111]/70 mt-2 max-w-2xl">
+              <p className="text-sm sm:text-base text-white/70 mt-2 max-w-2xl">
                 Browse discoverable student learning requirements, connect with learners, and propose personalized lessons.
               </p>
             </div>
@@ -379,15 +379,15 @@ export default function StudentsPage() {
                 variant="outline"
                 size="sm"
                 onClick={() => navigate("/calendar")}
-                className="rounded-full border-[#E5E4DE] text-[#111111] hover:bg-[#F5F4EF] text-xs font-semibold px-4 py-2 gap-1.5"
+                className="rounded-full border-white/15 bg-white/5 hover:bg-white/10 text-white text-xs font-semibold px-4 py-2 gap-1.5 backdrop-blur-sm"
               >
-                <Calendar className="w-3.5 h-3.5 text-[#F26522]" />
+                <Calendar className="w-3.5 h-3.5 text-violet-400" />
                 <span>My Schedule</span>
               </Button>
               <Button
                 size="sm"
                 onClick={() => navigate("/teacher-dashboard")}
-                className="rounded-full bg-[#111111] hover:bg-[#F26522] text-white text-xs font-semibold px-4 py-2 gap-1.5 shadow-xs transition-all"
+                className="rounded-full bg-gradient-to-r from-violet-600 to-indigo-600 hover:from-violet-500 hover:to-indigo-500 text-white text-xs font-semibold px-4 py-2 gap-1.5 shadow-[0_0_15px_rgba(139,92,246,0.3)] transition-all"
               >
                 <GraduationCap className="w-3.5 h-3.5" />
                 <span>Teacher Space</span>
@@ -396,38 +396,38 @@ export default function StudentsPage() {
           </div>
 
           {/* Privacy & Opt-In Assurance Banner */}
-          <div className="mt-6 p-4 bg-white rounded-2xl border border-[#E5E4DE] flex items-start gap-3 text-xs text-[#111111]/80">
-            <ShieldCheck className="w-4 h-4 text-[#F26522] mt-0.5 shrink-0" />
+          <div className="mt-6 p-4 bg-white/[0.04] backdrop-blur-xl rounded-2xl border border-white/10 flex items-start gap-3 text-xs text-white/80 shadow-[0_4px_20px_rgba(0,0,0,0.2)]">
+            <ShieldCheck className="w-4 h-4 text-emerald-400 mt-0.5 shrink-0" />
             <div className="flex-1 leading-relaxed">
-              <span className="font-bold text-[#111111]">Student Privacy Protected:</span> All students listed below have explicitly opted into educator discovery. Only academic needs, target subjects, learning goals, and schedule preferences are displayed.
+              <span className="font-bold text-white">Student Privacy Protected:</span> All students listed below have explicitly opted into educator discovery. Only academic needs, target subjects, learning goals, and schedule preferences are displayed.
             </div>
           </div>
 
           {/* Search bar & filter trigger */}
           <div className="mt-6 flex flex-col sm:flex-row gap-3">
             <div className="relative flex-1">
-              <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-[#111111]/40" />
+              <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-white/40" />
               <input
                 type="text"
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
                 placeholder="Search students by subject, curriculum, grade, or learning goal..."
-                className="w-full h-11 pl-11 pr-4 bg-white border border-[#E5E4DE] rounded-full text-sm text-[#111111] placeholder:text-[#111111]/40 focus:outline-none focus:border-[#111111] transition-all shadow-xs"
+                className="w-full h-11 pl-11 pr-4 bg-white/[0.06] border border-white/15 rounded-full text-sm text-white placeholder:text-white/40 focus:outline-none focus:border-violet-400 focus:ring-2 focus:ring-violet-500/20 transition-all shadow-inner backdrop-blur-md"
               />
             </div>
             <Button
               variant="outline"
               onClick={() => setShowFilters(!showFilters)}
-              className={`h-11 px-5 rounded-full text-xs font-semibold gap-2 border-[#E5E4DE] transition-all ${
+              className={`h-11 px-5 rounded-full text-xs font-semibold gap-2 border-white/15 backdrop-blur-md transition-all ${
                 showFilters || hasFilters
-                  ? "bg-[#111111] text-white"
-                  : "bg-white text-[#111111] hover:bg-[#F5F4EF]"
+                  ? "bg-violet-600 text-white border-violet-500"
+                  : "bg-white/[0.06] text-white hover:bg-white/10"
               }`}
             >
               <SlidersHorizontal className="w-3.5 h-3.5" />
               <span>Filters</span>
               {hasFilters && (
-                <span className="w-2 h-2 bg-[#F26522] rounded-full animate-pulse" />
+                <span className="w-2 h-2 bg-violet-400 rounded-full animate-pulse" />
               )}
             </Button>
           </div>
@@ -440,10 +440,10 @@ export default function StudentsPage() {
                 <button
                   key={sub}
                   onClick={() => setSelectedSubject(sub === "All Subjects" ? "" : sub)}
-                  className={`px-3.5 py-1.5 text-xs font-medium rounded-full whitespace-nowrap transition-all ${
+                  className={`px-3.5 py-1.5 text-xs font-medium rounded-full whitespace-nowrap transition-all backdrop-blur-sm ${
                     isSelected
-                      ? "bg-[#111111] text-white shadow-xs"
-                      : "bg-white border border-[#E5E4DE] text-[#111111]/70 hover:border-[#111111]/40"
+                      ? "bg-gradient-to-r from-violet-600 to-indigo-600 text-white shadow-[0_0_12px_rgba(139,92,246,0.3)] border border-violet-400/30"
+                      : "bg-white/[0.04] border border-white/10 text-white/70 hover:border-white/30 hover:bg-white/10 hover:text-white"
                   }`}
                 >
                   {sub}
@@ -454,15 +454,15 @@ export default function StudentsPage() {
 
           {/* Collapsible Filter Panel */}
           {showFilters && (
-            <div className="mt-4 p-4 bg-stone-50/90 border border-stone-200 rounded-xl animate-in fade-in slide-in-from-top-2 duration-150">
+            <div className="mt-4 p-5 bg-slate-950/80 backdrop-blur-2xl border border-white/12 rounded-2xl shadow-xl animate-in fade-in slide-in-from-top-2 duration-150">
               <div className="flex items-center justify-between mb-3">
-                <span className="text-xs font-bold text-slate-900 uppercase tracking-wider">
+                <span className="text-xs font-bold text-white uppercase tracking-wider">
                   Filter Student Requests
                 </span>
                 {hasFilters && (
                   <button
                     onClick={clearFilters}
-                    className="text-xs text-teal-700 font-semibold hover:underline"
+                    className="text-xs text-violet-400 hover:text-violet-300 font-semibold hover:underline"
                   >
                     Reset all filters
                   </button>
@@ -472,16 +472,16 @@ export default function StudentsPage() {
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-3">
                 {/* Grade / Level */}
                 <div>
-                  <label className="text-[11px] font-semibold text-slate-600 mb-1 block">
+                  <label className="text-[11px] font-semibold text-white/70 mb-1 block">
                     Grade / Level
                   </label>
                   <select
                     value={selectedGrade}
                     onChange={(e) => setSelectedGrade(e.target.value)}
-                    className="w-full px-2.5 py-1.5 bg-white border border-stone-200 rounded-lg text-xs focus:outline-none focus:ring-2 focus:ring-teal-500/20"
+                    className="w-full px-2.5 py-1.5 bg-white/5 border border-white/15 rounded-xl text-xs text-white focus:outline-none focus:ring-2 focus:ring-violet-500/20"
                   >
                     {gradeOptions.map((opt) => (
-                      <option key={opt.value} value={opt.value}>
+                      <option key={opt.value} value={opt.value} className="bg-slate-900 text-white">
                         {opt.label}
                       </option>
                     ))}
@@ -490,16 +490,16 @@ export default function StudentsPage() {
 
                 {/* Curriculum */}
                 <div>
-                  <label className="text-[11px] font-semibold text-slate-600 mb-1 block">
+                  <label className="text-[11px] font-semibold text-white/70 mb-1 block">
                     Curriculum / Board
                   </label>
                   <select
                     value={selectedCurriculum}
                     onChange={(e) => setSelectedCurriculum(e.target.value)}
-                    className="w-full px-2.5 py-1.5 bg-white border border-stone-200 rounded-lg text-xs focus:outline-none focus:ring-2 focus:ring-teal-500/20"
+                    className="w-full px-2.5 py-1.5 bg-white/5 border border-white/15 rounded-xl text-xs text-white focus:outline-none focus:ring-2 focus:ring-violet-500/20"
                   >
                     {curriculumOptions.map((opt) => (
-                      <option key={opt.value} value={opt.value}>
+                      <option key={opt.value} value={opt.value} className="bg-slate-900 text-white">
                         {opt.label}
                       </option>
                     ))}
@@ -508,16 +508,16 @@ export default function StudentsPage() {
 
                 {/* Preferred Language */}
                 <div>
-                  <label className="text-[11px] font-semibold text-slate-600 mb-1 block">
+                  <label className="text-[11px] font-semibold text-white/70 mb-1 block">
                     Teaching Language
                   </label>
                   <select
                     value={selectedLanguage}
                     onChange={(e) => setSelectedLanguage(e.target.value)}
-                    className="w-full px-2.5 py-1.5 bg-white border border-stone-200 rounded-lg text-xs focus:outline-none focus:ring-2 focus:ring-teal-500/20"
+                    className="w-full px-2.5 py-1.5 bg-white/5 border border-white/15 rounded-xl text-xs text-white focus:outline-none focus:ring-2 focus:ring-violet-500/20"
                   >
                     {languageOptions.map((opt) => (
-                      <option key={opt.value} value={opt.value}>
+                      <option key={opt.value} value={opt.value} className="bg-slate-900 text-white">
                         {opt.label}
                       </option>
                     ))}
@@ -526,16 +526,16 @@ export default function StudentsPage() {
 
                 {/* Learning Goals */}
                 <div>
-                  <label className="text-[11px] font-semibold text-slate-600 mb-1 block">
+                  <label className="text-[11px] font-semibold text-white/70 mb-1 block">
                     Primary Goal
                   </label>
                   <select
                     value={selectedGoal}
                     onChange={(e) => setSelectedGoal(e.target.value)}
-                    className="w-full px-2.5 py-1.5 bg-white border border-stone-200 rounded-lg text-xs focus:outline-none focus:ring-2 focus:ring-teal-500/20"
+                    className="w-full px-2.5 py-1.5 bg-white/5 border border-white/15 rounded-xl text-xs text-white focus:outline-none focus:ring-2 focus:ring-violet-500/20"
                   >
                     {goalOptions.map((opt) => (
-                      <option key={opt.value} value={opt.value}>
+                      <option key={opt.value} value={opt.value} className="bg-slate-900 text-white">
                         {opt.label}
                       </option>
                     ))}
@@ -544,18 +544,18 @@ export default function StudentsPage() {
 
                 {/* Sort */}
                 <div>
-                  <label className="text-[11px] font-semibold text-slate-600 mb-1 block">
+                  <label className="text-[11px] font-semibold text-white/70 mb-1 block">
                     Sort By
                   </label>
                   <select
                     value={sortBy}
                     onChange={(e) => setSortBy(e.target.value)}
-                    className="w-full px-2.5 py-1.5 bg-white border border-stone-200 rounded-lg text-xs focus:outline-none focus:ring-2 focus:ring-teal-500/20"
+                    className="w-full px-2.5 py-1.5 bg-white/5 border border-white/15 rounded-xl text-xs text-white focus:outline-none focus:ring-2 focus:ring-violet-500/20"
                   >
-                    <option value="verified">Verified Students First</option>
-                    <option value="completion">Profile Completeness</option>
-                    <option value="hours">Hours Needed (High to Low)</option>
-                    <option value="name">Name (A-Z)</option>
+                    <option value="verified" className="bg-slate-900 text-white">Verified Students First</option>
+                    <option value="completion" className="bg-slate-900 text-white">Profile Completeness</option>
+                    <option value="hours" className="bg-slate-900 text-white">Hours Needed (High to Low)</option>
+                    <option value="name" className="bg-slate-900 text-white">Name (A-Z)</option>
                   </select>
                 </div>
               </div>
@@ -565,13 +565,13 @@ export default function StudentsPage() {
       </div>
 
       {/* Main Student Feed */}
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
-        <div className="flex items-center justify-between mb-4">
-          <p className="text-xs font-semibold text-slate-500">
-            Showing <span className="text-slate-900 font-bold">{studentList.length}</span> discoverable student requirements
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <div className="flex items-center justify-between mb-6">
+          <p className="text-xs font-semibold text-white/60">
+            Showing <span className="text-white font-bold">{studentList.length}</span> discoverable student requirements
           </p>
-          <div className="flex items-center gap-2 text-xs text-slate-500">
-            <span className="w-2 h-2 rounded-full bg-emerald-500" />
+          <div className="flex items-center gap-2 text-xs text-white/60">
+            <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
             <span>Active learning opportunities</span>
           </div>
         </div>
@@ -579,17 +579,17 @@ export default function StudentsPage() {
         {isLoading ? (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
             {[1, 2, 3, 4, 5, 6].map((i) => (
-              <div key={i} className="bg-white rounded-2xl border border-stone-200/80 p-5 animate-pulse space-y-3">
+              <div key={i} className="bg-white/[0.04] backdrop-blur-xl rounded-3xl border border-white/10 p-6 animate-pulse space-y-4">
                 <div className="flex items-center gap-3">
-                  <div className="w-12 h-12 rounded-xl bg-stone-200" />
-                  <div className="flex-1 space-y-1.5">
-                    <div className="h-4 bg-stone-200 rounded w-1/2" />
-                    <div className="h-3 bg-stone-100 rounded w-1/3" />
+                  <div className="w-12 h-12 rounded-2xl bg-white/10" />
+                  <div className="flex-1 space-y-2">
+                    <div className="h-4 bg-white/10 rounded w-1/2" />
+                    <div className="h-3 bg-white/5 rounded w-1/3" />
                   </div>
                 </div>
-                <div className="h-3 bg-stone-100 rounded w-full" />
-                <div className="h-3 bg-stone-100 rounded w-4/5" />
-                <div className="h-8 bg-stone-100 rounded" />
+                <div className="h-3 bg-white/5 rounded w-full" />
+                <div className="h-3 bg-white/5 rounded w-4/5" />
+                <div className="h-10 bg-white/10 rounded-2xl" />
               </div>
             ))}
           </div>
@@ -623,22 +623,22 @@ export default function StudentsPage() {
       {/* Student Profile Modal */}
       <AnimatePresence>
         {activeStudent && (
-          <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-xs">
+          <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-md">
             <motion.div
               initial={{ opacity: 0, scale: 0.95, y: 10 }}
               animate={{ opacity: 1, scale: 1, y: 0 }}
               exit={{ opacity: 0, scale: 0.95, y: 10 }}
-              className="bg-white rounded-2xl border border-stone-200 w-full max-w-2xl max-h-[90vh] overflow-y-auto shadow-2xl p-6 relative"
+              className="bg-slate-950/90 backdrop-blur-2xl border border-white/15 w-full max-w-2xl max-h-[90vh] overflow-y-auto shadow-[0_24px_60px_rgba(0,0,0,0.8)] rounded-3xl p-6 relative text-white"
             >
               <button
                 onClick={() => setActiveStudent(null)}
-                className="absolute top-4 right-4 p-1.5 rounded-full text-slate-400 hover:text-slate-700 hover:bg-stone-100 transition-colors"
+                className="absolute top-4 right-4 p-2 rounded-full text-white/50 hover:text-white hover:bg-white/10 transition-colors"
               >
                 <X className="w-5 h-5" />
               </button>
 
               {/* Student Header */}
-              <div className="flex items-start gap-4 pb-5 border-b border-stone-100">
+              <div className="flex items-start gap-4 pb-5 border-b border-white/10">
                 <ProfileAvatar
                   name={activeStudent.name}
                   image={activeStudent.avatarUrl || activeStudent.image}
@@ -650,38 +650,38 @@ export default function StudentsPage() {
                 />
                 <div className="flex-1 min-w-0 pr-6">
                   <div className="flex items-center gap-2">
-                    <h2 className="text-xl font-bold text-slate-900 truncate">
+                    <h2 className="text-xl font-bold text-white truncate">
                       {activeStudent.name}
                     </h2>
                     {activeStudent.verificationStatus === "verified" && (
-                      <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[11px] font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200">
-                        <CheckCircle2 className="w-3 h-3 text-emerald-600" />
+                      <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[11px] font-semibold bg-emerald-500/15 text-emerald-400 border border-emerald-500/30">
+                        <CheckCircle2 className="w-3 h-3 text-emerald-400" />
                         Verified Student
                       </span>
                     )}
                   </div>
-                  <p className="text-xs text-slate-500 mt-1">
+                  <p className="text-xs text-white/60 mt-1">
                     {activeStudent.classLevel} · {activeStudent.curriculum}
                   </p>
-                  <p className="text-xs text-slate-400">
+                  <p className="text-xs text-white/40">
                     {activeStudent.institution || "School Academy"}
                   </p>
                 </div>
               </div>
 
               {/* Body */}
-              <div className="py-4 space-y-5 text-xs text-slate-700">
+              <div className="py-4 space-y-5 text-xs text-white/80">
                 {/* Subjects Needed */}
                 <div>
-                  <h4 className="font-bold text-slate-900 mb-2 flex items-center gap-1.5">
-                    <BookOpen className="w-4 h-4 text-teal-600" />
+                  <h4 className="font-bold text-white mb-2 flex items-center gap-1.5">
+                    <BookOpen className="w-4 h-4 text-violet-400" />
                     Subjects Needed
                   </h4>
                   <div className="flex flex-wrap gap-1.5">
                     {(activeStudent.subjects || []).map((sub: string) => (
                       <span
                         key={sub}
-                        className="px-2.5 py-1 bg-teal-50 text-teal-800 font-semibold rounded-lg border border-teal-200/60"
+                        className="px-2.5 py-1 bg-white/10 text-white font-semibold rounded-lg border border-white/15"
                       >
                         {sub}
                       </span>
@@ -691,8 +691,8 @@ export default function StudentsPage() {
 
                 {/* Learning Goals */}
                 <div>
-                  <h4 className="font-bold text-slate-900 mb-2 flex items-center gap-1.5">
-                    <Target className="w-4 h-4 text-indigo-600" />
+                  <h4 className="font-bold text-white mb-2 flex items-center gap-1.5">
+                    <Target className="w-4 h-4 text-violet-400" />
                     Academic Goals & Requirements
                   </h4>
                   <ul className="space-y-1.5">
@@ -701,8 +701,8 @@ export default function StudentsPage() {
                         ? activeStudent.learningGoals
                         : [activeStudent.learningGoal || "Master course syllabus and excel in examinations."]
                     ).map((goal: string, idx: number) => (
-                      <li key={idx} className="flex items-start gap-2 bg-stone-50 p-2.5 rounded-xl border border-stone-100">
-                        <CheckCircle2 className="w-3.5 h-3.5 text-teal-600 mt-0.5 shrink-0" />
+                      <li key={idx} className="flex items-start gap-2 bg-white/[0.04] p-3 rounded-xl border border-white/10">
+                        <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400 mt-0.5 shrink-0" />
                         <span className="leading-relaxed">{goal}</span>
                       </li>
                     ))}
@@ -710,55 +710,55 @@ export default function StudentsPage() {
                 </div>
 
                 {/* Preferences Grid */}
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 bg-stone-50 p-4 rounded-xl border border-stone-100">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 bg-white/[0.04] p-4 rounded-xl border border-white/10">
                   <div>
-                    <span className="text-slate-400 block mb-0.5">Preferred Schedule</span>
-                    <span className="font-semibold text-slate-900">{activeStudent.preferredSchedule || "Flexible Schedule"}</span>
+                    <span className="text-white/40 block mb-0.5">Preferred Schedule</span>
+                    <span className="font-semibold text-white">{activeStudent.preferredSchedule || "Flexible Schedule"}</span>
                   </div>
                   <div>
-                    <span className="text-slate-400 block mb-0.5">Learning Mode</span>
-                    <span className="font-semibold text-slate-900">{activeStudent.preferredLearningMode || "1-on-1 Interactive"}</span>
+                    <span className="text-white/40 block mb-0.5">Learning Mode</span>
+                    <span className="font-semibold text-white">{activeStudent.preferredLearningMode || "1-on-1 Interactive"}</span>
                   </div>
                   <div>
-                    <span className="text-slate-400 block mb-0.5">Languages</span>
-                    <span className="font-semibold text-slate-900">
+                    <span className="text-white/40 block mb-0.5">Languages</span>
+                    <span className="font-semibold text-white">
                       {(activeStudent.preferredLanguages || activeStudent.languages || ["English", "Bangla"]).join(", ")}
                     </span>
                   </div>
                   <div>
-                    <span className="text-slate-400 block mb-0.5">Weekly Commitment</span>
-                    <span className="font-semibold text-slate-900">{activeStudent.weeklyHours || 4} hours / week</span>
+                    <span className="text-white/40 block mb-0.5">Weekly Commitment</span>
+                    <span className="font-semibold text-white">{activeStudent.weeklyHours || 4} hours / week</span>
                   </div>
                 </div>
 
                 {/* Bio / Background */}
                 {activeStudent.bio && (
                   <div>
-                    <h4 className="font-bold text-slate-900 mb-1.5">Student Notes / Introduction</h4>
-                    <p className="p-3 bg-stone-50 rounded-xl text-slate-600 leading-relaxed border border-stone-100">
+                    <h4 className="font-bold text-white mb-1.5">Student Notes / Introduction</h4>
+                    <p className="p-3 bg-white/[0.04] rounded-xl text-white/70 leading-relaxed border border-white/10">
                       "{activeStudent.bio}"
                     </p>
                   </div>
                 )}
 
                 {/* Privacy Badge */}
-                <div className="p-3 bg-stone-100/80 rounded-xl flex items-center gap-2 text-[11px] text-slate-500">
-                  <Lock className="w-3.5 h-3.5 text-slate-400 shrink-0" />
+                <div className="p-3 bg-white/[0.03] rounded-xl flex items-center gap-2 text-[11px] text-white/50 border border-white/5">
+                  <Lock className="w-3.5 h-3.5 text-white/40 shrink-0" />
                   <span>Private contact information is hidden. Connect securely via the platform message and lesson invitation tools.</span>
                 </div>
               </div>
 
               {/* Footer Actions */}
-              <div className="pt-4 border-t border-stone-100 flex items-center justify-end gap-2.5">
+              <div className="pt-4 border-t border-white/10 flex items-center justify-end gap-2.5">
                 <Button
                   variant="outline"
                   onClick={() => {
                     setActiveStudent(null);
                     handleStartChat(activeStudent);
                   }}
-                  className="border-stone-200 text-xs font-semibold gap-1.5"
+                  className="border-white/15 bg-white/5 hover:bg-white/10 text-white text-xs font-semibold gap-1.5"
                 >
-                  <MessageCircle className="w-3.5 h-3.5 text-teal-600" />
+                  <MessageCircle className="w-3.5 h-3.5 text-violet-400" />
                   Send Message
                 </Button>
                 <Button
@@ -767,7 +767,7 @@ export default function StudentsPage() {
                     setActiveStudent(null);
                     handleOpenInvite(studentToInvite);
                   }}
-                  className="bg-teal-600 hover:bg-teal-700 text-white text-xs font-semibold gap-1.5"
+                  className="bg-gradient-to-r from-violet-600 to-indigo-600 hover:from-violet-500 hover:to-indigo-500 text-white text-xs font-semibold gap-1.5 shadow-[0_0_15px_rgba(139,92,246,0.3)]"
                 >
                   <GraduationCap className="w-3.5 h-3.5" />
                   Invite to Lesson
@@ -781,29 +781,29 @@ export default function StudentsPage() {
       {/* Invite to Lesson Modal */}
       <AnimatePresence>
         {inviteTarget && (
-          <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-xs">
+          <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-md">
             <motion.div
               initial={{ opacity: 0, scale: 0.95, y: 10 }}
               animate={{ opacity: 1, scale: 1, y: 0 }}
               exit={{ opacity: 0, scale: 0.95, y: 10 }}
-              className="bg-white rounded-2xl border border-stone-200 w-full max-w-lg shadow-2xl p-6 relative"
+              className="bg-slate-950/90 backdrop-blur-2xl border border-white/15 w-full max-w-lg shadow-[0_24px_60px_rgba(0,0,0,0.8)] rounded-3xl p-6 relative text-white"
             >
               <button
                 onClick={() => setInviteTarget(null)}
-                className="absolute top-4 right-4 p-1.5 rounded-full text-slate-400 hover:text-slate-700 hover:bg-stone-100 transition-colors"
+                className="absolute top-4 right-4 p-2 rounded-full text-white/50 hover:text-white hover:bg-white/10 transition-colors"
               >
                 <X className="w-5 h-5" />
               </button>
 
               <div className="flex items-center gap-3 mb-4">
-                <div className="w-10 h-10 rounded-xl bg-teal-50 text-teal-700 flex items-center justify-center font-bold text-sm">
+                <div className="w-10 h-10 rounded-xl bg-violet-600/20 text-violet-400 border border-violet-500/30 flex items-center justify-center font-bold text-sm">
                   {inviteTarget.name.charAt(0)}
                 </div>
                 <div>
-                  <h3 className="text-base font-bold text-slate-900">
+                  <h3 className="text-base font-bold text-white">
                     Invite {inviteTarget.name} to a Lesson
                   </h3>
-                  <p className="text-xs text-slate-500">
+                  <p className="text-xs text-white/60">
                     Propose a live interactive class tailored to their requirements
                   </p>
                 </div>
@@ -811,28 +811,28 @@ export default function StudentsPage() {
 
               <form onSubmit={handleSendInvite} className="space-y-4 text-xs">
                 <div>
-                  <label className="font-semibold text-slate-700 block mb-1">
+                  <label className="font-semibold text-white/70 block mb-1">
                     Lesson Subject
                   </label>
                   <select
                     value={inviteSubject}
                     onChange={(e) => setInviteSubject(e.target.value)}
-                    className="w-full px-3 py-2 bg-stone-50 border border-stone-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-teal-500/20"
+                    className="w-full px-3 py-2 bg-white/5 border border-white/15 rounded-xl text-sm text-white focus:outline-none focus:ring-2 focus:ring-violet-500/20"
                     required
                   >
                     {(inviteTarget.subjects || []).map((sub: string) => (
-                      <option key={sub} value={sub}>
+                      <option key={sub} value={sub} className="bg-slate-900 text-white">
                         {sub}
                       </option>
                     ))}
-                    <option value="General Tutoring / Diagnostic Session">
+                    <option value="General Tutoring / Diagnostic Session" className="bg-slate-900 text-white">
                       General Tutoring / Diagnostic Session
                     </option>
                   </select>
                 </div>
 
                 <div>
-                  <label className="font-semibold text-slate-700 block mb-1">
+                  <label className="font-semibold text-white/70 block mb-1">
                     Proposed Time / Schedule
                   </label>
                   <input
@@ -840,27 +840,27 @@ export default function StudentsPage() {
                     value={inviteTime}
                     onChange={(e) => setInviteTime(e.target.value)}
                     placeholder="e.g. Wednesday 6:00 PM (EST) or Weekends"
-                    className="w-full px-3 py-2 bg-stone-50 border border-stone-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-teal-500/20"
+                    className="w-full px-3 py-2 bg-white/5 border border-white/15 rounded-xl text-sm text-white placeholder:text-white/40 focus:outline-none focus:ring-2 focus:ring-violet-500/20"
                     required
                   />
                 </div>
 
                 <div>
-                  <label className="font-semibold text-slate-700 block mb-1">
+                  <label className="font-semibold text-white/70 block mb-1">
                     Personalized Message & Lesson Plan
                   </label>
                   <textarea
                     rows={4}
                     value={inviteMessage}
                     onChange={(e) => setInviteMessage(e.target.value)}
-                    className="w-full px-3 py-2.5 bg-stone-50 border border-stone-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-teal-500/20 resize-none"
+                    className="w-full px-3 py-2.5 bg-white/5 border border-white/15 rounded-xl text-sm text-white placeholder:text-white/40 focus:outline-none focus:ring-2 focus:ring-violet-500/20 resize-none"
                     placeholder="Explain how your expertise matches their academic goals..."
                     required
                   />
                 </div>
 
-                <div className="p-3 bg-teal-50/70 border border-teal-200/60 rounded-xl flex items-start gap-2 text-teal-800 text-[11px]">
-                  <Info className="w-3.5 h-3.5 text-teal-600 mt-0.5 shrink-0" />
+                <div className="p-3 bg-violet-600/10 border border-violet-500/20 rounded-xl flex items-start gap-2 text-violet-300 text-[11px]">
+                  <Info className="w-3.5 h-3.5 text-violet-400 mt-0.5 shrink-0" />
                   <span>
                     Sending this invite will immediately notify the student and open a direct messaging channel for seamless coordination.
                   </span>
@@ -871,14 +871,14 @@ export default function StudentsPage() {
                     type="button"
                     variant="ghost"
                     onClick={() => setInviteTarget(null)}
-                    className="text-xs"
+                    className="text-xs text-white/70 hover:text-white hover:bg-white/10"
                   >
                     Cancel
                   </Button>
                   <Button
                     type="submit"
                     disabled={isSendingInvite}
-                    className="bg-teal-600 hover:bg-teal-700 text-white text-xs font-semibold gap-1.5"
+                    className="bg-gradient-to-r from-violet-600 to-indigo-600 hover:from-violet-500 hover:to-indigo-500 text-white text-xs font-semibold gap-1.5 shadow-[0_0_15px_rgba(139,92,246,0.3)]"
                   >
                     <Send className="w-3.5 h-3.5" />
                     {isSendingInvite ? "Sending..." : "Send Invitation"}
@@ -907,7 +907,7 @@ function StudentCard({
   return (
     <div
       onClick={onViewProfile}
-      className="bg-white rounded-3xl border border-[#E5E4DE] hover:border-[#111111]/40 hover:shadow-md transition-all cursor-pointer group flex flex-col justify-between overflow-hidden shadow-xs"
+      className="bg-white/[0.04] backdrop-blur-xl rounded-3xl border border-white/12 hover:border-violet-400/40 hover:bg-white/[0.07] transition-all cursor-pointer group flex flex-col justify-between overflow-hidden shadow-[0_8px_32px_rgba(0,0,0,0.36),inset_0_1px_0_rgba(255,255,255,0.08)]"
     >
       <div className="p-6">
         {/* Header */}
@@ -924,17 +924,17 @@ function StudentCard({
           />
           <div className="flex-1 min-w-0">
             <div className="flex items-center justify-between">
-              <h3 className="text-base font-bold text-[#111111] truncate font-display">
+              <h3 className="text-base font-bold text-white truncate font-display group-hover:text-violet-300 transition-colors">
                 {student.name}
               </h3>
               {student.verificationStatus === "verified" && (
-                <span className="inline-flex items-center gap-1 text-[10px] font-semibold text-[#111111] bg-[#F5F4EF] px-2 py-0.5 rounded-full border border-[#E5E4DE]">
-                  <ShieldCheck className="w-3 h-3 text-[#F26522]" />
+                <span className="inline-flex items-center gap-1 text-[10px] font-semibold text-emerald-400 bg-emerald-500/10 px-2 py-0.5 rounded-full border border-emerald-500/20">
+                  <ShieldCheck className="w-3 h-3 text-emerald-400" />
                   Verified
                 </span>
               )}
             </div>
-            <p className="text-xs text-[#111111]/60 mt-0.5">
+            <p className="text-xs text-white/60 mt-0.5">
               {student.classLevel} · {student.curriculum}
             </p>
           </div>
@@ -942,20 +942,20 @@ function StudentCard({
 
         {/* Subjects Needed */}
         <div className="mt-4">
-          <span className="text-[11px] font-semibold text-[#111111]/50 uppercase tracking-wider block mb-2">
+          <span className="text-[11px] font-semibold text-white/50 uppercase tracking-wider block mb-2">
             Target Subjects
           </span>
           <div className="flex flex-wrap gap-1.5">
             {(student.subjects || []).slice(0, 3).map((sub: string) => (
               <span
                 key={sub}
-                className="px-3 py-1 bg-[#F5F4EF] text-[#111111] text-xs font-semibold rounded-full border border-[#E5E4DE]"
+                className="px-3 py-1 bg-white/10 text-white text-xs font-semibold rounded-full border border-white/10"
               >
                 {sub}
               </span>
             ))}
             {(student.subjects || []).length > 3 && (
-              <span className="px-2.5 py-1 text-[#111111]/50 bg-white text-xs font-medium rounded-full border border-[#E5E4DE]">
+              <span className="px-2.5 py-1 text-white/50 bg-white/5 text-xs font-medium rounded-full border border-white/10">
                 +{(student.subjects || []).length - 3} more
               </span>
             )}
@@ -963,37 +963,37 @@ function StudentCard({
         </div>
 
         {/* Learning Goal summary */}
-        <div className="mt-4 text-xs text-[#111111]/80 leading-relaxed bg-[#F5F4EF] p-3 rounded-2xl border border-[#E5E4DE]">
+        <div className="mt-4 text-xs text-white/80 leading-relaxed bg-white/[0.03] p-3 rounded-2xl border border-white/10">
           <p className="line-clamp-2">
-            <span className="font-bold text-[#111111]">Goal: </span>
+            <span className="font-bold text-white">Goal: </span>
             {student.learningGoals?.[0] || student.learningGoal || "Master course syllabus and excel in examinations."}
           </p>
         </div>
 
         {/* Schedule & Style tags */}
-        <div className="mt-4 flex items-center gap-2 text-[11px] text-[#111111]/60 flex-wrap">
+        <div className="mt-4 flex items-center gap-2 text-[11px] text-white/60 flex-wrap">
           <span className="inline-flex items-center gap-1">
-            <Clock className="w-3 h-3 text-[#F26522]" />
+            <Clock className="w-3 h-3 text-violet-400" />
             {student.preferredSchedule || "Flexible Schedule"}
           </span>
-          <span className="text-[#111111]/30">·</span>
+          <span className="text-white/30">·</span>
           <span className="inline-flex items-center gap-1">
-            <Globe2 className="w-3 h-3 text-[#111111]/40" />
+            <Globe2 className="w-3 h-3 text-white/40" />
             {(student.preferredLanguages || student.languages || ["English", "Bangla"]).join(", ")}
           </span>
         </div>
       </div>
 
       {/* Card Actions */}
-      <div className="px-6 py-3.5 bg-white border-t border-[#E5E4DE] flex items-center justify-between gap-3">
+      <div className="px-6 py-3.5 bg-black/30 border-t border-white/10 flex items-center justify-between gap-3">
         <button
           onClick={(e) => {
             e.stopPropagation();
             onChat();
           }}
-          className="text-xs font-semibold text-[#111111] hover:text-[#F26522] flex items-center gap-1.5 transition-colors"
+          className="text-xs font-semibold text-white/70 hover:text-white flex items-center gap-1.5 transition-colors"
         >
-          <MessageCircle className="w-3.5 h-3.5 text-[#F26522]" />
+          <MessageCircle className="w-3.5 h-3.5 text-violet-400" />
           <span>Message</span>
         </button>
 
@@ -1003,7 +1003,7 @@ function StudentCard({
             e.stopPropagation();
             onInvite();
           }}
-          className="rounded-full bg-[#111111] hover:bg-[#F26522] text-white text-xs font-semibold px-4 py-1.5 gap-1.5 shadow-xs transition-all"
+          className="rounded-full bg-gradient-to-r from-violet-600 to-indigo-600 hover:from-violet-500 hover:to-indigo-500 text-white text-xs font-semibold px-4 py-1.5 gap-1.5 shadow-[0_0_12px_rgba(139,92,246,0.3)] transition-all"
         >
           <GraduationCap className="w-3.5 h-3.5" />
           <span>Invite to Lesson</span>

@@ -70,16 +70,16 @@ function AmbientAtmosphere() {
 
     let animId: number;
     let width = (canvas.width = canvas.parentElement?.clientWidth || window.innerWidth);
-    let height = (canvas.height = canvas.parentElement?.clientHeight || 800);
+    let height = (canvas.height = canvas.parentElement?.clientHeight || window.innerHeight);
 
     const handleResize = () => {
       if (!canvas) return;
       width = canvas.width = canvas.parentElement?.clientWidth || window.innerWidth;
-      height = canvas.height = canvas.parentElement?.clientHeight || 800;
+      height = canvas.height = canvas.parentElement?.clientHeight || window.innerHeight;
     };
     window.addEventListener("resize", handleResize);
 
-    const particleCount = 24;
+    const particleCount = 28;
     const particles = Array.from({ length: particleCount }, () => ({
       x: Math.random() * width,
       y: Math.random() * height,
@@ -128,22 +128,22 @@ function AmbientAtmosphere() {
     <div className="absolute inset-0 pointer-events-none overflow-hidden z-0">
       <motion.div
         animate={{
-          scale: [1, 1.1, 1],
-          opacity: [0.35, 0.5, 0.35],
-          x: [0, 15, 0],
-          y: [0, -10, 0],
+          scale: [1, 1.12, 1],
+          opacity: [0.35, 0.55, 0.35],
+          x: [0, 20, 0],
+          y: [0, -15, 0],
         }}
-        transition={{ duration: 12, repeat: Infinity, ease: "easeInOut" }}
-        className="absolute -top-40 left-1/4 w-96 h-96 rounded-full bg-radial from-[#6D5DFB]/15 via-[#312E81]/8 to-transparent blur-3xl"
+        transition={{ duration: 14, repeat: Infinity, ease: "easeInOut" }}
+        className="absolute -top-40 left-1/4 w-[34rem] h-[34rem] rounded-full bg-radial from-[#6D5DFB]/18 via-[#312E81]/10 to-transparent blur-3xl"
       />
       <motion.div
         animate={{
-          scale: [1.08, 0.96, 1.08],
-          opacity: [0.25, 0.4, 0.25],
-          x: [0, -20, 0],
+          scale: [1.1, 0.95, 1.1],
+          opacity: [0.25, 0.45, 0.25],
+          x: [0, -25, 0],
         }}
-        transition={{ duration: 14, repeat: Infinity, ease: "easeInOut", delay: 1 }}
-        className="absolute top-24 right-1/4 w-[28rem] h-[28rem] rounded-full bg-radial from-[#14B8A6]/12 via-[#6D5DFB]/6 to-transparent blur-3xl"
+        transition={{ duration: 16, repeat: Infinity, ease: "easeInOut", delay: 1 }}
+        className="absolute top-1/3 right-1/4 w-[36rem] h-[36rem] rounded-full bg-radial from-[#14B8A6]/14 via-[#6D5DFB]/8 to-transparent blur-3xl"
       />
       <canvas ref={canvasRef} className="absolute inset-0 w-full h-full opacity-60" />
     </div>
@@ -203,7 +203,6 @@ export default function Landing() {
   const [isScrolled, setIsScrolled] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedSubject, setSelectedSubject] = useState<string>("All");
-  const [heroTheme, setHeroTheme] = useState<"dark" | "light">("dark");
 
   // Active accordion FAQ index
   const [activeFaqIndex, setActiveFaqIndex] = useState<number | null>(0);
@@ -284,8 +283,6 @@ export default function Landing() {
 
   // Motion physics configuration
   const shouldReduceMotion = useReducedMotion();
-  const { scrollY } = useScroll();
-  const heroBgY = useTransform(scrollY, [0, 800], shouldReduceMotion ? [0, 0] : [0, 75]);
   const heroMouseX = useMotionValue(0);
   const heroMouseY = useMotionValue(0);
 
@@ -329,25 +326,43 @@ export default function Landing() {
   };
 
   return (
-    <div className="min-h-screen bg-[#F8FAFC] text-[#0F172A] font-sans antialiased selection:bg-[#6D5DFB]/15 selection:text-[#312E81] relative">
-      {/* ─── 1. GLOBAL FLOATING HEADER ─── */}
-      <header
-        className={`sticky top-0 z-50 transition-all duration-300 ${
-          isScrolled
-            ? "bg-white/95 backdrop-blur-md border-b border-slate-200/80 shadow-[0_4px_20px_rgba(15,23,42,0.03)] py-3"
-            : heroTheme === "dark"
-            ? "bg-[#030712]/40 backdrop-blur-sm py-5"
-            : "bg-transparent py-5"
-        }`}
-      >
-        <div className="max-w-[1440px] mx-auto px-4 sm:px-8 flex items-center justify-between">
+    <div className="min-h-screen bg-black text-white font-sans antialiased selection:bg-[#6D5DFB]/25 selection:text-[#C7D2FE] relative overflow-x-clip">
+      {/* ─── Plane 0: Continuous Cinematic Background Foundation (Agent Wave) ─── */}
+      <div className="fixed inset-0 w-full h-full pointer-events-none z-0 overflow-hidden" aria-hidden="true">
+        <CinematicBackgroundAnimation
+          variant="hero-dark"
+          theme="dark"
+          opacity={0.96}
+          showGrain={true}
+        />
+        {/* Minimal atmospheric vignette for crisp text contrast without muting the wave */}
+        <div className="absolute inset-0 bg-radial from-transparent via-black/20 to-black/60 pointer-events-none" />
+      </div>
+
+      {/* Plane 1: Atmospheric Canvas Particles */}
+      <div className="fixed inset-0 pointer-events-none z-0 overflow-hidden">
+        <AmbientAtmosphere />
+      </div>
+      <GlobalScrollProgress />
+      <MouseSpotlight />
+      <CursorEnhancement />
+
+      {/* ─── 1. GLOBAL FLOATING GLASS HEADER ─── */}
+      <header className="fixed top-4 inset-x-0 z-50 transition-all duration-300 px-4 sm:px-6 max-w-[1400px] mx-auto">
+        <div
+          className={`w-full rounded-2xl sm:rounded-full px-4 sm:px-6 py-3 flex items-center justify-between transition-all duration-300 ${
+            isScrolled
+              ? "bg-slate-950/75 backdrop-blur-2xl border border-white/20 shadow-[0_12px_36px_rgba(0,0,0,0.5),inset_0_1px_0_rgba(255,255,255,0.15)]"
+              : "bg-slate-950/40 backdrop-blur-xl border border-white/12 shadow-[0_8px_24px_rgba(0,0,0,0.3),inset_0_1px_0_rgba(255,255,255,0.1)]"
+          }`}
+        >
           {/* Logo */}
           <div className="flex items-center">
             <BrandLogo
               variant="horizontal"
               size="md"
               showSubtext={true}
-              isDark={heroTheme === "dark" && !isScrolled}
+              isDark={true}
               onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
               className="cursor-pointer"
             />
@@ -363,7 +378,7 @@ export default function Landing() {
               { label: "Community", href: "/community" },
               { label: "FAQ", href: "#faq", isExternalOrHash: true },
             ]}
-            isDark={heroTheme === "dark"}
+            isDark={true}
             isScrolled={isScrolled}
           />
 
@@ -375,10 +390,18 @@ export default function Landing() {
               </PrimaryButton>
             ) : (
               <>
-                <GhostButton onClick={() => navigate("/auth?mode=login")} size="sm">
+                <GhostButton
+                  onClick={() => navigate("/auth?mode=login")}
+                  size="sm"
+                  className="text-slate-200 hover:text-white hover:bg-white/10"
+                >
                   Log In
                 </GhostButton>
-                <PrimaryButton onClick={() => navigate("/auth?mode=signup")} size="sm">
+                <PrimaryButton
+                  onClick={() => navigate("/auth?mode=signup")}
+                  size="sm"
+                  className="bg-white text-slate-950 hover:bg-slate-100 font-bold shadow-[0_0_24px_rgba(255,255,255,0.25)] border-white"
+                >
                   Start Learning
                 </PrimaryButton>
               </>
@@ -389,7 +412,7 @@ export default function Landing() {
           <div className="md:hidden flex items-center">
             <button
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-              className="p-2 rounded-xl text-slate-800 hover:bg-slate-100 transition-colors cursor-pointer"
+              className="p-2 rounded-xl text-white hover:bg-white/10 transition-colors cursor-pointer"
               aria-label="Toggle Menu"
             >
               {mobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
@@ -401,55 +424,55 @@ export default function Landing() {
         <AnimatePresence>
           {mobileMenuOpen && (
             <motion.div
-              initial={{ opacity: 0, height: 0 }}
-              animate={{ opacity: 1, height: "auto" }}
-              exit={{ opacity: 0, height: 0 }}
-              transition={{ duration: 0.25, ease: "easeInOut" }}
-              className="md:hidden border-b border-slate-200 bg-white px-4 pt-3 pb-6 space-y-3 overflow-hidden shadow-lg"
+              initial={{ opacity: 0, y: -10 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -10 }}
+              transition={{ duration: 0.22, ease: "easeInOut" }}
+              className="md:hidden mt-2 border border-white/15 bg-slate-950/90 backdrop-blur-2xl px-5 pt-4 pb-6 space-y-3 rounded-3xl overflow-hidden shadow-2xl"
             >
               <Link
                 to="/teachers"
                 onClick={() => setMobileMenuOpen(false)}
-                className="block py-2 text-sm font-semibold text-slate-700 hover:text-[#312E81]"
+                className="block py-2 text-sm font-semibold text-slate-200 hover:text-white"
               >
                 Find Tutors
               </Link>
               <a
                 href="#how-it-works"
                 onClick={() => setMobileMenuOpen(false)}
-                className="block py-2 text-sm font-semibold text-slate-700 hover:text-[#312E81]"
+                className="block py-2 text-sm font-semibold text-slate-200 hover:text-white"
               >
                 How It Works
               </a>
               <a
                 href="#subjects"
                 onClick={() => setMobileMenuOpen(false)}
-                className="block py-2 text-sm font-semibold text-slate-700 hover:text-[#312E81]"
+                className="block py-2 text-sm font-semibold text-slate-200 hover:text-white"
               >
                 Subjects
               </a>
               <Link
                 to="/teacher-application"
                 onClick={() => setMobileMenuOpen(false)}
-                className="block py-2 text-sm font-semibold text-slate-700 hover:text-[#312E81]"
+                className="block py-2 text-sm font-semibold text-slate-200 hover:text-white"
               >
                 Become a Tutor
               </Link>
               <Link
                 to="/community"
                 onClick={() => setMobileMenuOpen(false)}
-                className="block py-2 text-sm font-semibold text-slate-700 hover:text-[#312E81]"
+                className="block py-2 text-sm font-semibold text-slate-200 hover:text-white"
               >
                 Community
               </Link>
               <a
                 href="#faq"
                 onClick={() => setMobileMenuOpen(false)}
-                className="block py-2 text-sm font-semibold text-slate-700 hover:text-[#312E81]"
+                className="block py-2 text-sm font-semibold text-slate-200 hover:text-white"
               >
                 FAQ
               </a>
-              <div className="pt-3 border-t border-slate-200 flex flex-col gap-2">
+              <div className="pt-3 border-t border-white/10 flex flex-col gap-2">
                 {isAuthenticated ? (
                   <PrimaryButton
                     onClick={() => {
@@ -467,7 +490,7 @@ export default function Landing() {
                         setMobileMenuOpen(false);
                         navigate("/auth?mode=login");
                       }}
-                      className="w-full justify-center"
+                      className="w-full justify-center bg-white/10 text-white border-white/20 hover:bg-white/20"
                     >
                       Log In
                     </SecondaryButton>
@@ -476,7 +499,7 @@ export default function Landing() {
                         setMobileMenuOpen(false);
                         navigate("/auth?mode=signup");
                       }}
-                      className="w-full justify-center"
+                      className="w-full justify-center bg-white text-slate-950 hover:bg-slate-100 font-bold"
                     >
                       Start Learning
                     </PrimaryButton>
@@ -489,25 +512,7 @@ export default function Landing() {
       </header>
 
       {/* ─── 2. HERO SECTION ─── */}
-      <section className={`relative pt-6 pb-20 sm:pt-12 sm:pb-28 overflow-hidden transition-colors duration-500 ${
-        heroTheme === "dark" ? "bg-[#030712] text-white" : "bg-[#F8FAFC] text-[#0F172A]"
-      }`}>
-        {/* Plane 0: Cinematic Motion Background Animation with Parallax */}
-        <motion.div
-          style={{ y: heroBgY }}
-          className="absolute inset-0 w-full h-[120%] -top-[10%] pointer-events-none z-0 overflow-hidden"
-          aria-hidden="true"
-        >
-          <CinematicBackgroundAnimation
-            variant={heroTheme === "dark" ? "hero-dark" : "hero"}
-            theme={heroTheme}
-            opacity={heroTheme === "dark" ? 0.90 : 0.65}
-          />
-        </motion.div>
-
-        <AmbientAtmosphere />
-        <Floating3DObjects />
-
+      <section className="relative pt-28 sm:pt-36 pb-20 sm:pb-28 overflow-hidden z-10">
         <div className="max-w-[1440px] mx-auto px-4 sm:px-8 relative z-10">
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-8 items-center">
             {/* Left Content Column */}
@@ -517,38 +522,9 @@ export default function Landing() {
               animate="visible"
               className="lg:col-span-6 space-y-6 text-left"
             >
-              {/* Theme Switch & Eyebrow Pill Row */}
+              {/* Eyebrow Pill Row */}
               <div className="flex flex-wrap items-center gap-3">
-                {/* Visual Mode Switch */}
-                <div className={`inline-flex items-center gap-1 p-1 rounded-full border backdrop-blur-md transition-all ${
-                  heroTheme === "dark" ? "bg-white/10 border-white/15 text-white" : "bg-white border-slate-200 text-slate-800 shadow-2xs"
-                }`}>
-                  <button
-                    type="button"
-                    onClick={() => setHeroTheme("dark")}
-                    className={`px-3 py-1 rounded-full text-xs font-bold transition-all cursor-pointer ${
-                      heroTheme === "dark" ? "bg-white text-slate-950 shadow-xs" : "text-slate-400 hover:text-white"
-                    }`}
-                  >
-                    🌙 Cinematic Motion
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => setHeroTheme("light")}
-                    className={`px-3 py-1 rounded-full text-xs font-bold transition-all cursor-pointer ${
-                      heroTheme === "light" ? "bg-[#312E81] text-white shadow-xs" : "text-slate-400 hover:text-slate-700"
-                    }`}
-                  >
-                    ☀️ Minimal Light
-                  </button>
-                </div>
-
-                {/* Eyebrow Badge */}
-                <span className={`inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full border shadow-xs text-xs font-bold tracking-wider uppercase backdrop-blur-md transition-colors ${
-                  heroTheme === "dark"
-                    ? "bg-white/10 border-white/20 text-white"
-                    : "bg-white/90 border-slate-200 text-[#312E81]"
-                }`}>
+                <span className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full border border-white/20 bg-white/[0.08] backdrop-blur-md shadow-[0_0_20px_rgba(109,93,251,0.2)] text-xs font-bold tracking-wider uppercase text-white">
                   <span className="w-2 h-2 rounded-full bg-[#14B8A6] animate-pulse" />
                   VERIFIED 1-ON-1 ONLINE LEARNING · BANGLADESH
                 </span>
@@ -556,14 +532,12 @@ export default function Landing() {
 
               {/* Main Headline with Blur-to-Sharp Choreography */}
               <motion.div variants={itemVariants}>
-                <h1 className={`text-4xl sm:text-6xl xl:text-[4.25rem] font-bold tracking-tight leading-[1.08] transition-colors ${
-                  heroTheme === "dark" ? "text-white" : "text-[#0F172A]"
-                }`}>
+                <h1 className="text-4xl sm:text-6xl xl:text-[4.25rem] font-bold tracking-tight leading-[1.08] text-white">
                   <motion.span
                     initial={shouldReduceMotion ? {} : { opacity: 0, y: 25 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1], delay: 0.15 }}
-                    className="block"
+                    className="block text-glow-hero"
                   >
                     Learn better.
                   </motion.span>
@@ -571,11 +545,7 @@ export default function Landing() {
                     initial={shouldReduceMotion ? {} : { opacity: 0.1, filter: "blur(6px)", y: 15 }}
                     animate={{ opacity: 1, filter: "blur(0px)", y: 0 }}
                     transition={{ duration: 0.85, ease: [0.16, 1, 0.3, 1], delay: 0.35 }}
-                    className={`block ${
-                      heroTheme === "dark"
-                        ? "bg-gradient-to-r from-white via-[#C7D2FE] to-[#2DD4BF] bg-clip-text text-transparent"
-                        : "bg-gradient-to-r from-[#312E81] via-[#6D5DFB] to-[#14B8A6] bg-clip-text text-transparent"
-                    }`}
+                    className="block bg-gradient-to-r from-white via-[#C7D2FE] to-[#2DD4BF] bg-clip-text text-transparent drop-shadow-[0_4px_24px_rgba(109,93,251,0.3)]"
                   >
                     With the right teacher.
                   </motion.span>
@@ -584,9 +554,7 @@ export default function Landing() {
 
               {/* Supporting Text */}
               <motion.div variants={itemVariants}>
-                <p className={`text-base sm:text-lg leading-relaxed max-w-xl transition-colors ${
-                  heroTheme === "dark" ? "text-slate-300" : "text-slate-600"
-                }`}>
+                <p className="text-base sm:text-lg leading-relaxed max-w-xl text-slate-200 drop-shadow-[0_1px_4px_rgba(0,0,0,0.7)]">
                   Connect with verified teachers, book live one-to-one lessons, and learn in a professional WebRTC classroom with real-time digital whiteboard and protected escrow payments.
                 </p>
               </motion.div>
@@ -596,22 +564,14 @@ export default function Landing() {
                 <PrimaryButton
                   onClick={() => navigate("/teachers")}
                   size="lg"
-                  className={
-                    heroTheme === "dark"
-                      ? "bg-white text-slate-950 hover:bg-slate-100 shadow-[0_0_30px_rgba(255,255,255,0.25)] border-white font-semibold"
-                      : "shadow-[0_8px_25px_rgba(49,46,129,0.2)]"
-                  }
+                  className="bg-white text-slate-950 hover:bg-slate-100 shadow-[0_0_30px_rgba(255,255,255,0.3)] border-white font-bold"
                 >
                   Find a Tutor
                 </PrimaryButton>
                 <SecondaryButton
                   onClick={() => navigate("/teacher-application")}
                   size="lg"
-                  className={
-                    heroTheme === "dark"
-                      ? "bg-white/10 text-white border-white/20 hover:bg-white/20 backdrop-blur-md"
-                      : ""
-                  }
+                  className="bg-white/10 text-white border-white/20 hover:bg-white/20 backdrop-blur-md"
                 >
                   Become a Tutor
                 </SecondaryButton>
@@ -620,23 +580,21 @@ export default function Landing() {
               {/* Quick Trust Highlights */}
               <motion.div
                 variants={itemVariants}
-                className={`pt-6 border-t grid grid-cols-3 gap-4 transition-colors ${
-                  heroTheme === "dark" ? "border-white/15" : "border-slate-200/80"
-                }`}
+                className="pt-6 border-t border-white/15 grid grid-cols-3 gap-4"
               >
                 <div>
-                  <p className={`text-2xl font-black ${heroTheme === "dark" ? "text-white" : "text-[#312E81]"}`}>
+                  <p className="text-2xl font-black text-white">
                     <AnimatedStatCounter value={100} suffix="%" />
                   </p>
-                  <p className={`text-xs font-medium mt-0.5 ${heroTheme === "dark" ? "text-slate-400" : "text-slate-500"}`}>Verified Teachers</p>
+                  <p className="text-xs font-medium text-slate-300 mt-0.5">Verified Teachers</p>
                 </div>
                 <div>
-                  <p className={`text-2xl font-black ${heroTheme === "dark" ? "text-[#C7D2FE]" : "text-[#6D5DFB]"}`}>1-on-1</p>
-                  <p className={`text-xs font-medium mt-0.5 ${heroTheme === "dark" ? "text-slate-400" : "text-slate-500"}`}>Interactive Live Video</p>
+                  <p className="text-2xl font-black text-[#C7D2FE]">1-on-1</p>
+                  <p className="text-xs font-medium text-slate-300 mt-0.5">Interactive Live Video</p>
                 </div>
                 <div>
-                  <p className={`text-2xl font-black ${heroTheme === "dark" ? "text-[#2DD4BF]" : "text-[#14B8A6]"}`}>Escrow</p>
-                  <p className={`text-xs font-medium mt-0.5 ${heroTheme === "dark" ? "text-slate-400" : "text-slate-500"}`}>Payment Protection</p>
+                  <p className="text-2xl font-black text-[#2DD4BF]">Escrow</p>
+                  <p className="text-xs font-medium text-slate-300 mt-0.5">Payment Protection</p>
                 </div>
               </motion.div>
             </motion.div>
@@ -652,40 +610,40 @@ export default function Landing() {
               {/* Floating Verified Badge */}
               <motion.div
                 style={{ x: heroBadgeParallaxX, y: heroBadgeParallaxY }}
-                className="hidden sm:flex items-center gap-2.5 px-4 py-2.5 rounded-2xl bg-white border border-slate-200/90 shadow-[0_16px_36px_rgba(49,46,129,0.12)] absolute -top-5 -left-5 z-20"
+                className="hidden sm:flex items-center gap-2.5 px-4 py-2.5 rounded-2xl bg-slate-900/60 backdrop-blur-xl border border-white/20 shadow-[0_16px_36px_rgba(0,0,0,0.4)] absolute -top-5 -left-5 z-20"
               >
-                <div className="w-8 h-8 rounded-xl bg-teal-50 text-[#14B8A6] flex items-center justify-center font-bold">
+                <div className="w-8 h-8 rounded-xl bg-[#14B8A6]/20 text-[#2DD4BF] border border-[#14B8A6]/40 flex items-center justify-center font-bold">
                   <ShieldCheck className="w-5 h-5" />
                 </div>
                 <div>
-                  <p className="text-xs font-bold text-[#0F172A]">Verified Faculty</p>
-                  <p className="text-[10px] text-slate-500">BUET · DU · DMC · IBA Screened</p>
+                  <p className="text-xs font-bold text-white">Verified Faculty</p>
+                  <p className="text-[10px] text-slate-300">BUET · DU · DMC · IBA Screened</p>
                 </div>
               </motion.div>
 
-              {/* Main Classroom Studio Dark Card */}
-              <div className="bg-[#0B0F19] rounded-3xl p-6 sm:p-7 border border-slate-800 text-white shadow-[0_24px_64px_rgba(15,23,42,0.25)] relative overflow-hidden">
+              {/* Main Classroom Studio Frosted Glass Card */}
+              <div className="glass-panel rounded-3xl p-6 sm:p-7 border border-white/15 text-white shadow-[0_24px_64px_rgba(0,0,0,0.5)] relative overflow-hidden">
                 {/* Top Studio Bar */}
                 <div className="flex items-center justify-between pb-4 border-b border-white/10">
                   <div className="flex items-center gap-2.5">
                     <span className="w-2.5 h-2.5 rounded-full bg-[#14B8A6] animate-pulse" />
                     <span className="text-xs font-bold tracking-wide">Live Classroom #842</span>
-                    <span className="text-[10px] bg-white/10 px-2 py-0.5 rounded-full text-white/70">
+                    <span className="text-[10px] bg-white/10 px-2 py-0.5 rounded-full text-white/80 border border-white/10">
                       WebRTC Low Latency
                     </span>
                   </div>
                   <div className="flex items-center gap-2">
                     <LiveWaveform />
-                    <span className="text-xs text-white/60 font-mono">42:15</span>
+                    <span className="text-xs text-white/70 font-mono">42:15</span>
                   </div>
                 </div>
 
                 {/* Whiteboard Interactive Canvas Preview */}
-                <div className="my-5 p-5 bg-[#121826] rounded-2xl border border-white/10 relative overflow-hidden aspect-video flex flex-col justify-between">
+                <div className="my-5 p-5 bg-[#0B0F19]/80 rounded-2xl border border-white/10 relative overflow-hidden aspect-video flex flex-col justify-between backdrop-blur-sm">
                   <div className="space-y-1 relative z-10 font-mono text-xs text-white/80">
-                    <p className="text-[#6D5DFB] font-bold">// HSC Higher Mathematics · Calculus:</p>
+                    <p className="text-[#A5B4FC] font-bold">// HSC Higher Mathematics · Calculus:</p>
                     <p className="text-white text-sm font-semibold">∫ (3x² + 4x - 5) dx = x³ + 2x² - 5x + C</p>
-                    <p className="text-[#14B8A6] text-[11px] pt-1">✓ Step verified: d/dx(x³ + 2x² - 5x + C) = 3x² + 4x - 5</p>
+                    <p className="text-[#2DD4BF] text-[11px] pt-1">✓ Step verified: d/dx(x³ + 2x² - 5x + C) = 3x² + 4x - 5</p>
                   </div>
 
                   {/* Animated SVG trajectory drawing the integral curve */}
@@ -707,11 +665,11 @@ export default function Landing() {
                     </svg>
                   </motion.div>
 
-                  <div className="flex items-center justify-between pt-3 border-t border-white/10 text-[11px] text-white/60 relative z-10">
-                    <span className="flex items-center gap-1.5 text-white/80">
-                      <PenTool className="w-3.5 h-3.5 text-[#14B8A6]" /> Tutor Cursor: Active Annotation
+                  <div className="flex items-center justify-between pt-3 border-t border-white/10 text-[11px] text-white/70 relative z-10">
+                    <span className="flex items-center gap-1.5 text-white/90">
+                      <PenTool className="w-3.5 h-3.5 text-[#2DD4BF]" /> Tutor Cursor: Active Annotation
                     </span>
-                    <span className="text-[#6D5DFB] font-semibold">Real-Time Sync</span>
+                    <span className="text-[#A5B4FC] font-semibold">Real-Time Sync</span>
                   </div>
                 </div>
 
@@ -723,12 +681,12 @@ export default function Landing() {
                     </div>
                     <div>
                       <p className="font-bold text-white leading-tight">Tanvir Rahman</p>
-                      <p className="text-[10px] text-white/60">Physics Specialist (BUET)</p>
+                      <p className="text-[10px] text-slate-300">Physics Specialist (BUET)</p>
                     </div>
                   </div>
                   <button
                     onClick={() => navigate("/classroom/demo")}
-                    className="px-3.5 py-1.5 rounded-full bg-white/10 hover:bg-white/20 text-white text-xs font-semibold transition-colors cursor-pointer"
+                    className="px-3.5 py-1.5 rounded-full bg-white/15 hover:bg-white/25 text-white text-xs font-semibold transition-colors cursor-pointer border border-white/15"
                   >
                     Enter Live Preview
                   </button>
@@ -739,13 +697,13 @@ export default function Landing() {
 
           {/* Hero Search Panel (Embedded directly below hero grid) */}
           <div className="mt-12 sm:mt-16">
-            <HeroSearchPanel />
+            <HeroSearchPanel isDark={true} />
           </div>
         </div>
       </section>
 
       {/* ─── 3. TRUST SIGNALS SECTION ─── */}
-      <section className="py-10 border-y border-slate-200/80 bg-white">
+      <section className="py-12 border-y border-white/10 bg-white/[0.02] backdrop-blur-md relative z-10">
         <div className="max-w-[1440px] mx-auto px-4 sm:px-8">
           <div className="grid grid-cols-2 md:grid-cols-5 gap-6 sm:gap-8">
             {[
@@ -776,12 +734,12 @@ export default function Landing() {
               },
             ].map((pillar, idx) => (
               <div key={idx} className="flex items-start gap-3">
-                <div className="w-10 h-10 rounded-2xl bg-slate-50 border border-slate-200 flex items-center justify-center text-[#312E81] shrink-0 shadow-2xs">
+                <div className="w-10 h-10 rounded-2xl bg-white/[0.07] border border-white/15 flex items-center justify-center text-[#2DD4BF] shrink-0 shadow-[0_4px_16px_rgba(0,0,0,0.2)]">
                   <pillar.icon className="w-5 h-5" />
                 </div>
                 <div>
-                  <h4 className="text-xs sm:text-sm font-bold text-[#0F172A]">{pillar.title}</h4>
-                  <p className="text-[11px] text-slate-500 mt-0.5 leading-snug">{pillar.desc}</p>
+                  <h4 className="text-xs sm:text-sm font-bold text-white">{pillar.title}</h4>
+                  <p className="text-[11px] text-slate-300 mt-0.5 leading-snug">{pillar.desc}</p>
                 </div>
               </div>
             ))}
@@ -790,21 +748,21 @@ export default function Landing() {
       </section>
 
       {/* ─── 4. FIND YOUR TEACHER SECTION ─── */}
-      <section id="find-tutors" className="py-20 sm:py-28">
+      <section id="find-tutors" className="py-20 sm:py-28 relative z-10">
         <div className="max-w-[1440px] mx-auto px-4 sm:px-8">
           <div className="flex flex-col md:flex-row md:items-end justify-between mb-10 gap-4">
             <div>
-              <SectionLabel label="01" text="QUALIFIED INSTRUCTORS" />
-              <h2 className="text-3xl sm:text-4xl font-bold tracking-tight text-[#0F172A] mt-2">
+              <SectionLabel label="01" text="QUALIFIED INSTRUCTORS" theme="dark" />
+              <h2 className="text-3xl sm:text-4xl font-bold tracking-tight text-white mt-2">
                 Find your dedicated teacher.
               </h2>
-              <p className="text-sm text-slate-600 mt-1 max-w-xl">
+              <p className="text-sm text-slate-300 mt-1 max-w-xl">
                 Browse verified educators with proven track records across National Curriculum, English Medium, and Admissions.
               </p>
             </div>
             <button
               onClick={() => navigate("/teachers")}
-              className="inline-flex items-center gap-1.5 text-xs font-bold text-[#312E81] hover:text-[#6D5DFB] transition-colors self-start md:self-auto cursor-pointer"
+              className="inline-flex items-center gap-1.5 text-xs font-bold text-[#A5B4FC] hover:text-white transition-colors self-start md:self-auto cursor-pointer"
             >
               <span>View all teachers</span>
               <ArrowRight className="w-4 h-4" />
@@ -812,7 +770,7 @@ export default function Landing() {
           </div>
 
           {/* Search and Filter Controls */}
-          <div className="bg-white rounded-3xl border border-slate-200/80 p-4 sm:p-5 mb-8 shadow-xs space-y-4">
+          <div className="glass-panel rounded-3xl p-4 sm:p-5 mb-8 space-y-4">
             <div className="relative">
               <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
               <input
@@ -820,7 +778,7 @@ export default function Landing() {
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 placeholder="Search teachers or subjects (e.g. Physics, Higher Math, Chemistry, English)..."
-                className="w-full pl-11 pr-4 py-3 rounded-2xl bg-slate-50 border border-slate-200 text-sm text-[#0F172A] placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-[#6D5DFB]/20 focus:border-[#6D5DFB] transition-all"
+                className="w-full pl-11 pr-4 py-3 rounded-2xl bg-white/[0.06] border border-white/15 text-sm text-white placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-[#6D5DFB]/40 focus:border-[#6D5DFB] transition-all"
               />
             </div>
 
@@ -832,8 +790,8 @@ export default function Landing() {
                   onClick={() => setSelectedSubject(sub)}
                   className={`px-4 py-2 rounded-full text-xs font-semibold transition-all shrink-0 cursor-pointer ${
                     selectedSubject === sub
-                      ? "bg-[#312E81] text-white shadow-xs"
-                      : "bg-slate-50 text-slate-600 hover:text-[#0F172A] hover:bg-slate-100 border border-slate-200"
+                      ? "bg-gradient-to-r from-[#6D5DFB] to-[#5B4BE8] text-white shadow-[0_4px_16px_rgba(109,93,251,0.4)] border border-white/30"
+                      : "bg-white/[0.05] text-slate-300 hover:text-white hover:bg-white/[0.12] border border-white/10"
                   }`}
                 >
                   {sub}
@@ -855,17 +813,17 @@ export default function Landing() {
                 <motion.div key={tutor.userId || tutor._id} variants={itemVariants}>
                   <TutorCard
                     tutor={tutor as any}
-                    theme="light"
+                    theme="dark"
                     onBook={() => navigate(`/teachers/${tutor.userId || tutor._id}`)}
                   />
                 </motion.div>
               ))}
             </motion.div>
           ) : (
-            <div className="text-center py-16 bg-white rounded-3xl border border-slate-200/80 p-8 shadow-xs">
-              <GraduationCap className="w-12 h-12 text-[#6D5DFB] mx-auto mb-3" />
-              <h3 className="text-base font-bold text-[#0F172A]">No teachers match your search</h3>
-              <p className="text-xs text-slate-500 mt-1 max-w-sm mx-auto">
+            <div className="text-center py-16 glass-panel rounded-3xl p-8">
+              <GraduationCap className="w-12 h-12 text-[#A5B4FC] mx-auto mb-3" />
+              <h3 className="text-base font-bold text-white">No teachers match your search</h3>
+              <p className="text-xs text-slate-300 mt-1 max-w-sm mx-auto">
                 Try adjusting your search query or subject filters to find available tutors.
               </p>
               <button
@@ -873,7 +831,7 @@ export default function Landing() {
                   setSearchQuery("");
                   setSelectedSubject("All");
                 }}
-                className="mt-4 px-5 py-2 rounded-full bg-[#312E81] text-white text-xs font-bold hover:bg-[#6D5DFB] transition-colors cursor-pointer"
+                className="mt-4 px-5 py-2 rounded-full bg-[#6D5DFB] text-white text-xs font-bold hover:bg-[#5B4BE8] transition-colors cursor-pointer shadow-md"
               >
                 Reset Filters
               </button>
@@ -883,25 +841,14 @@ export default function Landing() {
       </section>
 
       {/* ─── 5. HOW IT WORKS SECTION ─── */}
-      <section id="how-it-works" className="py-20 sm:py-28 bg-white border-y border-slate-200/80 relative overflow-hidden">
-        {/* Atmospheric architectural study texture */}
-        <div className="absolute inset-0 pointer-events-none z-0 overflow-hidden" aria-hidden="true">
-          <img
-            src="https://images.unsplash.com/photo-1497633762265-9d179a990aa6?auto=format&fit=crop&q=80&w=1800"
-            alt=""
-            loading="lazy"
-            className="w-full h-full object-cover opacity-[0.04] mix-blend-luminosity"
-          />
-          <div className="absolute inset-0 bg-gradient-to-b from-white via-white/95 to-white" />
-        </div>
-
+      <section id="how-it-works" className="py-20 sm:py-28 relative z-10">
         <div className="max-w-[1440px] mx-auto px-4 sm:px-8 relative z-10">
           <div className="text-center max-w-2xl mx-auto mb-16">
-            <SectionLabel label="02" text="SIMPLE THREE-STEP PROCESS" className="justify-center" />
-            <h2 className="text-3xl sm:text-4xl font-bold tracking-tight text-[#0F172A] mt-2">
+            <SectionLabel label="02" text="SIMPLE THREE-STEP PROCESS" className="justify-center" theme="dark" />
+            <h2 className="text-3xl sm:text-4xl font-bold tracking-tight text-white mt-2">
               How Virtual Tutor works
             </h2>
-            <p className="text-sm text-slate-600 mt-2">
+            <p className="text-sm text-slate-300 mt-2">
               From finding the ideal educator to learning live on our interactive whiteboard in minutes.
             </p>
           </div>
@@ -909,7 +856,7 @@ export default function Landing() {
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8 relative">
             {/* Connecting progression line on desktop */}
             <div className="hidden md:block absolute top-1/2 left-[15%] right-[15%] h-[2px] -translate-y-14 z-0 pointer-events-none" aria-hidden="true">
-              <div className="w-full h-full bg-gradient-to-r from-[#6D5DFB]/25 via-[#14B8A6]/30 to-[#6D5DFB]/25 rounded-full" />
+              <div className="w-full h-full bg-gradient-to-r from-[#6D5DFB]/40 via-[#14B8A6]/50 to-[#6D5DFB]/40 rounded-full" />
             </div>
 
             {[
@@ -937,19 +884,19 @@ export default function Landing() {
                 whileHover={shouldReduceMotion ? {} : { y: -6 }}
                 transition={{ duration: 0.25, ease: "easeOut" }}
                 data-interactive="true"
-                className="group p-8 rounded-3xl bg-slate-50 border border-slate-200/90 hover:border-[#6D5DFB]/45 hover:shadow-[0_16px_36px_rgba(49,46,129,0.08)] transition-all shadow-2xs relative flex flex-col justify-between overflow-hidden z-10"
+                className="group p-8 rounded-3xl glass-panel glass-panel-hover relative flex flex-col justify-between overflow-hidden z-10"
               >
                 <div>
                   <div className="flex items-center justify-between mb-6">
-                    <span className="text-3xl font-black text-[#6D5DFB] font-mono transition-transform duration-300 group-hover:scale-105 group-hover:drop-shadow-[0_0_8px_rgba(109,93,251,0.35)]">
+                    <span className="text-3xl font-black text-transparent bg-clip-text bg-gradient-to-br from-[#A5B4FC] to-[#6D5DFB] font-mono transition-transform duration-300 group-hover:scale-105 drop-shadow-[0_0_8px_rgba(109,93,251,0.4)]">
                       {st.step}
                     </span>
-                    <div className="w-10 h-10 rounded-2xl bg-white border border-slate-200 flex items-center justify-center text-[#312E81] shadow-2xs transition-transform duration-300 group-hover:rotate-6">
+                    <div className="w-10 h-10 rounded-2xl bg-white/[0.08] border border-white/15 flex items-center justify-center text-[#2DD4BF] shadow-[0_4px_16px_rgba(0,0,0,0.2)] transition-transform duration-300 group-hover:rotate-6">
                       <st.icon className="w-5 h-5" />
                     </div>
                   </div>
-                  <h3 className="text-lg font-bold text-[#0F172A] group-hover:text-[#312E81] transition-colors">{st.title}</h3>
-                  <p className="text-xs text-slate-600 leading-relaxed mt-2">{st.desc}</p>
+                  <h3 className="text-lg font-bold text-white group-hover:text-[#C7D2FE] transition-colors">{st.title}</h3>
+                  <p className="text-xs text-slate-300 leading-relaxed mt-2">{st.desc}</p>
                 </div>
               </motion.div>
             ))}
@@ -958,26 +905,21 @@ export default function Landing() {
       </section>
 
       {/* ─── 6. POPULAR SUBJECTS SECTION (8 VISUAL TILES) ─── */}
-      <section id="subjects" className="py-20 sm:py-28 relative overflow-hidden">
-        {/* Subtle geometric STEM coordinate & blueprint grid pattern */}
-        <div
-          className="absolute inset-0 pointer-events-none opacity-[0.035] bg-[linear-gradient(to_right,#312E81_1px,transparent_1px),linear-gradient(to_bottom,#312E81_1px,transparent_1px)] bg-[size:48px_48px] [mask-image:radial-gradient(ellipse_60%_50%_at_50%_50%,#000_70%,transparent_100%)] z-0"
-          aria-hidden="true"
-        />
+      <section id="subjects" className="py-20 sm:py-28 relative z-10">
         <div className="max-w-[1440px] mx-auto px-4 sm:px-8 relative z-10">
           <div className="flex flex-col md:flex-row md:items-end justify-between mb-12 gap-4">
             <div>
-              <SectionLabel label="03" text="EXPLORE SUBJECTS" />
-              <h2 className="text-3xl sm:text-4xl font-bold tracking-tight text-[#0F172A] mt-2">
+              <SectionLabel label="03" text="EXPLORE SUBJECTS" theme="dark" />
+              <h2 className="text-3xl sm:text-4xl font-bold tracking-tight text-white mt-2">
                 Top subjects taught by verified experts.
               </h2>
-              <p className="text-sm text-slate-600 mt-1 max-w-xl">
+              <p className="text-sm text-slate-300 mt-1 max-w-xl">
                 Select your focus subject to explore qualified university instructors and syllabus-aligned courses.
               </p>
             </div>
             <button
               onClick={() => navigate("/teachers")}
-              className="inline-flex items-center gap-1.5 text-xs font-bold text-[#312E81] hover:text-[#6D5DFB] transition-colors self-start md:self-auto cursor-pointer"
+              className="inline-flex items-center gap-1.5 text-xs font-bold text-[#A5B4FC] hover:text-white transition-colors self-start md:self-auto cursor-pointer"
             >
               <span>Explore all subjects</span>
               <ArrowRight className="w-4 h-4" />
@@ -991,85 +933,77 @@ export default function Landing() {
                 short: "Physics",
                 grade: "SSC · HSC · O/A Level",
                 icon: Atom,
-                color: "text-[#312E81] bg-[#312E81]/10",
-                borderHover: "hover:border-[#312E81]/40",
+                color: "text-[#A5B4FC] bg-[#312E81]/30",
               },
               {
                 title: "Higher Mathematics & Calculus",
                 short: "Higher Math",
                 grade: "Algebra · Calculus · Vectors",
                 icon: Calculator,
-                color: "text-[#6D5DFB] bg-[#6D5DFB]/10",
-                borderHover: "hover:border-[#6D5DFB]/40",
+                color: "text-[#C7D2FE] bg-[#6D5DFB]/30",
               },
               {
                 title: "Organic & Inorganic Chemistry",
                 short: "Chemistry",
                 grade: "SSC · HSC · Cambridge",
                 icon: Sparkles,
-                color: "text-[#14B8A6] bg-[#14B8A6]/10",
-                borderHover: "hover:border-[#14B8A6]/40",
+                color: "text-[#2DD4BF] bg-[#14B8A6]/30",
               },
               {
                 title: "Biology & Life Sciences",
                 short: "Biology",
                 grade: "Zoology · Botany · Medical Prep",
                 icon: BookOpen,
-                color: "text-emerald-700 bg-emerald-50",
-                borderHover: "hover:border-emerald-300",
+                color: "text-emerald-400 bg-emerald-500/20",
               },
               {
                 title: "English Grammar & Literature",
                 short: "English",
                 grade: "IELTS · Edexcel · Spoken English",
                 icon: Languages,
-                color: "text-amber-700 bg-amber-50",
-                borderHover: "hover:border-amber-300",
+                color: "text-amber-400 bg-amber-500/20",
               },
               {
                 title: "Bangla Language & Sahitya",
                 short: "Bangla",
                 grade: "NCTB Board 1st & 2nd Paper",
                 icon: PenTool,
-                color: "text-rose-700 bg-rose-50",
-                borderHover: "hover:border-rose-300",
+                color: "text-rose-400 bg-rose-500/20",
               },
               {
                 title: "ICT & Computer Programming",
                 short: "ICT",
                 grade: "C · Python · Web · Database",
                 icon: Binary,
-                color: "text-indigo-700 bg-indigo-50",
-                borderHover: "hover:border-indigo-300",
+                color: "text-indigo-400 bg-indigo-500/20",
               },
               {
                 title: "University Admission Prep",
                 short: "Admission",
                 grade: "BUET · Medical · DU A-Unit",
                 icon: GraduationCap,
-                color: "text-blue-700 bg-blue-50",
-                borderHover: "hover:border-blue-300",
+                color: "text-blue-400 bg-blue-500/20",
               },
             ].map((sub, i) => (
               <motion.div
                 key={i}
                 whileHover={{ y: -4 }}
                 onClick={() => navigate(`/teachers?subject=${encodeURIComponent(sub.short)}`)}
-                className={`p-6 rounded-3xl bg-white border border-slate-200/80 shadow-xs ${sub.borderHover} transition-all cursor-pointer group flex flex-col justify-between`}
+                className="p-6 rounded-3xl glass-panel glass-panel-hover transition-all cursor-pointer group flex flex-col justify-between"
               >
                 <div>
                   <div className="flex items-center justify-between mb-4">
-                    <div className={`w-11 h-11 rounded-2xl ${sub.color} flex items-center justify-center`}>
+                    <div className={`w-11 h-11 rounded-2xl ${sub.color} border border-white/10 flex items-center justify-center`}>
                       <sub.icon className="w-5 h-5" />
                     </div>
-                    <span className="text-xs font-semibold text-slate-400 group-hover:text-[#6D5DFB] transition-colors flex items-center gap-1">
+                    <span className="text-xs font-semibold text-slate-400 group-hover:text-white transition-colors flex items-center gap-1">
                       Browse <ArrowRight className="w-3.5 h-3.5 transition-transform group-hover:translate-x-1" />
                     </span>
                   </div>
-                  <h3 className="text-base font-bold text-[#0F172A] group-hover:text-[#312E81] transition-colors">
+                  <h3 className="text-base font-bold text-white group-hover:text-[#C7D2FE] transition-colors">
                     {sub.title}
                   </h3>
-                  <p className="text-xs text-slate-500 mt-1">{sub.grade}</p>
+                  <p className="text-xs text-slate-400 mt-1">{sub.grade}</p>
                 </div>
               </motion.div>
             ))}
@@ -1078,23 +1012,18 @@ export default function Landing() {
       </section>
 
       {/* ─── 7. LIVE CLASSROOM SHOWCASE ─── */}
-      <section className="py-20 sm:py-28 bg-[#0B0F19] text-white relative overflow-hidden">
-        {/* Plane 0: Atmospheric Studio Cinematic Video Animation */}
-        <CinematicBackgroundAnimation variant="studio" opacity={0.36} />
-        <div className="absolute -top-40 right-1/4 w-[32rem] h-[32rem] bg-gradient-to-br from-[#6D5DFB]/15 to-transparent rounded-full blur-3xl pointer-events-none" />
-        <div className="absolute -bottom-40 left-10 w-[28rem] h-[28rem] bg-gradient-to-tr from-[#14B8A6]/10 to-transparent rounded-full blur-3xl pointer-events-none" />
-
+      <section className="py-20 sm:py-28 relative z-10">
         <div className="max-w-[1440px] mx-auto px-4 sm:px-8 relative z-10">
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
             <div className="lg:col-span-5 space-y-6">
-              <span className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/10 text-white text-xs font-bold uppercase tracking-wider">
+              <span className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/10 border border-white/15 text-white text-xs font-bold uppercase tracking-wider backdrop-blur-md">
                 <span className="w-2 h-2 rounded-full bg-[#14B8A6]" />
                 HUMAN-LED LIVE EDUCATION
               </span>
               <h2 className="text-3xl sm:text-5xl font-bold tracking-tight text-white leading-tight">
                 A live classroom built for real teaching.
               </h2>
-              <p className="text-sm sm:text-base text-white/70 leading-relaxed">
+              <p className="text-sm sm:text-base text-slate-300 leading-relaxed">
                 No simulated AI recordings. Every session is led by a verified human educator with real-time video, interactive digital drawing, screen sharing, and syllabus-structured materials.
               </p>
 
@@ -1105,12 +1034,12 @@ export default function Landing() {
                   { title: "Structured Coursework", desc: "Direct assignment distribution, student uploads, and annotated homework grading." },
                 ].map((feat, i) => (
                   <div key={i} className="flex items-start gap-3">
-                    <div className="w-5 h-5 rounded-full bg-[#14B8A6]/20 border border-[#14B8A6]/40 flex items-center justify-center text-[#14B8A6] shrink-0 mt-0.5">
+                    <div className="w-5 h-5 rounded-full bg-[#14B8A6]/20 border border-[#14B8A6]/40 flex items-center justify-center text-[#2DD4BF] shrink-0 mt-0.5">
                       <Check className="w-3 h-3" />
                     </div>
                     <div>
                       <h4 className="text-sm font-bold text-white">{feat.title}</h4>
-                      <p className="text-xs text-white/60 mt-0.5">{feat.desc}</p>
+                      <p className="text-xs text-slate-300 mt-0.5">{feat.desc}</p>
                     </div>
                   </div>
                 ))}
@@ -1119,7 +1048,7 @@ export default function Landing() {
               <div className="pt-4">
                 <button
                   onClick={() => navigate("/classroom/demo")}
-                  className="px-6 py-3 rounded-full bg-[#6D5DFB] hover:bg-[#5848e8] text-white font-bold text-xs transition-all shadow-md cursor-pointer"
+                  className="px-6 py-3 rounded-full bg-gradient-to-r from-[#6D5DFB] to-[#5B4BE8] hover:from-[#7C6EFB] hover:to-[#6D5DFB] text-white font-bold text-xs transition-all shadow-[0_4px_20px_rgba(109,93,251,0.4)] border border-white/20 cursor-pointer"
                 >
                   Explore Demo Classroom
                 </button>
@@ -1127,27 +1056,27 @@ export default function Landing() {
             </div>
 
             <div className="lg:col-span-7">
-              <div className="bg-[#121826] rounded-3xl border border-white/15 p-6 shadow-2xl space-y-4">
+              <div className="glass-dock rounded-3xl p-6 shadow-2xl space-y-4 border border-white/15">
                 <div className="flex items-center justify-between pb-3 border-b border-white/10 text-xs">
                   <div className="flex items-center gap-2">
                     <span className="w-2.5 h-2.5 rounded-full bg-[#14B8A6] animate-ping" />
                     <span className="font-bold text-white">Live Session: HSC Physics Mechanics</span>
                   </div>
-                  <span className="text-[11px] text-white/60 bg-white/10 px-2.5 py-0.5 rounded-full">
+                  <span className="text-[11px] text-white/80 bg-white/10 border border-white/10 px-2.5 py-0.5 rounded-full">
                     Latency: 32ms
                   </span>
                 </div>
 
-                <div className="bg-[#0B0F19] rounded-2xl p-5 border border-white/10 aspect-video flex flex-col justify-between">
-                  <div className="font-mono text-xs text-white/70 space-y-1">
-                    <p className="text-[#6D5DFB] font-bold">// Newton's Laws & Vector Resolution:</p>
+                <div className="bg-[#0B0F19]/85 rounded-2xl p-5 border border-white/10 aspect-video flex flex-col justify-between backdrop-blur-md">
+                  <div className="font-mono text-xs text-white/80 space-y-1">
+                    <p className="text-[#A5B4FC] font-bold">// Newton's Laws & Vector Resolution:</p>
                     <p className="text-white text-sm">F_net = m · a  |  ∑ F_x = T · cos(θ) - f_k</p>
-                    <p className="text-[#14B8A6] text-[11px] pt-1">✓ Normal force balanced: N = m · g - T · sin(θ)</p>
+                    <p className="text-[#2DD4BF] text-[11px] pt-1">✓ Normal force balanced: N = m · g - T · sin(θ)</p>
                   </div>
 
-                  <div className="flex items-center justify-between pt-3 border-t border-white/10 text-xs text-white/60">
+                  <div className="flex items-center justify-between pt-3 border-t border-white/10 text-xs text-white/70">
                     <span>Teacher Annotation Active</span>
-                    <span className="text-[#14B8A6] font-semibold">1080p Screen Sync</span>
+                    <span className="text-[#2DD4BF] font-semibold">1080p Screen Sync</span>
                   </div>
                 </div>
               </div>
@@ -1157,52 +1086,52 @@ export default function Landing() {
       </section>
 
       {/* ─── 8. PERSONALIZED LEARNING ROADMAP ─── */}
-      <section className="py-20 sm:py-28">
+      <section className="py-20 sm:py-28 relative z-10">
         <div className="max-w-[1440px] mx-auto px-4 sm:px-8">
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
             <div className="lg:col-span-6 space-y-6">
-              <SectionLabel label="04" text="TAILORED ROADMAP" />
-              <h2 className="text-3xl sm:text-4xl font-bold tracking-tight text-[#0F172A]">
+              <SectionLabel label="04" text="TAILORED ROADMAP" theme="dark" />
+              <h2 className="text-3xl sm:text-4xl font-bold tracking-tight text-white">
                 Education shaped around your syllabus.
               </h2>
-              <p className="text-sm sm:text-base text-slate-600 leading-relaxed">
+              <p className="text-sm sm:text-base text-slate-300 leading-relaxed">
                 Every student learns differently. Virtual Tutor connects you with instructors who design custom milestone plans for Bangla Medium, English Version, Cambridge IGCSE, Edexcel, and University Entrance.
               </p>
 
               <div className="grid grid-cols-2 gap-4 pt-2">
-                <div className="p-4 rounded-2xl bg-white border border-slate-200/80 shadow-xs">
+                <div className="p-4 rounded-2xl glass-panel border border-white/12">
                   <h4 className="text-xs font-bold uppercase tracking-wider text-slate-400">Curriculum Matching</h4>
-                  <p className="text-sm font-bold text-[#0F172A] mt-1">Bangla & English Medium</p>
-                  <p className="text-xs text-slate-500 mt-0.5">Syllabus-aligned preparation</p>
+                  <p className="text-sm font-bold text-white mt-1">Bangla & English Medium</p>
+                  <p className="text-xs text-slate-300 mt-0.5">Syllabus-aligned preparation</p>
                 </div>
-                <div className="p-4 rounded-2xl bg-white border border-slate-200/80 shadow-xs">
+                <div className="p-4 rounded-2xl glass-panel border border-white/12">
                   <h4 className="text-xs font-bold uppercase tracking-wider text-slate-400">Pacing</h4>
-                  <p className="text-sm font-bold text-[#0F172A] mt-1">1-on-1 Focus</p>
-                  <p className="text-xs text-slate-500 mt-0.5">Learn at your speed</p>
+                  <p className="text-sm font-bold text-white mt-1">1-on-1 Focus</p>
+                  <p className="text-xs text-slate-300 mt-0.5">Learn at your speed</p>
                 </div>
               </div>
             </div>
 
             <div className="lg:col-span-6">
-              <div className="bg-white rounded-3xl border border-slate-200/80 p-7 shadow-xs space-y-5">
-                <h3 className="text-base font-bold text-[#0F172A]">Sample Student Learning Plan</h3>
+              <div className="glass-panel rounded-3xl p-7 border border-white/15 space-y-5">
+                <h3 className="text-base font-bold text-white">Sample Student Learning Plan</h3>
                 <div className="space-y-3">
                   {[
                     { week: "Week 1-2", topic: "Vector Algebra & Kinematics", status: "Mastered" },
                     { week: "Week 3-4", topic: "Circular Motion & Gravitation", status: "In Progress" },
                     { week: "Week 5-6", topic: "Work, Energy & Power Review", status: "Scheduled" },
                   ].map((p, i) => (
-                    <div key={i} className="flex items-center justify-between p-3.5 bg-slate-50 rounded-2xl border border-slate-200">
+                    <div key={i} className="flex items-center justify-between p-3.5 bg-white/[0.05] hover:bg-white/[0.08] rounded-2xl border border-white/10 transition-colors">
                       <div>
-                        <p className="text-xs font-bold text-[#0F172A]">{p.topic}</p>
-                        <p className="text-[11px] text-slate-500">{p.week}</p>
+                        <p className="text-xs font-bold text-white">{p.topic}</p>
+                        <p className="text-[11px] text-slate-300">{p.week}</p>
                       </div>
-                      <span className={`px-2.5 py-0.5 rounded-full text-[10px] font-bold ${
+                      <span className={`px-2.5 py-0.5 rounded-full text-[10px] font-bold border ${
                         p.status === "Mastered"
-                          ? "bg-teal-100 text-teal-800"
+                          ? "bg-teal-500/20 text-[#2DD4BF] border-teal-500/30"
                           : p.status === "In Progress"
-                          ? "bg-[#312E81] text-white"
-                          : "bg-white border border-slate-200 text-slate-500"
+                          ? "bg-[#6D5DFB]/30 text-[#C7D2FE] border-[#6D5DFB]/40"
+                          : "bg-white/[0.08] border-white/15 text-slate-400"
                       }`}>
                         {p.status}
                       </span>
@@ -1216,59 +1145,59 @@ export default function Landing() {
       </section>
 
       {/* ─── 9. STUDENT PROGRESS & ANALYTICS ─── */}
-      <section className="py-20 sm:py-28 bg-white border-y border-slate-200/80">
+      <section className="py-20 sm:py-28 relative z-10">
         <div className="max-w-[1440px] mx-auto px-4 sm:px-8">
           <div className="text-center max-w-2xl mx-auto mb-14">
-            <SectionLabel label="05" text="ACADEMIC TRACKING" className="justify-center" />
-            <h2 className="text-3xl sm:text-4xl font-bold tracking-tight text-[#0F172A] mt-2">
+            <SectionLabel label="05" text="ACADEMIC TRACKING" className="justify-center" theme="dark" />
+            <h2 className="text-3xl sm:text-4xl font-bold tracking-tight text-white mt-2">
               Track your authentic learning journey.
             </h2>
-            <p className="text-sm text-slate-600 mt-2">
+            <p className="text-sm text-slate-300 mt-2">
               Every lesson session, study hour, and syllabus milestone is measured and displayed in your personalized student dashboard.
             </p>
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-            <div className="bg-slate-50 rounded-3xl p-6 border border-slate-200/80 shadow-xs">
-              <div className="w-10 h-10 rounded-2xl bg-white border border-slate-200 flex items-center justify-center text-[#312E81] mb-4">
+            <div className="glass-panel glass-panel-hover rounded-3xl p-6 border border-white/15">
+              <div className="w-10 h-10 rounded-2xl bg-white/[0.08] border border-white/15 flex items-center justify-center text-[#C7D2FE] mb-4">
                 <Clock className="w-5 h-5" />
               </div>
-              <p className="text-lg font-bold text-[#0F172A]">Hour Logging</p>
-              <p className="text-xs text-slate-600 mt-1">Verified Classroom Time</p>
-              <p className="text-[11px] text-slate-400 mt-2 leading-relaxed">
+              <p className="text-lg font-bold text-white">Hour Logging</p>
+              <p className="text-xs text-[#2DD4BF] font-semibold mt-1">Verified Classroom Time</p>
+              <p className="text-[11px] text-slate-300 mt-2 leading-relaxed">
                 Precise per-session tracking inside the WebRTC classroom with automatic attendance recording.
               </p>
             </div>
 
-            <div className="bg-slate-50 rounded-3xl p-6 border border-slate-200/80 shadow-xs">
-              <div className="w-10 h-10 rounded-2xl bg-white border border-slate-200 flex items-center justify-center text-[#6D5DFB] mb-4">
+            <div className="glass-panel glass-panel-hover rounded-3xl p-6 border border-white/15">
+              <div className="w-10 h-10 rounded-2xl bg-white/[0.08] border border-white/15 flex items-center justify-center text-[#A5B4FC] mb-4">
                 <CheckCircle2 className="w-5 h-5" />
               </div>
-              <p className="text-lg font-bold text-[#0F172A]">Milestones</p>
-              <p className="text-xs text-slate-600 mt-1">Syllabus Breakdown</p>
-              <p className="text-[11px] text-slate-400 mt-2 leading-relaxed">
+              <p className="text-lg font-bold text-white">Milestones</p>
+              <p className="text-xs text-[#2DD4BF] font-semibold mt-1">Syllabus Breakdown</p>
+              <p className="text-[11px] text-slate-300 mt-2 leading-relaxed">
                 Track topic-by-topic comprehension across NCTB, Cambridge, Edexcel, and test preparation curricula.
               </p>
             </div>
 
-            <div className="bg-slate-50 rounded-3xl p-6 border border-slate-200/80 shadow-xs">
-              <div className="w-10 h-10 rounded-2xl bg-white border border-slate-200 flex items-center justify-center text-[#14B8A6] mb-4">
+            <div className="glass-panel glass-panel-hover rounded-3xl p-6 border border-white/15">
+              <div className="w-10 h-10 rounded-2xl bg-white/[0.08] border border-white/15 flex items-center justify-center text-[#2DD4BF] mb-4">
                 <TrendingUp className="w-5 h-5" />
               </div>
-              <p className="text-lg font-bold text-[#0F172A]">Study Momentum</p>
-              <p className="text-xs text-slate-600 mt-1">Weekly Consistency</p>
-              <p className="text-[11px] text-slate-400 mt-2 leading-relaxed">
+              <p className="text-lg font-bold text-white">Study Momentum</p>
+              <p className="text-xs text-[#2DD4BF] font-semibold mt-1">Weekly Consistency</p>
+              <p className="text-[11px] text-slate-300 mt-2 leading-relaxed">
                 Visual streak badges and schedule reminders encourage disciplined weekly academic routines.
               </p>
             </div>
 
-            <div className="bg-slate-50 rounded-3xl p-6 border border-slate-200/80 shadow-xs">
-              <div className="w-10 h-10 rounded-2xl bg-white border border-slate-200 flex items-center justify-center text-[#312E81] mb-4">
+            <div className="glass-panel glass-panel-hover rounded-3xl p-6 border border-white/15">
+              <div className="w-10 h-10 rounded-2xl bg-white/[0.08] border border-white/15 flex items-center justify-center text-[#C7D2FE] mb-4">
                 <Award className="w-5 h-5" />
               </div>
-              <p className="text-lg font-bold text-[#0F172A]">Teacher Notes</p>
-              <p className="text-xs text-slate-600 mt-1">Performance Reviews</p>
-              <p className="text-[11px] text-slate-400 mt-2 leading-relaxed">
+              <p className="text-lg font-bold text-white">Teacher Notes</p>
+              <p className="text-xs text-[#2DD4BF] font-semibold mt-1">Performance Reviews</p>
+              <p className="text-[11px] text-slate-300 mt-2 leading-relaxed">
                 Receive direct notes, homework critique, and performance evaluations from your personal tutor after every lesson.
               </p>
             </div>
@@ -1277,23 +1206,16 @@ export default function Landing() {
       </section>
 
       {/* ─── 10. FOR TEACHERS SECTION ─── */}
-      <section className="py-20 sm:py-28">
+      <section className="py-20 sm:py-28 relative z-10">
         <div className="max-w-[1440px] mx-auto px-4 sm:px-8">
-          <div className="bg-gradient-to-r from-[#312E81] via-[#282568] to-[#1E1B4B] rounded-3xl p-8 sm:p-14 text-white shadow-xl relative overflow-hidden">
-            {/* Atmospheric educator desk & university stationery background */}
-            <div className="absolute inset-0 pointer-events-none z-0 overflow-hidden" aria-hidden="true">
-              <img
-                src="https://images.unsplash.com/photo-1531482615713-2afd69097998?auto=format&fit=crop&q=80&w=1800"
-                alt=""
-                loading="lazy"
-                className="w-full h-full object-cover opacity-[0.12] mix-blend-overlay scale-105"
-              />
-              <div className="absolute inset-0 bg-gradient-to-r from-[#312E81]/85 via-[#282568]/80 to-[#1E1B4B]/90" />
-            </div>
+          <div className="glass-dock rounded-3xl p-8 sm:p-14 text-white shadow-2xl relative overflow-hidden border border-white/20">
+            {/* Subtle atmospheric educator ambient light */}
+            <div className="absolute top-0 right-0 w-96 h-96 bg-[#6D5DFB]/20 rounded-full blur-3xl pointer-events-none" />
+            <div className="absolute bottom-0 left-0 w-80 h-80 bg-[#14B8A6]/15 rounded-full blur-3xl pointer-events-none" />
 
             <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center relative z-10">
               <div className="lg:col-span-8 space-y-4">
-                <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-white/10 text-xs font-bold uppercase tracking-wider text-[#14B8A6]">
+                <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-white/10 border border-white/15 text-xs font-bold uppercase tracking-wider text-[#2DD4BF] backdrop-blur-md">
                   TEACH ON VIRTUAL TUTOR
                 </span>
                 <h2 className="text-3xl sm:text-5xl font-bold tracking-tight text-white">
@@ -1301,34 +1223,34 @@ export default function Landing() {
                   <br />
                   Teach on your own schedule.
                 </h2>
-                <p className="text-sm sm:text-base text-white/80 max-w-2xl leading-relaxed">
+                <p className="text-sm sm:text-base text-slate-200 max-w-2xl leading-relaxed">
                   Join Bangladesh's premier verified tutoring network. Set your own tuition fees, conduct classes in our WebRTC live classroom, and receive guaranteed month-end payouts.
                 </p>
                 <div className="pt-2 flex flex-wrap items-center gap-4">
                   <button
                     onClick={() => navigate("/teacher-application")}
-                    className="px-7 py-3.5 rounded-full bg-[#6D5DFB] hover:bg-[#5848e8] text-white font-bold text-xs transition-all shadow-md active:scale-95 cursor-pointer"
+                    className="px-7 py-3.5 rounded-full bg-gradient-to-r from-[#6D5DFB] to-[#5B4BE8] hover:from-[#7C6EFB] hover:to-[#6D5DFB] text-white font-bold text-xs transition-all shadow-[0_8px_25px_rgba(109,93,251,0.45)] border border-white/20 active:scale-95 cursor-pointer"
                   >
                     Apply as a Teacher
                   </button>
-                  <span className="text-xs text-white/60">Zero upfront platform fees</span>
+                  <span className="text-xs text-slate-300">Zero upfront platform fees</span>
                 </div>
               </div>
 
-              <div className="lg:col-span-4 bg-white/10 rounded-2xl p-6 border border-white/15 space-y-3 backdrop-blur-md">
-                <h4 className="text-xs font-bold uppercase tracking-wider text-white/70">Educator Benefits</h4>
-                <div className="space-y-2 text-xs text-white/90">
+              <div className="lg:col-span-4 bg-white/[0.08] rounded-2xl p-6 border border-white/15 space-y-3 backdrop-blur-xl">
+                <h4 className="text-xs font-bold uppercase tracking-wider text-slate-300">Educator Benefits</h4>
+                <div className="space-y-2 text-xs text-white">
                   <div className="flex items-center gap-2">
-                    <Check className="w-4 h-4 text-[#14B8A6]" /> 85% Net Payout Allocation
+                    <Check className="w-4 h-4 text-[#2DD4BF]" /> 85% Net Payout Allocation
                   </div>
                   <div className="flex items-center gap-2">
-                    <Check className="w-4 h-4 text-[#14B8A6]" /> Direct Student Discovery
+                    <Check className="w-4 h-4 text-[#2DD4BF]" /> Direct Student Discovery
                   </div>
                   <div className="flex items-center gap-2">
-                    <Check className="w-4 h-4 text-[#14B8A6]" /> Integrated Classroom & Calendar
+                    <Check className="w-4 h-4 text-[#2DD4BF]" /> Integrated Classroom & Calendar
                   </div>
                   <div className="flex items-center gap-2">
-                    <Check className="w-4 h-4 text-[#14B8A6]" /> Automated Month-End Settlement
+                    <Check className="w-4 h-4 text-[#2DD4BF]" /> Automated Month-End Settlement
                   </div>
                 </div>
               </div>
@@ -1338,15 +1260,15 @@ export default function Landing() {
       </section>
 
       {/* ─── 11. SECURE PAYMENT SECTION ─── */}
-      <section className="py-20 sm:py-28 bg-white border-y border-slate-200/80">
+      <section className="py-20 sm:py-28 relative z-10">
         <div className="max-w-[1440px] mx-auto px-4 sm:px-8">
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 items-center">
             <div className="lg:col-span-6 space-y-5">
-              <SectionLabel label="06" text="FINANCIAL INTEGRITY" />
-              <h2 className="text-3xl sm:text-4xl font-bold tracking-tight text-[#0F172A]">
+              <SectionLabel label="06" text="FINANCIAL INTEGRITY" theme="dark" />
+              <h2 className="text-3xl sm:text-4xl font-bold tracking-tight text-white">
                 Protected tuition payments.
               </h2>
-              <p className="text-sm text-slate-600 leading-relaxed">
+              <p className="text-sm text-slate-300 leading-relaxed">
                 Pay safely using Bangladesh’s leading mobile financial services and bank cards. Student tuition is held in escrow and released to educators only after classes are completed.
               </p>
 
@@ -1356,8 +1278,8 @@ export default function Landing() {
                   "Instant payment verification with bKash, Nagad, Rocket, Upay & Cards",
                   "100% money-back protection if a scheduled class is missed or cancelled",
                 ].map((item, i) => (
-                  <div key={i} className="flex items-center gap-2.5 text-xs text-[#0F172A] font-semibold">
-                    <ShieldCheck className="w-4 h-4 text-teal-600 shrink-0" />
+                  <div key={i} className="flex items-center gap-2.5 text-xs text-white font-semibold">
+                    <ShieldCheck className="w-4 h-4 text-[#2DD4BF] shrink-0" />
                     <span>{item}</span>
                   </div>
                 ))}
@@ -1368,7 +1290,7 @@ export default function Landing() {
                   href="https://vartualtutor.paymently.io/paymentlink/default/BDT"
                   target="_blank"
                   rel="noreferrer"
-                  className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full bg-[#312E81] hover:bg-[#6D5DFB] text-white text-xs font-bold shadow-sm transition-all"
+                  className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full bg-gradient-to-r from-[#6D5DFB] to-[#5B4BE8] hover:from-[#7C6EFB] hover:to-[#6D5DFB] text-white text-xs font-bold shadow-[0_4px_20px_rgba(109,93,251,0.4)] border border-white/20 transition-all"
                 >
                   <span>Open Official Payment Gateway</span>
                   <ExternalLink className="w-3.5 h-3.5" />
@@ -1376,18 +1298,18 @@ export default function Landing() {
               </div>
             </div>
 
-            <div className="lg:col-span-6 bg-slate-50 rounded-3xl p-7 border border-slate-200/80 shadow-xs space-y-5">
+            <div className="lg:col-span-6 glass-panel rounded-3xl p-7 border border-white/15 space-y-5">
               <div className="flex items-center justify-between">
                 <div>
                   <h4 className="text-xs font-bold uppercase tracking-wider text-slate-400">Official Merchant Portal</h4>
-                  <p className="text-xs font-mono font-bold text-[#0F172A] mt-0.5">vartualtutor.paymently.io</p>
+                  <p className="text-xs font-mono font-bold text-white mt-0.5">vartualtutor.paymently.io</p>
                 </div>
-                <span className="text-[10px] font-bold uppercase tracking-wider px-2.5 py-1 rounded-full bg-teal-50 text-teal-700 border border-teal-200">
+                <span className="text-[10px] font-bold uppercase tracking-wider px-2.5 py-1 rounded-full bg-teal-500/20 text-[#2DD4BF] border border-teal-500/30">
                   Active BDT Gateway
                 </span>
               </div>
 
-              <div className="flex items-center gap-4 p-4 bg-white rounded-2xl border border-slate-200">
+              <div className="flex items-center gap-4 p-4 bg-white/95 rounded-2xl border border-white/20 text-slate-900">
                 <img
                   src="/payment-link-BDT-qr.svg"
                   alt="Virtual Tutor Paymently QR Code"
@@ -1395,7 +1317,7 @@ export default function Landing() {
                 />
                 <div className="space-y-1">
                   <span className="text-xs font-bold text-[#0F172A] block">Scan & Pay via MFS QR</span>
-                  <p className="text-[11px] text-slate-500 leading-tight">
+                  <p className="text-[11px] text-slate-600 leading-tight">
                     Scan with bKash, Nagad, or Upay app from anywhere for instant zero-fee tuition settlement.
                   </p>
                   <a
@@ -1417,12 +1339,12 @@ export default function Landing() {
                   <span className="px-3.5 py-1.5 rounded-xl text-xs font-black bg-[#F7941D] text-white shadow-2xs">Nagad</span>
                   <span className="px-3.5 py-1.5 rounded-xl text-xs font-black bg-[#8C3494] text-white shadow-2xs">Rocket</span>
                   <span className="px-3.5 py-1.5 rounded-xl text-xs font-black bg-[#2E3192] text-white shadow-2xs">Upay</span>
-                  <span className="px-3.5 py-1.5 rounded-xl text-xs font-bold bg-[#312E81] text-white shadow-2xs">Visa / Mastercard</span>
-                  <span className="px-3.5 py-1.5 rounded-xl text-xs font-semibold bg-white border border-slate-200 text-[#0F172A]">Internet Banking</span>
+                  <span className="px-3.5 py-1.5 rounded-xl text-xs font-bold bg-[#312E81] text-white shadow-2xs border border-white/20">Visa / Mastercard</span>
+                  <span className="px-3.5 py-1.5 rounded-xl text-xs font-semibold bg-white/10 border border-white/15 text-white">Internet Banking</span>
                 </div>
               </div>
 
-              <p className="text-[11px] text-slate-500 pt-2 border-t border-slate-200">
+              <p className="text-[11px] text-slate-400 pt-2 border-t border-white/10">
                 All transactions are encrypted with 256-bit SSL banking standards and Bangladesh Bank regulatory protocols.
               </p>
             </div>
@@ -1431,11 +1353,11 @@ export default function Landing() {
       </section>
 
       {/* ─── 12. FAQ ACCORDION SECTION ─── */}
-      <section id="faq" className="py-20 sm:py-28">
+      <section id="faq" className="py-20 sm:py-28 relative z-10">
         <div className="max-w-4xl mx-auto px-4 sm:px-6">
           <div className="text-center mb-14">
-            <SectionLabel label="07" text="FREQUENTLY ASKED QUESTIONS" className="justify-center" />
-            <h2 className="text-3xl sm:text-4xl font-bold tracking-tight text-[#0F172A] mt-2">
+            <SectionLabel label="07" text="FREQUENTLY ASKED QUESTIONS" className="justify-center" theme="dark" />
+            <h2 className="text-3xl sm:text-4xl font-bold tracking-tight text-white mt-2">
               Everything you need to know.
             </h2>
           </div>
@@ -1463,16 +1385,16 @@ export default function Landing() {
               return (
                 <div
                   key={idx}
-                  className="bg-white rounded-2xl border border-slate-200/80 overflow-hidden shadow-2xs transition-all"
+                  className="glass-panel rounded-2xl border border-white/15 overflow-hidden shadow-2xs transition-all"
                 >
                   <button
                     onClick={() => setActiveFaqIndex(isOpen ? null : idx)}
                     className="w-full p-5 text-left flex items-center justify-between gap-4 cursor-pointer"
                   >
-                    <span className="text-sm font-bold text-[#0F172A]">{faq.q}</span>
+                    <span className="text-sm font-bold text-white hover:text-[#C7D2FE] transition-colors">{faq.q}</span>
                     <ChevronDown
                       className={`w-4 h-4 text-slate-400 transition-transform duration-200 shrink-0 ${
-                        isOpen ? "rotate-180 text-[#6D5DFB]" : ""
+                        isOpen ? "rotate-180 text-[#2DD4BF]" : ""
                       }`}
                     />
                   </button>
@@ -1483,7 +1405,7 @@ export default function Landing() {
                         animate={{ opacity: 1, height: "auto" }}
                         exit={{ opacity: 0, height: 0 }}
                         transition={{ duration: 0.2 }}
-                        className="px-5 pb-5 text-xs sm:text-sm text-slate-600 leading-relaxed border-t border-slate-100 pt-3"
+                        className="px-5 pb-5 text-xs sm:text-sm text-slate-300 leading-relaxed border-t border-white/10 pt-3"
                       >
                         {faq.a}
                       </motion.div>
@@ -1497,94 +1419,82 @@ export default function Landing() {
       </section>
 
       {/* ─── 13. FINAL CTA SECTION ─── */}
-      <section className="py-20 sm:py-28 bg-gradient-to-r from-[#312E81] via-[#1E1B4B] to-[#312E81] text-white text-center relative overflow-hidden">
-        {/* Architectural university library hall background */}
-        <div className="absolute inset-0 pointer-events-none z-0 overflow-hidden" aria-hidden="true">
-          <img
-            src="https://images.unsplash.com/photo-1521587760476-6c12a4b040da?auto=format&fit=crop&q=80&w=1800"
-            alt=""
-            loading="lazy"
-            className="w-full h-full object-cover opacity-[0.12] mix-blend-luminosity scale-105"
-          />
-          <div className="absolute inset-0 bg-gradient-to-b from-[#312E81]/85 via-[#1E1B4B]/95 to-[#312E81]/90" />
-          <motion.div
-            animate={shouldReduceMotion ? {} : {
-              scale: [1, 1.15, 1],
-              opacity: [0.3, 0.55, 0.3],
-            }}
-            transition={{ duration: 10, repeat: Infinity, ease: "easeInOut" }}
-            className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[42rem] h-[26rem] bg-gradient-to-r from-[#6D5DFB]/25 via-[#14B8A6]/20 to-[#6D5DFB]/15 rounded-full blur-3xl pointer-events-none"
-            aria-hidden="true"
-          />
-        </div>
+      <section className="py-20 sm:py-28 relative z-10">
+        <div className="max-w-5xl mx-auto px-4 sm:px-6">
+          <div className="glass-dock rounded-3xl p-10 sm:p-16 text-center text-white relative overflow-hidden border border-white/20 shadow-2xl">
+            {/* Ambient accent glows */}
+            <div className="absolute top-0 right-1/4 w-80 h-80 bg-[#6D5DFB]/25 rounded-full blur-3xl pointer-events-none" />
+            <div className="absolute bottom-0 left-1/4 w-80 h-80 bg-[#14B8A6]/20 rounded-full blur-3xl pointer-events-none" />
 
-        <div className="max-w-3xl mx-auto px-4 sm:px-6 relative z-10 space-y-6">
-          <h2 className="text-3xl sm:text-5xl font-bold tracking-tight text-white">
-            Your next great lesson starts here.
-          </h2>
-          <p className="text-sm sm:text-base text-white/80 max-w-xl mx-auto leading-relaxed">
-            Join thousands of motivated students and certified educators on Bangladesh's premier live tutoring platform.
-          </p>
-          <div className="pt-2 flex flex-wrap items-center justify-center gap-4">
-            <button
-              onClick={() => navigate("/teachers")}
-              className="px-8 py-4 rounded-full bg-[#6D5DFB] hover:bg-[#5848e8] text-white font-bold text-sm transition-all shadow-lg active:scale-95 cursor-pointer"
-            >
-              Find a Tutor
-            </button>
-            <button
-              onClick={() => navigate("/teacher-application")}
-              className="px-8 py-4 rounded-full bg-white/10 hover:bg-white/20 text-white font-bold text-sm transition-all border border-white/20 active:scale-95 cursor-pointer"
-            >
-              Become a Tutor
-            </button>
+            <div className="relative z-10 space-y-6">
+              <h2 className="text-3xl sm:text-5xl font-bold tracking-tight text-white">
+                Your next great lesson starts here.
+              </h2>
+              <p className="text-sm sm:text-base text-slate-200 max-w-xl mx-auto leading-relaxed">
+                Join thousands of motivated students and certified educators on Bangladesh's premier live tutoring platform.
+              </p>
+              <div className="pt-2 flex flex-wrap items-center justify-center gap-4">
+                <button
+                  onClick={() => navigate("/teachers")}
+                  className="px-8 py-4 rounded-full bg-white text-slate-950 hover:bg-slate-100 font-bold text-sm transition-all shadow-[0_0_30px_rgba(255,255,255,0.3)] active:scale-95 cursor-pointer"
+                >
+                  Find a Tutor
+                </button>
+                <button
+                  onClick={() => navigate("/teacher-application")}
+                  className="px-8 py-4 rounded-full bg-white/10 hover:bg-white/20 text-white font-bold text-sm transition-all border border-white/20 backdrop-blur-md active:scale-95 cursor-pointer"
+                >
+                  Become a Tutor
+                </button>
+              </div>
+            </div>
           </div>
         </div>
       </section>
 
-      {/* ─── 14. FOUR-COLUMN PROFESSIONAL FOOTER ─── */}
-      <footer className="bg-white border-t border-slate-200 py-16 text-xs text-slate-600">
+      {/* ─── 14. FOUR-COLUMN PROFESSIONAL GLASS FOOTER ─── */}
+      <footer className="bg-slate-950/75 backdrop-blur-2xl border-t border-white/10 py-16 text-xs text-slate-400 relative z-10">
         <div className="max-w-[1440px] mx-auto px-4 sm:px-8">
           <div className="grid grid-cols-2 md:grid-cols-4 gap-8 mb-12">
             {/* Column 1: Virtual Tutor */}
             <div className="space-y-3">
-              <p className="font-bold text-[#0F172A] text-sm uppercase tracking-wider">Virtual Tutor</p>
-              <p className="text-xs text-slate-500 leading-relaxed">
+              <p className="font-bold text-white text-sm uppercase tracking-wider">Virtual Tutor</p>
+              <p className="text-xs text-slate-300 leading-relaxed">
                 A trusted online learning platform connecting students with verified teachers across Bangladesh and beyond.
               </p>
               <div className="pt-1">
-                <Link to="/teachers" className="block py-1 hover:text-[#312E81] font-medium">Find Tutors</Link>
-                <Link to="/teacher-application" className="block py-1 hover:text-[#312E81] font-medium">Become a Tutor</Link>
+                <Link to="/teachers" className="block py-1 text-slate-300 hover:text-white font-medium transition-colors">Find Tutors</Link>
+                <Link to="/teacher-application" className="block py-1 text-slate-300 hover:text-white font-medium transition-colors">Become a Tutor</Link>
               </div>
             </div>
 
             {/* Column 2: Learning */}
             <div className="space-y-2">
-              <p className="font-bold text-[#0F172A] text-sm uppercase tracking-wider">Learning</p>
-              <Link to="/lessons" className="block py-1 hover:text-[#312E81] font-medium">Lessons</Link>
-              <Link to="/assignments" className="block py-1 hover:text-[#312E81] font-medium">Assignments</Link>
-              <Link to="/progress" className="block py-1 hover:text-[#312E81] font-medium">Progress</Link>
-              <Link to="/community" className="block py-1 hover:text-[#312E81] font-medium">Community</Link>
+              <p className="font-bold text-white text-sm uppercase tracking-wider">Learning</p>
+              <Link to="/lessons" className="block py-1 text-slate-300 hover:text-white font-medium transition-colors">Lessons</Link>
+              <Link to="/assignments" className="block py-1 text-slate-300 hover:text-white font-medium transition-colors">Assignments</Link>
+              <Link to="/progress" className="block py-1 text-slate-300 hover:text-white font-medium transition-colors">Progress</Link>
+              <Link to="/community" className="block py-1 text-slate-300 hover:text-white font-medium transition-colors">Community</Link>
             </div>
 
             {/* Column 3: Support */}
             <div className="space-y-2">
-              <p className="font-bold text-[#0F172A] text-sm uppercase tracking-wider">Support</p>
-              <Link to="/faq" className="block py-1 hover:text-[#312E81] font-medium">FAQ</Link>
-              <Link to="/contact" className="block py-1 hover:text-[#312E81] font-medium">Contact Support</Link>
-              <Link to="/students" className="block py-1 hover:text-[#312E81] font-medium">Student Learning Requests</Link>
+              <p className="font-bold text-white text-sm uppercase tracking-wider">Support</p>
+              <Link to="/faq" className="block py-1 text-slate-300 hover:text-white font-medium transition-colors">FAQ</Link>
+              <Link to="/contact" className="block py-1 text-slate-300 hover:text-white font-medium transition-colors">Contact Support</Link>
+              <Link to="/students" className="block py-1 text-slate-300 hover:text-white font-medium transition-colors">Student Learning Requests</Link>
             </div>
 
             {/* Column 4: Legal */}
             <div className="space-y-2">
-              <p className="font-bold text-[#0F172A] text-sm uppercase tracking-wider">Legal</p>
-              <Link to="/privacy" className="block py-1 hover:text-[#312E81] font-medium">Privacy Policy</Link>
-              <Link to="/terms" className="block py-1 hover:text-[#312E81] font-medium">Terms of Service</Link>
-              <Link to="/privacy" className="block py-1 hover:text-[#312E81] font-medium">Refund Policy</Link>
+              <p className="font-bold text-white text-sm uppercase tracking-wider">Legal</p>
+              <Link to="/privacy" className="block py-1 text-slate-300 hover:text-white font-medium transition-colors">Privacy Policy</Link>
+              <Link to="/terms" className="block py-1 text-slate-300 hover:text-white font-medium transition-colors">Terms of Service</Link>
+              <Link to="/privacy" className="block py-1 text-slate-300 hover:text-white font-medium transition-colors">Refund Policy</Link>
             </div>
           </div>
 
-          <div className="pt-8 border-t border-slate-200 flex flex-col sm:flex-row items-center justify-between gap-4 text-[11px] text-slate-400">
+          <div className="pt-8 border-t border-white/10 flex flex-col sm:flex-row items-center justify-between gap-4 text-[11px] text-slate-400">
             <p>© {new Date().getFullYear()} Virtual Tutor Pro. All rights reserved.</p>
             <p>Built for serious, high-quality human education.</p>
           </div>

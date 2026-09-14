@@ -27,15 +27,19 @@ export const FloatingNavPill: React.FC<FloatingNavPillProps> = ({
     <nav
       onMouseLeave={() => setHoveredIdx(null)}
       className={`relative hidden lg:flex items-center gap-0.5 px-2 py-1.5 rounded-full border transition-all duration-300 ${
-        isDark && !isScrolled
-          ? "bg-white/[0.06] border-white/12 backdrop-blur-md"
-          : "bg-white/85 border-slate-200/80 backdrop-blur-md shadow-2xs"
+        isDark
+          ? isScrolled
+            ? "bg-slate-900/65 border-white/20 backdrop-blur-xl shadow-[0_8px_24px_rgba(0,0,0,0.35)]"
+            : "bg-white/[0.07] border-white/15 backdrop-blur-xl shadow-[inset_0_1px_0_rgba(255,255,255,0.15)]"
+          : isScrolled
+          ? "bg-white/90 border-slate-200/80 backdrop-blur-md shadow-sm"
+          : "bg-white/70 border-slate-200/60 backdrop-blur-md shadow-2xs"
       } ${className}`}
     >
       {items.map((item, idx) => {
         const isHovered = hoveredIdx === idx;
         const linkClasses = `relative z-10 px-3.5 py-1.5 text-xs font-semibold rounded-full transition-colors duration-200 select-none cursor-pointer ${
-          isDark && !isScrolled
+          isDark
             ? isHovered
               ? "text-white"
               : "text-slate-300 hover:text-white"
@@ -50,8 +54,8 @@ export const FloatingNavPill: React.FC<FloatingNavPillProps> = ({
               <motion.div
                 layoutId="nav-pill"
                 className={`absolute inset-0 rounded-full ${
-                  isDark && !isScrolled
-                    ? "bg-white/15 border border-white/20 shadow-[0_2px_12px_rgba(255,255,255,0.08)]"
+                  isDark
+                    ? "bg-white/15 border border-white/25 shadow-[0_2px_12px_rgba(255,255,255,0.12)]"
                     : "bg-slate-100/95 border border-slate-200/70 shadow-[0_2px_8px_rgba(0,0,0,0.04)]"
                 }`}
                 transition={{

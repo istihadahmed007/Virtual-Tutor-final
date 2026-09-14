@@ -159,16 +159,16 @@ export default function Dashboard() {
   }, []);
 
   return (
-    <main className="min-h-screen bg-[#F5F4EF] text-[#111111] pb-24 pt-6 sm:pt-8">
+    <main className="min-h-screen bg-transparent text-white pb-24 pt-6 sm:pt-8">
       <div className="max-w-[1440px] mx-auto px-4 sm:px-8">
         {/* Editorial Top Heading */}
         <div className="flex flex-col sm:flex-row sm:items-end justify-between mb-6 gap-4">
           <div>
             <SectionLabel number="01" text="Student Workspace" className="mb-2.5" />
-            <h1 className="text-2xl sm:text-4xl font-bold tracking-[-0.03em] text-[#111111] font-display">
+            <h1 className="text-2xl sm:text-4xl font-bold tracking-[-0.03em] text-white font-display">
               {greeting}{user?.name ? `, ${user.name}` : ""}
             </h1>
-            <p className="text-xs sm:text-sm text-[#111111]/70 mt-1 font-normal">
+            <p className="text-xs sm:text-sm text-white/70 mt-1 font-normal">
               Here's what needs your attention today.
             </p>
           </div>
@@ -204,7 +204,7 @@ export default function Dashboard() {
             <button
               key={item.path}
               onClick={() => navigate(item.path)}
-              className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white border border-[#E5E4DE] text-xs font-semibold text-[#111111] hover:border-[#111111] hover:shadow-xs transition-all shrink-0 cursor-pointer"
+              className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/5 border border-white/12 text-xs font-semibold text-white/90 hover:bg-white/10 hover:border-white/20 hover:text-white transition-all shrink-0 cursor-pointer backdrop-blur-md"
             >
               <item.icon className="w-3.5 h-3.5 text-[#F26522]" />
               <span>{item.label}</span>
@@ -221,16 +221,16 @@ export default function Dashboard() {
         {profileStatus &&
           !profileStatus.isComplete &&
           profileStatus.role === "student" && (
-            <div className="bg-white border border-[#F26522]/30 rounded-2xl p-5 mb-8 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 shadow-xs">
+            <div className="bg-amber-500/10 border border-amber-500/30 rounded-2xl p-5 mb-8 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 shadow-xs text-white">
               <div className="flex items-center gap-3.5">
-                <div className="w-10 h-10 rounded-full bg-[#F26522]/10 text-[#F26522] flex items-center justify-center shrink-0">
+                <div className="w-10 h-10 rounded-full bg-amber-500/20 text-amber-400 flex items-center justify-center shrink-0">
                   <AlertCircle className="w-5 h-5" />
                 </div>
                 <div>
-                  <p className="text-sm font-semibold text-[#111111]">
+                  <p className="text-sm font-semibold text-white">
                     Complete your learning goals & academic profile
                   </p>
-                  <p className="text-xs text-[#111111]/70 mt-0.5">
+                  <p className="text-xs text-white/70 mt-0.5">
                     Your profile is {profileStatus.completionPercentage}% complete.
                     Adding target exams helps tutors prepare custom lesson plans.
                   </p>
@@ -252,7 +252,7 @@ export default function Dashboard() {
             ACTIVE STUDENT: NextBestAction & WeeklyLearningSummary
         ========================================================================= */}
         {isNewStudent ? (
-          <div className="mb-10 bg-white rounded-3xl border border-[#E5E4DE] p-6 sm:p-8">
+          <div className="mb-10 bg-white/[0.04] backdrop-blur-xl rounded-3xl border border-white/12 text-white shadow-[0_8px_32px_rgba(0,0,0,0.36),inset_0_1px_0_rgba(255,255,255,0.08)] p-6 sm:p-8">
             <OnboardingChecklist
               status={onboardingStatus}
               onUpdateGoals={() => {
@@ -263,7 +263,7 @@ export default function Dashboard() {
         ) : (
           <div className="space-y-6 mb-10">
             {/* Contextual Next Best Action Banner */}
-            <div className="bg-white rounded-3xl border border-[#E5E4DE] p-6 sm:p-8">
+            <div className="bg-white/[0.04] backdrop-blur-xl rounded-3xl border border-white/12 text-white shadow-[0_8px_32px_rgba(0,0,0,0.36),inset_0_1px_0_rgba(255,255,255,0.08)] p-6 sm:p-8">
               <NextBestAction
                 state={nextActionState}
                 lesson={nextLesson}
@@ -273,7 +273,7 @@ export default function Dashboard() {
             </div>
 
             {/* Active Student Weekly Workspace Summary */}
-            <div className="bg-white rounded-3xl border border-[#E5E4DE] p-6 sm:p-8">
+            <div className="bg-white/[0.04] backdrop-blur-xl rounded-3xl border border-white/12 text-white shadow-[0_8px_32px_rgba(0,0,0,0.36),inset_0_1px_0_rgba(255,255,255,0.08)] p-6 sm:p-8">
               <WeeklyLearningSummary
                 nextLesson={nextLesson}
                 pendingAssignmentsCount={pendingAssignments.length}
@@ -320,21 +320,21 @@ export default function Dashboard() {
           {/* Left / Center: Upcoming Lessons & Assignments */}
           <div className="lg:col-span-2 space-y-8">
             {/* Upcoming Lessons Card */}
-            <div className="bg-white rounded-3xl border border-[#E5E4DE] p-6 sm:p-8">
-              <div className="flex items-center justify-between mb-6 pb-4 border-b border-[#E5E4DE]">
+            <div className="bg-white/[0.04] backdrop-blur-xl rounded-3xl border border-white/12 text-white shadow-[0_8px_32px_rgba(0,0,0,0.36),inset_0_1px_0_rgba(255,255,255,0.08)] p-6 sm:p-8">
+              <div className="flex items-center justify-between mb-6 pb-4 border-b border-white/10">
                 <div>
-                  <h3 className="text-base sm:text-lg font-semibold text-[#111111] flex items-center gap-2">
+                  <h3 className="text-base sm:text-lg font-semibold text-white flex items-center gap-2">
                     <Calendar className="w-4 h-4 text-[#F26522]" />
                     <span>Upcoming Lessons</span>
                   </h3>
-                  <p className="text-xs text-[#111111]/60 mt-0.5">
+                  <p className="text-xs text-white/60 mt-0.5">
                     Live classroom rooms become active 10 minutes prior to session
                   </p>
                 </div>
                 {upcomingLessons.length > 0 && (
                   <button
                     onClick={() => navigate("/lessons")}
-                    className="text-xs font-semibold text-[#111111] hover:text-[#F26522] transition-colors cursor-pointer"
+                    className="text-xs font-semibold text-white hover:text-[#F26522] transition-colors cursor-pointer"
                   >
                     View all ({upcomingLessons.length}) →
                   </button>
@@ -379,21 +379,21 @@ export default function Dashboard() {
             </div>
 
             {/* Assignments Card */}
-            <div className="bg-white rounded-3xl border border-[#E5E4DE] p-6 sm:p-8">
-              <div className="flex items-center justify-between mb-6 pb-4 border-b border-[#E5E4DE]">
+            <div className="bg-white/[0.04] backdrop-blur-xl rounded-3xl border border-white/12 text-white shadow-[0_8px_32px_rgba(0,0,0,0.36),inset_0_1px_0_rgba(255,255,255,0.08)] p-6 sm:p-8">
+              <div className="flex items-center justify-between mb-6 pb-4 border-b border-white/10">
                 <div>
-                  <h3 className="text-base sm:text-lg font-semibold text-[#111111] flex items-center gap-2">
+                  <h3 className="text-base sm:text-lg font-semibold text-white flex items-center gap-2">
                     <BookOpen className="w-4 h-4 text-[#F26522]" />
                     <span>Pending Assignments & Homework</span>
                   </h3>
-                  <p className="text-xs text-[#111111]/60 mt-0.5">
+                  <p className="text-xs text-white/60 mt-0.5">
                     Tasks assigned by your tutors to reinforce classroom concepts
                   </p>
                 </div>
                 {pendingAssignments.length > 0 && (
                   <button
                     onClick={() => navigate("/assignments")}
-                    className="text-xs font-semibold text-[#111111] hover:text-[#F26522] transition-colors cursor-pointer"
+                    className="text-xs font-semibold text-white hover:text-[#F26522] transition-colors cursor-pointer"
                   >
                     View all ({pendingAssignments.length}) →
                   </button>
@@ -411,14 +411,14 @@ export default function Dashboard() {
                   {pendingAssignments.slice(0, 3).map((assignment) => (
                     <div
                       key={assignment._id}
-                      className="flex items-center justify-between p-4 rounded-2xl border border-[#E5E4DE] bg-[#FAF9F5] hover:bg-white transition-all"
+                      className="flex items-center justify-between p-4 rounded-2xl border border-white/10 bg-white/5 hover:bg-white/10 transition-all text-white"
                     >
                       <div>
-                        <h4 className="text-sm font-semibold text-[#111111]">
+                        <h4 className="text-sm font-semibold text-white">
                           {assignment.title}
                         </h4>
-                        <div className="flex items-center gap-3 text-xs text-[#111111]/60 mt-1">
-                          <span className="font-medium text-[#111111]">
+                        <div className="flex items-center gap-3 text-xs text-white/60 mt-1">
+                          <span className="font-medium text-white/90">
                             {assignment.subject}
                           </span>
                           {assignment.dueDate && (
@@ -445,27 +445,27 @@ export default function Dashboard() {
             </div>
 
             {/* Tuition Invoices & Payment Receipts Card */}
-            <div className="bg-white rounded-3xl border border-[#E5E4DE] p-6 sm:p-8">
-              <div className="flex items-center justify-between mb-6 pb-4 border-b border-[#E5E4DE]">
+            <div className="bg-white/[0.04] backdrop-blur-xl rounded-3xl border border-white/12 text-white shadow-[0_8px_32px_rgba(0,0,0,0.36),inset_0_1px_0_rgba(255,255,255,0.08)] p-6 sm:p-8">
+              <div className="flex items-center justify-between mb-6 pb-4 border-b border-white/10">
                 <div>
-                  <h3 className="text-base sm:text-lg font-semibold text-[#111111] flex items-center gap-2">
+                  <h3 className="text-base sm:text-lg font-semibold text-white flex items-center gap-2">
                     <CreditCard className="w-4 h-4 text-[#F26522]" />
                     <span>Tuition Invoices & Payment Receipts</span>
                   </h3>
-                  <p className="text-xs text-[#111111]/60 mt-0.5">
+                  <p className="text-xs text-white/60 mt-0.5">
                     Official payment receipts for your private tutoring bookings
                   </p>
                 </div>
-                <span className="text-[10px] font-bold text-emerald-800 bg-emerald-50 px-2.5 py-1 rounded-full border border-emerald-200">
+                <span className="text-[10px] font-bold text-emerald-300 bg-emerald-500/20 px-2.5 py-1 rounded-full border border-emerald-500/30">
                   Verified Payment
                 </span>
               </div>
 
               {(!studentPayments || studentPayments.length === 0) ? (
-                <div className="p-6 text-center text-[#111111]/50 text-xs bg-[#FAF9F5] rounded-2xl border border-[#E5E4DE]/60">
-                  <CreditCard className="w-6 h-6 mx-auto mb-2 text-[#111111]/30" />
-                  <p className="font-semibold text-slate-700">No payment receipts yet</p>
-                  <p className="text-[11px] text-slate-500 mt-0.5">
+                <div className="p-6 text-center text-white/60 text-xs bg-white/5 rounded-2xl border border-white/10">
+                  <CreditCard className="w-6 h-6 mx-auto mb-2 text-white/30" />
+                  <p className="font-semibold text-white/90">No payment receipts yet</p>
+                  <p className="text-[11px] text-white/50 mt-0.5">
                     When you book and confirm a live tutoring session, your official invoice and payment receipt will appear here.
                   </p>
                 </div>
@@ -474,30 +474,30 @@ export default function Dashboard() {
                   {studentPayments.slice(0, 4).map((pmt) => (
                     <div
                       key={pmt._id}
-                      className="p-3.5 bg-[#FAF9F5] rounded-2xl border border-[#E5E4DE] flex flex-col sm:flex-row sm:items-center justify-between gap-3"
+                      className="p-3.5 bg-white/5 rounded-2xl border border-white/10 flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-white"
                     >
                       <div>
                         <div className="flex items-center gap-2">
-                          <span className="font-mono text-xs font-bold text-slate-900">
+                          <span className="font-mono text-xs font-bold text-white">
                             {pmt.transactionId}
                           </span>
                           <span
                             className={`px-2 py-0.5 rounded-full text-[10px] font-bold ${
                               pmt.status === "paid"
-                                ? "bg-emerald-100 text-emerald-800"
+                                ? "bg-emerald-500/20 text-emerald-300 border border-emerald-500/30"
                                 : pmt.status === "refunded"
-                                ? "bg-rose-100 text-rose-800"
-                                : "bg-amber-100 text-amber-800"
+                                ? "bg-rose-500/20 text-rose-300 border border-rose-500/30"
+                                : "bg-amber-500/20 text-amber-300 border border-amber-500/30"
                             }`}
                           >
                             {pmt.status.toUpperCase()}
                           </span>
                         </div>
-                        <p className="text-xs text-[#111111]/70 mt-1">
-                          Teacher: <span className="font-semibold text-slate-800">{pmt.teacherName || "Instructor"}</span> · Tuition:{" "}
-                          <span className="font-bold text-teal-700">৳{pmt.amount.toLocaleString()} BDT</span>
+                        <p className="text-xs text-white/70 mt-1">
+                          Teacher: <span className="font-semibold text-white">{pmt.teacherName || "Instructor"}</span> · Tuition:{" "}
+                          <span className="font-bold text-teal-400">৳{pmt.amount.toLocaleString()} BDT</span>
                         </p>
-                        <p className="text-[10px] text-slate-400 mt-0.5">
+                        <p className="text-[10px] text-white/40 mt-0.5">
                           Date: {new Date(pmt.createdAt).toLocaleDateString()}
                         </p>
                       </div>
@@ -505,7 +505,7 @@ export default function Dashboard() {
                       <div className="flex items-center gap-2 self-end sm:self-center">
                         <button
                           onClick={() => navigate(`/checkout/${pmt.transactionId}`)}
-                          className="px-3.5 py-1.5 rounded-full bg-white hover:bg-slate-50 border border-[#E5E4DE] text-xs font-semibold text-slate-800 transition-colors shadow-2xs cursor-pointer"
+                          className="px-3.5 py-1.5 rounded-full bg-white/10 hover:bg-white/15 border border-white/15 text-xs font-semibold text-white transition-colors shadow-2xs cursor-pointer"
                         >
                           {pmt.status === "paid" ? "View Receipt" : "Complete Payment"}
                         </button>
@@ -520,7 +520,7 @@ export default function Dashboard() {
           {/* Right Column: Discoverability, Quick Links, Progress */}
           <div className="space-y-8">
             {/* Transparent Privacy & Teacher Discoverability Card */}
-            <div className="bg-white rounded-3xl border border-[#E5E4DE] p-6 sm:p-8">
+            <div className="bg-white/[0.04] backdrop-blur-xl rounded-3xl border border-white/12 text-white shadow-[0_8px_32px_rgba(0,0,0,0.36),inset_0_1px_0_rgba(255,255,255,0.08)] p-6 sm:p-8">
               <PrivacyDiscoverabilityCard
                 isDiscoverable={isDiscoverable}
                 onToggleDiscoverable={(val) => setIsDiscoverable(val)}
@@ -528,8 +528,8 @@ export default function Dashboard() {
             </div>
 
             {/* Quick Navigation Links */}
-            <div className="bg-white rounded-3xl border border-[#E5E4DE] p-6 sm:p-8">
-              <h4 className="text-xs font-bold uppercase tracking-wider text-[#111111]/40 mb-4">
+            <div className="bg-white/[0.04] backdrop-blur-xl rounded-3xl border border-white/12 text-white shadow-[0_8px_32px_rgba(0,0,0,0.36),inset_0_1px_0_rgba(255,255,255,0.08)] p-6 sm:p-8">
+              <h4 className="text-xs font-bold uppercase tracking-wider text-white/40 mb-4">
                 Learning Workspace
               </h4>
               <div className="space-y-2">
@@ -566,21 +566,21 @@ export default function Dashboard() {
                     onClick={() => navigate(link.path)}
                     className={`w-full flex items-center justify-between p-3.5 rounded-2xl text-xs font-semibold transition-all cursor-pointer ${
                       link.primary
-                        ? "bg-[#111111] text-white hover:bg-[#222222]"
-                        : "bg-[#FAF9F5] text-[#111111] hover:bg-[#F5F4EF] border border-[#E5E4DE]/60"
+                        ? "bg-white/10 text-white hover:bg-white/15 border border-white/15"
+                        : "bg-white/5 text-white/90 hover:bg-white/10 border border-white/10"
                     }`}
                   >
                     <div className="flex items-center gap-2.5">
                       <link.icon
                         className={`w-4 h-4 ${
-                          link.primary ? "text-[#F26522]" : "text-[#111111]/60"
+                          link.primary ? "text-[#F26522]" : "text-white/60"
                         }`}
                       />
                       <span>{link.label}</span>
                     </div>
                     <ChevronRight
                       className={`w-3.5 h-3.5 ${
-                        link.primary ? "text-white/50" : "text-[#111111]/40"
+                        link.primary ? "text-white/70" : "text-white/40"
                       }`}
                     />
                   </button>
@@ -589,28 +589,28 @@ export default function Dashboard() {
             </div>
 
             {/* Mastery & Milestones Overview */}
-            <div className="bg-white rounded-3xl border border-[#E5E4DE] p-6 sm:p-8">
-              <h4 className="text-xs font-bold uppercase tracking-wider text-[#111111]/40 mb-4 flex items-center gap-1.5">
+            <div className="bg-white/[0.04] backdrop-blur-xl rounded-3xl border border-white/12 text-white shadow-[0_8px_32px_rgba(0,0,0,0.36),inset_0_1px_0_rgba(255,255,255,0.08)] p-6 sm:p-8">
+              <h4 className="text-xs font-bold uppercase tracking-wider text-white/40 mb-4 flex items-center gap-1.5">
                 <TrendingUp className="w-3.5 h-3.5 text-[#F26522]" />
                 <span>Mastery & Milestones</span>
               </h4>
 
               {progress && progress.classesCompleted > 0 ? (
                 <div className="space-y-3.5 text-xs">
-                  <div className="flex justify-between py-2 border-b border-[#E5E4DE]">
-                    <span className="text-[#111111]/60">Total Hours:</span>
-                    <span className="font-bold text-[#111111]">
+                  <div className="flex justify-between py-2 border-b border-white/10">
+                    <span className="text-white/60">Total Hours:</span>
+                    <span className="font-bold text-white">
                       {progress.totalHoursLearned}h
                     </span>
                   </div>
-                  <div className="flex justify-between py-2 border-b border-[#E5E4DE]">
-                    <span className="text-[#111111]/60">Completed Sessions:</span>
-                    <span className="font-bold text-[#111111]">
+                  <div className="flex justify-between py-2 border-b border-white/10">
+                    <span className="text-white/60">Completed Sessions:</span>
+                    <span className="font-bold text-white">
                       {progress.classesCompleted}
                     </span>
                   </div>
-                  <div className="flex justify-between py-2 border-b border-[#E5E4DE]">
-                    <span className="text-[#111111]/60">Active Streak:</span>
+                  <div className="flex justify-between py-2 border-b border-white/10">
+                    <span className="text-white/60">Active Streak:</span>
                     <span className="font-bold text-[#F26522]">
                       {progress.streakDays || 1} days 🔥
                     </span>

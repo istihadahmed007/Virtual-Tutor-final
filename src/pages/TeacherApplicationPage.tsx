@@ -444,20 +444,20 @@ export default function TeacherApplicationPage() {
   };
 
   return (
-    <div className="min-h-screen bg-stone-50/50 py-8 px-4 sm:px-6 lg:px-8">
+    <div className="min-h-screen bg-transparent text-white py-8 px-4 sm:px-6 lg:px-8 relative z-10">
       <div className="max-w-4xl mx-auto space-y-6">
         {/* Header & Status Card */}
-        <div className="bg-white rounded-2xl border border-stone-200 shadow-sm p-6 sm:p-8 space-y-6">
+        <div className="bg-white/[0.04] backdrop-blur-xl rounded-3xl border border-white/12 shadow-[0_8px_32px_rgba(0,0,0,0.36),inset_0_1px_0_rgba(255,255,255,0.08)] p-6 sm:p-8 space-y-6">
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
             <div className="flex items-center gap-3.5">
-              <div className="w-12 h-12 rounded-2xl bg-teal-50 border border-teal-200 text-teal-700 flex items-center justify-center shrink-0 shadow-xs">
+              <div className="w-12 h-12 rounded-2xl bg-white/10 border border-white/15 text-violet-400 flex items-center justify-center shrink-0 shadow-xs">
                 <GraduationCap className="w-6 h-6" />
               </div>
               <div>
-                <h1 className="text-2xl font-bold text-slate-900 tracking-tight">
+                <h1 className="text-2xl font-bold text-white tracking-tight font-display">
                   Teacher Registration & Verification
                 </h1>
-                <p className="text-xs text-slate-500 mt-0.5">
+                <p className="text-xs text-white/60 mt-0.5">
                   Complete your verified educator profile and submit identity documents for administrator review
                 </p>
               </div>
@@ -466,8 +466,8 @@ export default function TeacherApplicationPage() {
             {/* Status Pill */}
             <div className="flex items-center gap-2">
               {verificationStatus === "not_started" && (
-                <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-stone-100 text-slate-700 border border-stone-200">
-                  <Clock className="w-3.5 h-3.5 text-slate-500" /> Draft Application
+                <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-white/10 text-white/80 border border-white/15">
+                  <Clock className="w-3.5 h-3.5 text-white/60" /> Draft Application
                 </span>
               )}
               {verificationStatus === "under_review" && (
@@ -519,11 +519,11 @@ export default function TeacherApplicationPage() {
 
           {/* Notifications / Status Banners */}
           {verificationStatus === "under_review" && (
-            <div className="p-4 rounded-xl bg-amber-50 border border-amber-200 text-amber-900 text-xs flex items-start gap-3">
-              <Clock className="w-5 h-5 text-amber-600 shrink-0 mt-0.5" />
+            <div className="p-4 rounded-2xl bg-amber-500/10 border border-amber-500/30 text-amber-200 text-xs flex items-start gap-3 backdrop-blur-md">
+              <Clock className="w-5 h-5 text-amber-400 shrink-0 mt-0.5" />
               <div>
-                <p className="font-bold text-sm">Application Currently Under Review</p>
-                <p className="mt-0.5 text-amber-800 leading-relaxed">
+                <p className="font-bold text-sm text-amber-300">Application Currently Under Review</p>
+                <p className="mt-0.5 text-amber-200/80 leading-relaxed">
                   Your credentials and identity documents have been submitted and are currently queued for administrator evaluation.
                   Fields are locked in read-only mode during review. You will be notified immediately upon decision.
                 </p>
@@ -532,19 +532,19 @@ export default function TeacherApplicationPage() {
           )}
 
           {verificationStatus === "needs_attention" && (
-            <div className="p-4 rounded-xl bg-orange-50 border border-orange-200 text-orange-900 text-xs flex items-start gap-3">
-              <AlertTriangle className="w-5 h-5 text-orange-600 shrink-0 mt-0.5" />
+            <div className="p-4 rounded-2xl bg-orange-500/10 border border-orange-500/30 text-orange-200 text-xs flex items-start gap-3 backdrop-blur-md">
+              <AlertTriangle className="w-5 h-5 text-orange-400 shrink-0 mt-0.5" />
               <div>
-                <p className="font-bold text-sm">Administrator Feedback & Corrections Requested</p>
-                <p className="mt-0.5 text-orange-800 leading-relaxed">
+                <p className="font-bold text-sm text-orange-300">Administrator Feedback & Corrections Requested</p>
+                <p className="mt-0.5 text-orange-200/80 leading-relaxed">
                   The reviewing administrator requested adjustments before approving your account.
                 </p>
                 {(myProfile?.adminFeedback || (myProfile as any)?.rejectionReason) && (
-                  <div className="mt-2 p-2.5 bg-white/80 rounded-lg border border-orange-200 font-mono text-[11px] text-orange-950">
+                  <div className="mt-2 p-2.5 bg-black/40 rounded-xl border border-orange-500/30 font-mono text-[11px] text-orange-200">
                     "{myProfile?.adminFeedback || (myProfile as any)?.rejectionReason}"
                   </div>
                 )}
-                <p className="mt-2 text-orange-800 font-medium">
+                <p className="mt-2 text-orange-300 font-medium">
                   Please update the requested fields below and click "Submit Application" to resubmit.
                 </p>
               </div>
@@ -552,16 +552,16 @@ export default function TeacherApplicationPage() {
           )}
 
           {verificationStatus === "rejected" && (
-            <div className="p-4 rounded-xl bg-red-50 border border-red-200 text-red-900 text-xs flex items-start gap-3">
-              <XCircle className="w-5 h-5 text-red-600 shrink-0 mt-0.5" />
+            <div className="p-4 rounded-2xl bg-red-500/10 border border-red-500/30 text-red-200 text-xs flex items-start gap-3 backdrop-blur-md">
+              <XCircle className="w-5 h-5 text-red-400 shrink-0 mt-0.5" />
               <div>
-                <p className="font-bold text-sm">Application Not Approved</p>
+                <p className="font-bold text-sm text-red-300">Application Not Approved</p>
                 {(myProfile?.adminFeedback || (myProfile as any)?.rejectionReason) && (
-                  <p className="mt-1 text-red-800 italic">
+                  <p className="mt-1 text-red-200/90 italic">
                     "{myProfile?.adminFeedback || (myProfile as any)?.rejectionReason}"
                   </p>
                 )}
-                <p className="mt-2 text-red-800">
+                <p className="mt-2 text-red-200/80">
                   You can update your credentials or provide supplementary documentation to submit a new application.
                 </p>
               </div>
@@ -569,19 +569,19 @@ export default function TeacherApplicationPage() {
           )}
 
           {verificationStatus === "verified" && (
-            <div className="p-4 rounded-xl bg-teal-50 border border-teal-200 text-teal-900 text-xs flex items-center justify-between gap-4">
+            <div className="p-4 rounded-2xl bg-emerald-500/10 border border-emerald-500/30 text-emerald-200 text-xs flex items-center justify-between gap-4 backdrop-blur-md">
               <div className="flex items-center gap-3">
-                <ShieldCheck className="w-6 h-6 text-teal-600 shrink-0" />
+                <ShieldCheck className="w-6 h-6 text-emerald-400 shrink-0" />
                 <div>
-                  <p className="font-bold text-sm">You are an Approved Verified Teacher</p>
-                  <p className="text-teal-800 text-[11px]">
+                  <p className="font-bold text-sm text-emerald-300">You are an Approved Verified Teacher</p>
+                  <p className="text-emerald-200/70 text-[11px]">
                     Your credentials have been authenticated. Your profile is visible in public teacher discovery.
                   </p>
                 </div>
               </div>
               <Button
                 onClick={() => navigate("/teacher-dashboard")}
-                className="bg-teal-600 hover:bg-teal-700 text-white text-xs h-9"
+                className="bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white text-xs h-9 shadow-lg shadow-emerald-950/30"
               >
                 Go to Teacher Dashboard <ArrowRight className="w-3.5 h-3.5 ml-1" />
               </Button>
@@ -590,75 +590,75 @@ export default function TeacherApplicationPage() {
         </div>
 
         {/* Section 1: Basic Information */}
-        <Card className="border border-stone-200 shadow-sm bg-white rounded-2xl">
-          <CardHeader className="pb-3 border-b border-stone-100">
-            <CardTitle className="text-base font-bold text-slate-900 flex items-center gap-2">
-              <FileText className="w-4 h-4 text-teal-600" />
+        <Card className="border border-white/12 shadow-[0_8px_32px_rgba(0,0,0,0.36),inset_0_1px_0_rgba(255,255,255,0.08)] bg-white/[0.04] backdrop-blur-xl rounded-3xl">
+          <CardHeader className="pb-3 border-b border-white/10">
+            <CardTitle className="text-base font-bold text-white flex items-center gap-2 font-display">
+              <FileText className="w-4 h-4 text-violet-400" />
               1. Basic Information
             </CardTitle>
-            <CardDescription className="text-xs text-slate-500">
+            <CardDescription className="text-xs text-white/60">
               Personal and display details visible to students on your public tutor profile
             </CardDescription>
           </CardHeader>
           <CardContent className="pt-5 space-y-4">
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div className="space-y-1.5">
-                <label className="text-xs font-semibold text-slate-700">
-                  Full Legal Name <span className="text-red-500">*</span>
+                <label className="text-xs font-semibold text-white/80">
+                  Full Legal Name <span className="text-red-400">*</span>
                 </label>
                 <Input
                   disabled={isLocked}
                   value={name}
                   onChange={(e) => setName(e.target.value)}
                   placeholder="e.g., Dr. Sarah Jenkins"
-                  className="h-10 text-sm"
+                  className="h-10 text-sm bg-white/5 border-white/15 text-white placeholder:text-white/40 focus:border-violet-400 focus:ring-1 focus:ring-violet-400"
                 />
               </div>
 
               <div className="space-y-1.5">
-                <label className="text-xs font-semibold text-slate-700">
-                  Professional Title <span className="text-red-500">*</span>
+                <label className="text-xs font-semibold text-white/80">
+                  Professional Title <span className="text-red-400">*</span>
                 </label>
                 <Input
                   disabled={isLocked}
                   value={title}
                   onChange={(e) => setTitle(e.target.value)}
                   placeholder="e.g., Senior AP Calculus & Physics Specialist"
-                  className="h-10 text-sm"
+                  className="h-10 text-sm bg-white/5 border-white/15 text-white placeholder:text-white/40 focus:border-violet-400 focus:ring-1 focus:ring-violet-400"
                 />
               </div>
             </div>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div className="space-y-1.5">
-                <label className="text-xs font-semibold text-slate-700">Country of Residence</label>
+                <label className="text-xs font-semibold text-white/80">Country of Residence</label>
                 <Input
                   disabled={isLocked}
                   value={country}
                   onChange={(e) => setCountry(e.target.value)}
                   placeholder="e.g., United States"
-                  className="h-10 text-sm"
+                  className="h-10 text-sm bg-white/5 border-white/15 text-white placeholder:text-white/40 focus:border-violet-400 focus:ring-1 focus:ring-violet-400"
                 />
               </div>
 
               <div className="space-y-1.5">
-                <label className="text-xs font-semibold text-slate-700">Timezone</label>
+                <label className="text-xs font-semibold text-white/80">Timezone</label>
                 <Input
                   disabled={isLocked}
                   value={timezone}
                   onChange={(e) => setTimezone(e.target.value)}
                   placeholder="e.g., America/New_York (EST)"
-                  className="h-10 text-sm"
+                  className="h-10 text-sm bg-white/5 border-white/15 text-white placeholder:text-white/40 focus:border-violet-400 focus:ring-1 focus:ring-violet-400"
                 />
               </div>
             </div>
 
             <div className="space-y-1.5">
               <div className="flex justify-between items-center">
-                <label className="text-xs font-semibold text-slate-700">
-                  Detailed Bio & Teaching Philosophy <span className="text-red-500">*</span>
+                <label className="text-xs font-semibold text-white/80">
+                  Detailed Bio & Teaching Philosophy <span className="text-red-400">*</span>
                 </label>
-                <span className="text-[11px] text-slate-400">
+                <span className="text-[11px] text-white/50">
                   {bio.length} characters (min 30 recommended)
                 </span>
               </div>
@@ -668,28 +668,28 @@ export default function TeacherApplicationPage() {
                 onChange={(e) => setBio(e.target.value)}
                 rows={4}
                 placeholder="Describe your teaching approach, background, student successes, and how you conduct interactive live sessions..."
-                className="w-full rounded-xl border border-stone-200 bg-white p-3 text-xs text-slate-900 placeholder:text-slate-400 focus:border-teal-500 focus:ring-1 focus:ring-teal-500 disabled:bg-stone-50"
+                className="w-full rounded-2xl border border-white/15 bg-white/5 p-3 text-xs text-white placeholder:text-white/40 focus:border-violet-400 focus:ring-1 focus:ring-violet-400 disabled:bg-white/[0.02]"
               />
             </div>
           </CardContent>
         </Card>
 
         {/* Section 2: Subject & Curriculum Expertise */}
-        <Card className="border border-stone-200 shadow-sm bg-white rounded-2xl">
-          <CardHeader className="pb-3 border-b border-stone-100">
-            <CardTitle className="text-base font-bold text-slate-900 flex items-center gap-2">
-              <BookOpen className="w-4 h-4 text-teal-600" />
+        <Card className="border border-white/12 shadow-[0_8px_32px_rgba(0,0,0,0.36),inset_0_1px_0_rgba(255,255,255,0.08)] bg-white/[0.04] backdrop-blur-xl rounded-3xl">
+          <CardHeader className="pb-3 border-b border-white/10">
+            <CardTitle className="text-base font-bold text-white flex items-center gap-2 font-display">
+              <BookOpen className="w-4 h-4 text-violet-400" />
               2. Subjects & Target Class Levels
             </CardTitle>
-            <CardDescription className="text-xs text-slate-500">
+            <CardDescription className="text-xs text-white/60">
               Select the academic disciplines and student cohorts you are qualified to instruct
             </CardDescription>
           </CardHeader>
           <CardContent className="pt-5 space-y-5">
             {/* Subjects multiselect */}
             <div className="space-y-2">
-              <label className="text-xs font-semibold text-slate-700 block">
-                Teaching Subjects <span className="text-red-500">*</span>
+              <label className="text-xs font-semibold text-white/80 block">
+                Teaching Subjects <span className="text-red-400">*</span>
               </label>
               <div className="flex flex-wrap gap-1.5">
                 {COMMON_SUBJECTS.map((s) => {
@@ -700,10 +700,10 @@ export default function TeacherApplicationPage() {
                       type="button"
                       disabled={isLocked}
                       onClick={() => toggleSubject(s)}
-                      className={`text-xs px-3 py-1.5 rounded-lg border font-medium transition-all ${
+                      className={`text-xs px-3 py-1.5 rounded-xl border font-medium transition-all ${
                         isSelected
-                          ? "bg-teal-600 text-white border-teal-600 shadow-xs"
-                          : "bg-stone-50 text-slate-700 border-stone-200 hover:border-teal-400"
+                          ? "bg-gradient-to-r from-violet-600 to-indigo-600 text-white border-violet-500 shadow-sm"
+                          : "bg-white/5 text-white/80 border-white/10 hover:border-violet-400/50 hover:text-white"
                       }`}
                     >
                       {isSelected && <CheckCircle2 className="w-3 h-3 inline mr-1" />}
@@ -721,14 +721,14 @@ export default function TeacherApplicationPage() {
                     value={customSubjectInput}
                     onChange={(e) => setCustomSubjectInput(e.target.value)}
                     onKeyDown={(e) => e.key === "Enter" && (e.preventDefault(), addCustomSubject())}
-                    className="h-8 text-xs"
+                    className="h-8 text-xs bg-white/5 border-white/15 text-white placeholder:text-white/40 focus:border-violet-400"
                   />
                   <Button
                     type="button"
                     size="sm"
                     variant="outline"
                     onClick={addCustomSubject}
-                    className="h-8 text-xs shrink-0"
+                    className="h-8 text-xs shrink-0 border-white/15 text-white hover:bg-white/10"
                   >
                     <Plus className="w-3 h-3 mr-1" /> Add
                   </Button>
@@ -737,9 +737,9 @@ export default function TeacherApplicationPage() {
             </div>
 
             {/* Class Levels */}
-            <div className="space-y-2 pt-2 border-t border-stone-100">
-              <label className="text-xs font-semibold text-slate-700 block">
-                Target Student Class Levels <span className="text-red-500">*</span>
+            <div className="space-y-2 pt-2 border-t border-white/10">
+              <label className="text-xs font-semibold text-white/80 block">
+                Target Student Class Levels <span className="text-red-400">*</span>
               </label>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
                 {CLASS_LEVELS.map((lvl) => {
@@ -752,15 +752,15 @@ export default function TeacherApplicationPage() {
                       onClick={() => toggleClassLevel(lvl)}
                       className={`p-2.5 rounded-xl border text-left text-xs font-medium transition-all flex items-center justify-between ${
                         isSelected
-                          ? "bg-teal-50/80 border-teal-500 text-teal-950 font-semibold"
-                          : "bg-stone-50/40 border-stone-200 text-slate-700 hover:border-stone-300"
+                          ? "bg-violet-500/20 border-violet-400 text-white font-semibold"
+                          : "bg-white/[0.03] border-white/10 text-white/70 hover:border-white/20 hover:text-white"
                       }`}
                     >
                       <span>{lvl}</span>
                       {isSelected ? (
-                        <CheckCircle2 className="w-4 h-4 text-teal-600 shrink-0" />
+                        <CheckCircle2 className="w-4 h-4 text-violet-400 shrink-0" />
                       ) : (
-                        <div className="w-4 h-4 rounded-full border border-stone-300 shrink-0" />
+                        <div className="w-4 h-4 rounded-full border border-white/30 shrink-0" />
                       )}
                     </button>
                   );
@@ -771,13 +771,13 @@ export default function TeacherApplicationPage() {
         </Card>
 
         {/* Section 3: Monthly Tuition Plan & Languages */}
-        <Card className="border border-stone-200 shadow-sm bg-white rounded-2xl">
-          <CardHeader className="pb-3 border-b border-stone-100">
-            <CardTitle className="text-base font-bold text-slate-900 flex items-center gap-2">
-              <span className="text-teal-700 font-bold text-lg leading-none">৳</span>
+        <Card className="border border-white/12 shadow-[0_8px_32px_rgba(0,0,0,0.36),inset_0_1px_0_rgba(255,255,255,0.08)] bg-white/[0.04] backdrop-blur-xl rounded-3xl">
+          <CardHeader className="pb-3 border-b border-white/10">
+            <CardTitle className="text-base font-bold text-white flex items-center gap-2 font-display">
+              <span className="text-violet-400 font-bold text-lg leading-none">৳</span>
               3. Monthly Tuition Plan & Languages
             </CardTitle>
-            <CardDescription className="text-xs text-slate-500">
+            <CardDescription className="text-xs text-white/60">
               Students are charged on a monthly tuition plan only (in Bangladeshi Taka / Tk).
             </CardDescription>
           </CardHeader>
@@ -785,15 +785,15 @@ export default function TeacherApplicationPage() {
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div className="space-y-1.5">
                 <div className="flex items-center justify-between">
-                  <label className="text-[11px] font-semibold text-slate-700">
-                    Monthly Tuition Fee (৳ Tk / month) <span className="text-red-500">*</span>
+                  <label className="text-[11px] font-semibold text-white/80">
+                    Monthly Tuition Fee (৳ Tk / month) <span className="text-red-400">*</span>
                   </label>
-                  <span className="text-[10px] font-semibold text-teal-700 bg-teal-50 px-2 py-0.5 rounded border border-teal-200">
+                  <span className="text-[10px] font-semibold text-violet-300 bg-violet-500/10 px-2 py-0.5 rounded-full border border-violet-500/20">
                     Monthly Charge Only
                   </span>
                 </div>
                 <div className="relative">
-                  <span className="absolute left-3 top-2.5 text-xs text-teal-800 font-bold">৳</span>
+                  <span className="absolute left-3 top-2.5 text-xs text-violet-400 font-bold">৳</span>
                   <Input
                     type="number"
                     disabled={isLocked}
@@ -807,20 +807,20 @@ export default function TeacherApplicationPage() {
                       setPrice60Min(val);
                     }}
                     placeholder="e.g. 4000"
-                    className="h-9 pl-7 text-xs font-semibold font-mono"
+                    className="h-9 pl-7 text-xs font-semibold font-mono bg-white/5 border-white/15 text-white placeholder:text-white/40 focus:border-violet-400"
                   />
                 </div>
-                <p className="text-[11px] text-slate-400">
+                <p className="text-[11px] text-white/50">
                   Standard 1-on-1 monthly tuition charged to student for regular weekly live lessons.
                 </p>
               </div>
 
               <div className="space-y-1.5">
-                <label className="text-[11px] font-semibold text-slate-700">
+                <label className="text-[11px] font-semibold text-white/80">
                   Small Group Monthly Fee (৳ Tk / student)
                 </label>
                 <div className="relative">
-                  <span className="absolute left-3 top-2.5 text-xs text-teal-800 font-bold">৳</span>
+                  <span className="absolute left-3 top-2.5 text-xs text-violet-400 font-bold">৳</span>
                   <Input
                     type="number"
                     disabled={isLocked}
@@ -830,32 +830,32 @@ export default function TeacherApplicationPage() {
                     value={priceSmallGroup}
                     onChange={(e) => setPriceSmallGroup(Number(e.target.value))}
                     placeholder="e.g. 2500"
-                    className="h-9 pl-7 text-xs font-semibold font-mono"
+                    className="h-9 pl-7 text-xs font-semibold font-mono bg-white/5 border-white/15 text-white placeholder:text-white/40 focus:border-violet-400"
                   />
                 </div>
-                <p className="text-[11px] text-slate-400">
+                <p className="text-[11px] text-white/50">
                   Discounted monthly tuition rate per student for small group cohort batches.
                 </p>
               </div>
             </div>
 
             {/* Languages */}
-            <div className="space-y-2 pt-2 border-t border-stone-100">
-              <label className="text-xs font-semibold text-slate-700 flex items-center gap-1.5">
-                <Globe className="w-3.5 h-3.5 text-slate-400" /> Languages of Instruction
+            <div className="space-y-2 pt-2 border-t border-white/10">
+              <label className="text-xs font-semibold text-white/80 flex items-center gap-1.5">
+                <Globe className="w-3.5 h-3.5 text-white/50" /> Languages of Instruction
               </label>
               <div className="flex flex-wrap gap-1.5">
                 {languages.map((lang, idx) => (
                   <span
                     key={idx}
-                    className="inline-flex items-center gap-1 px-2.5 py-1 rounded-md bg-stone-100 border border-stone-200 text-slate-800 text-xs font-medium"
+                    className="inline-flex items-center gap-1 px-2.5 py-1 rounded-xl bg-white/10 border border-white/15 text-white text-xs font-medium"
                   >
                     {lang}
                     {!isLocked && (
                       <button
                         type="button"
                         onClick={() => setLanguages(languages.filter((_, i) => i !== idx))}
-                        className="text-slate-400 hover:text-red-500 ml-1"
+                        className="text-white/50 hover:text-red-400 ml-1"
                       >
                         ✕
                       </button>
@@ -878,7 +878,7 @@ export default function TeacherApplicationPage() {
                         }
                       }
                     }}
-                    className="h-8 text-xs"
+                    className="h-8 text-xs bg-white/5 border-white/15 text-white placeholder:text-white/40 focus:border-violet-400"
                   />
                   <Button
                     type="button"
@@ -890,7 +890,7 @@ export default function TeacherApplicationPage() {
                         setCustomLanguageInput("");
                       }
                     }}
-                    className="h-8 text-xs shrink-0"
+                    className="h-8 text-xs shrink-0 border-white/15 text-white hover:bg-white/10"
                   >
                     Add
                   </Button>
@@ -901,14 +901,14 @@ export default function TeacherApplicationPage() {
         </Card>
 
         {/* Section 4: Academic Credentials & Education History */}
-        <Card className="border border-stone-200 shadow-sm bg-white rounded-2xl">
-          <CardHeader className="pb-3 border-b border-stone-100 flex flex-row items-center justify-between">
+        <Card className="border border-white/12 shadow-[0_8px_32px_rgba(0,0,0,0.36),inset_0_1px_0_rgba(255,255,255,0.08)] bg-white/[0.04] backdrop-blur-xl rounded-3xl">
+          <CardHeader className="pb-3 border-b border-white/10 flex flex-row items-center justify-between">
             <div>
-              <CardTitle className="text-base font-bold text-slate-900 flex items-center gap-2">
-                <Award className="w-4 h-4 text-teal-600" />
+              <CardTitle className="text-base font-bold text-white flex items-center gap-2 font-display">
+                <Award className="w-4 h-4 text-violet-400" />
                 4. Academic Credentials & Teaching History
               </CardTitle>
-              <CardDescription className="text-xs text-slate-500">
+              <CardDescription className="text-xs text-white/60">
                 Verified university degrees, certificates, and years of educational background
               </CardDescription>
             </div>
@@ -918,17 +918,17 @@ export default function TeacherApplicationPage() {
                 size="sm"
                 variant="outline"
                 onClick={addEducationRow}
-                className="text-xs border-stone-200 h-8"
+                className="text-xs border-white/15 text-white hover:bg-white/10 h-8"
               >
-                <Plus className="w-3.5 h-3.5 mr-1 text-teal-600" /> Add Degree
+                <Plus className="w-3.5 h-3.5 mr-1 text-violet-400" /> Add Degree
               </Button>
             )}
           </CardHeader>
           <CardContent className="pt-5 space-y-4">
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div className="space-y-1.5">
-                <label className="text-xs font-semibold text-slate-700">
-                  Total Teaching Experience (Years) <span className="text-red-500">*</span>
+                <label className="text-xs font-semibold text-white/80">
+                  Total Teaching Experience (Years) <span className="text-red-400">*</span>
                 </label>
                 <Input
                   type="number"
@@ -937,40 +937,40 @@ export default function TeacherApplicationPage() {
                   max={50}
                   value={yearsExperience}
                   onChange={(e) => setYearsExperience(Number(e.target.value))}
-                  className="h-9 text-xs"
+                  className="h-9 text-xs bg-white/5 border-white/15 text-white placeholder:text-white/40 focus:border-violet-400"
                 />
               </div>
 
               <div className="space-y-1.5">
-                <label className="text-xs font-semibold text-slate-700">Current Position / Affiliation</label>
+                <label className="text-xs font-semibold text-white/80">Current Position / Affiliation</label>
                 <Input
                   disabled={isLocked}
                   value={currentPosition}
                   onChange={(e) => setCurrentPosition(e.target.value)}
                   placeholder="e.g., Mathematics Instructor / Independent Educator"
-                  className="h-9 text-xs"
+                  className="h-9 text-xs bg-white/5 border-white/15 text-white placeholder:text-white/40 focus:border-violet-400"
                 />
               </div>
             </div>
 
             {/* Dynamic Degrees List */}
             <div className="space-y-3 pt-2">
-              <label className="text-xs font-semibold text-slate-700 block">
-                Higher Education Degrees & Certifications <span className="text-red-500">*</span>
+              <label className="text-xs font-semibold text-white/80 block">
+                Higher Education Degrees & Certifications <span className="text-red-400">*</span>
               </label>
 
               {educationHistory.map((edu, idx) => (
                 <div
                   key={idx}
-                  className="p-3.5 rounded-xl border border-stone-200 bg-stone-50/60 space-y-2.5 relative"
+                  className="p-3.5 rounded-2xl border border-white/10 bg-white/[0.02] backdrop-blur-md space-y-2.5 relative"
                 >
-                  <div className="flex items-center justify-between text-xs font-bold text-slate-800">
+                  <div className="flex items-center justify-between text-xs font-bold text-white">
                     <span>Credential #{idx + 1}</span>
                     {!isLocked && educationHistory.length > 1 && (
                       <button
                         type="button"
                         onClick={() => removeEducationRow(idx)}
-                        className="text-red-500 hover:text-red-700 text-xs flex items-center gap-1"
+                        className="text-red-400 hover:text-red-300 text-xs flex items-center gap-1"
                       >
                         <Trash2 className="w-3.5 h-3.5" /> Remove
                       </button>
@@ -983,14 +983,14 @@ export default function TeacherApplicationPage() {
                       placeholder="Degree (e.g., M.S. in Applied Mathematics)"
                       value={edu.degree}
                       onChange={(e) => updateEducationRow(idx, "degree", e.target.value)}
-                      className="h-8 text-xs bg-white"
+                      className="h-8 text-xs bg-white/5 border-white/15 text-white placeholder:text-white/40 focus:border-violet-400"
                     />
                     <Input
                       disabled={isLocked}
                       placeholder="Institution (e.g., University of Cambridge)"
                       value={edu.institution}
                       onChange={(e) => updateEducationRow(idx, "institution", e.target.value)}
-                      className="h-8 text-xs bg-white"
+                      className="h-8 text-xs bg-white/5 border-white/15 text-white placeholder:text-white/40 focus:border-violet-400"
                     />
                   </div>
 
@@ -1000,7 +1000,7 @@ export default function TeacherApplicationPage() {
                       placeholder="Department / Major"
                       value={edu.department || ""}
                       onChange={(e) => updateEducationRow(idx, "department", e.target.value)}
-                      className="h-8 text-xs bg-white"
+                      className="h-8 text-xs bg-white/5 border-white/15 text-white placeholder:text-white/40 focus:border-violet-400"
                     />
                     <Input
                       disabled={isLocked}
@@ -1008,14 +1008,14 @@ export default function TeacherApplicationPage() {
                       placeholder="Year"
                       value={edu.passingYear || ""}
                       onChange={(e) => updateEducationRow(idx, "passingYear", Number(e.target.value))}
-                      className="h-8 text-xs bg-white"
+                      className="h-8 text-xs bg-white/5 border-white/15 text-white placeholder:text-white/40 focus:border-violet-400"
                     />
                     <Input
                       disabled={isLocked}
                       placeholder="Result / Honors"
                       value={edu.result || ""}
                       onChange={(e) => updateEducationRow(idx, "result", e.target.value)}
-                      className="h-8 text-xs bg-white"
+                      className="h-8 text-xs bg-white/5 border-white/15 text-white placeholder:text-white/40 focus:border-violet-400"
                     />
                   </div>
                 </div>
@@ -1025,19 +1025,19 @@ export default function TeacherApplicationPage() {
         </Card>
 
         {/* Section 5: Online Teaching Environment & Tools */}
-        <Card className="border border-stone-200 shadow-sm bg-white rounded-2xl">
-          <CardHeader className="pb-3 border-b border-stone-100">
-            <CardTitle className="text-base font-bold text-slate-900 flex items-center gap-2">
-              <Monitor className="w-4 h-4 text-teal-600" />
+        <Card className="border border-white/12 shadow-[0_8px_32px_rgba(0,0,0,0.36),inset_0_1px_0_rgba(255,255,255,0.08)] bg-white/[0.04] backdrop-blur-xl rounded-3xl">
+          <CardHeader className="pb-3 border-b border-white/10">
+            <CardTitle className="text-base font-bold text-white flex items-center gap-2 font-display">
+              <Monitor className="w-4 h-4 text-violet-400" />
               5. Online Teaching Setup & Equipment
             </CardTitle>
-            <CardDescription className="text-xs text-slate-500">
+            <CardDescription className="text-xs text-white/60">
               Confirm your audio-visual hardware and virtual classroom capabilities
             </CardDescription>
           </CardHeader>
           <CardContent className="pt-5 space-y-4">
             <div className="space-y-2">
-              <label className="text-xs font-semibold text-slate-700 block">
+              <label className="text-xs font-semibold text-white/80 block">
                 Hardware & Interactive Equipment Available
               </label>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
@@ -1049,15 +1049,15 @@ export default function TeacherApplicationPage() {
                       type="button"
                       disabled={isLocked}
                       onClick={() => toggleTool(tool)}
-                      className={`p-2 rounded-lg border text-left text-xs flex items-center justify-between transition-all ${
+                      className={`p-2 rounded-xl border text-left text-xs flex items-center justify-between transition-all ${
                         isChecked
-                          ? "bg-teal-50 border-teal-400 text-teal-900 font-semibold"
-                          : "bg-white border-stone-200 text-slate-700 hover:border-stone-300"
+                          ? "bg-violet-500/20 border-violet-400 text-white font-semibold"
+                          : "bg-white/[0.03] border-white/10 text-white/70 hover:border-white/20 hover:text-white"
                       }`}
                     >
                       <span>{tool}</span>
                       <CheckCircle2
-                        className={`w-3.5 h-3.5 ${isChecked ? "text-teal-600" : "text-stone-300"}`}
+                        className={`w-3.5 h-3.5 ${isChecked ? "text-violet-400" : "text-white/30"}`}
                       />
                     </button>
                   );
@@ -1065,8 +1065,8 @@ export default function TeacherApplicationPage() {
               </div>
             </div>
 
-            <div className="space-y-2 pt-2 border-t border-stone-100">
-              <label className="text-xs font-semibold text-slate-700 block">
+            <div className="space-y-2 pt-2 border-t border-white/10">
+              <label className="text-xs font-semibold text-white/80 block">
                 Supported Video Platforms
               </label>
               <div className="flex flex-wrap gap-1.5">
@@ -1078,10 +1078,10 @@ export default function TeacherApplicationPage() {
                       type="button"
                       disabled={isLocked}
                       onClick={() => togglePlatform(plat)}
-                      className={`text-xs px-2.5 py-1 rounded-md border font-medium transition-all ${
+                      className={`text-xs px-2.5 py-1 rounded-xl border font-medium transition-all ${
                         isChecked
-                          ? "bg-teal-600 text-white border-teal-600"
-                          : "bg-stone-50 text-slate-700 border-stone-200"
+                          ? "bg-gradient-to-r from-violet-600 to-indigo-600 text-white border-violet-500 shadow-sm"
+                          : "bg-white/5 text-white/80 border-white/10 hover:border-violet-400/50 hover:text-white"
                       }`}
                     >
                       {plat}
@@ -1094,44 +1094,44 @@ export default function TeacherApplicationPage() {
         </Card>
 
         {/* Section 6: Identity Verification & Government Documents */}
-        <Card className="border border-stone-200 shadow-sm bg-white rounded-2xl">
-          <CardHeader className="pb-3 border-b border-stone-100">
-            <CardTitle className="text-base font-bold text-slate-900 flex items-center gap-2">
-              <ShieldCheck className="w-4 h-4 text-teal-600" />
+        <Card className="border border-white/12 shadow-[0_8px_32px_rgba(0,0,0,0.36),inset_0_1px_0_rgba(255,255,255,0.08)] bg-white/[0.04] backdrop-blur-xl rounded-3xl">
+          <CardHeader className="pb-3 border-b border-white/10">
+            <CardTitle className="text-base font-bold text-white flex items-center gap-2 font-display">
+              <ShieldCheck className="w-4 h-4 text-violet-400" />
               6. Identity Document Verification (NID / Passport)
             </CardTitle>
-            <CardDescription className="text-xs text-slate-500">
+            <CardDescription className="text-xs text-white/60">
               Mandatory government verification documents required to unlock live classroom hosting
             </CardDescription>
           </CardHeader>
           <CardContent className="pt-5 space-y-5">
             {/* Government ID Number */}
             <div className="space-y-1.5 max-w-md">
-              <label className="text-xs font-semibold text-slate-700 flex items-center gap-1.5">
-                Government ID / Passport / NID Number <span className="text-red-500">*</span>
+              <label className="text-xs font-semibold text-white/80 flex items-center gap-1.5">
+                Government ID / Passport / NID Number <span className="text-red-400">*</span>
               </label>
               <Input
                 disabled={isLocked}
                 placeholder="e.g., 8492019482910"
                 value={nidNumber}
                 onChange={(e) => setNidNumber(e.target.value)}
-                className="h-10 text-xs font-mono font-semibold"
+                className="h-10 text-xs font-mono font-semibold bg-white/5 border-white/15 text-white placeholder:text-white/40 focus:border-violet-400"
               />
             </div>
 
             {/* Document Uploads Grid */}
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               {/* Front Document */}
-              <div className="p-4 rounded-xl border border-stone-200 bg-stone-50/50 space-y-2">
-                <label className="text-xs font-semibold text-slate-800 flex items-center justify-between">
-                  <span>Front ID Photo / Scan <span className="text-red-500">*</span></span>
-                  <span className="text-[10px] text-slate-400">PDF, JPG, PNG &lt; 10MB</span>
+              <div className="p-4 rounded-2xl border border-white/10 bg-white/[0.02] backdrop-blur-md space-y-2">
+                <label className="text-xs font-semibold text-white/90 flex items-center justify-between">
+                  <span>Front ID Photo / Scan <span className="text-red-400">*</span></span>
+                  <span className="text-[10px] text-white/40">PDF, JPG, PNG &lt; 10MB</span>
                 </label>
 
                 {frontDocUrl ? (
-                  <div className="p-3 bg-white rounded-lg border border-teal-200 flex items-center justify-between">
-                    <div className="flex items-center gap-2 text-xs text-teal-900 font-medium truncate">
-                      <FileText className="w-4 h-4 text-teal-600 shrink-0" />
+                  <div className="p-3 bg-white/5 rounded-xl border border-violet-500/30 flex items-center justify-between">
+                    <div className="flex items-center gap-2 text-xs text-white font-medium truncate">
+                      <FileText className="w-4 h-4 text-violet-400 shrink-0" />
                       <span className="truncate">{frontFileName || "Front_ID_Document.pdf"}</span>
                     </div>
                     {!isLocked && (
@@ -1141,23 +1141,23 @@ export default function TeacherApplicationPage() {
                           setFrontDocUrl("");
                           setFrontFileName("");
                         }}
-                        className="text-slate-400 hover:text-red-500 text-xs ml-2"
+                        className="text-white/40 hover:text-red-400 text-xs ml-2"
                       >
                         ✕
                       </button>
                     )}
                   </div>
                 ) : isUploadingDoc === "front" ? (
-                  <div className="flex flex-col items-center justify-center p-6 border-2 border-dashed border-teal-300 rounded-xl bg-teal-50/40 text-center">
-                    <Loader2 className="w-6 h-6 animate-spin text-teal-600 mb-1" />
-                    <span className="text-xs font-semibold text-teal-800">Uploading Front ID...</span>
-                    <span className="text-[10px] text-teal-600 mt-0.5">Encrypting and uploading to secure storage</span>
+                  <div className="flex flex-col items-center justify-center p-6 border-2 border-dashed border-violet-400/50 rounded-2xl bg-violet-500/10 text-center">
+                    <Loader2 className="w-6 h-6 animate-spin text-violet-400 mb-1" />
+                    <span className="text-xs font-semibold text-violet-200">Uploading Front ID...</span>
+                    <span className="text-[10px] text-violet-300/80 mt-0.5">Encrypting and uploading to secure storage</span>
                   </div>
                 ) : (
-                  <label className="flex flex-col items-center justify-center p-6 border-2 border-dashed border-stone-300 hover:border-teal-400 rounded-xl cursor-pointer bg-white transition-colors text-center">
-                    <Upload className="w-6 h-6 text-slate-400 mb-1" />
-                    <span className="text-xs font-semibold text-slate-700">Upload Front Side</span>
-                    <span className="text-[10px] text-slate-400 mt-0.5">Click or drag & drop</span>
+                  <label className="flex flex-col items-center justify-center p-6 border-2 border-dashed border-white/20 hover:border-violet-400 rounded-2xl cursor-pointer bg-white/[0.02] hover:bg-white/[0.05] transition-colors text-center">
+                    <Upload className="w-6 h-6 text-white/40 mb-1" />
+                    <span className="text-xs font-semibold text-white/80">Upload Front Side</span>
+                    <span className="text-[10px] text-white/40 mt-0.5">Click or drag & drop</span>
                     <input
                       type="file"
                       disabled={isLocked}
@@ -1170,16 +1170,16 @@ export default function TeacherApplicationPage() {
               </div>
 
               {/* Back Document */}
-              <div className="p-4 rounded-xl border border-stone-200 bg-stone-50/50 space-y-2">
-                <label className="text-xs font-semibold text-slate-800 flex items-center justify-between">
+              <div className="p-4 rounded-2xl border border-white/10 bg-white/[0.02] backdrop-blur-md space-y-2">
+                <label className="text-xs font-semibold text-white/90 flex items-center justify-between">
                   <span>Back ID Photo / Scan (Optional)</span>
-                  <span className="text-[10px] text-slate-400">PDF, JPG, PNG &lt; 10MB</span>
+                  <span className="text-[10px] text-white/40">PDF, JPG, PNG &lt; 10MB</span>
                 </label>
 
                 {backDocUrl ? (
-                  <div className="p-3 bg-white rounded-lg border border-teal-200 flex items-center justify-between">
-                    <div className="flex items-center gap-2 text-xs text-teal-900 font-medium truncate">
-                      <FileText className="w-4 h-4 text-teal-600 shrink-0" />
+                  <div className="p-3 bg-white/5 rounded-xl border border-violet-500/30 flex items-center justify-between">
+                    <div className="flex items-center gap-2 text-xs text-white font-medium truncate">
+                      <FileText className="w-4 h-4 text-violet-400 shrink-0" />
                       <span className="truncate">{backFileName || "Back_ID_Document.pdf"}</span>
                     </div>
                     {!isLocked && (
@@ -1189,23 +1189,23 @@ export default function TeacherApplicationPage() {
                           setBackDocUrl("");
                           setBackFileName("");
                         }}
-                        className="text-slate-400 hover:text-red-500 text-xs ml-2"
+                        className="text-white/40 hover:text-red-400 text-xs ml-2"
                       >
                         ✕
                       </button>
                     )}
                   </div>
                 ) : isUploadingDoc === "back" ? (
-                  <div className="flex flex-col items-center justify-center p-6 border-2 border-dashed border-teal-300 rounded-xl bg-teal-50/40 text-center">
-                    <Loader2 className="w-6 h-6 animate-spin text-teal-600 mb-1" />
-                    <span className="text-xs font-semibold text-teal-800">Uploading Back ID...</span>
-                    <span className="text-[10px] text-teal-600 mt-0.5">Encrypting and uploading to secure storage</span>
+                  <div className="flex flex-col items-center justify-center p-6 border-2 border-dashed border-violet-400/50 rounded-2xl bg-violet-500/10 text-center">
+                    <Loader2 className="w-6 h-6 animate-spin text-violet-400 mb-1" />
+                    <span className="text-xs font-semibold text-violet-200">Uploading Back ID...</span>
+                    <span className="text-[10px] text-violet-300/80 mt-0.5">Encrypting and uploading to secure storage</span>
                   </div>
                 ) : (
-                  <label className="flex flex-col items-center justify-center p-6 border-2 border-dashed border-stone-300 hover:border-teal-400 rounded-xl cursor-pointer bg-white transition-colors text-center">
-                    <Upload className="w-6 h-6 text-slate-400 mb-1" />
-                    <span className="text-xs font-semibold text-slate-700">Upload Back Side</span>
-                    <span className="text-[10px] text-slate-400 mt-0.5">Click or drag & drop</span>
+                  <label className="flex flex-col items-center justify-center p-6 border-2 border-dashed border-white/20 hover:border-violet-400 rounded-2xl cursor-pointer bg-white/[0.02] hover:bg-white/[0.05] transition-colors text-center">
+                    <Upload className="w-6 h-6 text-white/40 mb-1" />
+                    <span className="text-xs font-semibold text-white/80">Upload Back Side</span>
+                    <span className="text-[10px] text-white/40 mt-0.5">Click or drag & drop</span>
                     <input
                       type="file"
                       disabled={isLocked}
@@ -1219,19 +1219,19 @@ export default function TeacherApplicationPage() {
             </div>
 
             {/* Privacy note */}
-            <div className="p-3 bg-slate-50 rounded-xl border border-stone-200/80 flex items-start gap-2.5 text-[11px] text-slate-600">
-              <Lock className="w-4 h-4 text-slate-400 shrink-0 mt-0.5" />
+            <div className="p-3 bg-white/[0.03] rounded-2xl border border-white/10 flex items-start gap-2.5 text-[11px] text-white/60">
+              <Lock className="w-4 h-4 text-white/40 shrink-0 mt-0.5" />
               <span>
-                <strong>Data Privacy Guarantee:</strong> Government identity documents are strictly encrypted and used exclusively by Virtual Tutor Pro compliance officers to verify credentials and ensure trust & safety. Documents are never exposed to students or third parties.
+                <strong className="text-white/80">Data Privacy Guarantee:</strong> Government identity documents are strictly encrypted and used exclusively by Virtual Tutor Pro compliance officers to verify credentials and ensure trust & safety. Documents are never exposed to students or third parties.
               </span>
             </div>
           </CardContent>
         </Card>
 
         {/* Action Controls Bar */}
-        <div className="bg-white rounded-2xl border border-stone-200 shadow-sm p-4 sm:p-6 flex flex-col sm:flex-row items-center justify-between gap-4 sticky bottom-4 z-20">
-          <div className="flex items-center gap-2 text-xs text-slate-500">
-            <Info className="w-4 h-4 text-teal-600" />
+        <div className="bg-slate-950/80 backdrop-blur-2xl border border-white/15 shadow-2xl rounded-3xl p-4 sm:p-6 flex flex-col sm:flex-row items-center justify-between gap-4 sticky bottom-4 z-20">
+          <div className="flex items-center gap-2 text-xs text-white/60">
+            <Info className="w-4 h-4 text-violet-400" />
             <span>
               {isLocked
                 ? "Application is currently locked for review."
@@ -1246,7 +1246,7 @@ export default function TeacherApplicationPage() {
                 variant="outline"
                 disabled={isSavingDraft || isSubmitting}
                 onClick={handleSaveDraft}
-                className="flex-1 sm:flex-none border-stone-200 text-slate-700 h-10 text-xs font-semibold"
+                className="flex-1 sm:flex-none border-white/20 text-white hover:bg-white/10 h-10 text-xs font-semibold"
               >
                 {isSavingDraft ? (
                   <Loader2 className="w-3.5 h-3.5 mr-1.5 animate-spin" />
@@ -1262,7 +1262,7 @@ export default function TeacherApplicationPage() {
                 type="button"
                 disabled={isSubmitting || isSavingDraft}
                 onClick={handleSubmitApplication}
-                className="flex-1 sm:flex-none bg-teal-600 hover:bg-teal-700 text-white h-10 text-xs font-semibold shadow-xs"
+                className="flex-1 sm:flex-none bg-gradient-to-r from-violet-600 to-indigo-600 hover:from-violet-500 hover:to-indigo-500 text-white h-10 text-xs font-semibold shadow-[0_0_20px_rgba(139,92,246,0.3)]"
               >
                 {isSubmitting ? (
                   <>
@@ -1283,7 +1283,7 @@ export default function TeacherApplicationPage() {
             {verificationStatus === "verified" && (
               <Button
                 onClick={() => navigate("/teacher-dashboard")}
-                className="w-full sm:w-auto bg-teal-600 hover:bg-teal-700 text-white h-10 text-xs font-semibold"
+                className="w-full sm:w-auto bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white h-10 text-xs font-semibold shadow-lg shadow-emerald-950/30"
               >
                 Go to Teacher Dashboard <ArrowRight className="w-3.5 h-3.5 ml-1.5" />
               </Button>

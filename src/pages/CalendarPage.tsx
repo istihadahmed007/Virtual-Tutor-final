@@ -33,14 +33,14 @@ export default function CalendarPage() {
   };
 
   return (
-    <main className="min-h-screen bg-[#F5F4EF] text-[#111111] pb-24">
-      <header className="bg-white/80 backdrop-blur-xs border-b border-[#E5E4DE] sticky top-0 z-20">
+    <main className="min-h-screen bg-transparent text-white pb-24 relative z-10">
+      <header className="bg-slate-950/40 backdrop-blur-xl border-b border-white/10 sticky top-0 z-20">
         <div className="max-w-5xl mx-auto px-4 sm:px-6 py-6">
           <Button
             variant="ghost"
             size="sm"
             onClick={() => navigate("/dashboard")}
-            className="mb-3 text-[#111111]/70 hover:text-[#111111] hover:bg-white rounded-full text-xs font-semibold gap-2"
+            className="mb-3 text-white/70 hover:text-white hover:bg-white/10 rounded-full text-xs font-semibold gap-2 border border-white/10"
           >
             <ArrowLeft className="w-4 h-4" />
             Dashboard
@@ -48,7 +48,7 @@ export default function CalendarPage() {
           <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4">
             <div>
               <SectionLabel label="ACADEMIC SCHEDULE" />
-              <h1 className="text-3xl sm:text-4xl font-bold tracking-tight text-[#111111] font-display mt-1">
+              <h1 className="text-3xl sm:text-4xl font-bold tracking-tight text-white font-display mt-1">
                 Calendar & Sessions
               </h1>
             </div>
@@ -57,21 +57,21 @@ export default function CalendarPage() {
       </header>
 
       <div className="max-w-5xl mx-auto px-4 sm:px-6 py-8 space-y-8">
-        <div className="bg-white rounded-3xl border border-[#E5E4DE] p-6 sm:p-8 shadow-xs">
+        <div className="bg-white/[0.04] backdrop-blur-xl rounded-3xl border border-white/12 p-6 sm:p-8 shadow-[0_8px_32px_rgba(0,0,0,0.36),inset_0_1px_0_rgba(255,255,255,0.08)]">
           {/* Month Navigation */}
-          <div className="flex items-center justify-between mb-8 pb-4 border-b border-[#E5E4DE]">
+          <div className="flex items-center justify-between mb-8 pb-4 border-b border-white/10">
             <button
               onClick={prevMonth}
-              className="p-2.5 hover:bg-[#F5F4EF] rounded-full border border-[#E5E4DE] text-[#111111] transition-colors"
+              className="p-2.5 hover:bg-white/10 rounded-full border border-white/15 text-white transition-colors"
             >
               <ChevronLeft className="w-5 h-5" />
             </button>
-            <h2 className="text-xl font-bold text-[#111111] font-display">
+            <h2 className="text-xl font-bold text-white font-display">
               {currentDate.toLocaleDateString("en-US", { month: "long", year: "numeric" })}
             </h2>
             <button
               onClick={nextMonth}
-              className="p-2.5 hover:bg-[#F5F4EF] rounded-full border border-[#E5E4DE] text-[#111111] transition-colors"
+              className="p-2.5 hover:bg-white/10 rounded-full border border-white/15 text-white transition-colors"
             >
               <ChevronRight className="w-5 h-5" />
             </button>
@@ -80,7 +80,7 @@ export default function CalendarPage() {
           {/* Day headers */}
           <div className="grid grid-cols-7 gap-2 mb-3">
             {["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"].map((d) => (
-              <div key={d} className="text-center text-xs font-bold text-[#111111]/50 py-2 font-display uppercase tracking-wider">
+              <div key={d} className="text-center text-xs font-bold text-white/40 py-2 font-display uppercase tracking-wider">
                 {d}
               </div>
             ))}
@@ -98,22 +98,22 @@ export default function CalendarPage() {
               return (
                 <div
                   key={day}
-                  className={`aspect-square p-2 rounded-2xl border transition-all flex flex-col justify-between ${
+                  className={`aspect-square p-2.5 rounded-2xl border transition-all flex flex-col justify-between ${
                     isToday
-                      ? "border-[#111111] bg-[#F5F4EF] font-bold"
-                      : "border-[#E5E4DE]/70 hover:border-[#111111]/40"
-                  } ${dayLessons.length > 0 ? "cursor-pointer bg-white" : ""}`}
+                      ? "border-violet-400 bg-violet-600/20 text-white font-bold shadow-[0_0_15px_rgba(139,92,246,0.3)]"
+                      : "border-white/10 hover:border-white/30 bg-white/[0.02]"
+                  } ${dayLessons.length > 0 ? "cursor-pointer bg-white/[0.06] hover:bg-white/10" : ""}`}
                 >
-                  <div className={`text-xs ${isToday ? "text-[#111111] font-bold" : "text-[#111111]/70"}`}>
+                  <div className={`text-xs ${isToday ? "text-violet-300 font-bold" : "text-white/70"}`}>
                     {day}
                   </div>
                   {dayLessons.length > 0 && (
                     <div className="mt-auto space-y-1">
                       {dayLessons.slice(0, 2).map((l) => (
-                        <div key={l._id} className="w-full h-1.5 bg-[#F26522] rounded-full" />
+                        <div key={l._id} className="w-full h-1.5 bg-gradient-to-r from-violet-500 to-indigo-500 rounded-full" />
                       ))}
                       {dayLessons.length > 2 && (
-                        <p className="text-[9px] text-[#F26522] font-bold">+{dayLessons.length - 2}</p>
+                        <p className="text-[9px] text-violet-400 font-bold">+{dayLessons.length - 2}</p>
                       )}
                     </div>
                   )}
@@ -126,29 +126,28 @@ export default function CalendarPage() {
         {/* Upcoming list */}
         {lessonList.length > 0 && (
           <div className="space-y-4">
-            <h3 className="text-lg font-bold text-[#111111] font-display">Upcoming Confirmed Lessons</h3>
+            <h3 className="text-lg font-bold text-white font-display">Upcoming Confirmed Lessons</h3>
             <div className="space-y-3">
               {lessonList.slice(0, 5).map((l) => {
                 const date = new Date(l.scheduledAt);
                 return (
                   <div
                     key={l._id}
-                    className="bg-white rounded-3xl border border-[#E5E4DE] p-5 flex items-center gap-4 cursor-pointer hover:border-[#111111] transition-all shadow-xs"
+                    className="bg-white/[0.04] backdrop-blur-xl rounded-3xl border border-white/12 p-5 flex items-center gap-4 cursor-pointer hover:border-violet-400/40 hover:bg-white/[0.07] transition-all shadow-[0_8px_32px_rgba(0,0,0,0.36),inset_0_1px_0_rgba(255,255,255,0.08)] group"
                     onClick={() => navigate(`/classroom/${l._id}`)}
                   >
-                    <div className="w-12 h-12 rounded-2xl bg-[#F5F4EF] border border-[#E5E4DE] flex items-center justify-center shrink-0">
-                      <Video className="w-5 h-5 text-[#F26522]" />
+                    <div className="w-12 h-12 rounded-2xl bg-white/10 border border-white/15 flex items-center justify-center shrink-0 text-violet-400 group-hover:bg-gradient-to-r group-hover:from-violet-600 group-hover:to-indigo-600 group-hover:text-white transition-all">
+                      <Video className="w-5 h-5" />
                     </div>
                     <div className="flex-1 min-w-0">
-                      <p className="text-sm font-bold text-[#111111] font-display truncate">{l.title}</p>
-                      <p className="text-xs text-[#111111]/60 mt-0.5">
+                      <p className="text-sm font-bold text-white font-display truncate group-hover:text-violet-300 transition-colors">{l.title}</p>
+                      <p className="text-xs text-white/60 mt-0.5">
                         {l.teacherName} • {date.toLocaleDateString()} {date.toLocaleTimeString("en-US", { hour: "2-digit", minute: "2-digit" })}
                       </p>
                     </div>
                     <Button
-                      variant="outline"
                       size="sm"
-                      className="rounded-full border-[#E5E4DE] text-xs font-semibold hover:bg-[#111111] hover:text-white transition-colors"
+                      className="rounded-full bg-gradient-to-r from-violet-600 to-indigo-600 hover:from-violet-500 hover:to-indigo-500 text-white text-xs font-semibold px-4 py-1.5 shadow-[0_0_12px_rgba(139,92,246,0.3)] transition-all"
                     >
                       Enter Room
                     </Button>

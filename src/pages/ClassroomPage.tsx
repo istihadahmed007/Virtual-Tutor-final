@@ -505,14 +505,14 @@ export default function ClassroomPage() {
       />
 
       {/* ─── PRIMARY MODE SELECTOR (Video Call vs Whiteboard) ──────── */}
-      <div className="bg-[#111111] border-b border-white/10 px-3 sm:px-4 py-2 flex items-center justify-between gap-2 shrink-0 z-20">
+      <div className="bg-slate-950/60 backdrop-blur-xl border-b border-white/10 px-3 sm:px-4 py-2 flex items-center justify-between gap-2 shrink-0 z-20">
         <div className="flex items-center gap-2">
           <button
             onClick={() => setViewMode("grid")}
             className={`px-3.5 py-1.5 rounded-full text-xs font-semibold flex items-center gap-1.5 transition-all cursor-pointer ${
               viewMode === "grid"
-                ? "bg-[#F26522] text-white shadow-xs"
-                : "bg-white/10 text-white/70 hover:bg-white/20 hover:text-white"
+                ? "bg-gradient-to-r from-violet-600 to-indigo-600 text-white shadow-[0_0_12px_rgba(139,92,246,0.3)] border border-violet-400/30"
+                : "bg-white/10 text-white/70 hover:bg-white/20 hover:text-white border border-white/10"
             }`}
           >
             <Video className="w-3.5 h-3.5" />
@@ -523,8 +523,8 @@ export default function ClassroomPage() {
             onClick={() => setViewMode("whiteboard")}
             className={`px-3.5 py-1.5 rounded-full text-xs font-semibold flex items-center gap-1.5 transition-all cursor-pointer ${
               viewMode !== "grid"
-                ? "bg-[#F26522] text-white shadow-xs"
-                : "bg-white/10 text-white/70 hover:bg-white/20 hover:text-white"
+                ? "bg-gradient-to-r from-violet-600 to-indigo-600 text-white shadow-[0_0_12px_rgba(139,92,246,0.3)] border border-violet-400/30"
+                : "bg-white/10 text-white/70 hover:bg-white/20 hover:text-white border border-white/10"
             }`}
           >
             <PenTool className="w-3.5 h-3.5" />
@@ -534,14 +534,14 @@ export default function ClassroomPage() {
 
         <div className="flex items-center gap-2">
           {viewMode === "grid" ? (
-            <span className="text-[11px] text-[#F26522] flex items-center gap-1.5 font-semibold bg-[#F26522]/10 px-2.5 py-1 rounded-full border border-[#F26522]/20">
-              <span className="w-2 h-2 rounded-full bg-[#F26522] animate-pulse" />
+            <span className="text-[11px] text-violet-300 flex items-center gap-1.5 font-semibold bg-violet-500/15 px-2.5 py-1 rounded-full border border-violet-500/25">
+              <span className="w-2 h-2 rounded-full bg-violet-400 animate-pulse" />
               <span>Full Video Call Active</span>
             </span>
           ) : (
             <button
               onClick={() => setViewMode("grid")}
-              className="text-[11px] text-white/70 hover:text-white font-medium bg-white/10 px-2.5 py-1 rounded-full transition-colors cursor-pointer"
+              className="text-[11px] text-white/70 hover:text-white font-medium bg-white/10 px-2.5 py-1 rounded-full border border-white/10 transition-colors cursor-pointer"
             >
               Switch to Video Call
             </button>

@@ -158,9 +158,9 @@ export default function TeacherProfilePage() {
 
   if (isLoading) {
     return (
-      <main className="min-h-screen bg-[#FAFAF8] flex items-center justify-center">
-        <div className="flex items-center gap-2 text-slate-500 text-sm font-medium">
-          <Loader2 className="w-4 h-4 animate-spin text-teal-600" />
+      <main className="min-h-screen bg-transparent flex items-center justify-center text-white">
+        <div className="flex items-center gap-2 text-white/70 text-sm font-medium p-4 rounded-2xl bg-white/5 backdrop-blur-xl border border-white/10">
+          <Loader2 className="w-4 h-4 animate-spin text-violet-400" />
           <span>Loading educator profile...</span>
         </div>
       </main>
@@ -169,14 +169,16 @@ export default function TeacherProfilePage() {
 
   if (!teacher) {
     return (
-      <main className="min-h-screen bg-[#FAFAF8] flex items-center justify-center p-6">
-        <EmptyState
-          icon={Users}
-          title="Educator profile not found"
-          description="This teacher profile doesn't exist or is undergoing verification."
-          actionLabel="Browse Verified Teachers"
-          actionPath="/teachers"
-        />
+      <main className="min-h-screen bg-transparent flex items-center justify-center p-6 text-white">
+        <div className="p-8 rounded-3xl bg-white/[0.04] backdrop-blur-xl border border-white/12 shadow-[0_8px_32px_rgba(0,0,0,0.36)] max-w-md w-full">
+          <EmptyState
+            icon={Users}
+            title="Educator profile not found"
+            description="This teacher profile doesn't exist or is undergoing verification."
+            actionLabel="Browse Verified Teachers"
+            actionPath="/teachers"
+          />
+        </div>
       </main>
     );
   }
@@ -259,7 +261,7 @@ export default function TeacherProfilePage() {
   };
 
   return (
-    <main className="min-h-screen bg-[#F8FAFC] text-[#0F172A] pb-24">
+    <main className="min-h-screen bg-transparent text-white pb-24">
       <SEO
         title={`${teacher.name} - ${teacher.title || teacher.subjects.join(", ") || "Educator"}`}
         description={
@@ -279,13 +281,13 @@ export default function TeacherProfilePage() {
         }}
       />
       {/* Top Navigation Bar */}
-      <header className="bg-white/90 backdrop-blur-md border-b border-slate-200 sticky top-0 z-20">
-        <div className="max-w-6xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between">
+      <header className="bg-slate-950/40 backdrop-blur-xl border-b border-white/10 sticky top-0 z-20">
+        <div className="max-w-6xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between text-white">
           <Button
             variant="ghost"
             size="sm"
             onClick={() => navigate("/teachers")}
-            className="gap-2 text-slate-600 hover:text-[#0F172A] hover:bg-slate-100 rounded-full text-xs font-semibold cursor-pointer"
+            className="gap-2 text-white/70 hover:text-white hover:bg-white/10 rounded-full text-xs font-semibold cursor-pointer"
           >
             <ArrowLeft className="w-4 h-4" />
             <span>Faculty Directory</span>
@@ -297,9 +299,9 @@ export default function TeacherProfilePage() {
               size="sm"
               onClick={handleStartChat}
               disabled={isStartingChat}
-              className="gap-2 border-slate-200 text-slate-700 hover:bg-slate-50 rounded-full text-xs font-semibold px-4 h-9 cursor-pointer"
+              className="gap-2 border-white/15 bg-white/5 text-white/80 hover:bg-white/10 hover:text-white rounded-full text-xs font-semibold px-4 h-9 cursor-pointer"
             >
-              <MessageCircle className="w-3.5 h-3.5 text-[#6D5DFB]" />
+              <MessageCircle className="w-3.5 h-3.5 text-violet-400" />
               <span>{isStartingChat ? "Connecting..." : "Message"}</span>
             </Button>
 
@@ -309,7 +311,7 @@ export default function TeacherProfilePage() {
                 const el = document.getElementById("availability");
                 if (el) el.scrollIntoView({ behavior: "smooth" });
               }}
-              className="bg-[#312E81] hover:bg-[#6D5DFB] text-white gap-2 rounded-full text-xs font-bold px-4 h-9 shadow-xs transition-all cursor-pointer"
+              className="bg-gradient-to-r from-violet-600 to-indigo-600 hover:from-violet-500 hover:to-indigo-500 text-white gap-2 rounded-full text-xs font-bold px-4 h-9 shadow-[0_4px_16px_rgba(109,93,251,0.35)] transition-all cursor-pointer"
             >
               <Calendar className="w-3.5 h-3.5" />
               <span>Reserve Session</span>
@@ -328,26 +330,26 @@ export default function TeacherProfilePage() {
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           <div className="lg:col-span-2 space-y-8">
             {/* About / Bio Card */}
-            <Card className="border-slate-200 bg-white rounded-3xl shadow-xs">
-              <CardHeader className="pb-4 border-b border-slate-100">
-                <CardTitle className="text-base text-[#0F172A] font-bold flex items-center gap-2 font-display">
-                  <BookOpen className="w-4 h-4 text-[#6D5DFB]" />
+            <Card className="border-white/12 bg-white/[0.04] backdrop-blur-xl rounded-3xl shadow-[0_8px_32px_rgba(0,0,0,0.36),inset_0_1px_0_rgba(255,255,255,0.08)] text-white">
+              <CardHeader className="pb-4 border-b border-white/10">
+                <CardTitle className="text-base text-white font-bold flex items-center gap-2 font-display">
+                  <BookOpen className="w-4 h-4 text-violet-400" />
                   <span>Academic Approach & Pedagogy</span>
                 </CardTitle>
               </CardHeader>
-              <CardContent className="pt-6 space-y-6 text-sm text-slate-600 leading-relaxed">
+              <CardContent className="pt-6 space-y-6 text-sm text-white/75 leading-relaxed">
                 <p>{teacher.bio}</p>
 
                 {/* Subject Fit & Expertise Tags */}
                 <div>
-                  <h4 className="text-xs font-bold uppercase tracking-wider text-slate-400 mb-3">
+                  <h4 className="text-xs font-bold uppercase tracking-wider text-white/40 mb-3">
                     Disciplines & Coursework
                   </h4>
                   <div className="flex flex-wrap gap-2">
                     {teacher.subjects.map((sub) => (
                       <span
                         key={sub}
-                        className="px-3.5 py-1.5 rounded-full text-xs font-semibold bg-slate-50 text-[#0F172A] border border-slate-200"
+                        className="px-3.5 py-1.5 rounded-full text-xs font-semibold bg-white/10 text-white border border-white/15 shadow-sm"
                       >
                         {sub}
                       </span>
@@ -358,14 +360,14 @@ export default function TeacherProfilePage() {
                 {/* Class Levels & Target Curriculums */}
                 {teacher.classLevels && teacher.classLevels.length > 0 && (
                   <div>
-                    <h4 className="text-xs font-bold uppercase tracking-wider text-slate-400 mb-3">
+                    <h4 className="text-xs font-bold uppercase tracking-wider text-white/40 mb-3">
                       Target Academic Levels
                     </h4>
                     <div className="flex flex-wrap gap-2">
                       {teacher.classLevels.map((lvl) => (
                         <span
                           key={lvl}
-                          className="px-3.5 py-1.5 rounded-full text-xs font-medium bg-white text-slate-600 border border-slate-200"
+                          className="px-3.5 py-1.5 rounded-full text-xs font-medium bg-white/5 text-white/70 border border-white/10"
                         >
                           {lvl}
                         </span>
@@ -378,15 +380,15 @@ export default function TeacherProfilePage() {
 
             {/* Intro Video Card if present */}
             {teacher.introVideoUrl && (
-              <Card className="border-slate-200 bg-white rounded-3xl overflow-hidden shadow-xs">
-                <CardHeader className="pb-4 border-b border-slate-100">
-                  <CardTitle className="text-base flex items-center gap-2 text-[#0F172A] font-bold font-display">
-                    <Video className="w-4 h-4 text-[#6D5DFB]" />
+              <Card className="border-white/12 bg-white/[0.04] backdrop-blur-xl rounded-3xl overflow-hidden shadow-[0_8px_32px_rgba(0,0,0,0.36),inset_0_1px_0_rgba(255,255,255,0.08)] text-white">
+                <CardHeader className="pb-4 border-b border-white/10">
+                  <CardTitle className="text-base flex items-center gap-2 text-white font-bold font-display">
+                    <Video className="w-4 h-4 text-violet-400" />
                     <span>Introductory Video Lecture</span>
                   </CardTitle>
                 </CardHeader>
                 <CardContent className="pt-6">
-                  <div className="relative rounded-2xl overflow-hidden bg-black aspect-video">
+                  <div className="relative rounded-2xl overflow-hidden bg-black/60 border border-white/10 aspect-video">
                     <video
                       src={teacher.introVideoUrl}
                       controls
@@ -398,10 +400,10 @@ export default function TeacherProfilePage() {
             )}
 
             {/* Verified Education & Credentials */}
-            <Card className="border-slate-200 bg-white rounded-3xl shadow-xs">
-              <CardHeader className="pb-4 border-b border-slate-100">
-                <CardTitle className="text-base text-[#0F172A] font-bold flex items-center gap-2 font-display">
-                  <GraduationCap className="w-4 h-4 text-[#6D5DFB]" />
+            <Card className="border-white/12 bg-white/[0.04] backdrop-blur-xl rounded-3xl shadow-[0_8px_32px_rgba(0,0,0,0.36),inset_0_1px_0_rgba(255,255,255,0.08)] text-white">
+              <CardHeader className="pb-4 border-b border-white/10">
+                <CardTitle className="text-base text-white font-bold flex items-center gap-2 font-display">
+                  <GraduationCap className="w-4 h-4 text-violet-400" />
                   <span>Verified Credentials & Honors</span>
                 </CardTitle>
               </CardHeader>
@@ -411,37 +413,37 @@ export default function TeacherProfilePage() {
                     {teacher.education.map((edu, idx) => (
                       <div
                         key={idx}
-                        className="flex items-start gap-3.5 p-4 rounded-2xl bg-slate-50 border border-slate-200 text-xs"
+                        className="flex items-start gap-3.5 p-4 rounded-2xl bg-white/5 border border-white/10 text-xs"
                       >
-                        <div className="h-9 w-9 rounded-xl bg-[#312E81] text-white flex items-center justify-center shrink-0">
+                        <div className="h-9 w-9 rounded-xl bg-violet-600/30 border border-violet-400/30 text-violet-300 flex items-center justify-center shrink-0">
                           <GraduationCap className="w-4 h-4" />
                         </div>
                         <div>
-                          <p className="font-bold text-[#0F172A] text-sm font-display">{edu.degree}</p>
-                          <p className="text-slate-600 font-medium">{edu.institution}</p>
-                          <p className="text-slate-400 mt-0.5">
+                          <p className="font-bold text-white text-sm font-display">{edu.degree}</p>
+                          <p className="text-white/70 font-medium">{edu.institution}</p>
+                          <p className="text-white/40 mt-0.5">
                             {edu.department ? `${edu.department} · ` : ""}
                             {edu.passingYear ? `Class of ${edu.passingYear}` : ""}
                           </p>
                           {edu.result && (
-                            <p className="text-teal-700 font-semibold mt-1">Honors: {edu.result}</p>
+                            <p className="text-teal-400 font-semibold mt-1">Honors: {edu.result}</p>
                           )}
                         </div>
                       </div>
                     ))}
                   </div>
                 ) : (
-                  <p className="text-xs text-slate-400 italic">Academic degrees verified by administration.</p>
+                  <p className="text-xs text-white/40 italic">Academic degrees verified by administration.</p>
                 )}
               </CardContent>
             </Card>
 
             {/* Reviews Section */}
-            <Card className="border-slate-200 bg-white rounded-3xl shadow-xs">
-              <CardHeader className="pb-4 border-b border-slate-100">
-                <CardTitle className="text-base text-[#0F172A] font-bold flex items-center justify-between font-display">
+            <Card className="border-white/12 bg-white/[0.04] backdrop-blur-xl rounded-3xl shadow-[0_8px_32px_rgba(0,0,0,0.36),inset_0_1px_0_rgba(255,255,255,0.08)] text-white">
+              <CardHeader className="pb-4 border-b border-white/10">
+                <CardTitle className="text-base text-white font-bold flex items-center justify-between font-display">
                   <span>Student Evaluations ({teacher.reviewCount})</span>
-                  <span className="text-xs font-bold text-[#0F172A] flex items-center gap-1.5">
+                  <span className="text-xs font-bold text-white flex items-center gap-1.5">
                     <Star className="w-3.5 h-3.5 fill-amber-400 text-amber-400" />
                     <span>{teacher.rating.toFixed(2)} / 5.0</span>
                   </span>
@@ -452,10 +454,10 @@ export default function TeacherProfilePage() {
                 {reviewEligibility?.canReview ? (
                   <form
                     onSubmit={handleSubmitReview}
-                    className="p-5 bg-slate-50 border border-slate-200 rounded-3xl space-y-4"
+                    className="p-5 bg-white/[0.03] border border-white/10 rounded-3xl space-y-4"
                   >
                     <div className="flex items-center justify-between">
-                      <h4 className="text-sm font-bold text-[#0F172A] font-display">Submit Course Evaluation</h4>
+                      <h4 className="text-sm font-bold text-white font-display">Submit Course Evaluation</h4>
                       <div className="flex items-center gap-1">
                         {[1, 2, 3, 4, 5].map((star) => (
                           <button
@@ -468,7 +470,7 @@ export default function TeacherProfilePage() {
                               className={`w-5 h-5 ${
                                 star <= ratingInput
                                   ? "fill-amber-400 text-amber-400"
-                                  : "text-slate-200"
+                                  : "text-white/20"
                               }`}
                             />
                           </button>
@@ -480,7 +482,7 @@ export default function TeacherProfilePage() {
                       onChange={(e) => setCommentInput(e.target.value)}
                       placeholder="Detail your learning outcome and instructor effectiveness..."
                       rows={3}
-                      className="w-full p-3.5 bg-white border border-slate-200 rounded-2xl text-sm text-[#0F172A] placeholder:text-slate-400 focus:outline-none focus:border-[#6D5DFB]"
+                      className="w-full p-3.5 bg-white/5 border border-white/12 rounded-2xl text-sm text-white placeholder:text-white/40 focus:outline-none focus:border-violet-400"
                       required
                     />
                     <div className="flex justify-end">
@@ -488,7 +490,7 @@ export default function TeacherProfilePage() {
                         type="submit"
                         disabled={isSubmittingReview}
                         size="sm"
-                        className="bg-[#312E81] hover:bg-[#6D5DFB] text-white gap-2 rounded-full font-semibold text-xs px-5 h-9 cursor-pointer"
+                        className="bg-gradient-to-r from-violet-600 to-indigo-600 hover:from-violet-500 hover:to-indigo-500 text-white gap-2 rounded-full font-semibold text-xs px-5 h-9 shadow-[0_4px_16px_rgba(109,93,251,0.35)] cursor-pointer"
                       >
                         {isSubmittingReview ? (
                           <Loader2 className="w-4 h-4 animate-spin" />
@@ -507,10 +509,10 @@ export default function TeacherProfilePage() {
                     reviewList.map((review) => (
                       <div
                         key={review._id}
-                        className="p-5 bg-slate-50 rounded-2xl border border-slate-200 space-y-2"
+                        className="p-5 bg-white/5 rounded-2xl border border-white/10 space-y-2"
                       >
                         <div className="flex items-center justify-between">
-                          <span className="text-xs font-bold text-[#0F172A] font-display">
+                          <span className="text-xs font-bold text-white font-display">
                             {review.studentName}
                           </span>
                           <div className="flex items-center gap-0.5">
@@ -519,16 +521,16 @@ export default function TeacherProfilePage() {
                             ))}
                           </div>
                         </div>
-                        <p className="text-xs sm:text-sm text-slate-600 leading-relaxed">
+                        <p className="text-xs sm:text-sm text-white/75 leading-relaxed">
                           {review.comment}
                         </p>
-                        <p className="text-[10px] text-slate-400">
+                        <p className="text-[10px] text-white/40">
                           {new Date(review.createdAt).toLocaleDateString()}
                         </p>
                       </div>
                     ))
                   ) : (
-                    <div className="py-6 text-center text-slate-400 text-xs">
+                    <div className="py-6 text-center text-white/40 text-xs">
                       No student reviews yet. Reviews will appear here once verified lessons are completed.
                     </div>
                   )}

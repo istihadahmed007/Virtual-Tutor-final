@@ -34,9 +34,9 @@ export default function PrivacyPolicy() {
   const lastUpdated = "September 9, 2026";
 
   return (
-    <div className="min-h-screen bg-black text-white font-sans antialiased selection:bg-teal-500/30 selection:text-teal-200">
+    <div className="min-h-screen bg-transparent text-white relative z-10 font-sans antialiased selection:bg-violet-500/30 selection:text-violet-200">
       {/* ─── STICKY HEADER ─── */}
-      <header className="sticky top-0 z-50 backdrop-blur-xl bg-black/70 border-b border-white/10 transition-colors">
+      <header className="sticky top-0 z-50 backdrop-blur-2xl bg-slate-950/60 border-b border-white/10 transition-colors">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 h-18 flex items-center justify-between">
           <div className="flex items-center gap-4">
             <Link
@@ -61,7 +61,7 @@ export default function PrivacyPolicy() {
             </button>
             <Link
               to="/auth"
-              className="btn-metallic-solid px-4 py-1.5 text-xs font-bold uppercase tracking-wider rounded-full hover:scale-105 transition-all"
+              className="px-4 py-1.5 text-xs font-bold uppercase tracking-wider rounded-full bg-gradient-to-r from-violet-600 to-indigo-600 hover:from-violet-500 hover:to-indigo-500 text-white shadow-[0_0_15px_rgba(139,92,246,0.3)] hover:scale-105 transition-all"
             >
               Get Started
             </Link>
@@ -72,14 +72,14 @@ export default function PrivacyPolicy() {
       {/* ─── HERO BANNER ─── */}
       <div className="relative py-14 px-4 sm:px-6 lg:px-8 max-w-6xl mx-auto border-b border-white/10">
         <div className="max-w-3xl">
-          <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-teal-500/10 border border-teal-500/20 text-teal-300 text-xs font-semibold mb-4">
-            <Shield className="w-3.5 h-3.5 text-teal-400" />
+          <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-violet-500/10 border border-violet-500/20 text-violet-300 text-xs font-semibold mb-4">
+            <Shield className="w-3.5 h-3.5 text-violet-400" />
             <span>Trust & Legal Center</span>
             <span className="text-white/40">•</span>
             <span className="text-white/60">Updated {lastUpdated}</span>
           </div>
 
-          <h1 className="text-3xl sm:text-5xl font-extrabold tracking-tight text-white leading-tight">
+          <h1 className="text-3xl sm:text-5xl font-extrabold tracking-tight text-white leading-tight font-display">
             {activeTab === "privacy" ? "Privacy Policy" : "Terms of Service"}
           </h1>
 
@@ -90,12 +90,12 @@ export default function PrivacyPolicy() {
           </p>
 
           {/* Policy / Terms Switcher Tabs */}
-          <div className="mt-8 inline-flex p-1 rounded-xl bg-white/[0.04] border border-white/10 backdrop-blur-md">
+          <div className="mt-8 inline-flex p-1 rounded-2xl bg-white/[0.04] border border-white/12 backdrop-blur-xl">
             <button
               onClick={() => handleTabChange("privacy")}
-              className={`px-5 py-2 text-xs sm:text-sm font-semibold rounded-lg transition-all flex items-center gap-2 cursor-pointer ${
+              className={`px-5 py-2 text-xs sm:text-sm font-semibold rounded-xl transition-all flex items-center gap-2 cursor-pointer ${
                 activeTab === "privacy"
-                  ? "bg-white text-black shadow-md"
+                  ? "bg-gradient-to-r from-violet-600 to-indigo-600 text-white shadow-md"
                   : "text-white/60 hover:text-white hover:bg-white/5"
               }`}
             >
@@ -104,9 +104,9 @@ export default function PrivacyPolicy() {
             </button>
             <button
               onClick={() => handleTabChange("terms")}
-              className={`px-5 py-2 text-xs sm:text-sm font-semibold rounded-lg transition-all flex items-center gap-2 cursor-pointer ${
+              className={`px-5 py-2 text-xs sm:text-sm font-semibold rounded-xl transition-all flex items-center gap-2 cursor-pointer ${
                 activeTab === "terms"
-                  ? "bg-white text-black shadow-md"
+                  ? "bg-gradient-to-r from-violet-600 to-indigo-600 text-white shadow-md"
                   : "text-white/60 hover:text-white hover:bg-white/5"
               }`}
             >
@@ -122,7 +122,7 @@ export default function PrivacyPolicy() {
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-10">
           {/* Quick Table of Contents Sidebar */}
           <aside className="lg:col-span-4 order-2 lg:order-1">
-            <div className="sticky top-28 p-6 rounded-2xl bg-white/[0.03] border border-white/10 space-y-6">
+            <div className="sticky top-28 p-6 rounded-3xl bg-white/[0.04] backdrop-blur-xl border border-white/12 shadow-[0_8px_32px_rgba(0,0,0,0.36),inset_0_1px_0_rgba(255,255,255,0.08)] space-y-6">
               <h3 className="text-xs font-bold uppercase tracking-wider text-white/50">
                 {activeTab === "privacy" ? "Policy Sections" : "Terms Sections"}
               </h3>

@@ -179,26 +179,26 @@ export default function ResumeBuilder() {
   };
 
   return (
-    <div className="min-h-screen bg-[#FAFAF8]">
+    <div className="min-h-screen bg-transparent text-white relative z-10">
       {/* Top bar */}
-      <div className="sticky top-0 z-50 bg-white/90 backdrop-blur-xl border-b border-stone-200/60">
+      <div className="sticky top-0 z-50 bg-slate-950/70 backdrop-blur-2xl border-b border-white/10">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex items-center justify-between h-14">
           <button
             onClick={() => (step === 0 ? navigate("/") : setStep(step - 1))}
-            className="flex items-center gap-2 text-sm font-medium text-slate-600 hover:text-slate-900 transition-colors"
+            className="flex items-center gap-2 text-sm font-medium text-white/70 hover:text-white transition-colors"
           >
             <ArrowLeft className="w-4 h-4" />
             {step === 0 ? "Back" : steps[step - 1]}
           </button>
           <div className="flex items-center gap-2">
-            <FileText className="w-5 h-5 text-violet-600" />
-            <span className="text-sm font-bold text-slate-900">Resume Builder</span>
+            <FileText className="w-5 h-5 text-violet-400" />
+            <span className="text-sm font-bold text-white font-display">Resume Builder</span>
           </div>
           <div className="flex items-center gap-2">
             {step < steps.length - 1 && (
               <button
                 onClick={() => setStep(step + 1)}
-                className="px-4 py-2 bg-violet-600 hover:bg-violet-700 text-white text-sm font-semibold rounded-xl transition-all active:scale-95 flex items-center gap-1.5"
+                className="px-4 py-2 bg-gradient-to-r from-violet-600 to-indigo-600 hover:from-violet-500 hover:to-indigo-500 text-white text-sm font-semibold rounded-xl transition-all active:scale-95 flex items-center gap-1.5 shadow-[0_0_15px_rgba(139,92,246,0.3)]"
               >
                 Next <ArrowRight className="w-3.5 h-3.5" />
               </button>
@@ -206,7 +206,7 @@ export default function ResumeBuilder() {
             {step === steps.length - 1 && (
               <button
                 onClick={handleExportPDF}
-                className="px-4 py-2 bg-violet-600 hover:bg-violet-700 text-white text-sm font-semibold rounded-xl transition-all active:scale-95 flex items-center gap-1.5"
+                className="px-4 py-2 bg-gradient-to-r from-violet-600 to-indigo-600 hover:from-violet-500 hover:to-indigo-500 text-white text-sm font-semibold rounded-xl transition-all active:scale-95 flex items-center gap-1.5 shadow-[0_0_15px_rgba(139,92,246,0.3)]"
               >
                 <Download className="w-3.5 h-3.5" /> Export PDF
               </button>
@@ -214,7 +214,7 @@ export default function ResumeBuilder() {
           </div>
         </div>
         {/* Progress bar */}
-        <div className="h-0.5 bg-stone-100">
+        <div className="h-0.5 bg-white/10">
           <div
             className="h-full bg-gradient-to-r from-violet-500 to-indigo-500 transition-all duration-500"
             style={{ width: `${((step + 1) / steps.length) * 100}%` }}
@@ -224,17 +224,17 @@ export default function ResumeBuilder() {
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {/* Step labels */}
-        <div className="flex items-center gap-2 mb-8 overflow-x-auto pb-2">
+        <div className="flex items-center gap-2 mb-8 overflow-x-auto pb-2 scrollbar-none">
           {steps.map((s, i) => (
             <button
               key={s}
               onClick={() => i <= step && setStep(i)}
-              className={`px-3 py-1.5 rounded-full text-xs font-semibold whitespace-nowrap transition-all ${
+              className={`px-3.5 py-1.5 rounded-full text-xs font-semibold whitespace-nowrap transition-all backdrop-blur-sm ${
                 i === step
-                  ? "bg-violet-100 text-violet-700 border border-violet-200"
+                  ? "bg-gradient-to-r from-violet-600 to-indigo-600 text-white border border-violet-400/40 shadow-sm"
                   : i < step
-                    ? "bg-stone-100 text-slate-600 hover:bg-stone-200 cursor-pointer"
-                    : "bg-stone-50 text-slate-400 cursor-not-allowed"
+                    ? "bg-white/10 text-white/90 hover:bg-white/15 hover:text-white border border-white/10 cursor-pointer"
+                    : "bg-white/[0.04] text-white/40 border border-white/5 cursor-not-allowed"
               }`}
             >
               {i < step ? "✓ " : ""}
@@ -254,10 +254,10 @@ export default function ResumeBuilder() {
               transition={{ duration: 0.3 }}
             >
               <div className="text-center mb-8">
-                <h1 className="text-2xl sm:text-3xl font-extrabold text-slate-900">
+                <h1 className="text-2xl sm:text-4xl font-extrabold text-white font-display">
                   Choose a template
                 </h1>
-                <p className="mt-2 text-slate-500">
+                <p className="mt-2 text-white/60 text-sm">
                   Pick a design that matches your industry. You can customize everything later.
                 </p>
               </div>
@@ -266,24 +266,24 @@ export default function ResumeBuilder() {
                   <button
                     key={t.id}
                     onClick={() => setSelectedTemplate(t.id)}
-                    className={`group relative p-5 rounded-2xl border-2 transition-all text-left ${
+                    className={`group relative p-5 rounded-3xl border transition-all text-left backdrop-blur-xl ${
                       selectedTemplate === t.id
-                        ? "border-violet-500 bg-violet-50/50 shadow-lg shadow-violet-500/10"
-                        : "border-stone-200 bg-white hover:border-stone-300 hover:shadow-md"
+                        ? "border-violet-400 bg-violet-500/10 shadow-[0_0_25px_rgba(139,92,246,0.25)]"
+                        : "border-white/12 bg-white/[0.04] hover:border-white/20 hover:bg-white/[0.08]"
                     }`}
                   >
                     {selectedTemplate === t.id && (
-                      <div className="absolute top-3 right-3 w-6 h-6 rounded-full bg-violet-600 flex items-center justify-center">
+                      <div className="absolute top-3 right-3 w-6 h-6 rounded-full bg-violet-600 flex items-center justify-center shadow-md">
                         <svg className="w-3.5 h-3.5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" />
                         </svg>
                       </div>
                     )}
-                    <div className={`w-full h-40 rounded-xl mb-4 overflow-hidden ${getTemplateBg(t.id)}`}>
+                    <div className={`w-full h-40 rounded-2xl mb-4 overflow-hidden ${getTemplateBg(t.id)}`}>
                       <TemplatePreviewMini templateId={t.id} />
                     </div>
-                    <h3 className="text-sm font-bold text-slate-900">{t.name}</h3>
-                    <p className="text-xs text-slate-500 mt-1">{t.desc}</p>
+                    <h3 className="text-sm font-bold text-white font-display">{t.name}</h3>
+                    <p className="text-xs text-white/60 mt-1">{t.desc}</p>
                   </button>
                 ))}
               </div>
@@ -331,10 +331,10 @@ export default function ResumeBuilder() {
               <SectionHeader icon={Briefcase} title="Work experience" />
               <div className="space-y-6 mt-6">
                 {resume.experience.map((exp, idx) => (
-                  <div key={exp.id} className="bg-white rounded-2xl border border-stone-200 p-5 space-y-4">
+                  <div key={exp.id} className="bg-white/[0.04] backdrop-blur-xl rounded-3xl border border-white/12 p-5 sm:p-6 space-y-4 shadow-[0_8px_32px_rgba(0,0,0,0.36),inset_0_1px_0_rgba(255,255,255,0.08)]">
                     <div className="flex items-center justify-between">
-                      <span className="text-xs font-bold text-slate-400">Experience {idx + 1}</span>
-                      <button onClick={() => removeExperience(exp.id)} className="text-slate-400 hover:text-red-500 transition-colors">
+                      <span className="text-xs font-bold text-white/50">Experience #{idx + 1}</span>
+                      <button onClick={() => removeExperience(exp.id)} className="text-white/40 hover:text-red-400 transition-colors">
                         <Trash2 className="w-4 h-4" />
                       </button>
                     </div>
@@ -353,23 +353,23 @@ export default function ResumeBuilder() {
                         disabled={exp.current}
                       />
                     </div>
-                    <label className="flex items-center gap-2 text-sm text-slate-600 cursor-pointer">
+                    <label className="flex items-center gap-2 text-sm text-white/80 cursor-pointer">
                       <input
                         type="checkbox"
                         checked={exp.current}
                         onChange={(e) => updateExperience(exp.id, { current: e.target.checked, endDate: "" })}
-                        className="rounded border-stone-300 text-violet-600"
+                        className="rounded border-white/20 bg-white/10 text-violet-500 focus:ring-violet-500/20"
                       />
                       Currently working here
                     </label>
                     <div>
-                      <label className="block text-xs font-semibold text-slate-500 mb-1">Description (one bullet per line)</label>
+                      <label className="block text-xs font-semibold text-white/70 mb-1">Description (one bullet per line)</label>
                       <textarea
                         value={exp.bullets.join("\n")}
                         onChange={(e) => updateExperience(exp.id, { bullets: e.target.value.split("\n") })}
                         rows={4}
                         placeholder="Describe your responsibilities and achievements..."
-                        className="w-full px-3 py-2 bg-stone-50 border border-stone-200 rounded-xl text-sm text-slate-800 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-violet-500/20 focus:border-violet-400 resize-none"
+                        className="w-full px-3.5 py-2.5 bg-white/5 border border-white/15 rounded-2xl text-sm text-white placeholder:text-white/40 focus:outline-none focus:ring-2 focus:ring-violet-500/20 focus:border-violet-400 resize-none backdrop-blur-md"
                       />
                     </div>
                     <Input label="Key achievement (optional)" value={exp.keyAchievement} onChange={(v) => updateExperience(exp.id, { keyAchievement: v })} placeholder="Achieved over $500,000 in sales..." />
@@ -377,7 +377,7 @@ export default function ResumeBuilder() {
                 ))}
                 <button
                   onClick={addExperience}
-                  className="w-full py-3 border-2 border-dashed border-stone-300 rounded-2xl text-sm font-semibold text-slate-500 hover:border-violet-400 hover:text-violet-600 hover:bg-violet-50/50 transition-all flex items-center justify-center gap-2"
+                  className="w-full py-3.5 border-2 border-dashed border-white/20 rounded-3xl text-sm font-semibold text-white/70 hover:border-violet-400 hover:text-white hover:bg-violet-500/10 transition-all flex items-center justify-center gap-2"
                 >
                   <Plus className="w-4 h-4" /> Add experience
                 </button>
@@ -398,10 +398,10 @@ export default function ResumeBuilder() {
               <SectionHeader icon={GraduationCap} title="Education" />
               <div className="space-y-6 mt-6">
                 {resume.education.map((edu, idx) => (
-                  <div key={edu.id} className="bg-white rounded-2xl border border-stone-200 p-5 space-y-4">
+                  <div key={edu.id} className="bg-white/[0.04] backdrop-blur-xl rounded-3xl border border-white/12 p-5 sm:p-6 space-y-4 shadow-[0_8px_32px_rgba(0,0,0,0.36),inset_0_1px_0_rgba(255,255,255,0.08)]">
                     <div className="flex items-center justify-between">
-                      <span className="text-xs font-bold text-slate-400">Education {idx + 1}</span>
-                      <button onClick={() => removeEducation(edu.id)} className="text-slate-400 hover:text-red-500 transition-colors">
+                      <span className="text-xs font-bold text-white/50">Education #{idx + 1}</span>
+                      <button onClick={() => removeEducation(edu.id)} className="text-white/40 hover:text-red-400 transition-colors">
                         <Trash2 className="w-4 h-4" />
                       </button>
                     </div>
@@ -417,7 +417,7 @@ export default function ResumeBuilder() {
                 ))}
                 <button
                   onClick={addEducation}
-                  className="w-full py-3 border-2 border-dashed border-stone-300 rounded-2xl text-sm font-semibold text-slate-500 hover:border-violet-400 hover:text-violet-600 hover:bg-violet-50/50 transition-all flex items-center justify-center gap-2"
+                  className="w-full py-3.5 border-2 border-dashed border-white/20 rounded-3xl text-sm font-semibold text-white/70 hover:border-violet-400 hover:text-white hover:bg-violet-500/10 transition-all flex items-center justify-center gap-2"
                 >
                   <Plus className="w-4 h-4" /> Add education
                 </button>
@@ -434,34 +434,34 @@ export default function ResumeBuilder() {
                         value={skill.name}
                         onChange={(e) => updateSkill(idx, { name: e.target.value })}
                         placeholder="Skill name"
-                        className="flex-1 px-3 py-2 bg-stone-50 border border-stone-200 rounded-xl text-sm text-slate-800 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-violet-500/20 focus:border-violet-400"
+                        className="flex-1 px-3.5 py-2.5 bg-white/5 border border-white/15 rounded-xl text-sm text-white placeholder:text-white/40 focus:outline-none focus:ring-2 focus:ring-violet-500/20 focus:border-violet-400"
                       />
-                      <div className="flex items-center gap-1">
+                      <div className="flex items-center gap-1.5">
                         {[1, 2, 3, 4, 5].map((lvl) => (
                           <button
                             key={lvl}
                             onClick={() => updateSkill(idx, { level: lvl })}
-                            className={`w-5 h-5 rounded-sm transition-all ${
-                              lvl <= skill.level ? "bg-slate-800" : "bg-stone-200"
+                            className={`w-5 h-5 rounded-md transition-all ${
+                              lvl <= skill.level ? "bg-gradient-to-r from-violet-600 to-indigo-600 shadow-[0_0_8px_rgba(139,92,246,0.4)]" : "bg-white/10 hover:bg-white/20"
                             }`}
                           />
                         ))}
                       </div>
-                      <button onClick={() => removeSkill(idx)} className="text-slate-400 hover:text-red-500">
+                      <button onClick={() => removeSkill(idx)} className="text-white/40 hover:text-red-400 transition-colors">
                         <Trash2 className="w-4 h-4" />
                       </button>
                     </div>
                   ))}
                   <button
                     onClick={addSkill}
-                    className="flex items-center gap-2 text-sm font-semibold text-violet-600 hover:text-violet-700 transition-colors"
+                    className="flex items-center gap-2 text-sm font-semibold text-violet-400 hover:text-violet-300 transition-colors"
                   >
                     <Plus className="w-4 h-4" /> Add skill
                   </button>
                 </div>
 
                 <div className="mt-6">
-                  <label className="block text-xs font-semibold text-slate-500 mb-2">Languages (comma-separated)</label>
+                  <label className="block text-xs font-semibold text-white/70 mb-2">Languages (comma-separated)</label>
                   <input
                     type="text"
                     value={resume.languages.join(", ")}
@@ -469,7 +469,7 @@ export default function ResumeBuilder() {
                       update({ languages: e.target.value.split(",").map((l) => l.trim()).filter(Boolean) })
                     }
                     placeholder="English, Spanish"
-                    className="w-full px-3 py-2 bg-stone-50 border border-stone-200 rounded-xl text-sm text-slate-800 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-violet-500/20 focus:border-violet-400"
+                    className="w-full px-3.5 py-2.5 bg-white/5 border border-white/15 rounded-xl text-sm text-white placeholder:text-white/40 focus:outline-none focus:ring-2 focus:ring-violet-500/20 focus:border-violet-400"
                   />
                 </div>
               </div>
@@ -489,7 +489,7 @@ export default function ResumeBuilder() {
               <SectionHeader icon={Palette} title="Additional details" />
               <div className="space-y-6 mt-6">
                 <div>
-                  <label className="block text-xs font-semibold text-slate-500 mb-2">Hobbies (comma-separated)</label>
+                  <label className="block text-xs font-semibold text-white/70 mb-2">Hobbies (comma-separated)</label>
                   <input
                     type="text"
                     value={resume.hobbies.join(", ")}
@@ -497,7 +497,7 @@ export default function ResumeBuilder() {
                       update({ hobbies: e.target.value.split(",").map((h) => h.trim()).filter(Boolean) })
                     }
                     placeholder="Writing, Photography, Design"
-                    className="w-full px-3 py-2 bg-stone-50 border border-stone-200 rounded-xl text-sm text-slate-800 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-violet-500/20 focus:border-violet-400"
+                    className="w-full px-3.5 py-2.5 bg-white/5 border border-white/15 rounded-xl text-sm text-white placeholder:text-white/40 focus:outline-none focus:ring-2 focus:ring-violet-500/20 focus:border-violet-400"
                   />
                 </div>
               </div>
@@ -515,25 +515,25 @@ export default function ResumeBuilder() {
             >
               <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-6">
                 <div>
-                  <h2 className="text-xl font-extrabold text-slate-900">Your resume</h2>
-                  <p className="text-sm text-slate-500">Review, then export as PDF</p>
+                  <h2 className="text-xl font-extrabold text-white font-display">Your resume</h2>
+                  <p className="text-sm text-white/60">Review, then export as PDF</p>
                 </div>
                 <div className="flex items-center gap-2">
                   <button
                     onClick={() => setShowPreview(false)}
-                    className={`px-3 py-1.5 text-xs font-semibold rounded-lg transition-all ${!showPreview ? "bg-slate-900 text-white" : "bg-stone-100 text-slate-600 hover:bg-stone-200"}`}
+                    className={`px-3.5 py-2 text-xs font-semibold rounded-xl transition-all ${!showPreview ? "bg-gradient-to-r from-violet-600 to-indigo-600 text-white shadow-sm" : "bg-white/10 text-white/70 hover:bg-white/20 hover:text-white"}`}
                   >
                     <Eye className="w-3.5 h-3.5 inline mr-1" /> Preview
                   </button>
                   <button
                     onClick={() => setShowPreview(true)}
-                    className={`px-3 py-1.5 text-xs font-semibold rounded-lg transition-all ${showPreview ? "bg-slate-900 text-white" : "bg-stone-100 text-slate-600 hover:bg-stone-200"}`}
+                    className={`px-3.5 py-2 text-xs font-semibold rounded-xl transition-all ${showPreview ? "bg-gradient-to-r from-violet-600 to-indigo-600 text-white shadow-sm" : "bg-white/10 text-white/70 hover:bg-white/20 hover:text-white"}`}
                   >
                     <Edit3 className="w-3.5 h-3.5 inline mr-1" /> Edit
                   </button>
                   <button
                     onClick={handleExportPDF}
-                    className="px-4 py-2 bg-violet-600 hover:bg-violet-700 text-white text-sm font-semibold rounded-xl transition-all active:scale-95 flex items-center gap-1.5"
+                    className="px-4 py-2 bg-gradient-to-r from-violet-600 to-indigo-600 hover:from-violet-500 hover:to-indigo-500 text-white text-sm font-semibold rounded-xl transition-all active:scale-95 flex items-center gap-1.5 shadow-[0_0_15px_rgba(139,92,246,0.3)]"
                   >
                     <Download className="w-4 h-4" /> Export PDF
                   </button>
@@ -541,16 +541,16 @@ export default function ResumeBuilder() {
               </div>
 
               {showPreview && (
-                <div className="mb-4 flex items-center gap-2">
-                  <span className="text-xs font-semibold text-slate-500">Template:</span>
+                <div className="mb-4 flex items-center gap-2 overflow-x-auto pb-1">
+                  <span className="text-xs font-semibold text-white/60">Template:</span>
                   {templates.map((t) => (
                     <button
                       key={t.id}
                       onClick={() => setSelectedTemplate(t.id)}
-                      className={`px-3 py-1 text-xs rounded-lg font-medium transition-all ${
+                      className={`px-3 py-1 text-xs rounded-xl font-medium transition-all ${
                         selectedTemplate === t.id
-                          ? "bg-violet-100 text-violet-700 border border-violet-200"
-                          : "bg-stone-100 text-slate-500 hover:bg-stone-200"
+                          ? "bg-violet-500/20 text-violet-300 border border-violet-400/40"
+                          : "bg-white/5 text-white/70 hover:bg-white/10 hover:text-white border border-white/10"
                       }`}
                     >
                       {t.name}
@@ -559,8 +559,8 @@ export default function ResumeBuilder() {
                 </div>
               )}
 
-              <div className="bg-stone-200 rounded-2xl p-4 sm:p-8 flex justify-center overflow-auto">
-                <div ref={previewRef} className="shadow-2xl" style={{ width: "210mm", maxWidth: "100%", background: "white" }}>
+              <div className="bg-slate-950/60 backdrop-blur-xl border border-white/10 rounded-3xl p-4 sm:p-8 flex justify-center overflow-auto shadow-2xl">
+                <div ref={previewRef} className="shadow-2xl rounded-sm" style={{ width: "210mm", maxWidth: "100%", background: "white" }}>
                   {selectedTemplate === "classic" && <ClassicTemplate data={resume} />}
                   {selectedTemplate === "dark-sidebar" && <DarkSidebarTemplate data={resume} />}
                   {selectedTemplate === "modern-green" && <ModernGreenTemplate data={resume} />}
@@ -581,10 +581,10 @@ export default function ResumeBuilder() {
 function SectionHeader({ icon: Icon, title }: { icon: React.ElementType; title: string }) {
   return (
     <div className="flex items-center gap-3">
-      <div className="w-10 h-10 rounded-xl bg-violet-100 flex items-center justify-center">
-        <Icon className="w-5 h-5 text-violet-600" />
+      <div className="w-10 h-10 rounded-2xl bg-violet-500/20 border border-violet-500/30 flex items-center justify-center text-violet-400">
+        <Icon className="w-5 h-5 text-violet-400" />
       </div>
-      <h2 className="text-xl font-extrabold text-slate-900">{title}</h2>
+      <h2 className="text-xl font-extrabold text-white font-display">{title}</h2>
     </div>
   );
 }
@@ -606,14 +606,14 @@ function Input({
 }) {
   return (
     <div>
-      <label className="block text-xs font-semibold text-slate-500 mb-1">{label}</label>
+      <label className="block text-xs font-semibold text-white/70 mb-1">{label}</label>
       <input
         type={type}
         value={value}
         onChange={(e) => onChange(e.target.value)}
         placeholder={placeholder}
         disabled={disabled}
-        className="w-full px-3 py-2 bg-stone-50 border border-stone-200 rounded-xl text-sm text-slate-800 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-violet-500/20 focus:border-violet-400 disabled:opacity-50 disabled:cursor-not-allowed"
+        className="w-full px-3.5 py-2 bg-white/5 border border-white/15 rounded-xl text-sm text-white placeholder:text-white/40 focus:outline-none focus:ring-2 focus:ring-violet-500/20 focus:border-violet-400 disabled:opacity-50 disabled:cursor-not-allowed transition-all"
       />
     </div>
   );
@@ -634,13 +634,13 @@ function Textarea({
 }) {
   return (
     <div>
-      <label className="block text-xs font-semibold text-slate-500 mb-1">{label}</label>
+      <label className="block text-xs font-semibold text-white/70 mb-1">{label}</label>
       <textarea
         value={value}
         onChange={(e) => onChange(e.target.value)}
         placeholder={placeholder}
         rows={rows}
-        className="w-full px-3 py-2 bg-stone-50 border border-stone-200 rounded-xl text-sm text-slate-800 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-violet-500/20 focus:border-violet-400 resize-none"
+        className="w-full px-3.5 py-2.5 bg-white/5 border border-white/15 rounded-xl text-sm text-white placeholder:text-white/40 focus:outline-none focus:ring-2 focus:ring-violet-500/20 focus:border-violet-400 resize-none transition-all"
       />
     </div>
   );

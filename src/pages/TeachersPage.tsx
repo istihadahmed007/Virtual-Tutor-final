@@ -333,7 +333,7 @@ export default function TeachersPage() {
   };
 
   return (
-    <main className="min-h-screen bg-[#F8FAFC] text-[#0F172A] pb-24">
+    <main className="min-h-screen bg-transparent text-white pb-24">
       <SEO
         title="Find Verified Tutors & Educators"
         description="Explore verified, top-tier tutors across mathematics, sciences, languages, and test preparation with transparent monthly tuition plans in Bangladeshi Taka."
@@ -349,26 +349,15 @@ export default function TeachersPage() {
       />
       
       {/* Header Section */}
-      <div className="border-b border-slate-200 bg-white/95 backdrop-blur-md relative overflow-hidden">
-        {/* Atmospheric collegiate seminar & library background */}
-        <div className="absolute inset-0 pointer-events-none z-0 overflow-hidden" aria-hidden="true">
-          <img
-            src="https://images.unsplash.com/photo-1524178232363-1fb2b075b655?auto=format&fit=crop&q=80&w=1800"
-            alt=""
-            loading="lazy"
-            className="w-full h-full object-cover opacity-[0.05] mix-blend-luminosity scale-105"
-          />
-          <div className="absolute inset-0 bg-gradient-to-r from-white via-white/95 to-slate-50/90" />
-        </div>
-
+      <div className="border-b border-white/10 bg-black/20 backdrop-blur-md relative overflow-hidden">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 relative z-10">
           <div className="flex flex-col lg:flex-row lg:items-end justify-between gap-6">
             <div>
               <SectionLabel number="01" text="Verified Faculty Directory" />
-              <h1 className="text-3xl sm:text-5xl font-extrabold text-[#0F172A] tracking-tight font-display mt-2">
+              <h1 className="text-3xl sm:text-5xl font-extrabold text-white tracking-tight font-display mt-2">
                 Find Qualified Tutors.
               </h1>
-              <p className="text-sm sm:text-base text-slate-600 mt-2 max-w-2xl">
+              <p className="text-sm sm:text-base text-white/70 mt-2 max-w-2xl">
                 Compare verified educators, read student reviews, inspect monthly plans, and book your 1-on-1 session.
               </p>
             </div>
@@ -379,15 +368,15 @@ export default function TeachersPage() {
                 variant="outline"
                 size="sm"
                 onClick={() => navigate("/lessons")}
-                className="rounded-full border-slate-200 text-slate-700 hover:bg-slate-50 text-xs font-semibold px-4 py-2 gap-1.5"
+                className="rounded-full border-white/15 bg-white/5 text-white/80 hover:bg-white/10 hover:text-white text-xs font-semibold px-4 py-2 gap-1.5 cursor-pointer"
               >
-                <BookOpen className="w-3.5 h-3.5 text-[#6D5DFB]" />
+                <BookOpen className="w-3.5 h-3.5 text-violet-400" />
                 <span>My Lessons</span>
               </Button>
               <Button
                 size="sm"
                 onClick={() => navigate("/calendar")}
-                className="rounded-full bg-[#312E81] hover:bg-[#6D5DFB] text-white text-xs font-semibold px-4 py-2 gap-1.5 shadow-xs transition-all cursor-pointer"
+                className="rounded-full bg-gradient-to-r from-violet-600 to-indigo-600 hover:from-violet-500 hover:to-indigo-500 text-white text-xs font-semibold px-4 py-2 gap-1.5 shadow-[0_4px_20px_rgba(109,93,251,0.35)] transition-all cursor-pointer"
               >
                 <Calendar className="w-3.5 h-3.5" />
                 <span>Schedule Calendar</span>

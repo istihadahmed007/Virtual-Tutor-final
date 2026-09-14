@@ -68,7 +68,7 @@ export default function LessonsPage() {
         : lessons;
 
   return (
-    <main className="min-h-screen bg-[#F5F4EF] text-[#111111] pb-24">
+    <main className="min-h-screen bg-transparent text-white pb-24 relative z-10">
       <div className="max-w-5xl mx-auto px-4 sm:px-6 py-8 lg:py-12">
         <PageHeader
           title="Lessons & Classes"
@@ -85,10 +85,10 @@ export default function LessonsPage() {
             <button
               key={t.key}
               onClick={() => setTab(t.key)}
-              className={`px-5 py-2.5 rounded-full text-xs font-semibold transition-all ${
+              className={`px-5 py-2.5 rounded-full text-xs font-semibold transition-all backdrop-blur-sm ${
                 tab === t.key
-                  ? "bg-[#111111] text-white shadow-xs"
-                  : "bg-white border border-[#E5E4DE] text-[#111111]/70 hover:border-[#111111]/40"
+                  ? "bg-gradient-to-r from-violet-600 to-indigo-600 text-white shadow-[0_0_12px_rgba(139,92,246,0.3)] border border-violet-400/30"
+                  : "bg-white/[0.04] border border-white/10 text-white/70 hover:border-white/30 hover:bg-white/10 hover:text-white"
               }`}
             >
               {t.label}
@@ -128,40 +128,40 @@ export default function LessonsPage() {
                 <button
                   key={lesson._id}
                   onClick={() => navigate(`/classroom?session=${lesson._id}`)}
-                  className="w-full bg-white rounded-3xl border border-[#E5E4DE] p-5 flex items-center gap-4 hover:border-[#111111]/40 hover:shadow-md transition-all text-left group shadow-xs"
+                  className="w-full bg-white/[0.04] backdrop-blur-xl rounded-3xl border border-white/12 p-5 flex items-center gap-4 hover:border-violet-400/40 hover:bg-white/[0.07] transition-all text-left group shadow-[0_8px_32px_rgba(0,0,0,0.36),inset_0_1px_0_rgba(255,255,255,0.08)] cursor-pointer"
                 >
                   <div
                     className={`w-12 h-12 rounded-2xl flex items-center justify-center shrink-0 border transition-all ${
                       lesson.status === "completed"
-                        ? "bg-[#F5F4EF] text-[#111111] border-[#E5E4DE]"
+                        ? "bg-white/10 text-white/70 border-white/15"
                         : isNow
-                          ? "bg-[#F26522] text-white border-transparent animate-pulse"
-                          : "bg-[#111111] text-white border-[#111111] group-hover:bg-[#F26522] group-hover:border-[#F26522]"
+                          ? "bg-emerald-500 text-white border-emerald-400 shadow-[0_0_15px_rgba(16,185,129,0.5)] animate-pulse"
+                          : "bg-white/10 text-violet-400 border-white/15 group-hover:bg-gradient-to-r group-hover:from-violet-600 group-hover:to-indigo-600 group-hover:text-white group-hover:border-violet-400/30"
                     }`}
                   >
                     {lesson.status === "completed" ? (
-                      <CheckCircle className="w-5 h-5 text-[#111111]" />
+                      <CheckCircle className="w-5 h-5 text-emerald-400" />
                     ) : (
                       <Play className="w-5 h-5 fill-current" />
                     )}
                   </div>
                   <div className="flex-1 min-w-0">
-                    <p className="text-base font-bold text-[#111111] truncate font-display">
+                    <p className="text-base font-bold text-white truncate font-display group-hover:text-violet-300 transition-colors">
                       {lesson.title}
                     </p>
-                    <p className="text-xs text-[#111111]/60 mt-0.5">
+                    <p className="text-xs text-white/60 mt-0.5">
                       {lesson.teacherName} · {lesson.subject} ·{" "}
                       {lesson.durationMinutes} min
                     </p>
                   </div>
                   <div className="text-right shrink-0">
-                    <p className="text-xs font-semibold text-[#111111]">
+                    <p className="text-xs font-semibold text-white">
                       {date.toLocaleDateString("en-US", {
                         month: "short",
                         day: "numeric",
                       })}
                     </p>
-                    <p className="text-xs text-[#111111]/50">
+                    <p className="text-xs text-white/50">
                       {date.toLocaleTimeString("en-US", {
                         hour: "2-digit",
                         minute: "2-digit",
