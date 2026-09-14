@@ -206,7 +206,8 @@ errorTracker.init(convex);
 const container = document.getElementById("root")!;
 const existingRoot = (window as unknown as { __reactRoot?: ReturnType<typeof createRoot> }).__reactRoot;
 const root = existingRoot || createRoot(container);
-const appBasename = (import.meta.env.BASE_URL || "/").replace(/\/+$/, "");
+const rawBase = import.meta.env.BASE_URL || "/";
+const appBasename = rawBase === "/" ? "/" : rawBase.replace(/\/+$/, "");
 
 root.render(
   <StrictMode>

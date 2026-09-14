@@ -36,8 +36,6 @@ jobs:
 
       - name: Build project for GitHub Pages
         run: npm run build
-        env:
-          GITHUB_PAGES: "true"
 
       - name: Verify 404.html fallback exists in dist
         run: |

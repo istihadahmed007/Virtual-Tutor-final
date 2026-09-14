@@ -2,14 +2,27 @@
   RewriteEngine On
   RewriteBase /
   RewriteRule ^index\.html$ - [L]
+
+  # Static asset requests under /assets/ must never fall back to index.html; return 404
+  RewriteCond %{REQUEST_URI} ^/assets/ [NC]
+  RewriteCond %{REQUEST_FILENAME} !-f
+  RewriteRule ^ - [R=404,L]
+
+  # Standard SPA fallback for client-side routes (e.g. /dashboard, /teachers)
   RewriteCond %{REQUEST_FILENAME} !-f
   RewriteCond %{REQUEST_FILENAME} !-d
   RewriteRule . /index.html [L]
 </IfModule>
 
-# MIME types for video streaming
+# MIME types for scripts, stylesheets, vectors, fonts, and video
+AddType application/javascript .js .mjs
+AddType text/css .css
+AddType image/svg+xml .svg .svgz
+AddType font/woff2 .woff2
+AddType font/woff .woff
 AddType video/mp4 .mp4
 AddType video/webm .webm
+AddType application/json .json
 
 # Explicitly disable caching for index.html so users always get the newest release immediately
 <FilesMatch "^(index\.html)?$">
@@ -32,7 +45,7 @@ AddType video/webm .webm
   AddOutputFilterByType DEFLATE text/html text/plain text/xml text/css application/javascript application/json image/svg+xml
 </IfModule>
 
-# Cache static assets
+# Cache static assets with content hashes
 <IfModule mod_expires.c>
   ExpiresActive On
   ExpiresByType application/javascript "access plus 1 year"

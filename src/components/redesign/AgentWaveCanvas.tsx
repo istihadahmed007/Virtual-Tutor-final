@@ -107,7 +107,8 @@ export const AgentWaveCanvas: React.FC<AgentWaveCanvasProps> = ({
     };
 
     const renderFrame = () => {
-      time += 0.012 * speed;
+      try {
+        time += 0.012 * speed;
       mouseX += (targetMouseX - mouseX) * 0.04;
       mouseY += (targetMouseY - mouseY) * 0.04;
 
@@ -231,8 +232,11 @@ export const AgentWaveCanvas: React.FC<AgentWaveCanvasProps> = ({
         ctx.shadowBlur = 0;
       }
 
-      if (!shouldReduceMotion) {
-        animId = requestAnimationFrame(renderFrame);
+        if (!shouldReduceMotion) {
+          animId = requestAnimationFrame(renderFrame);
+        }
+      } catch (e) {
+        console.warn("[AgentWaveCanvas] Animation frame suppressed:", e);
       }
     };
 
